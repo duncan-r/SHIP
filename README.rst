@@ -1,4 +1,3 @@
-
 SHIP
 ====
 
@@ -26,13 +25,16 @@ Installing
 ----------
 
 Once you have compiled the library you can either install it or add it to 
-your script by:  
+your script by: 
+ 
 Install using Pip:  
-pip install TMacTools-X.X.dev0.zip  
+::
+	pip install SHIP-X.X.dev0.zip
+	
 Append to top of Python script:  
 ::
 	import sys  
-	sys.path.append("TMacTools-X.X.dev0-py2.7.egg")
+	sys.path.append("SHIP-X.X.dev0-py2.7.egg")
 
 
 
@@ -47,27 +49,24 @@ Usage
 List of main packages
 ======================
 
-ship package:
+	ship package:
 
-isis - Contains modules for reading, writing and maniplating ISIS and Flood
-       Modeller Pro files. Including .dat, .ief, .ief file types. 
+	isis:
+		Contains modules for reading, writing and maniplating ISIS and Flood 
+		Modeller Pro files. Including .dat, .ief, .ief file types. 
 
-tuflow - Contains modules reading, writing, and manipulating TUFLOW files.
-         Constructs a TuflowModel object based around a given input path, such
-         as a .tcf file.
-         Sub modules are available in the data_files package for reading the
-         contents of files that contain additional data, such as Materials and
-         Boundary Condition files.
+	tuflow: 
+		Contains modules reading, writing, and manipulating TUFLOW files.
+        Constructs a TuflowModel object based around a given input path, such
+        as a .tcf file.
+        Sub modules are available in the data_files package for reading the
+        contents of files that contain additional data, such as Materials and
+        Boundary Condition files.
 
-utils - Contains utility modules with file loaders, top level classes used by
+	utils:
+		Contains utility modules with file loaders, top level classes used by
         all modules - like PathHolder - and file other useful functionality
         that is used globally.
         There is also a sub package called tools that contains standalone tools
         or scripts that may be used by clients of the library to complete 
         common analysis undertaken on ISIS and TUFLOW models.
-      
-
-
-
-
-
