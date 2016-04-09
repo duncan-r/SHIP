@@ -1,0 +1,3 @@
+recursive-exclude tests *
+prune tests
+include README.rst
