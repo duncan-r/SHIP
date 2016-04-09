@@ -78,6 +78,33 @@ class ADataFileObject(object):
             raise KeyError ('Key %s does not match any avialable' % (key))
         
         return self.row_collection.getDataObject(key)
+
+
+    def getDataEntryAsList(self, key):
+        """Returns the a list of the data associated with the given key.
+        
+        The Keys for each class are usually defined by a related enum. These
+        should be used when calling this function.
+        
+        Args:
+            key (int): values associated with the different data types.
+            
+        Return:
+            list: containing the data stipulated by the given key.
+            
+        Raises:
+            KeyError: if key value does not exist.
+        """
+        if self.keys is None or not key in self.keys.ITERABLE:
+            raise KeyError ('Key %s does not match any avialable' % (key))
+        
+        outlist = []
+        data = self.row_collection.getDataObject(key)
+        outlist = [d for d in data]
+#         for d in data:
+#             outlist.append(d)
+
+        return outlist
     
         
     def saveData(self, plus_subfiles=False):
