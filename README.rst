@@ -11,6 +11,13 @@ For more information containing an overview of the setup of the library,
 some usage examples and complete API docs build the Sphynx documentation 
 provided in the docs folder.
 
+Examples
+--------
+
+Some example python modules showing how to use the API and tools are included
+in the /examples/ folder. This is a good place to start to get an idea of how
+the library can be used for practical tasks.
+
 Building the library
 --------------------
 
@@ -49,24 +56,28 @@ Usage
 List of main packages
 ======================
 
-	ship package:
+isis
+----
 
-	isis:
-		Contains modules for reading, writing and maniplating ISIS and Flood 
-		Modeller Pro files. Including .dat, .ief, .ief file types. 
+	Contains modules for reading, writing and maniplating ISIS and Flood 
+	Modeller Pro files. Including .dat, .ief, .ief file types. 
 
-	tuflow: 
-		Contains modules reading, writing, and manipulating TUFLOW files.
-        Constructs a TuflowModel object based around a given input path, such
-        as a .tcf file.
-        Sub modules are available in the data_files package for reading the
-        contents of files that contain additional data, such as Materials and
-        Boundary Condition files.
+tuflow
+------
 
-	utils:
-		Contains utility modules with file loaders, top level classes used by
-        all modules - like PathHolder - and file other useful functionality
-        that is used globally.
-        There is also a sub package called tools that contains standalone tools
-        or scripts that may be used by clients of the library to complete 
-        common analysis undertaken on ISIS and TUFLOW models.
+	Contains modules reading, writing, and manipulating TUFLOW files.
+	Constructs a TuflowModel object based around a given input path, such
+	as a .tcf file.
+	Sub modules are available in the data_files package for reading the
+	contents of files that contain additional data, such as Materials and
+	Boundary Condition files.
+
+utils
+-----
+
+	Contains utility modules with file loaders, top level classes used by
+	all modules - like PathHolder - and file other useful functionality
+	that is used globally.
+	There is also a sub package called tools that contains standalone tools
+	or scripts that may be used by clients of the library to complete 
+	common analysis undertaken on ISIS and TUFLOW models.
