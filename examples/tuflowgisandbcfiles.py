@@ -25,7 +25,7 @@ from ship.tuflow.data_files import datafileloader as dfl
 from ship.tuflow.tuflowmodel import FilesFilter  
 
 
-def tuflowExample():
+def tuflowFileExample():
     """Find all gis and bc database files referenced by a tuflow model.
     
     Uses a .tcf file to load a tuflow model and find all of the gis files and
@@ -71,4 +71,4 @@ def tuflowExample():
 
 
 if __name__ == '__main__':
-    main()
+    tuflowFileExample()
