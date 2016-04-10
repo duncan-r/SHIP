@@ -1,4 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Command
+import os
+import shutil
 
 '''
 Usage:
@@ -15,37 +17,59 @@ Usage:
     c:\python27\python.exe setup.py sdist
 '''
 
+
+class CleanCommand(Command):
+    """Custom clean command to tidy up the project root."""
+    user_options = []
+    def initialize_options(self):
+        self.cwd = None
+        
+    def finalize_options(self):
+        self.cwd = os.getcwd()
+        
+    def run(self):
+        assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
+        curd = os.getcwd()
+        shutil.rmtree(os.path.join(curd, 'SHIP.egg-info'))
+        shutil.rmtree(os.path.join(curd, 'dist'))
+
+
 def readme():
     with open('README.rst') as f:
         return f.read()
     
 
-setup(name='ship',
-    version='0.1.0',
-    description='A Library of Python utilities for interacting with 1D and 2D hydraulic models',
-    long_description=readme(),
-    classifiers=[
-      'Development Status :: 1 - Beta',
-      'License :: OSI Approved :: GNU General Public License',
-      'Programming Language :: Python :: 2.7',
-      'Topic :: Utilities :: Model processing :: API',
-    ],
-    keywords='ISIS TUFLOW Utilities Files Tools API',
-    url='http://www.thomasmackay.co.uk',
-    author='Duncan Runnacles',
-    author_email='duncan.runnacles@thomasmackay.co.uk',
-    license='GPL',
-    
-    # Include the test suite
-    test_suite='tests',
-	
-	# Package exclusions
-	packages=find_packages(), #exclude=['tests', '*.tests', '*.tests.*']),
-      
-    # No package requirements at the moment
-    #install_requires=[
-    #    ,
-    #],
-     
-    include_package_data=True,
-    zip_safe=False)
+setup(  name='ship',
+        version='0.1.0',
+        description='A Library of Python utilities for interacting with 1D and 2D hydraulic models',
+        long_description=readme(),
+        classifiers=[
+          'Development Status :: 1 - Beta',
+          'License :: OSI Approved :: GNU General Public License',
+          'Programming Language :: Python :: 2.7',
+          'Topic :: Utilities :: Model processing :: API',
+        ],
+        keywords='ISIS TUFLOW Utilities Files Tools API',
+        url='https://github.com/duncan-r/SHIP',
+        author='Duncan Runnacles',
+        author_email='duncan.runnacles@thomasmackay.co.uk',
+        license='GPL',
+        
+        # Include the test suite
+        test_suite='tests',
+        
+        # Package exclusions
+        packages=find_packages(exclude=['tests', 'docs']),
+          
+        # No package requirements at the moment
+        #install_requires=[
+        #    ,
+        #],
+         
+        include_package_data=True,
+        zip_safe=False,
+        
+        cmdclass={
+                  'clean': CleanCommand,
+                 }
+    )
