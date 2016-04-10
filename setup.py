@@ -32,6 +32,7 @@ class CleanCommand(Command):
         curd = os.getcwd()
         shutil.rmtree(os.path.join(curd, 'SHIP.egg-info'))
         shutil.rmtree(os.path.join(curd, 'dist'))
+        shutil.rmtree(os.path.join(curd, 'build'))
 
 
 def readme():
