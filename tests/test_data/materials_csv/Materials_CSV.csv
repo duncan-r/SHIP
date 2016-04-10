@@ -1,0 +1,12 @@
+Material ID, Manning's n, Infiltration Parameters, Land Us Hazard ID, ! Description
+1,"0.030,0.100,0.100,0.060","5.000, 2.000",,!Pasture
+2,0.022,"0.000, 2.000",,!Roads
+3,"0.030,0.020,0.100,3.000","0.000, 2.000",,!Buildings
+4,0.030,"5.000, 2.000",,!Ponds and other water
+10,0.080,"5.000, 2.000",,!Vegetated creek
+11,"0.030,0.100,0.100,0.040","5.000, 2.000",,!Maintained Grass
+20,Otherfile.csv | Depth | light values,"0.000, 0.000",,!Subfile light test
+21,Otherfile.csv | Depth | heavy values,"0.000, 0.000",,!Subfile heavy test
+30,Anotherfile.csv | < 50mm,"0.000, 0.000",,!Anotherfile under 50 test
+31,Anotherfile.csv | 50mm - 150mm,"0.000, 0.000",,!Anotherfile over 50 test
+40,Onlyname.csv,"0.000, 0.000",,!Onlyname test
