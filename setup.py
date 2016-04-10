@@ -37,10 +37,10 @@ setup(name='ship',
     license='GPL',
     
     # Include the test suite
-    #test_suite='tests',
+    test_suite='tests',
 	
 	# Package exclusions
-	packages=find_packages(exclude=['tests', '*.tests', '*.tests.*']),
+	packages=find_packages(), #exclude=['tests', '*.tests', '*.tests.*']),
       
     # No package requirements at the moment
     #install_requires=[
