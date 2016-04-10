@@ -1,5 +1,0 @@
-Tests have been removed temporarily due to the use of the proprietary data for
-the test data.
-
-Once a non-proprietary model has been built to use to run the tests they will
-be re-implemented.

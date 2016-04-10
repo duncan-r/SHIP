@@ -128,7 +128,7 @@ def readXsFile(datafile):
             table = DBF(file_path, load=True)
         except IOError:
             logger.error('Unable to load file at: ' + file_path)
-            raise ('Unable to load file at: ' + file_path)
+            raise IOError ('Unable to load file at: ' + file_path)
 
         for i, t in enumerate(table.records):
             count = 0
@@ -368,7 +368,7 @@ def readBcFile(datafile):
     
     except IOError:
         logger.warning('Cannot load file - IOError')
-        raise ('Cannot load file at: ' + path)
+        raise IOError ('Cannot load file at: ' + path)
  
     # Just need to reset the has_changed variable because it will have been
     # set to True while loading everything in.
@@ -580,7 +580,7 @@ def readMatCsvFile(datafile):
     
     except IOError:
         logger.warning('Cannot load file - IOError')
-        raise ('Cannot load file at: ' + path)
+        raise IOError ('Cannot load file at: ' + path)
 
     # Just need to reset the has_changed variable because it will have been
     # set to True while loading everything in.
