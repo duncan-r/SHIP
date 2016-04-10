@@ -15,20 +15,21 @@ Examples
 --------
 
 Some example python modules showing how to use the API and tools are included
-in the /examples/ folder. This is a good place to start to get an idea of how
+in the examples/ folder. This is a good place to start to get an idea of how
 the library can be used to interact with model files.
 
 Building the library
 --------------------
 
-When major releases are made they will be tagged and included on this releases
+When major releases are made they will be tagged and included on the releases
 page on GitHub. These release markers will include compiled .egg and .zip
 distributions, as well a the documentation as it stands at that release. You
 can find this under the 'Releases' tab on the GitHub repository page. The latest
 release should match the current state of the master branch.
 
 If you would prefer to get the latest version of the library you can download
-or clone the develop branch and build it yourself.A setup.py is provided for
+or clone the develop branch and build it yourself. The develop branch is the
+active development branch and may be unstable. A setup.py is provided for
 this. Once you have obtained the code you can build it with SetupTools.  
 
 To build the library for installation on your machine use:  

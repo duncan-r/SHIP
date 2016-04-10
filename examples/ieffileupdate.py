@@ -27,11 +27,11 @@ from ship.utils import filetools
 def iefExample():
     """update some key file paths in an ief file.
     
-    Updates the .dat file, .ief file, and results file paths referenced by
+    Updates the .dat file, .tcf file, and results file paths referenced by
     the ief file and save it under a new ief file name. 
     """
     # Load the tuflow model with a tcf file
-    ief_file = r'C:\path\to\an\isis\ieffile.tcf'
+    ief_file = r'C:\path\to\an\isis\ieffile.ief'
     loader = fl.FileLoader()
     ief = loader.loadFile(ief_file)
     
