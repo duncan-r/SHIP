@@ -121,7 +121,7 @@ class Ief(object):
         return paths_dict
     
     
-    def getDictValue(self, key):
+    def getValue(self, key):
         """Get a value from one of the variables dictionaries.
         
         All single variables (i.e. not lists like ied data) are stored in two
@@ -187,7 +187,7 @@ class Ief(object):
         return self.description
 
     
-    def setDictValue(self, key, value): 
+    def setValue(self, key, value): 
         """Set the value of one of dictionary entries in the ief.
         
         Args:
@@ -252,8 +252,9 @@ class Ief(object):
         try:
             variable = the_dict[key]
         except KeyError:
-            logger.info('No ' + key + ' key found in ief')
-            raise ('Key %s not found in dictionary' % (key))
+            logger.debug('No ' + key + ' key found in ief')
+            return False
+#             raise ('Key %s not found in dictionary' % (key))
          
         return variable
         
