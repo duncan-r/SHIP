@@ -23,6 +23,8 @@
 
 import os
 
+from ship.utils import utilfunctions as uf
+
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
@@ -74,132 +76,176 @@ class Ief(object):
         """Returns all the file paths that occur in the ief file.
 
         Most paths are extracted from the head and details data, when they 
-        exist, and are added to paths_dict. 
+        exist, and are added to paths_dict. If any ied data or snapshot data
+        exists it will be added as a list to the dictionary.
         
-        The ied_data and snapshots lists are returned separately.
+        If a particular path is not found the value will be set to None, unless,
+        it's ied or snapshot data in which case it will be an empty list.
+        
+        Dict keys are: Datafile, Results, InitialConditions, 2DFile, ied,
+        and snapshots.
         
         Returns:
-            tuple containing::
-
-                {
-                    'dictionary': the datafile, results, initial conditions 
-                        and 2D file paths. if a path doesn't exist it will be 
-                        set to False,
-                    'list': Each element contains a dict of ied name and file 
-                        path. If no .ied files exist this will be None, 
-                    'list': Each element contains a dict of snapshot name and
-                      file path. This may be None.
-                }
-
+            dict - containing all of the path data stored by this object.
         """
         paths_dict = {}
-        paths_dict['datafile'] = self._findVarInDictionary(self.event_header, 'Datafile')
-        paths_dict['results'] = self._findVarInDictionary(self.event_header, 'Results')
-        paths_dict['initialconditions'] = self._findVarInDictionary(self.event_details, 'InitialConditions')
-        paths_dict['twodfile'] = self._findVarInDictionary(self.event_details, '2DFile')
+        try:
+            paths_dict['Datafile'] = self._findVarInDictionary(self.event_header, 'Datafile')
+        except:
+            paths_dict['Datafile'] = None
+        try:
+            paths_dict['Results'] = self._findVarInDictionary(self.event_header, 'Results')
+        except:
+            paths_dict['Results'] = None
+        try:
+            paths_dict['InitialConditions'] = self._findVarInDictionary(self.event_details, 'InitialConditions')
+        except:
+            paths_dict['InitialConditions'] = None
+        try:
+            paths_dict['2DFile'] = self._findVarInDictionary(self.event_details, '2DFile')
+        except:
+            paths_dict['2DFile'] = None
         
-        return paths_dict, self.ied_data, self.snapshots
+        if not self.ied_data is None and not self.ied_data == []:
+            ied_paths = [ied['file'] for ied in self.ied_data]
+            paths_dict['ied'] = ied_paths
+        else:
+            paths_dict['ied'] = []
+        
+        if not self.snapshots is None and not self.snapshots == []:
+            snapshot_paths = [snap['file'] for snap in self.snapshots]
+            paths_dict['snapshots'] = snapshot_paths
+        else:
+            paths_dict['snapshots'] = []
+        
+        return paths_dict
     
     
-    def setValue(self, data_type, key, value):
-        """Set the values in the data_type provided.
+    def getDictValue(self, key):
+        """Get a value from one of the variables dictionaries.
         
-        Warning:
-            This does not check that the key or value are legal for the 
-            ief file format, so check that you know what you're adding and 
-            that it is allowed in the IEF. 
+        All single variables (i.e. not lists like ied data) are stored in two
+        main dictionaries. This method will return the value associated with
+        the given key from whichever dictionary it is stored in.
         
         Args:
-            data_type: The data dictionary that should be updated. Use 
-                IefDataTypes to reference the data_type.
-            key: The dictionary access key.
-            value: The value to be added.
+            key(str): dict key for value. For a list of available keys use the
+                getAvailableKeys method.
+        
+        Return:
+            string: value referenced by the given key, in the ief file.
+        
+        Raises:
+            KeyError: if the given key does not exist.
         """
-        if data_type == IefDataTypes.HEADER:
-            if not key in self.event_header:
-                raise KeyError ('Key %s not found in event_header dictionary' % (key))
-            
-            self.event_header[key] = value
-            
-        elif data_type == IefDataTypes.DETAILS:
-            if not key in self.event_details:
-                raise KeyError ('Key %s not found in event_details dictionary' % (key))
-            
-            self.event_details[key] = value
-    
-    
-    def getValue(self, data_type, key=None):
-        """Get values dictionary or specific value based on key.
+        if key in self.event_header.keys():
+            return self.event_header[key]
 
-        IefDataTypes HEADER and DETAILS will return a specific value based on
-        the provided key. IED_DATA, SNAPSHOTS and  DESCRIPTION will only 
-        return the entire list so providing a key for these types will have
-        no effect.
+        elif key in self.event_details.keys():
+            return self.event_details[key]
 
-        Note:
-            Use the IefDataTypes enum class for data_type.
+    
+    def getIedData(self):
+        """Get all of the ied data stored in this object.
         
-        Args:
-            data_type (int): The data dictionary in the ief object that you 
-                want. 
-            key (string): The key for the dictionary access - Optional: if 
-                this is not provided the dictionary will be returned.
+        There can be multiple ied files referenced by an ief. This will return
+        a dictionary containing all of them.
+        
+        If no ied files are included in the ief file the returned list will
+        be empty.
         
         Returns:
-            Dictionary, list, or value requested or False if the key
-                 provided does not exist.
-            
-            
-        TODO:
-            This should raise an error if the key provided doesn't exist, not
-            return False.
+            dict - containing {ied_name: ied_path} for all ied files referenced.
         """
-        if data_type == IefDataTypes.HEADER:
-            if key == None:
-                return self.event_header
-            else:
-                return self.getValue(self.event_header, key)
-
-        elif data_type == IefDataTypes.DETAILS:
-            if key == None:
-                return self.event_details
-            else:
-                return self.getValue(self.event_details, key)
-
-        elif data_type == IefDataTypes.IED_DATA:
+        if self.ied_data == None: 
+            return []
+        else:
             return self.ied_data
-
-        elif data_type == IefDataTypes.SNAPSHOTS:
-            return self.snapshots
-
-        elif data_type == IefDataTypes.DESCRIPTION:
-            return self.description
-
-
-    def setListValue(self, data_type, key1, key2, value1, value2):
-        """Set the value for the given list dataType.
+    
+    
+    def getSnapshots(self):
+        """Get all of the snapshot data stored in this object.
         
-        Note:
-            This hasn't been implemented becuase it can be accessed directly.
-            It probably never will be, so don't implement this without good
-            reason.
-            
-        Raises:
-            NotImplementedError
+        There can be multiple snapshot files referenced by an ief. This will return
+        a dictionary containing all of them.
+        
+        If no snapshots are included in the ief file the returned list will
+        be empty.
+        
+        Returns:
+            dict - containing {snapshot_time: snapshot_path} for all snapshot 
+                files referenced.
         """
-        raise NotImplementedError    
+        if self.snapshots == None: 
+            return []
+        else:
+            self.snapshots
+    
+    
+    def getDescription(self):
+        """Returns the description component of the ief."""
+        return self.description
+
+    
+    def setDictValue(self, key, value): 
+        """Set the value of one of dictionary entries in the ief.
+        
+        Args:
+            key(str): The key of the value to update.
+            value(str(: the value to update.
+        
+        Raises:
+            KeyError: if given key is not recongised.
+        
+        Warning:
+            Currently no checks are made on the validity of the the key given
+            this is because it may be a legal key, but not yet exist in the
+            dictionary. To fix this a list of all valid keys should be created
+            and checked here before setting the value. These are the keys used
+            in the ief file.
+        """
+        headlist = ['Title', 'Path', 'Datafile', 'Results']
+        if key in headlist:
+            self.event_header[key] = value
+        else:
+            self.event_details[key] = value
             
-            
+    
+    def addIedFile(self, ied_path, name=''):
+        """Add a new ied file.
+        
+        Args:
+            ied_path(str): path to an ied file.
+            name=''(str): name for the ied file.
+        """
+        if self.ied_data is None: self.ied_data = []
+        self.ied_data.append({'name': name, 'file': ied_path})
+    
+    
+    def addSnapshot(self, snapshot_path, time):
+        """Add a new snapshot.
+        
+        Args:
+            snapshot_path(str): the path for the snapshot.
+            time(float): the time to assign to the snapshot.
+        """
+        if self.snapshots is None: self.snapshots = []
+        if not uf.isNumeric(time):
+            raise ValueError ('time is not a numeric value')
+        
+        self.snapshots.append({'time': time, 'file': snapshot_path})
+    
+    
     def _findVarInDictionary(self, the_dict, key):
         """Returns the variable in a dictionary.
-
+ 
         Tests to see if a variables exists under the given key in the given
         dictionary. If it does it will return it.
-
+ 
         Args:
             the_dict (Dict): Dictionary in which to check the keys existence.
             key (str): Key to look for in the dictionary.
-        
+         
         Returns:
             The requested variable if it exists or False if not. 
         """
@@ -208,7 +254,7 @@ class Ief(object):
         except KeyError:
             logger.info('No ' + key + ' key found in ief')
             raise ('Key %s not found in dictionary' % (key))
-        
+         
         return variable
         
     
