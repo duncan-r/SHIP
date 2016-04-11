@@ -7,11 +7,13 @@
     problems in the rest of the modules.
 
     If new modules are added to the library they should have a test class
-    created and placed in the tests.maintests package with tests for
-    all of the functions within. The new test module should then be added to
-    the testsuite in this module.
+    created, called 'test_something.py', and placed in the tests package with 
+    tests for all of the functions within. 
     If any data is needed for running the tests it should be kept in the
-    /tests/testinputdata/ folder.
+    /tests/test_data/ folder.
+    
+    All test files in the /tests/ folder will be found automatically if they
+    are preprended with 'test_'.
 
  Author:  
      Duncan Runnacles

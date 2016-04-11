@@ -28,15 +28,15 @@ class TuflowModelLoaderTests(unittest.TestCase):
         """Check that we can disect a file line properly"""
         
         gis_line = r'Read MI Network == ..\model\mi\1d_nwk_somefile2.MIF ! 1d network file.'
-        results_line = r'Output Folder == ..\Results\1d\Cul_free\Option1aPlus\ ! destination of 1d results files'
+        results_line = r'Output Folder == ..\Results\1d\Somefolder\Somefolder2\ ! destination of 1d results files'
         data_line = r'BC Database == ..\model\bc_dbase\bc_dbase_somefile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)'
         variable_line = r'End Time == 20   ! simulation end time (hours)'
-        model_line = r'Geometry Control File == ..\model\Grange_baseline_Option1A_v1-00.tgc ! reference to the geometry control file for this simulation'
+        model_line = r'Geometry Control File == ..\model\Some_tgc_v1-0.tgc ! reference to the geometry control file for this simulation'
     
         gis_tuple = ('Read MI Network', r'..\model\mi\1d_nwk_somefile2.MIF ! 1d network file.')
         self.assertTupleEqual(gis_tuple, self.loader._breakLine(gis_line), 'GIS object fail')
 
-        results_tuple = ('Output Folder', r'..\Results\1d\Cul_free\Option1aPlus\ ! destination of 1d results files')
+        results_tuple = ('Output Folder', r'..\Results\1d\Somefolder\Somefolder2\ ! destination of 1d results files')
         self.assertTupleEqual(results_tuple, self.loader._breakLine(results_line), 'Results object fail')
 
         data_tuple = ('BC Database', r'..\model\bc_dbase\bc_dbase_somefile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)')
@@ -45,7 +45,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         variable_tuple = ('End Time', r'20   ! simulation end time (hours)')
         self.assertTupleEqual(variable_tuple, self.loader._breakLine(variable_line), 'Variable object fail')
 
-        model_tuple = ('Geometry Control File', r'..\model\Grange_baseline_Option1A_v1-00.tgc ! reference to the geometry control file for this simulation')
+        model_tuple = ('Geometry Control File', r'..\model\Some_tgc_v1-0.tgc ! reference to the geometry control file for this simulation')
         self.assertTupleEqual(model_tuple, self.loader._breakLine(model_line), 'Model file object fail')
 
         
@@ -106,25 +106,25 @@ class TuflowModelLoaderTests(unittest.TestCase):
         """
         """
         # Result as folder only
-        result_path = 'S:\\15006c\\tuflow\\results\\2d\\calibration\\'
+        result_path = 'S:\\007\\tuflow\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
         result_file = SomeFile(0, result_path, hex_hash, 1, 'Output Folder')
         output = self.loader._resolveResult(result_file)
         
-        self.assertEqual(output.root, 'S:\\15006c\\tuflow\\results\\2d\\calibration\\', 'Result root no filename equal fail.')
+        self.assertEqual(output.root, 'S:\\007\\tuflow\\results\\2d\\calibration\\', 'Result root no filename equal fail.')
         self.assertEqual(output.file_name, '', 'Result no filename file_name equal fail.')
         self.assertEqual(output.relative_root, '', 'Result no filename relative_root equal fail.')
         self.assertEqual(output.parent_relative_root, '', 'Result no filename parent_relative_root equal fail.')
 
         # Result with filename
-        result_path = 'S:\\15006c\\tuflow\\results\\2d\\calibration'
+        result_path = 'S:\\007\\tuflow\\results\\2d\\calibration'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
         result_file = SomeFile(0, result_path, hex_hash, 1, 'Output Folder')
         output = self.loader._resolveResult(result_file)
         
-        self.assertEqual(output.root, 'S:\\15006c\\tuflow\\results\\2d', 'Result filename-prefix root equal fail.')
+        self.assertEqual(output.root, 'S:\\007\\tuflow\\results\\2d', 'Result filename-prefix root equal fail.')
         self.assertEqual(output.file_name, 'calibration', 'Result filename-prefix file_name equal fail.')
         self.assertEqual(output.relative_root, '', 'Result filename-prefix relative_root equal fail.')
         self.assertEqual(output.parent_relative_root, '', 'Result filename-prefix parent_relative_root equal fail.')

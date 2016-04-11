@@ -29,8 +29,18 @@ release should match the current state of the master branch.
 
 If you would prefer to get the latest version of the library you can download
 or clone the develop branch and build it yourself. The develop branch is the
-active development branch and may be unstable. A setup.py is provided for
-this. Once you have obtained the code you can build it with SetupTools.  
+active development branch and may be unstable.  
+
+If you just want to install the latest develop version using pip do:
+::
+	# First time install
+	pip install git+https://github.com/duncan-r/SHIP.git@develop
+	
+	# Upgrading
+	pip install --upgrade git+https://github.com/duncan-r/SHIP.git@develop
+
+Otherwise you can download the source and use the setup.py provided. Once you 
+have obtained the code you can build it with SetupTools.  
 
 To build the library for installation on your machine use:  
 ::
@@ -62,7 +72,11 @@ your script:
  
 Install using Pip:  
 ::
+	# First time install
 	pip install SHIP-X.X.dev0.zip
+	
+	# Upgrading
+	pip install --upgrade SHIP-X.X.dev0.zip
 	
 Append to top of Python script:  
 ::
