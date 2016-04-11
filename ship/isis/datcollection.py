@@ -141,7 +141,7 @@ class DatCollection(object):
                 return False
         
         
-    def getPrintableUnits(self):
+    def getPrintableContents(self):
         """Get the formatted contents of each isisunit in the collection.
         
         Iterates through each of the units in the collection and

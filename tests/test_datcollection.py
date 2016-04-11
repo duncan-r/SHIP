@@ -142,7 +142,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         self.assertFalse(col.removeUnit(self.river1.name), 'Remove non existing unit fail')
 
 
-    def test_getPrintableUnits_method(self):
+    def test_getPrintableContents(self):
         '''Ensure that the printable lists are in the format that we are
         expecting.
         '''
@@ -201,7 +201,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         col.addUnit(self.river2)
         
         # Get the printable units from the collection
-        print_unit = col.getPrintableUnits()
+        print_unit = col.getPrintableContents()
         
         # Make sure the printed units are what we expect
         self.assertListEqual(self.out_contents, print_unit, 'GetPrintable units fail')
