@@ -46,8 +46,10 @@ def tuflowFileExample():
     gis_paths = tuflow_model.getAbsolutePaths(f)
     combined = dict(zip(gis_files, gis_paths))
     
-    # Get the data files referenced by the model.
+    # Get the data files objs referenced by the model.
     # These are files that point to additional data (tmf, bcdbase, 1d_xs, etc)
+    # In this case we want the the object itself, not just the filename, so 
+    # we use the getContents method instead
     bc_combined = []
     data_objs = tuflow_model.getContents(content_type=tuflow_model.DATA, no_duplicates=True)
     

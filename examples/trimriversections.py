@@ -1,4 +1,4 @@
-import os
+
 from ship.utils.fileloaders import fileloader as fl
 from ship.utils import filetools
 # Used to accessing data stored in isis.datunits
@@ -30,9 +30,9 @@ def trimRiverSections():
         # Get the DataObject for deactivation because we want to update it
         deactivation_data = river.getRowDataObject(rdt.DEACTIVATION)
         
-        # Loop through the bankmarker values and each time we find one that it 
-        # set (not False) we that the value at that index equal to it's LEFT or
-        # RIGHT status.
+        # Loop through the bankmarker values and each time we find one that's 
+        # set (not False) we set the deactivation value at that index equal to 
+        # the LEFT or RIGHT status of the bankmarker 
         for i, b in enumerate(bvals):
             if b == 'LEFT':
                 deactivation_data.setValue('LEFT', i)
@@ -41,10 +41,8 @@ def trimRiverSections():
     
     
     # Update and get the filename of the isis_model
-    fname = os.path.basename(dat_file)
-    ext = os.path.splitext(dat_file)[1]
-    new_dat = fname + '_Updated' + ext
-    isis_model.path_holder.setFileName(new_dat, has_extension=True, keep_extension=True)
+    fname = isis_model.path_holder.file_name
+    isis_model.path_holder.setFileName(fname + '_Updated')
     dat_path = isis_model.path_holder.getAbsolutePath()
 
     # Get the contents of the updated isis model

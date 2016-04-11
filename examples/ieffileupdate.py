@@ -52,10 +52,8 @@ def iefExample():
     ief.setValue('2DFile', new_tcf)
     
     # Update and get the filename of the ief
-    fname = os.path.basename(ief_file)
-    ext = os.path.splitext(ief_file)[1]
-    new_ief = fname + '_Updated' + ext
-    ief.path_holder.setFileName(new_ief, has_extension=True, keep_extension=True)
+    fname = ief.path_holder.file_name
+    ief.path_holder.setFileName(fname + '_Updated')
     ief_path = ief.path_holder.getAbsolutePath()
 
     # Get the contents of the updated ief
