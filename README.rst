@@ -122,3 +122,12 @@ that is used globally.
 There is also a sub package called tools that contains standalone tools
 or scripts that may be used by clients of the library to complete 
 common analysis undertaken on ISIS and TUFLOW models.
+
+
+Credit
+======
+
+Parts of this library make use of the excellent dbfread project by
+Ole Martin Bjorndalen. It is a library for accessing data in DBF database
+files. You can find the project here on GitHub 
+https://github.com/olemb/dbfread
