@@ -32,7 +32,7 @@ class TuflowModelTests(unittest.TestCase):
         self.tcf_hex_hash = _encodeHash(tcfpath)
         tcf_part = SomeFile(1, tcfpath, self.tcf_hex_hash, 0, 'tcf', self.fake_root, 'tcf')
         self.tuflow_model.file_parts[self.tcf_hex_hash] = ModelFileEntry(tcf_part, 0, self.tcf_hex_hash)
-        model_file = TuflowModelFile('tcf')
+        model_file = TuflowModelFile('tcf', '3hh3h43ykjdhakjhf')
         self.tuflow_model.files['tcf'][self.tcf_hex_hash] = model_file
         self.tuflow_model.model_order.addRef(ModelRef(self.tcf_hex_hash, 'tcf'), True)
         
@@ -143,7 +143,7 @@ class TuflowModelFileTests(unittest.TestCase):
     def setUp(self):
         """Setup global test values"""
         
-        self.tcf_file = TuflowModelFile('tcf')
+        self.tcf_file = TuflowModelFile('tcf', 'b93yey483yrhfheu33')
         
         self.fake_root = 'c:\\some\\fake\\root'
         

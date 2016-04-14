@@ -27,6 +27,7 @@
 
 import os
 import hashlib
+import re
 
 from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
@@ -529,10 +530,19 @@ class TuflowLoader(ATool, ALoader):
     def _resolveResult(self, entry):
         """Fixes the self.type.RESULT paths after load.
         
-        These are only directories normally rather than actual files, i.e. 
-        they have no filename. This causes issues in the way that they're 
-        stored, or actually with how they're retrieved, so we need to set
-        it to a known default after loading.
+        Result and Check file paths are a bit tricky because they can be set
+        up in a range of ways as either relative or absolute e.g.:
+        ::
+            ..\some\path\end  
+            ..\some\path\end\  
+            ..\some\path\end_as_prefix_  
+        
+        If output is a checkfile no '\' on the end indicates that the final
+        string should be prepended to all files, but if it's a result output
+        it is the same as having a '\' on the end.
+        
+        This method attempts to work out what's going on with it all and setup
+        the root, relative_root and filename accordingly.
         
         TODO:
             Need to account for the case where a string follows the directory
@@ -545,38 +555,57 @@ class TuflowLoader(ATool, ALoader):
             TuflowFilePart - ammended.
         """
         
-        # Check if the result path is absolute, then if it has a filename or
-        # not, if it does set it, if not set to ''. The root will also be set
-        # with the absolute directory
-        if os.path.isabs(entry.path_as_read):
-            entry.has_own_root = True
-            bname = os.path.basename(entry.path_as_read)
-            if bname == '': #os.path.basename(entry.path_as_read) == '':
-                entry.file_name = ''
-                entry.relative_root = ''
-                entry.root = entry.path_as_read
-
-            else:
-                s = os.path.splitext(bname)
-#                 if len(s) < 2 or s[1] == '':
-#                     entry.file_name = ''
-#                     entry.relative_root = ''
-#                     entry.root = entry.path_as_read
-# #                     entry.file_name_is_prefix = True
-#                 else: 
-                parts = os.path.split(entry.path_as_read)
-                entry.file_name = bname
-                entry.relative_root = ''
-                entry.root = parts[0]
-            
+        RESULT, CHECK, LOG = range(3)
+        if entry.command.upper() == 'OUTPUT FOLDER':
+            rtype = RESULT
+        elif entry.command.upper() == 'WRITE CHECK FILES':
+            rtype = CHECK
         else:
-            # If there's only a single folder and no other path references it won't
-            # get put in anything, so check for that here
-            if entry.file_name == '' and entry.relative_root == '' and not entry.path_as_read == '':
+            rtype = LOG
+             
+        is_absolute = os.path.isabs(entry.path_as_read)
+        basename = os.path.basename(entry.path_as_read)
+        final_char = entry.path_as_read[-1]
+        trailing_slash = final_char == '\\' or final_char == '/'
+        
+        if is_absolute:
+            entry.has_own_root = True
+            entry.relative_root = ''
+            
+            # If there's a slash on the end keep path as it is
+            if trailing_slash:
+                entry.root = entry.path_as_read
+            
+            # Get directory for CHECK files so we can set a filename prefix later
+            # or stick a slash on the end for the others to make it easier to
+            # deal with it later
+            elif not trailing_slash and rtype == CHECK:
+                entry.root = os.path.dirname(entry.path_as_read) + os.sep
+            else:
+                entry.root = entry.path_as_read + os.sep
+        else:
+            # This shouldn't ever happen, but in case it does we set it to 
+            # '' here so it doesn't catch anyone out later
+            if entry.root is None: entry.root = ''
+
+            entry.has_own_root = False
+            if trailing_slash:
                 entry.relative_root = entry.path_as_read
+            elif not trailing_slash and rtype == CHECK:
+                entry.relative_root = os.path.dirname(entry.path_as_read)
+            else:
+                entry.relative_root = entry.path_as_read + os.sep
                 
-            entry.file_name = ''
-            entry.extension = ''
+        entry.file_name = ''
+        entry.extension = ''
+        entry.file_name_is_prefix = False
+        
+        # A trailing string is a prefix in check files so set that up here
+        if rtype == CHECK:
+            if not trailing_slash:
+                entry.file_name_is_prefix = True
+                entry.file_name = os.path.basename(entry.path_as_read)
+       
         return entry
     
     

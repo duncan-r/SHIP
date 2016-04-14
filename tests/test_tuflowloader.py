@@ -116,18 +116,44 @@ class TuflowModelLoaderTests(unittest.TestCase):
         self.assertEqual(output.file_name, '', 'Result no filename file_name equal fail.')
         self.assertEqual(output.relative_root, '', 'Result no filename relative_root equal fail.')
         self.assertEqual(output.parent_relative_root, '', 'Result no filename parent_relative_root equal fail.')
-
-        # Result with filename
-        result_path = 'S:\\007\\tuflow\\results\\2d\\calibration'
+        
+        # Result relative path
+        result_path = '..\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
         result_file = SomeFile(0, result_path, hex_hash, 1, 'Output Folder')
         output = self.loader._resolveResult(result_file)
         
-        self.assertEqual(output.root, 'S:\\007\\tuflow\\results\\2d', 'Result filename-prefix root equal fail.')
-        self.assertEqual(output.file_name, 'calibration', 'Result filename-prefix file_name equal fail.')
-        self.assertEqual(output.relative_root, '', 'Result filename-prefix relative_root equal fail.')
-        self.assertEqual(output.parent_relative_root, '', 'Result filename-prefix parent_relative_root equal fail.')
+        self.assertEqual(output.root, '', 'Result relative root no filename equal fail.')
+        self.assertEqual(output.file_name, '', 'Result relative no filename file_name equal fail.')
+        self.assertEqual(output.relative_root, '..\\results\\2d\\calibration\\', 'Result relative filename relative_root equal fail.')
+        self.assertEqual(output.parent_relative_root, '', 'Result relative parent_relative_root equal fail.')
+
+        # Check folder setup with prefix
+        check_path_prefix = 'S:\\007\\tuflow\\checks\\2d\\calibration'
+        hex_hash = hashlib.md5(result_path.encode())
+        hex_hash = hex_hash.hexdigest()
+        check_file_prefix = SomeFile(0, check_path_prefix, hex_hash, 1, 'WRITE CHECK FILES')
+        output_check_prefix = self.loader._resolveResult(check_file_prefix)
+        
+        self.assertEqual(output_check_prefix.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check prefix root equal fail.')
+        self.assertEqual(output_check_prefix.file_name, 'calibration', 'Check prefix file_name equal fail.')
+        self.assertEqual(output_check_prefix.relative_root, '', 'Check prefix relative_root equal fail.')
+        self.assertEqual(output_check_prefix.parent_relative_root, '', 'Check prefix parent_relative_root equal fail.')
+        self.assertTrue(output_check_prefix.file_name_is_prefix)
+
+        # Check folder setup with no prefix
+        check_path = 'S:\\007\\tuflow\\checks\\2d\\'
+        hex_hash = hashlib.md5(result_path.encode())
+        hex_hash = hex_hash.hexdigest()
+        check_file = SomeFile(0, check_path, hex_hash, 1, 'WRITE CHECK FILES')
+        output_check = self.loader._resolveResult(check_file)
+        
+        self.assertEqual(output_check.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check root equal fail.')
+        self.assertEqual(output_check.file_name, '', 'Check file_name equal fail.')
+        self.assertEqual(output_check.relative_root, '', 'Check relative_root equal fail.')
+        self.assertEqual(output_check.parent_relative_root, '', 'Check parent_relative_root equal fail.')
+        self.assertFalse(output_check.file_name_is_prefix)
         
     
     
