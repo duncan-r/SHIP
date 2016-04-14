@@ -158,6 +158,7 @@ class TuflowLoader(ATool, ALoader):
                                                            line_val, 
                                                            self.types.MODEL,
                                                            file_d.head_hash)
+        self.tuflow_model.mainfile_hash = file_d.head_hash
 #         self.tuflow_model.file_parts[file_d.head_hash] = line_val
 #         self.tuflow_model._filename_lookup[line_val.getFileNameAndExtension()] = file_d.head_hash
 #         self.tuflow_model._hash_lookup[file_d.head_hash] = line_val.getFileNameAndExtension()
@@ -630,7 +631,7 @@ class TuflowLoader(ATool, ALoader):
             Returns:
                 TuflowModelFile - based on extension in class.
             """
-            return TuflowModelFile(self.extension) 
+            return TuflowModelFile(self.extension, self.head_hash) 
             
 
         def generateModelSomefile(self, line_type, global_order):

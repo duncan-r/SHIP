@@ -67,7 +67,7 @@ class TuflowModelFile(object):
         :module: 'tuflowfilepart <ship.tuflow.tuflowfilepart>'
     """
 
-    def __init__(self, line_type):
+    def __init__(self, line_type, hex_hash):
         """Constructor.
 
         Checks if the path to the file is absolute. If it doesn't it converts
@@ -78,7 +78,7 @@ class TuflowModelFile(object):
                 is. E.g. tcf, tgc, etc.
         """
         self.TYPE = line_type
-        self.this_part = None
+        self.hex_hash = hex_hash
         self.content_order = []
 
     

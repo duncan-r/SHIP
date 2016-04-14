@@ -147,6 +147,9 @@ class TuflowModel(object):
         self.missing_model_files = []
         """Contains any tcf, tgs, etc files that could not be loaded."""
         
+        self.mainfile_hash = ''
+        """Hash code for the main file. I.e. the one that the model is loaded from."""
+        
     
     def getPrintableContents(self):
         """Returns a dictionary of all the file contents ready to write to disk.
@@ -211,7 +214,7 @@ class TuflowModel(object):
                         # Keep looping through until there are no more piped files
                         while has_children:
                             if not f.child_hash is None:
-                                f = self.f_parts[f.child_hash].fpart
+                                f = self.file_parts[f.child_hash].filepart
                                 out_line.append(f.getPrintableContents())
                                 skip_codes.append(f.hex_hash)
                             else:
@@ -240,7 +243,8 @@ class TuflowModel(object):
             # If there's a KeyError it means there are no files of that type
             # so move on
             try:
-                model_files[f] = self.getModelFilesByType(f, files_filter) 
+                files_filter.modelfile_type = [f]
+                model_files[f] = self.getModelFilesByType(files_filter) 
             except KeyError:
                 pass
         
@@ -278,14 +282,15 @@ class TuflowModel(object):
         
         model_files = []
         if files_filter.modelfile_type == 'main':
-            model_files = [self.file_parts[self.part_order[0]].filepart]
+            model_files = [self.file_parts[self.mainfile_hash].filepart]
+            #[self.file_parts[self.file_parts[0]].filepart]
         else:
             for mtype in files_filter.modelfile_type:
                 try:
                     file_type = self.files[mtype]
                 except KeyError:
                     logger.error('Key %s does not exist in files' % (mtype))
-                    raise ('Key %s does not exist in files' % (mtype))
+                    raise KeyError ('Key %s does not exist in files' % (mtype))
                 
                 if not files_filter.filename_only: 
                     for val in file_type.values():
@@ -341,6 +346,42 @@ class TuflowModel(object):
                         missing.append((hash_hex, part.filepart.getFileNameAndExtension(), part.filepart.root))
         
         return missing
+    
+    
+    def getFileNamesFromModelFile(self, modelfile):
+        """Get all of the file names from a partcular TuflowModelFile.
+        
+        Retrieves a list of the all of the hash codes held by the model file.
+        Performs a lookup in the TuflowFileParts dictionary and returns all
+        parts derived from SomeFile.
+        
+        Args:
+            modelfile(TuflowModelFile): used to retrive all file names from.
+            
+        Returns:
+            list - containing all of the filename.ext's referenced by the
+                given TuflowModelFile.
+        """
+        files = []
+        all_hashes = modelfile.getHashCategory(include_comments=False)
+        for part_hash in all_hashes:
+            part = self.file_parts[part_hash]
+            if part.isSomeFile():
+                files.append(part.filepart.getFileNameAndExtension())
+        
+        return files
+    
+    
+    def getNameFromModelFile(self, modelfile):
+        """Return the filename.ext of the given TuflowModelFile.
+        
+        Args:
+            modelfile(TuflowModelFile): the file to retirve the name for.
+            
+        Return:
+            string - name.extension of the given TuflowModelFile.
+        """
+        return self.file_parts[modelfile.hash_hex].filepart.getFileNameAndExtension()
     
     
     def getFileNames(self, files_filter, extensions=[]):
