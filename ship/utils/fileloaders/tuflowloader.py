@@ -580,10 +580,14 @@ class TuflowLoader(ATool, ALoader):
             # or stick a slash on the end for the others to make it easier to
             # deal with it later
             elif not trailing_slash and rtype == CHECK:
-                entry.root = os.path.dirname(entry.path_as_read)
+                entry.root = os.path.dirname(entry.path_as_read) + os.sep
             else:
                 entry.root = entry.path_as_read + os.sep
         else:
+            # This shouldn't ever happen, but in case it does we set it to 
+            # '' here so it doesn't catch anyone out later
+            if entry.root is None: entry.root = ''
+
             entry.has_own_root = False
             if trailing_slash:
                 entry.relative_root = entry.path_as_read
