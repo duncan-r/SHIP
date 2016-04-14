@@ -170,7 +170,7 @@ def readXsFile(datafile):
 
         except IOError:
             logger.error('Unable to load file at: ' + file_path)
-            raise ('Unable to load file at: ' + file_path)
+            raise IOError ('Unable to load file at: ' + file_path)
         
         return row_collection
     
@@ -573,10 +573,10 @@ def readMatCsvFile(datafile):
                         comment_lines.append(None)
             except IndexError:
                 logger.error('This file is not setup/formatted correctly for a Materials.CSV file:\n' + path)
-                raise ('File is not correclty formatted for a MEticals.csv file')
+                raise IndexError ('File is not correctly formatted for a Materials.csv file')
             except AttributeError:
                 logger.error('This file is not setup/formatted correctly for a Materials.CSV file:\n' + path)
-                raise ('File is not correclty formatted for a MEticals.csv file')
+                raise AttributeError ('File is not correctly formatted for a Materials.csv file')
     
     except IOError:
         logger.warning('Cannot load file - IOError')
@@ -751,7 +751,7 @@ def readMatSubfile(main_datafile, filename, header_list): #path, root, header1, 
     
     except IOError:
         logger.warning('Cannot load file - IOError')
-        raise ('Cannot load file at: ' + path)
+        raise IOError ('Cannot load file at: ' + path)
     
     path_holder = filetools.PathHolder(path, root)
     mat_sub = dataobj.DataFileSubfileMat(path_holder, row_collection, comment_lines, 
