@@ -30,7 +30,7 @@ class TuflowModelTests(unittest.TestCase):
         # MODEL type
         tcfpath = 'c:\\some\\fake\\root\\main.tcf'
         self.tcf_hex_hash = _encodeHash(tcfpath)
-        tcf_part = SomeFile(1, tcfpath, self.tcf_hex_hash, 0, 'tcf', self.fake_root, 'tcf')
+        tcf_part = TuflowFile(1, tcfpath, self.tcf_hex_hash, 0, 'tcf', self.fake_root, 'tcf')
         self.tuflow_model.file_parts[self.tcf_hex_hash] = ModelFileEntry(tcf_part, 0, self.tcf_hex_hash)
         model_file = TuflowModelFile('tcf', '3hh3h43ykjdhakjhf')
         self.tuflow_model.files['tcf'][self.tcf_hex_hash] = model_file
@@ -46,7 +46,7 @@ class TuflowModelTests(unittest.TestCase):
         # RESULTS type
         dfilepath = '..\\madeuppath\\2d\\results'
         self.result_hex_hash = _encodeHash(dfilepath)
-        dfile = SomeFile(1, dfilepath, self.result_hex_hash, 1, 'OUTPUT FOLDER', self.fake_root)
+        dfile = TuflowFile(1, dfilepath, self.result_hex_hash, 1, 'OUTPUT FOLDER', self.fake_root)
         model_file.addContent(1, self.result_hex_hash)
         self.tuflow_model.file_parts[self.result_hex_hash] = ModelFileEntry(dfile, 1, self.result_hex_hash)
 

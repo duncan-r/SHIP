@@ -4,10 +4,10 @@
     Contains all of the :class:'TuflowFilePart' type classes.
     
     TuflowFilePart is the interface that all parts of the Tuflow model files 
-    should inherit. i.e. SomeFile and derivatives, ModelVariables and ,
+    should inherit. i.e. TuflowFile and derivatives, ModelVariables and ,
     derivatives etc.
     
-    Contains the SomeFile base class and other specific types for holding
+    Contains the TuflowFile base class and other specific types for holding
     the file path objects. These are used for accessing and updating file
     paths read in from the Tuflow model files.
     
@@ -16,9 +16,9 @@
     
     Will be stored in this class or a class derived from this.
 
-    This version of the module replaces the old SomeFile ModelVariables and 
+    This version of the module replaces the old TuflowFile ModelVariables and 
     TuflowFilePart modules. It seemed unnecessary to keep them apart has they 
-    are so closely related to each other. The SomeFile module no longer exists.
+    are so closely related to each other. The TuflowFile module no longer exists.
 
  Author:  
      Duncan Runnacles
@@ -180,7 +180,7 @@ class ModelVariables(TuflowFilePart):
             
 
             
-class SomeFile(TuflowFilePart, PathHolder):
+class TuflowFile(TuflowFilePart, PathHolder):
     """Associated with files that are used in TuFLOW models.
 
     It has specific variables and methods for it's use in that way. E.g. it
@@ -442,8 +442,8 @@ class SomeFile(TuflowFilePart, PathHolder):
 gis_types = {'MI':('mif', 'mid'), 'Shape': ('shp', 'shx', 'dbf', 'prj')}
 """File type associations for the GisFile class"""
 
-class GisFile(SomeFile): 
-    """Extends the SomeFile class with GIS file specific behaviour.
+class GisFile(TuflowFile): 
+    """Extends the TuflowFile class with GIS file specific behaviour.
     
     This behaviour includes: 
     defining the different file types (extensions) that should be associated
@@ -455,7 +455,7 @@ class GisFile(SomeFile):
                        parent_hash=None, child_hash=None):
         """Constructor.
 
-        Provides the all_types variable to SomeFile according to the file
+        Provides the all_types variable to TuflowFile according to the file
         extension of the path. This will include the other files associated
         with the type of GIS file found.
         
@@ -467,9 +467,9 @@ class GisFile(SomeFile):
                of this object.
         
         See Also:
-            SomeFile
+            TuflowFile
         """
-        SomeFile.__init__(self, global_order, path, hex_hash, type, command,
+        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
                                 root, parent_relative_root, category,  
                                 parent_hash, child_hash)
         
@@ -486,13 +486,13 @@ class GisFile(SomeFile):
 data_types = {'TMF': ('tmf',), 'CSV': ('csv',)}
 """File type associations for the GisFile class"""
 
-class DataFile(SomeFile):
-    """Extends the SomeFile class with functionality needed for data files.
+class DataFile(TuflowFile):
+    """Extends the TuflowFile class with functionality needed for data files.
 
     Data files are considered to have data or links to other files in text
     format. 
 
-    Class provides the all_types variable to SomeFile according to the
+    Class provides the all_types variable to TuflowFile according to the
     file extensions of the path.
     
     The main use for this file type is for things like materials.tmf/.csv,
@@ -520,9 +520,9 @@ class DataFile(SomeFile):
                 path of this object.
         
         See Also:
-            SomeFile
+            TuflowFile
         """
-        SomeFile.__init__(self, global_order, path, hex_hash, type, command,
+        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
                                 root, parent_relative_root, category,  
                                 parent_hash, child_hash)
         # Make sure that we know what all the other associated file types should

@@ -3,7 +3,7 @@ import hashlib
 import unittest
 
 from ship.utils.fileloaders.tuflowloader import TuflowLoader
-from ship.tuflow.tuflowfilepart import SomeFile
+from ship.tuflow.tuflowfilepart import TuflowFile
 
 
 class TuflowModelLoaderTests(unittest.TestCase):
@@ -20,26 +20,26 @@ class TuflowModelLoaderTests(unittest.TestCase):
     def test_extractExtension(self):
         """Check we can break up lines properly"""
         
-        instruction = '..\model\bc_dbase\bc_dbase_somefile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)'
+        instruction = '..\model\bc_dbase\bc_dbase_TuflowFile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)'
         self.assertEqual('csv', self.loader.extractExtension(instruction))
     
     
     def test_breakLine(self):
         """Check that we can disect a file line properly"""
         
-        gis_line = r'Read MI Network == ..\model\mi\1d_nwk_somefile2.MIF ! 1d network file.'
+        gis_line = r'Read MI Network == ..\model\mi\1d_nwk_TuflowFile2.MIF ! 1d network file.'
         results_line = r'Output Folder == ..\Results\1d\Somefolder\Somefolder2\ ! destination of 1d results files'
-        data_line = r'BC Database == ..\model\bc_dbase\bc_dbase_somefile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)'
+        data_line = r'BC Database == ..\model\bc_dbase\bc_dbase_TuflowFile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)'
         variable_line = r'End Time == 20   ! simulation end time (hours)'
         model_line = r'Geometry Control File == ..\model\Some_tgc_v1-0.tgc ! reference to the geometry control file for this simulation'
     
-        gis_tuple = ('Read MI Network', r'..\model\mi\1d_nwk_somefile2.MIF ! 1d network file.')
+        gis_tuple = ('Read MI Network', r'..\model\mi\1d_nwk_TuflowFile2.MIF ! 1d network file.')
         self.assertTupleEqual(gis_tuple, self.loader._breakLine(gis_line), 'GIS object fail')
 
         results_tuple = ('Output Folder', r'..\Results\1d\Somefolder\Somefolder2\ ! destination of 1d results files')
         self.assertTupleEqual(results_tuple, self.loader._breakLine(results_line), 'Results object fail')
 
-        data_tuple = ('BC Database', r'..\model\bc_dbase\bc_dbase_somefile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)')
+        data_tuple = ('BC Database', r'..\model\bc_dbase\bc_dbase_TuflowFile.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)')
         self.assertTupleEqual(data_tuple, self.loader._breakLine(data_line), 'Data object fail')
 
         variable_tuple = ('End Time', r'20   ! simulation end time (hours)')
@@ -109,7 +109,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         result_path = 'S:\\007\\tuflow\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        result_file = SomeFile(0, result_path, hex_hash, 1, 'Output Folder')
+        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder')
         output = self.loader._resolveResult(result_file)
         
         self.assertEqual(output.root, 'S:\\007\\tuflow\\results\\2d\\calibration\\', 'Result root no filename equal fail.')
@@ -121,7 +121,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         result_path = '..\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        result_file = SomeFile(0, result_path, hex_hash, 1, 'Output Folder')
+        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder')
         output = self.loader._resolveResult(result_file)
         
         self.assertEqual(output.root, '', 'Result relative root no filename equal fail.')
@@ -133,7 +133,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         check_path_prefix = 'S:\\007\\tuflow\\checks\\2d\\calibration'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        check_file_prefix = SomeFile(0, check_path_prefix, hex_hash, 1, 'WRITE CHECK FILES')
+        check_file_prefix = TuflowFile(0, check_path_prefix, hex_hash, 1, 'WRITE CHECK FILES')
         output_check_prefix = self.loader._resolveResult(check_file_prefix)
         
         self.assertEqual(output_check_prefix.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check prefix root equal fail.')
@@ -146,7 +146,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         check_path = 'S:\\007\\tuflow\\checks\\2d\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        check_file = SomeFile(0, check_path, hex_hash, 1, 'WRITE CHECK FILES')
+        check_file = TuflowFile(0, check_path, hex_hash, 1, 'WRITE CHECK FILES')
         output_check = self.loader._resolveResult(check_file)
         
         self.assertEqual(output_check.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check root equal fail.')

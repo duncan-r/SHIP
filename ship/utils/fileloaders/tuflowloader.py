@@ -153,7 +153,7 @@ class TuflowLoader(ATool, ALoader):
         self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension), True)
         
         # Need to create one here becuase it's the first
-        line_val = file_d.generateModelSomefile(self.types.MODEL, self._global_order)
+        line_val = file_d.generateModelTuflowFile(self.types.MODEL, self._global_order)
         self._global_order += 1
         self.tuflow_model.file_parts[file_d.head_hash] = ModelFileEntry(
                                                            line_val, 
@@ -337,7 +337,7 @@ class TuflowLoader(ATool, ALoader):
 
                             if ext is 'trd':
                                 ext = file_d.extension
-                            line_val = tfp.SomeFile(self._global_order, instruction, 
+                            line_val = tfp.TuflowFile(self._global_order, instruction, 
                                                     hex_hash, command_type, 
                                                     command, file_d.root, 
                                                     file_d.relative_root, ext)
@@ -663,8 +663,8 @@ class TuflowLoader(ATool, ALoader):
             return TuflowModelFile(self.extension, self.head_hash) 
             
 
-        def generateModelSomefile(self, line_type, global_order):
-            """Creates a SomeFile object from the current state.
+        def generateModelTuflowFile(self, line_type, global_order):
+            """Creates a TuflowFile object from the current state.
             
             Generates the class the self params.
             
@@ -672,9 +672,9 @@ class TuflowLoader(ATool, ALoader):
                 line_type(int): one of the TuflowLoader.types value e.g. MODEL
             
             Returns:
-                SomeFile object.
+                TuflowFile object.
             """
-            return tfp.SomeFile(global_order, self.filename, self.head_hash, 
+            return tfp.TuflowFile(global_order, self.filename, self.head_hash, 
                         line_type, self.extension, self.root, 
                         self.relative_root, self.extension)
             

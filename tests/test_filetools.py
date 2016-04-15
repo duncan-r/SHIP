@@ -13,8 +13,8 @@ class PathHolderTests(unittest.TestCase):
     
     def setUp(self):
         self.fake_root = 'c:\\some\\fake\\root'
-        self.fake_abs_path = 'c:\\first\\second\\third\\fourth\\somefile.txt'
-        self.fake_relative_path = '..\\relative\\somefile.txt'
+        self.fake_abs_path = 'c:\\first\\second\\third\\fourth\\TuflowFile.txt'
+        self.fake_relative_path = '..\\relative\\TuflowFile.txt'
         self.no_relative_path = '..\\relative'
         self.path_with_comment = 'relative\\file.txt ! Some comment'
         
@@ -28,14 +28,14 @@ class PathHolderTests(unittest.TestCase):
         # Check that it loads an absolute path properly
         ph = PathHolder(self.fake_abs_path)
         self.assertEqual('c:\\first\\second\\third\\fourth', ph.root, 'roots do not match')
-        self.assertEqual('somefile', ph.file_name, 'filenames do not match')
+        self.assertEqual('TuflowFile', ph.file_name, 'filenames do not match')
         self.assertEqual('txt', ph.extension, 'extensions do not match')
         self.assertIsNone(ph.relative_root, 'relative root should be None')
         
         # Check that it loads a relative path properly
         ph = PathHolder(self.fake_relative_path)
         self.assertEqual('..\\relative', ph.relative_root, 'relative roots do not match')
-        self.assertEqual('somefile', ph.file_name, 'filenames do not match')
+        self.assertEqual('TuflowFile', ph.file_name, 'filenames do not match')
         self.assertEqual('txt', ph.extension, 'extensions do not match')
         self.assertIsNone(ph.root, 'root should be None')
         
@@ -74,7 +74,7 @@ class PathHolderTests(unittest.TestCase):
         
         ph = PathHolder(self.fake_relative_path, self.fake_root)
         q = ph.getAbsolutePath()
-        self.assertEqual('c:\\some\\fake\\root\\..\\relative\\somefile.txt', ph.getAbsolutePath(), 'getAbsolutePath() with root and relative root fail')
+        self.assertEqual('c:\\some\\fake\\root\\..\\relative\\TuflowFile.txt', ph.getAbsolutePath(), 'getAbsolutePath() with root and relative root fail')
         
         
     def test_getDirectory(self):

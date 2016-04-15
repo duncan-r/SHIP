@@ -29,7 +29,7 @@
 
 """
 
-from ship.tuflow.tuflowfilepart import SomeFile
+from ship.tuflow.tuflowfilepart import TuflowFile
 
 class ModelFileEntry(object):
     
@@ -39,14 +39,14 @@ class ModelFileEntry(object):
         self.part_type = part_type
         self.file_name = None
 
-        if isinstance(self.filepart, SomeFile):
+        if isinstance(self.filepart, TuflowFile):
             self.file_name = self.filepart.file_name
             
 
-    def isSomeFile(self):
+    def isTuflowFile(self):
         """
         """
-        return isinstance(self.filepart, SomeFile)
+        return isinstance(self.filepart, TuflowFile)
     
         
 
@@ -63,7 +63,7 @@ class TuflowModelFile(object):
     of :class: 'TuflowFilePart') and their hash key is stored in this list.
         
     See Also:
-        :class: 'SomeFile <ship.tuflow.tuflowfilepart.SomeFile>'
+        :class: 'TuflowFile <ship.tuflow.tuflowfilepart.TuflowFile>'
         :module: 'tuflowfilepart <ship.tuflow.tuflowfilepart>'
     """
 

@@ -34,7 +34,7 @@ import os
 
 # ship modules
 from ship.data_structures.rowdatacollection import RowDataCollection, DataTypes
-from ship.tuflow.tuflowfilepart import DataFile, GisFile, SomeFile
+from ship.tuflow.tuflowfilepart import DataFile, GisFile, TuflowFile
 from ship.tuflow.data_files import datafileobject as dataobj
 from ship.utils import filetools
 from ship.utils import utilfunctions as uuf
@@ -55,18 +55,18 @@ def loadDataFile(datafile):
     given object and returns the newly created DataFileObject of that type.
     
     Args:
-        datafile(SomeFile): FilePart to create the DataFileObject from.
+        datafile(TuflowFile): FilePart to create the DataFileObject from.
         
     Return:
         DataFileObject: of type identified from the composition of the given
-            SomeFile object.
+            TuflowFile object.
             
     See Also:
-        :class:'SomeFile'.
+        :class:'TuflowFile'.
         :class:'DataFileObject'.
     """
-    if not isinstance(datafile, SomeFile):
-        raise AttributeError('datafile is not an instance of SomeFile')
+    if not isinstance(datafile, TuflowFile):
+        raise AttributeError('datafile is not an instance of TuflowFile')
     
     command = datafile.command.upper()
     if command == 'READ MI TABLE LINKS':
@@ -237,11 +237,11 @@ def readXsFile(datafile):
 def readBcFile(datafile):
     """Loads the contents of the BC Database file refernced by datafile.
     
-    Loads the data from the file referenced by the given SomeFile object into
+    Loads the data from the file referenced by the given TuflowFile object into
     a :class:'rowdatacollection' and a list of comment only lines.
     
     Args:
-        datafile(SomeFile): SomeFile object with file details.
+        datafile(TuflowFile): TuflowFile object with file details.
         
     Return:
         tuple: rowdatacollection, comment_lines(list).
@@ -381,11 +381,11 @@ def readBcFile(datafile):
 def readMatCsvFile(datafile):
     """Loads the contents of the Materials CSV file referenced by datafile.
     
-    Loads the data from the file referenced by the given SomeFile object into
+    Loads the data from the file referenced by the given TuflowFile object into
     a :class:'rowdatacollection' and a list of comment only lines.
     
     Args:
-        datafile(SomeFile): SomeFile object with file details.
+        datafile(TuflowFile): TuflowFile object with file details.
         
     Return:
         tuple: rowdatacollection, comment_lines(list).
@@ -763,11 +763,11 @@ def readMatSubfile(main_datafile, filename, header_list): #path, root, header1, 
 def readTmfFile(datafile):
     """Loads the contents of the Materials CSV file referenced by datafile.
     
-    Loads the data from the file referenced by the given SomeFile object into
+    Loads the data from the file referenced by the given TuflowFile object into
     a :class:'rowdatacollection' and a list of comment only lines.
     
     Args:
-        datafile(SomeFile): SomeFile object with file details.
+        datafile(TuflowFile): TuflowFile object with file details.
         
     Return:
         tuple: rowdatacollection, comment_lines(list).

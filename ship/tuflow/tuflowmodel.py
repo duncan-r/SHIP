@@ -34,7 +34,7 @@
 import os
 import operator
 
-from ship.tuflow.tuflowfilepart import SomeFile
+from ship.tuflow.tuflowfilepart import TuflowFile
 
 import logging
 logger = logging.getLogger(__name__)
@@ -206,7 +206,7 @@ class TuflowModel(object):
                 else:
                     
                     # If there's piped files
-                    if isinstance(f, SomeFile) and not f.child_hash is None:
+                    if isinstance(f, TuflowFile) and not f.child_hash is None:
                         out_line = []
                         has_children = True
                         out_line.append(f.getPrintableContents())
@@ -320,7 +320,7 @@ class TuflowModel(object):
         
         """
         for part in self.file_parts.values():
-            if part.isSomeFile():
+            if part.isTuflowFile():
                 part.filepart.root = new_root
         
         self.root = new_root 
@@ -339,7 +339,7 @@ class TuflowModel(object):
         missing = []
         for hex_hash, part in self.file_parts.iteritems():
             
-            if part.isSomeFile():
+            if part.isTuflowFile():
                 if not part.part_type == self.RESULT:
                     p = part.filepart.getAbsolutePath() # DEBUG
                     if not os.path.exists(part.filepart.getAbsolutePath()):
@@ -353,7 +353,7 @@ class TuflowModel(object):
         
         Retrieves a list of the all of the hash codes held by the model file.
         Performs a lookup in the TuflowFileParts dictionary and returns all
-        parts derived from SomeFile.
+        parts derived from TuflowFile.
         
         Args:
             modelfile(TuflowModelFile): used to retrive all file names from.
@@ -366,7 +366,7 @@ class TuflowModel(object):
         all_hashes = modelfile.getHashCategory(include_comments=False)
         for part_hash in all_hashes:
             part = self.file_parts[part_hash]
-            if part.isSomeFile():
+            if part.isTuflowFile():
                 files.append(part.filepart.getFileNameAndExtension())
         
         return files
@@ -419,7 +419,7 @@ class TuflowModel(object):
                                     extensions, files_filter.in_model_order,
                                     files_filter.no_duplicates)
         
-        files = [f for f in contents if isinstance(f, SomeFile)]
+        files = [f for f in contents if isinstance(f, TuflowFile)]
         
         filenames = []
         for f in files:
@@ -452,13 +452,13 @@ class TuflowModel(object):
         filenames = []
         if files_filter.all_types:
             for f in contents:
-                if isinstance(f, SomeFile):
+                if isinstance(f, TuflowFile):
                     rel_paths = f.getAbsolutePath(all_types=True)
                     for r in rel_paths:
                         filenames.append(r)
         else:
             for f in contents:
-                if isinstance(f, SomeFile):
+                if isinstance(f, TuflowFile):
                     filenames.append(f.getAbsolutePath())
         return filenames
         
@@ -480,7 +480,7 @@ class TuflowModel(object):
             in_order=False(Bool): if True the selected parts will be return in
                 the order that they were loaded.
             no_duplicates=False(Bool): Only call if setting content_type to a
-                SomeFile type (GIS, MODEL, DATA - Not VARIABLE). Removes any
+                TuflowFile type (GIS, MODEL, DATA - Not VARIABLE). Removes any
                 duplicate file entries. Useful if, for example, there are 
                 multiple calls the same file, such as a boundary conditions 
                 file and you only want a single reference.
@@ -514,11 +514,11 @@ class TuflowModel(object):
 
                 content = [self.file_parts[x].filepart for x in hashes]
         
-        # If only SomeFile types with a certain extension are wanted.
+        # If only TuflowFile types with a certain extension are wanted.
         if len(extensions) > 0:
             temp = []
             for c in content:
-                if isinstance(c, SomeFile):
+                if isinstance(c, TuflowFile):
                     if c.extension.upper() in extensions:
                         temp.append(c)
             content = temp
@@ -528,7 +528,7 @@ class TuflowModel(object):
             self._orderByGlobal(content)
         
         # Remove any duplicate file names if requested
-        # Only works for SomeFile type objects
+        # Only works for TuflowFile type objects
         if no_duplicates and not content_type == self.VARIABLE:
             content = self._removeDuplicateFilenames(content)
 
@@ -561,7 +561,7 @@ class TuflowModel(object):
         seen = {}
         result = []
         for item in in_list:
-            if not isinstance(item, SomeFile): continue
+            if not isinstance(item, TuflowFile): continue
             marker = item.getFileNameAndExtension()
             if marker in seen: continue
             seen[marker] = 1
