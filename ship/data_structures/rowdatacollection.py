@@ -41,10 +41,10 @@ class RowDataCollection(object):
     Note:
         There are many references to a 'key' variable in this class to decipher
         which object in the collection to access/update/etc. This is one of
-        the DataTypes enum values.
+        the ROW_DATA_TYPES enum values in the datunits package.
     
     See Also:
-        DataTypes - in ADataObject module.
+        ROW_DATA_TYPE - in :class:'datunits <ship.isis.datunits>' module.
     
     TODO:
           Need to find a way to safely add values to the collection while making
@@ -65,7 +65,6 @@ class RowDataCollection(object):
         self._current_collection = 0
         self._max = len(self._collection)
         self._min = 0
-        self._max = len(self._collection)
         self._current = 0
     
     
@@ -223,12 +222,8 @@ class RowDataCollection(object):
             for obj in self._collection:
                 obj.setValue(values_dict[obj.data_type], index)
             
-        except IndexError:
+        except (IndexError, ValueError, Exception):
             self._resetDataObject(temp_list)
-            raise
-        except ValueError:
-            self._resetDataObject(temp_list)
-            raise 
         finally:
             for o in temp_list:
                 del o
@@ -275,10 +270,7 @@ class RowDataCollection(object):
             for obj in self._collection:
                 obj.addValue(values_dict[obj.data_type], index)
             
-        except IndexError:
-            self._resetDataObject(temp_list)
-            raise 
-        except ValueError:
+        except (IndexError, ValueError, Exception):
             self._resetDataObject(temp_list)
             raise 
         finally:
@@ -326,7 +318,7 @@ class RowDataCollection(object):
             if obj.data_type == name_key:
                 return obj
         else:
-            return False
+            raise KeyError ('name_key %s was not found in collection' % (name_key))
     
     
     def getRowDataAsList(self, key=None):
@@ -395,7 +387,7 @@ class RowDataCollection(object):
                 obj_copy = self._deepCopyDataObjects(obj)
                 return obj_copy
         else:
-            return False
+            raise KeyError ('name_key %s was not found in collection' % (name_key))
             
     
     def getDataValue(self, name_key, index):
@@ -410,12 +402,13 @@ class RowDataCollection(object):
             The requested value or False if the key or index do not exist.
         """
         if index > self.getNumberOfRows():
-            return False
+            raise IndexError ('Index %s is greater than number of values in collection' % (index))
+
         for obj in self._collection:
             if obj.data_type == name_key:
                 return obj.getValue(index)
         else:
-            return False
+            raise KeyError ('name_key %s was not found in collection' % (name_key))
         
     
     def deleteDataObject(self, name_key):
