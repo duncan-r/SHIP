@@ -33,9 +33,9 @@ from ship.tuflow.tuflowfilepart import SomeFile
 
 class ModelFileEntry(object):
     
-    def __init__(self, filepart, part_type, hash_hex):
+    def __init__(self, filepart, part_type, hex_hash):
         self.filepart = filepart
-        self.hash_hex = hash_hex
+        self.hex_hash = hex_hash
         self.part_type = part_type
         self.file_name = None
 
@@ -82,7 +82,7 @@ class TuflowModelFile(object):
         self.content_order = []
 
     
-    def addContent(self, line_type, hash_hex, unknown_contents=None):
+    def addContent(self, line_type, hex_hash, unknown_contents=None):
         """Add an entry to the content_order list.
         
         Entries are added in order so that the order can be maintained.
@@ -95,7 +95,7 @@ class TuflowModelFile(object):
         Args:
             line_type (int): denotes the code to store the entry under. This is
                 one of the constants in :class:'TuflowModel' (GIS, MODEL, etc).
-            hash_hex (hex): the unique hex value of the line hash used to 
+            hex_hash (hex): the unique hex value of the line hash used to 
                 identify all parts of the tuflow model.
             unknown_contents (str): Optional - this will be handed in if the
                 loader cannot work out what to do with it. This way it can go
@@ -103,9 +103,9 @@ class TuflowModelFile(object):
         """
 #         self.content_order.append(modelfile_entry)
         if unknown_contents is None:
-            self.content_order.append([line_type, hash_hex])
+            self.content_order.append([line_type, hex_hash])
         else:
-            self.content_order.append([line_type, hash_hex, unknown_contents])
+            self.content_order.append([line_type, hex_hash, unknown_contents])
  
      
     def getHashCategory(self, line_type=None, include_comments=False):

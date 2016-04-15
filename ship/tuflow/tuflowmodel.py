@@ -185,19 +185,19 @@ class TuflowModel(object):
         
         '''Read the order of the contents in the model file.
         [0] = the type of file part: MODEL, COMMENT, GIS, etc
-        [1] = the hash_hex of the file part
+        [1] = the hex_hash of the file part
         [2] = the comment contents (or None if it's not a comment section
         '''
         for entry in model_file.content_order:
             
             line_type = entry[0]
-            hash_hex = entry[1]
+            hex_hash = entry[1]
             if hash in skip_codes: continue
 
             if line_type == self.COMMENT:
                 output.append(''.join(entry[2]))
             else:
-                f = self.file_parts[hash_hex].filepart 
+                f = self.file_parts[hex_hash].filepart 
                 
                 if f.category == 'ecf':
                     if self.has_estry_auto:
@@ -337,13 +337,13 @@ class TuflowModel(object):
                 that doesn't exist or an empty list if all exist.
         """
         missing = []
-        for hash_hex, part in self.file_parts.iteritems():
+        for hex_hash, part in self.file_parts.iteritems():
             
             if part.isSomeFile():
                 if not part.part_type == self.RESULT:
                     p = part.filepart.getAbsolutePath() # DEBUG
                     if not os.path.exists(part.filepart.getAbsolutePath()):
-                        missing.append((hash_hex, part.filepart.getFileNameAndExtension(), part.filepart.root))
+                        missing.append((hex_hash, part.filepart.getFileNameAndExtension(), part.filepart.root))
         
         return missing
     
@@ -381,7 +381,7 @@ class TuflowModel(object):
         Return:
             string - name.extension of the given TuflowModelFile.
         """
-        return self.file_parts[modelfile.hash_hex].filepart.getFileNameAndExtension()
+        return self.file_parts[modelfile.hex_hash].filepart.getFileNameAndExtension()
     
     
     def getFileNames(self, files_filter, extensions=[]):
