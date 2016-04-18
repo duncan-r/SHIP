@@ -1,11 +1,16 @@
 """
 
  Summary:  
-    Contains the ADataObject class and all of its subclasses. These are 
-    used to hold the values in the ISIS data file.
+    Contains the ADataObject class and all of its subclasses.
+    
+    These classes can be used to hold used by the :class:'<RowDataCollection>'.
+    They provide a range of methods for easily acessing, amending and retrieving
+    values to print to file. Classes include support for:  
+        # Numeric data.  
+        # String data.  
+        # Symbol data.  
+        # Constant data (a tuple of legal values).
 
-    A RowDataFactory is included in this module. It's used to build the type
-    of ADataObject specified by the type read in from the data file.
 
  Author:  
      Duncan Runnacles
@@ -17,9 +22,6 @@
      Duncan Runnacles 2016
 
  TODO:
-     The way that the RowDataFactory works to create ADataRowObject class
-     types is poorly designed and naive at the moment. It needs to designed
-     better to take advantage of polymorphism.
 
  Updates:
 
@@ -49,18 +51,17 @@ class ADataRowObject(object):
         """Constructor
         
         Args:
-            data_type (int): The type of collection it will hold (see the enum 
-            list in the DataType class.
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
             format_str (str): Represents the format that should be used to
-                   print out the values kept in this data collection. This 
-                   should be in the form '{:<10}' = 10 spaces formatted left. 
-                   With the required spaces need to correctly format the value 
-                   in the file.
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
             default: The default value that the collection should use -
                 Can be None if defaults are not allowed or '~' if the default 
                 should remove the formatting and apply an empty string.
-            data_collection (list): Optional. An existing data collection in 
-                list form. Used to set the initial state of this collection.  
         """
         self.data_type = datatype
         self.record_length = 0
@@ -284,18 +285,17 @@ class IntData(ADataRowObject):
         """Constructor.
         
         Args:
-            data_type (str): Identifies this DataRowObject.
-            format_str (str): Represnets the format that should be used to
-               print out the values kept in this data collection. This 
-               should be in the form '{:<10}' = 10 spaces formatted left. 
-               With the required spaces need to correctly format the value 
-               in the file.
-            default: The default value that the collection should use - Can be
-               None if defaults are not allowed.
-            row_pos (int): The position in the row that the values in this
-               collection exist.
-            data_collection (list): A complete data collection if already built.    
-        
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
+            format_str={} (str): Represents the format that should be used to
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
+            default=None: The default value that the collection should use -
+                Can be None if defaults are not allowed or '~' if the default 
+                should remove the formatting and apply an empty string.
         """
         ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
          
@@ -359,20 +359,19 @@ class FloatData(ADataRowObject):
         """Constructor.
         
         Args:
-            data_type (str): Identifies this DataRowObject.
-            format_str (str): Represnets the format that should be used to
-               print out the values kept in this data collection. This 
-               should be in the form '{:<10}' = 10 spaces formatted left. 
-               With the required spaces need to correctly format the value 
-               in the file.
-            default: The default value that the collection should use - Can be
-               None if defaults are not allowed.
-            row_pos (int): The position in the row that the values in this
-               collection exist.
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
+            format_str={} (str): Represents the format that should be used to
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
+            default=None: The default value that the collection should use -
+                Can be None if defaults are not allowed or '~' if the default 
+                should remove the formatting and apply an empty string.
             no_of_dps: int of the number of decimal places that this value
                    should be represented with when printed to file. 
-            data_collection (list): A complete data collection if already built.  
-        
         """
         self.no_of_dps = no_of_dps
         ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
@@ -435,17 +434,19 @@ class StringData(ADataRowObject):
     
     def __init__(self, row_pos, datatype, format_str='{}', default=None):
         """Constructor.
+
         Args:
-            data_typei (str): Used to identify this DataRowObject.
-            format_str (str): Representing the format that should be used to
-                print out the values kept in this data collection. This should be
-                in the form '{:<10}' = 10 spaces formatted left. With the required
-                spaces need to correctly format the value in the file.
-            default (str): The default value that the collection should use - Can be
-                None if defaults are not allowed.
-            row_pos (int): The position in the row that the values in this
-                collection.
-            data_collection (list): A complete data collection if already built.    
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
+            format_str={} (str): Represents the format that should be used to
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
+            default=None: The default value that the collection should use -
+                Can be None if defaults are not allowed or '~' if the default 
+                should remove the formatting and apply an empty string.
         """
         ADataRowObject.__init__(self, row_pos, datatype, format_str, 
                                 default)
@@ -513,19 +514,21 @@ class ConstantData(ADataRowObject):
     
     def __init__(self, row_pos, datatype, legal_values, format_str='{}', default=None):
         """Constructor.
+
         Args:
-            data_typei (str): Used to identify this DataRowObject.
-            format_str (str): Representing the format that should be used to
-                print out the values kept in this data collection. This should be
-                in the form '{:<10}' = 10 spaces formatted left. With the required
-                spaces need to correctly format the value in the file.
-            default (str): The default value that the collection should use - Can be
-                None if defaults are not allowed.
-            row_pos (int): The position in the row that the values in this
-                collection.
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
             legal_values(tuple): contains the possible values that this 
                 collection can have.
-            data_collection (list): A complete data collection if already built.    
+            format_str={} (str): Represents the format that should be used to
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
+            default=None: The default value that the collection should use -
+                Can be None if defaults are not allowed or '~' if the default 
+                should remove the formatting and apply an empty string.
         
         Raises:
             AttributeError: if legal_values in not a valid tuple.
@@ -590,19 +593,23 @@ class SymbolData(ADataRowObject):
     
     def __init__(self, row_pos, datatype, symbol, format_str='{}', default=None):
         """Constructor.
+
         Args:
-            data_typei (str): Used to identify this DataRowObject.
-            format_str (str): Representing the format that should be used to
-                print out the values kept in this data collection. This should be
-                in the form '{:<10}' = 10 spaces formatted left. With the required
-                spaces need to correctly format the value in the file.
-            default (str): The default value that the collection should use - Can be
-                None if defaults are not allowed.
-            row_pos (int): The position in the row that the values in this
-                collection.
+            row_pos(int): the position in the datarow held by this object.
+            datatype (int): The type of collection it will hold (see the enum 
+                list in the isis.datunits.ROW_DATA_TYPES.
             symbol(str): The symbol that should should be used to represent the 
                presence of this value in the file.
-            data_collection (list): A complete data collection if already built.    
+            legal_values(tuple): contains the possible values that this 
+                collection can have.
+            format_str={} (str): Represents the format that should be used to
+                print out the values kept in this data collection. This 
+                should be in the form '{:<10}' = 10 spaces formatted left. 
+                With the required spaces need to correctly format the value 
+                in the file.
+            default=None: The default value that the collection should use -
+                Can be None if defaults are not allowed or '~' if the default 
+                should remove the formatting and apply an empty string.
         
         Raises:
             AttributeError: if legal_values in not a valid tuple.
