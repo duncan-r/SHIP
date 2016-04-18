@@ -22,10 +22,9 @@
 """
 
 from ship.isis.datunits.isisunit import AIsisUnit
-from ship.data_structures.dataobject import DataTypes
+from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
-
-import copy
 
 import logging
 logger = logging.getLogger(__name__)
@@ -120,10 +119,10 @@ class SpillUnit (AIsisUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = ['chainage', '{:>10}', None, 0, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = ['elevation', '{:>10}', None, 1, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = ['easting', '{:>10}', 0.0, 2, 2])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = ['northing', '{:>10}', 0.0, 3, 2])
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
+        self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
 
         out_line = file_line + self.unit_length
         try:
@@ -133,24 +132,21 @@ class SpillUnit (AIsisUnit):
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
                 # for the spill section.
-                self.row_collection.addValue('chainage', unit_data[i][0:10].strip())
-                self.row_collection.addValue('elevation', unit_data[i][10:20].strip())
+                self.row_collection.addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
+                self.row_collection.addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
                 
                 # In some edge cases there are no values set in the file for the
                 # easting and northing, so use defaults.
                 if not len(unit_data[i]) > 21:
-                    self.row_collection.addValue('easting')
-                    self.row_collection.addValue('northing')
+                    self.row_collection.addValue(rdt.EASTING)
+                    self.row_collection.addValue(rdt.NORTHING)
                 else:
-                    self.row_collection.addValue('easting', unit_data[i][20:30].strip())
-                    self.row_collection.addValue('northing', unit_data[i][30:40].strip())
+                    self.row_collection.addValue(rdt.EASTING, unit_data[i][20:30].strip())
+                    self.row_collection.addValue(rdt.NORTHING, unit_data[i][30:40].strip())
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.ERROR('Unable to read Unit Data - Attempt to access index out of range')
-#             raise
             
         return out_line
     
@@ -251,15 +247,9 @@ class SpillUnit (AIsisUnit):
             raise ValueError ('Chainage increase cannot be negative')
 
         # Call the row collection add row method to add the new row.
-#         try:
         self.row_collection.addNewRow(values_dict={'chainage': chainage, 
                 'elevation': elevation, 'easting': easting, 
                 'northing': northing}, index=index)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             raise 
     
     
     def _checkChainageIncreaseNotNegative(self, index, chainageValue):

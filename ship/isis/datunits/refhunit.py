@@ -22,7 +22,6 @@
 """
 
 from ship.isis.datunits.isisunit import AIsisUnit
-from ship.data_structures.dataobject import DataTypes
 from ship.data_structures.rowdatacollection import RowDataCollection 
 
 

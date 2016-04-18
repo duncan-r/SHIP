@@ -26,8 +26,8 @@
 import os
 
 from ship.utils import filetools
-from ship.data_structures.rowdatacollection import DataTypes
-from ship.data_structures.rowdatacollection import RowDataCollection, DataTypes
+# from ship.data_structures.rowdatacollection import DataTypes
+from ship.data_structures.rowdatacollection import RowDataCollection#, DataTypes
 
 import logging
 logger = logging.getLogger(__name__)
@@ -101,8 +101,6 @@ class ADataFileObject(object):
         outlist = []
         data = self.row_collection.getDataObject(key)
         outlist = [d for d in data]
-#         for d in data:
-#             outlist.append(d)
 
         return outlist
     

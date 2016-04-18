@@ -33,15 +33,13 @@ import csv
 import os
 
 # ship modules
-from ship.data_structures.rowdatacollection import RowDataCollection, DataTypes
+from ship.data_structures.rowdatacollection import RowDataCollection
+from ship.data_structures import dataobject as do
 from ship.tuflow.tuflowfilepart import DataFile, GisFile, TuflowFile
 from ship.tuflow.data_files import datafileobject as dataobj
 from ship.utils import filetools
 from ship.utils import utilfunctions as uuf
 from ship.utils.dbfread import DBF
-
-# from ship.utils.atool import ATool
-# from ship.utils.fileloaders.loader import ALoader
 
 import logging
 logger = logging.getLogger(__name__)
@@ -180,21 +178,19 @@ def readXsFile(datafile):
         """
         # First entry doesn't want to have a comma in front when formatting.
         row_collection = RowDataCollection()
-        s = DataTypes.STRING_DATA
-        f = DataTypes.FLOAT_DATA
-        types = [s, s, s, s, s, s, s, s, f, f, f]
+        types = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
         
         # Do the first entry separately because it has a different format string
-        row_collection.initCollection(DataTypes.STRING_DATA, vars = [0, '{0}', '', 0])
+        row_collection.initCollection(do.StringData(0, 0, format_str='{0}', default=''))
         for i, t in enumerate(types, 1):
-            if t == s:
-                row_collection.initCollection(DataTypes.STRING_DATA, vars = [i, ', {0}', '', i])
+            if t == 0:
+                row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
             else:
-                row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [i, ', {0}', 0.00, i, 3])
+                row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', no_of_dps=3, default=0.00))
 
         # Add a couple of extra rows to the row_collection for tracking the
         # data in the file. 
-        row_collection.initCollection(DataTypes.INT_DATA, vars = ['row_no', None, '', 15, 0])
+        row_collection.initCollection(do.IntData(15, 'row_no'))
         
         return row_collection
 
@@ -326,12 +322,12 @@ def readBcFile(datafile):
     row_collection = RowDataCollection()
     for i, val in enumerate(bc_enum.ITERABLE):
         if i == 0:
-            row_collection.initCollection(DataTypes.STRING_DATA, vars = [i, '{0}', '', i])
+            row_collection.initCollection(do.StringData(i, i, format_str='{0}', default=''))
         else:
-            row_collection.initCollection(DataTypes.STRING_DATA, vars = [i, ', {0}', '', i])
+            row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
     
-    row_collection.initCollection(DataTypes.STRING_DATA, vars = ['actual_header', '{0}', '', 0])
-    row_collection.initCollection(DataTypes.INT_DATA, vars = ['row_no', None, '', 15, 0])
+    row_collection.initCollection(do.StringData(0, 'actual_header', format_str=', {0}', default=''))
+    row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
         
     path = datafile.getAbsolutePath()
     required_headers = ['Name', 'Source']
@@ -520,23 +516,21 @@ def readMatCsvFile(datafile):
 
     # First entry doesn't want to have a comma in front when formatting.
     row_collection = RowDataCollection()
-    s = DataTypes.STRING_DATA
-    f = DataTypes.FLOAT_DATA
-    types = [f, f, f, f, f, s, s, s, f, f, s]
+    types = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0]
     
     # Do the first entry separately because it has a different format string
-    row_collection.initCollection(DataTypes.STRING_DATA, vars = [0, '{0}', '', 0])
+    row_collection.initCollection(do.StringData(0, 0, format_str='{0}', default=''))
     for i, t in enumerate(types, 1):
-        if t == s:
-            row_collection.initCollection(DataTypes.STRING_DATA, vars = [i, ', {0}', '', i])
+        if t == 0:
+            row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
         else:
-            row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [i, ', {0}', '', i, 3])
+            row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=3))
 
     # Add a couple of extra rows to the row_collection for tracking the
     # data in the file. 
-    row_collection.initCollection(DataTypes.STRING_DATA, vars = ['comment', '{0}', '', 12])
-    row_collection.initCollection(DataTypes.STRING_DATA, vars = ['actual_header', '{0}', '', 13])
-    row_collection.initCollection(DataTypes.INT_DATA, vars = ['row_no', None, '', 15, 0])
+    row_collection.initCollection(do.StringData(12, 'comment', format_str='{0}', default=''))
+    row_collection.initCollection(do.StringData(13, 'actual_header', format_str='{0}', default=''))
+    row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
 
     path = datafile.getAbsolutePath()
     try:
@@ -717,15 +711,15 @@ def readMatSubfile(main_datafile, filename, header_list): #path, root, header1, 
             # First entry doesn't want to have a comma in front when formatting.
             # but all of the others do.
             row_collection = RowDataCollection()
-            row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [0, ' {0}', '', 0, 6])
+            row_collection.initCollection(do.FloatData(0, 0, format_str=' {0}', default='', no_of_dps=6))
             for i in range(1, len(cols)):
                 if cols[i] == True:
-                    row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [i, ', {0}', '', i, 6])
+                    row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=6))
                 else:
-                    row_collection.initCollection(DataTypes.STRING_DATA, vars = [i, ', {0}', '', i])
+                    row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
                     
-            row_collection.initCollection(DataTypes.STRING_DATA, vars = ['actual_header', '{0}', '', 0])
-            row_collection.initCollection(DataTypes.INT_DATA, vars = ['row_no', None, '', 15, 0])
+            row_collection.initCollection(do.StringData(0, 'actual_header', format_str='{0}', default=''))
+            row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
 
             # Stores the comments found in the file
             comment_lines = []
@@ -783,23 +777,18 @@ def readTmfFile(datafile):
     value_order = range(11)
     
     row_collection = RowDataCollection()
-    row_collection.initCollection(DataTypes.INT_DATA, vars = [0, None, '', 0, 0])
+    row_collection.initCollection(do.IntData(0, 0, format_str=None, default=''))
     for i in range(1, 11):
-        row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [i, ', {0}', '', i, 3])
+        row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=3))
 
     # Keep track of any comment lines and the row numbers as well
-    row_collection.initCollection(DataTypes.STRING_DATA, vars = ['comment', ' ! {0}', '', 11])      
-    row_collection.initCollection(DataTypes.INT_DATA, vars = ['row_no', None, '', 12, 0])
+    row_collection.initCollection(do.StringData(11, 'comment', format_str=' ! {0}', default=''))
+    row_collection.initCollection(do.IntData(12, 'row_no', format_str=None, default=''))
     
     contents = []
-#     try:
     logger.info('Loading data file contents from disc - %s' % (path))
     contents = _loadFileFromDisc(path)
                     
-#     except IOError:
-#         logger.warning('Cannot load file - IOError')
-#         raise
-    
     # Stores the comments found in the file
     comment_lines = []
     

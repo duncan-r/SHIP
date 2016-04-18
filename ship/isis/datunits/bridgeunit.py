@@ -25,7 +25,7 @@
 import math
 
 from ship.isis.datunits.isisunit import AIsisUnit
-from ship.data_structures.dataobject import DataTypes
+from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
 from ship.utils.tools import geometry
@@ -166,12 +166,12 @@ class BridgeUnit (AIsisUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CHAINAGE, '{:>10}', None, 0, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.ELEVATION, '{:>10}', None, 1, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.ROUGHNESS, '{:>10}', 0.0, 2, 3]) 
-        self.row_collection.initCollection(DataTypes.CONSTANT_DATA, vars = [rdt.EMBANKMENT, '{:>11}', '', 3, ('L', 'R')])
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
         
-        self.unit_length = 6 #self.UNIT_VARS['Vars']['headlength']
+        self.unit_length = 6 
         out_line = file_line + self.no_of_chainage_rows
         try:
             # Load the geometry data
@@ -193,11 +193,7 @@ class BridgeUnit (AIsisUnit):
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.error('Unable to read Unit Data - Attempt to access index out of range')
-#             raise ('Unable to read Unit Data - Attempt to access index out of range')
 
-#         self.no_of_opening_rows = int(unit_data[self.UNIT_VARS['Vars']['headlength']+self.no_of_chainage_rows])
         self.no_of_opening_rows = int(unit_data[out_line].strip())
         self.unit_length += self.no_of_chainage_rows + 1
         return out_line + 1
@@ -309,13 +305,7 @@ class BridgeUnit (AIsisUnit):
                 raise KeyError ('collection_name %s does not exist in row collection' % (collection_name))
         
         # Call superclass method to add the new row
-#         try:
         AIsisUnit.updateDataRow(self, index=index, row_vals=row_vals)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             raise 
     
    
     def addDataRow(self, row_vals, index=None, collection_name=None): 
@@ -374,14 +364,8 @@ class BridgeUnit (AIsisUnit):
         kw[rdt.SPECIAL] = row_vals.get(rdt.SPECIAL, '')
 
         # Call superclass method to add the new row
-#         try:
         AIsisUnit.addDataRow(self, index=index, row_vals=kw, 
                                             collection_name=collection_name)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             raise 
     
     
     def _checkChainageIncreaseNotNegative(self, index, chainageValue):
@@ -549,10 +533,10 @@ class BridgeUnitUsbpr (BridgeUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.OPEN_START, '{:>10}', None, 0, 3])
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.OPEN_END, '{:>10}', None, 1, 3])
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.SPRINGING_LEVEL, '{:>10}', 0.0, 2, 3]) 
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.SOFFIT_LEVEL, '{:>10}', 0.0, 3, 3]) 
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
         
         out_line = file_line + self.no_of_opening_rows
         try:
@@ -570,9 +554,6 @@ class BridgeUnitUsbpr (BridgeUnit):
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.error('Unable to read Unit Data - Attempt to access index out of range')
-#             raise
         
         self.no_of_culvert_rows = int(unit_data[out_line].strip())
         self.unit_length += self.no_of_culvert_rows + 1
@@ -596,12 +577,12 @@ class BridgeUnitUsbpr (BridgeUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.additional_row_collections['Orifice'] = RowDataCollection()
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_INVERT, '{:>10}', None, 0, 3])
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_SOFFIT, '{:>10}', None, 1, 3])
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_AREA, '{:>10}', 0.0, 2, 3]) 
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_CD_PART, '{:>10}', 0.0, 3, 3]) 
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_CD_FULL, '{:>10}', 0.0, 4, 3]) 
-        self.additional_row_collections['Orifice'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CULVERT_DROWNING, '{:>10}', 0.0, 5, 3]) 
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
 
         out_line = file_line + self.no_of_culvert_rows
         try:
@@ -621,9 +602,6 @@ class BridgeUnitUsbpr (BridgeUnit):
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.error('Unable to read Unit Data - Attempt to access index out of range')
-#             raise
         
         self.unit_length += self.no_of_culvert_rows
         return out_line
@@ -745,10 +723,10 @@ class BridgeUnitArch (BridgeUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.OPEN_START, '{:>10}', None, 0, 3])
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.OPEN_END, '{:>10}', None, 1, 3])
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.SPRINGING_LEVEL, '{:>10}', 0.0, 2, 3]) 
-        self.additional_row_collections['Opening'].initCollection(DataTypes.FLOAT_DATA, vars = [rdt.SOFFIT_LEVEL, '{:>10}', 0.0, 3, 3]) 
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
         
         out_line = file_line + self.no_of_opening_rows
         try:
@@ -766,11 +744,7 @@ class BridgeUnitArch (BridgeUnit):
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.error('Unable to read Unit Data - Attempt to access index out of range')
-#             raise
         
         self.unit_length += self.no_of_culvert_rows + 1
         return out_line
         
- 

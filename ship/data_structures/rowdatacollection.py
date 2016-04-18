@@ -91,7 +91,7 @@ class RowDataCollection(object):
         return self._collection[key]
     
 
-    def initCollection(self, obj_type, vars):
+    def initCollection(self, dataobject):
         """Setup a new data object and add it to the collection.
         
         Args:
@@ -104,8 +104,7 @@ class RowDataCollection(object):
             ADataRowObject (and subclasses), DataTypes - all in ADataObject 
             module.
         """  
-        row_data =  RowDataFactory(obj_type, vars)
-        self._collection.append(row_data)
+        self._collection.append(dataobject)
         self._max = len(self._collection)
         
         

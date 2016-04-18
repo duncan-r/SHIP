@@ -1,9 +1,9 @@
 import unittest
 
 from ship.isis.datunits import riverunit
-from ship.isis.datunits import ROW_DATA_TYPES
+from ship.isis.datunits import ROW_DATA_TYPES as rdt
 from ship.data_structures.rowdatacollection import RowDataCollection 
-from ship.data_structures.dataobject import *
+from ship.data_structures import dataobject as do
 from ship.isis.isisunitfactory import IsisUnitFactory
 
 class RiverUnitTests(unittest.TestCase):
@@ -116,16 +116,16 @@ class RiverUnitTests(unittest.TestCase):
         h = river.getHeadData()
         self.assertDictEqual(self.header_vars, river.getHeadData(), 'River header dicts not equal fail')
         
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.CHAINAGE).data_collection, self.chainage, 'River chainage load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.ELEVATION).data_collection, self.elevation, 'River elevation load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.ROUGHNESS).data_collection, self.roughness, 'River roughness load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.PANEL_MARKER).data_collection, self.panelmarker, 'River panelmarker load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.RPL).data_collection, self.rpl, 'River rpl load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.BANKMARKER).data_collection, self.bankmarker, 'River bankmarker load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.EASTING).data_collection, self.easting, 'River easting load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.NORTHING).data_collection, self.northing, 'River northing load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.DEACTIVATION).data_collection, self.deactivation, 'River deactivation load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.SPECIAL).data_collection, self.special, 'River special load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.CHAINAGE).data_collection, self.chainage, 'River chainage load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.ELEVATION).data_collection, self.elevation, 'River elevation load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.ROUGHNESS).data_collection, self.roughness, 'River roughness load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.PANEL_MARKER).data_collection, self.panelmarker, 'River panelmarker load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.RPL).data_collection, self.rpl, 'River rpl load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.BANKMARKER).data_collection, self.bankmarker, 'River bankmarker load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.EASTING).data_collection, self.easting, 'River easting load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.NORTHING).data_collection, self.northing, 'River northing load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.DEACTIVATION).data_collection, self.deactivation, 'River deactivation load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.SPECIAL).data_collection, self.special, 'River special load fail')
         
         self.assertTrue(river.getUnitCategory() == 'River', 'River.unit_category fail:  River.unit_category = ' + river.unit_category)
         self.assertTrue(river.getName() == '1.069', 'River.name fail:  River.name = ' + river.name)
@@ -158,16 +158,16 @@ class RiverUnitTests(unittest.TestCase):
         river.readUnitData(self.unit_data_test, 0)
        
         # Check that everything matches. 
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.CHAINAGE).data_collection, self.chainage, 'River chainage load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.ELEVATION).data_collection, self.elevation, 'River elevation load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.ROUGHNESS).data_collection, self.roughness, 'River roughness load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.PANEL_MARKER).data_collection, self.panelmarker, 'River panelmarker load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.RPL).data_collection, self.rpl, 'River rpl load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.BANKMARKER).data_collection, self.bankmarker, 'River bankmarker load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.EASTING).data_collection, self.easting, 'River easting load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.NORTHING).data_collection, self.northing, 'River northing load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.DEACTIVATION).data_collection, self.deactivation, 'River deactivation load fail')
-        self.assertListEqual(river.getRowDataObject(ROW_DATA_TYPES.SPECIAL).data_collection, self.special, 'River special load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.CHAINAGE).data_collection, self.chainage, 'River chainage load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.ELEVATION).data_collection, self.elevation, 'River elevation load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.ROUGHNESS).data_collection, self.roughness, 'River roughness load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.PANEL_MARKER).data_collection, self.panelmarker, 'River panelmarker load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.RPL).data_collection, self.rpl, 'River rpl load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.BANKMARKER).data_collection, self.bankmarker, 'River bankmarker load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.EASTING).data_collection, self.easting, 'River easting load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.NORTHING).data_collection, self.northing, 'River northing load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.DEACTIVATION).data_collection, self.deactivation, 'River deactivation load fail')
+        self.assertListEqual(river.getRowDataObject(rdt.SPECIAL).data_collection, self.special, 'River special load fail')
         
  
     def test_getData_method(self):
@@ -180,16 +180,16 @@ class RiverUnitTests(unittest.TestCase):
         
         # Create some data objects
         objs = []
-        objs.append(FloatDataRowObject('chainage', '{:>10}', None, 0, 3))
-        objs.append(FloatDataRowObject('elevation', '{:>10}', None, 1, 3))
-        objs.append(FloatDataRowObject('roughness', '{:>10}', 0.0, 2, 3)) 
-        objs.append(SymbolDataRowObject('panelmarker', '{:<5}', False, 3, '*'))
-        objs.append(FloatDataRowObject('rpl', '{:>5}', 1.000, 4, 3))
-        objs.append(ConstantDataRowObject('bankmarker', '{:<10}', '', 5, ('LEFT', 'RIGHT', 'BED')))
-        objs.append(FloatDataRowObject('easting', '{:>10}', 0.0, 6, 2))
-        objs.append(FloatDataRowObject('northing', '{:>10}', 0.0, 7, 2))
-        objs.append(ConstantDataRowObject('deactivation', '{:<10}', '', 8, ('LEFT', 'RIGHT')))
-        objs.append(StringDataRowObject('special', '{:<10}', '~', 9))
+        objs.append(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        objs.append(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        objs.append(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        objs.append(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+        objs.append(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+        objs.append(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+        objs.append(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        objs.append(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        objs.append(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+        objs.append(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
         
         # Populate the data
         objs[0].data_collection = [5.996, 6.936, 7.446, 7.635, 8.561, 9.551, 10.323, 10.904, 12.542, 13.74, 13.788, 13.944, 15.008, 16.355, 17.424, 18.449, 19.416, 19.420]    
@@ -278,16 +278,16 @@ class RiverUnitTests(unittest.TestCase):
         
         # Create some data objects
         objs = []
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.CHAINAGE, '{:>10}', None, 0, 3))
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.ELEVATION, '{:>10}', None, 1, 3))
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.ROUGHNESS, '{:>10}', 0.0, 2, 3)) 
-        objs.append(SymbolDataRowObject(ROW_DATA_TYPES.PANEL_MARKER, '{:<5}', False, 3, '*'))
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.RPL, '{:>5}', 1.000, 4, 3))
-        objs.append(ConstantDataRowObject(ROW_DATA_TYPES.BANKMARKER, '{:<10}', '', 5, ('LEFT', 'RIGHT', 'BED')))
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.EASTING, '{:>10}', 0.0, 6, 2))
-        objs.append(FloatDataRowObject(ROW_DATA_TYPES.NORTHING, '{:>10}', 0.0, 7, 2))
-        objs.append(ConstantDataRowObject(ROW_DATA_TYPES.DEACTIVATION, '{:<10}', '', 8, ('LEFT', 'RIGHT')))
-        objs.append(StringDataRowObject(ROW_DATA_TYPES.SPECIAL, '{:<10}', '~', 9))
+        objs.append(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        objs.append(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        objs.append(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        objs.append(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+        objs.append(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+        objs.append(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+        objs.append(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        objs.append(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        objs.append(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+        objs.append(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
         
         # Populate the data
         objs[0].data_collection = [5.996, 6.936, 7.446, 7.635, 8.561, 9.551, 10.323, 10.904, 12.542, 13.74, 13.788, 13.944, 15.008, 16.355, 17.424, 18.449, 19.416, 19.420]    
@@ -309,21 +309,21 @@ class RiverUnitTests(unittest.TestCase):
         river.row_collection = col
         
         # Add a new row
-        river.addDataRow(row_vals={ROW_DATA_TYPES.CHAINAGE: 9.42, ROW_DATA_TYPES.ELEVATION: 35.2,
-                                   ROW_DATA_TYPES.ROUGHNESS: 0.035, ROW_DATA_TYPES.SPECIAL: '1264'}, 
+        river.addDataRow(row_vals={rdt.CHAINAGE: 9.42, rdt.ELEVATION: 35.2,
+                                   rdt.ROUGHNESS: 0.035, rdt.SPECIAL: '1264'}, 
                          index=5)
          
         # Make sure that we get back the same values as we set.
-        self.assertEqual(9.42, river.row_collection._collection[ROW_DATA_TYPES.CHAINAGE].data_collection[5], 'Add new row - get chainage value failed')
-        self.assertEqual(35.2, river.row_collection._collection[ROW_DATA_TYPES.ELEVATION].data_collection[5], 'Add new row - get elevation value failed')
-        self.assertEqual(0.035, river.row_collection._collection[ROW_DATA_TYPES.ROUGHNESS].data_collection[5], 'Add new row - get roughness value failed')
-        self.assertEqual(False, river.row_collection._collection[ROW_DATA_TYPES.PANEL_MARKER].data_collection[5], 'Add new row - get panelmarker value failed')
-        self.assertEqual(1.000, river.row_collection._collection[ROW_DATA_TYPES.RPL].data_collection[5], 'Add new row - get rpl value failed')
-        self.assertEqual(False, river.row_collection._collection[ROW_DATA_TYPES.BANKMARKER].data_collection[5], 'Add new row - get bankmarker value failed')
-        self.assertEqual(0.00, river.row_collection._collection[ROW_DATA_TYPES.EASTING].data_collection[5], 'Add new row - get easting value failed')
-        self.assertEqual(0.00, river.row_collection._collection[ROW_DATA_TYPES.NORTHING].data_collection[5], 'Add new row - get northing value failed')
-        self.assertEqual(False, river.row_collection._collection[ROW_DATA_TYPES.DEACTIVATION].data_collection[5], 'Add new row - get deactivation value failed')
-        self.assertEqual('1264', river.row_collection._collection[ROW_DATA_TYPES.SPECIAL].data_collection[5], 'Add new row - get special value failed')
+        self.assertEqual(9.42, river.row_collection._collection[rdt.CHAINAGE].data_collection[5], 'Add new row - get chainage value failed')
+        self.assertEqual(35.2, river.row_collection._collection[rdt.ELEVATION].data_collection[5], 'Add new row - get elevation value failed')
+        self.assertEqual(0.035, river.row_collection._collection[rdt.ROUGHNESS].data_collection[5], 'Add new row - get roughness value failed')
+        self.assertEqual(False, river.row_collection._collection[rdt.PANEL_MARKER].data_collection[5], 'Add new row - get panelmarker value failed')
+        self.assertEqual(1.000, river.row_collection._collection[rdt.RPL].data_collection[5], 'Add new row - get rpl value failed')
+        self.assertEqual(False, river.row_collection._collection[rdt.BANKMARKER].data_collection[5], 'Add new row - get bankmarker value failed')
+        self.assertEqual(0.00, river.row_collection._collection[rdt.EASTING].data_collection[5], 'Add new row - get easting value failed')
+        self.assertEqual(0.00, river.row_collection._collection[rdt.NORTHING].data_collection[5], 'Add new row - get northing value failed')
+        self.assertEqual(False, river.row_collection._collection[rdt.DEACTIVATION].data_collection[5], 'Add new row - get deactivation value failed')
+        self.assertEqual('1264', river.row_collection._collection[rdt.SPECIAL].data_collection[5], 'Add new row - get special value failed')
          
         # This is how we expect the data to look when we get back out of the addRow() method
         new_chainage = [5.996, 6.936, 7.446, 7.635, 8.561, 9.42, 9.551, 10.323, 10.904, 12.542, 13.74, 13.788, 13.944, 15.008, 16.355, 17.424, 18.449, 19.416, 19.42]    
@@ -352,8 +352,8 @@ class RiverUnitTests(unittest.TestCase):
         # Check that it recognises illegal input values
         self.assertRaises(AttributeError, lambda: river.addDataRow({'trick': 39.1}))
         # Check that it recognises when it will cause a negative chainage increase
-        self.assertRaises(ValueError, lambda: river.addDataRow({ROW_DATA_TYPES.CHAINAGE: 10.42, 
-                                                                ROW_DATA_TYPES.ELEVATION: 35.3},
+        self.assertRaises(ValueError, lambda: river.addDataRow({rdt.CHAINAGE: 10.42, 
+                                                                rdt.ELEVATION: 35.3},
                                                                5))
          
          
@@ -364,7 +364,7 @@ class RiverUnitTests(unittest.TestCase):
         '''
         # Create RiverUnit object and give it a chainage object with some data
         river = riverunit.RiverUnit(1, 1)
-        chainage = FloatDataRowObject(ROW_DATA_TYPES.CHAINAGE, '{:>10}', None, 0, 3)
+        chainage = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
         chainage.data_collection = self.chainage
         chainage.record_length = 18
         river.row_collection = RowDataCollection()

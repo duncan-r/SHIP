@@ -22,7 +22,7 @@
 """
 
 from ship.isis.datunits.isisunit import AIsisUnit
-from ship.data_structures.dataobject import DataTypes
+from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
 
@@ -123,16 +123,17 @@ class RiverUnit (AIsisUnit):
         # in the row as the first variables in vars.
         # The others are DataType specific.
         self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.CHAINAGE, '{:>10}', None, 0, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.ELEVATION, '{:>10}', None, 1, 3])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.ROUGHNESS, '{:>10}', 0.0, 2, 3]) 
-        self.row_collection.initCollection(DataTypes.SYMBOL_DATA, vars = [rdt.PANEL_MARKER, '{:<5}', False, 3, '*'])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.RPL, '{:>5}', 1.000, 4, 3])
-        self.row_collection.initCollection(DataTypes.CONSTANT_DATA, vars = [rdt.BANKMARKER, '{:<10}', '', 5, ('LEFT', 'RIGHT', 'BED')])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.EASTING, '{:>10}', 0.0, 6, 2])
-        self.row_collection.initCollection(DataTypes.FLOAT_DATA, vars = [rdt.NORTHING, '{:>10}', 0.0, 7, 2])
-        self.row_collection.initCollection(DataTypes.CONSTANT_DATA, vars = [rdt.DEACTIVATION, '{:<10}', '', 8, ('LEFT', 'RIGHT')])
-        self.row_collection.initCollection(DataTypes.STRING_DATA, vars = [rdt.SPECIAL, '{:<10}', '~', 9])      
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+        self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+        self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+        self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+        # Default == '~' means to ignore formatting and apply '' when value is None
+        self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
 
         out_line = file_line + self.unit_length
         try:
@@ -156,9 +157,6 @@ class RiverUnit (AIsisUnit):
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-#         except IndexError:
-#             logger.ERROR('Unable to read Unit Data - Attempt to access index out of range')
-#             raise
             
         return out_line
 
@@ -256,14 +254,7 @@ class RiverUnit (AIsisUnit):
             ADataObject and subclasses for information on the parameters.
         """
         # Call superclass method to add the new row
-#         try:
         AIsisUnit.updateDataRow(self, index=index, row_vals=row_vals)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             raise 
-
         
     
     def addDataRow(self, row_vals, index=None): 
@@ -313,13 +304,8 @@ class RiverUnit (AIsisUnit):
         kw[rdt.SPECIAL] = row_vals.get(rdt.SPECIAL, '')
 
         # Call superclass method to add the new row
-#         try:
         AIsisUnit.addDataRow(self, index=index, row_vals=kw)
             
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             raise 
     
     
         

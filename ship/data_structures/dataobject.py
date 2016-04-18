@@ -33,82 +33,6 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class DataTypes(object):
-    """Enum class for the different ADataRowObject Types available
-    
-    This can be used by any caller of RowDataFactory to specify the type of
-    row data required.
-    """
-
-    STRING_DATA, INT_DATA, FLOAT_DATA, CONSTANT_DATA, SYMBOL_DATA = range(5)
-
-
-def RowDataFactory(obj_type, vars):
-    """Factory for creating instances of ADataRowObject types.
-
-    Calls the appropriate __init__() of the DataRowObject as
-    defined by the data_type variable. Caller should use the enum class 
-    DataTypes to do this..
-
-
-    Args:
-        obj_type (DataTypes): The DataType that should be created: STRING_DATA,
-           FLOAT_DATA, CONSTANT_DATA, SYMBOL_DATA. See Also the classes in this 
-           module for details on implementation.
-        vars (list): The obj_type specific variables that are needed. Further
-            details in 'Note' below. 
-    
-    Returns:
-        ADataRowObject: As defined by the obj_type variable provided. 
-    
-    Raises:
-        IndexError: If the factory cannot access the variables needed
-               to instanciate the class.
-        NotImplementedError: If the given obj_type is not recognised.
-
-    Note: The object specified variables are further defined in the 
-        ADataRowObject subclasses - StringDataRowObject, FloatDataRowObject, 
-        ConstantDataRowObject, and SymbolDataRowObject.
-        
-    TODO:
-          Need some type checking here to make sure that the vars handed
-          in match the requirements for the individual ob_types.  
-          
-    """    
-    try: 
-        if obj_type == DataTypes.STRING_DATA:
-            # Hand in the data_type[0], format_str[1], default[2], row_pos[3]
-            obj_data = StringDataRowObject(vars[0], vars[1], vars[2], vars[3])
-
-        elif obj_type == DataTypes.INT_DATA:
-            # Hand in the data_type[0], format_str[1], default[2], row_pos[3]
-            obj_data = IntDataRowObject(vars[0], vars[1], vars[2], vars[3])
-        
-        elif obj_type == DataTypes.FLOAT_DATA:
-            # data_type[0], format_str[1], default[2], row_pos[3], no_of_dps[4]
-            obj_data = FloatDataRowObject(vars[0], vars[1], vars[2], vars[3], vars[4])
-        
-        elif obj_type == DataTypes.CONSTANT_DATA:
-            # data_type[0], format_str[1], default[2], row_pos[3], legal_values[4]
-            obj_data = ConstantDataRowObject(vars[0], vars[1], vars[2], vars[3], vars[4])
-            
-        elif obj_type == DataTypes.SYMBOL_DATA:
-            # data_type[0], format_str[1], default[2], row_pos[3], symbol[4]
-            obj_data = SymbolDataRowObject(vars[0], vars[1], vars[2], vars[3], vars[4])
-            
-        else:
-            logger.error('RowDataFactory - type is not recognised.')
-            raise NotImplementedError ('RowDataFactory type is not recognised.')
-        
-        return obj_data
-        
-    except IndexError:
-        logger.error('RowDataFactory - required index does not exist')
-        raise
-    
-    return False
-
-
 class ADataRowObject(object):
     """Abstract class for all data objects used in an AIsisUnit class.
     
@@ -121,7 +45,7 @@ class ADataRowObject(object):
     __metaclass__ = ABCMeta
     
     
-    def __init__(self, data_type, format_str, default, row_pos, data_collection = None):
+    def __init__(self, row_pos, datatype, format_str, default):
         """Constructor
         
         Args:
@@ -138,18 +62,15 @@ class ADataRowObject(object):
             data_collection (list): Optional. An existing data collection in 
                 list form. Used to set the initial state of this collection.  
         """
-        self.data_type = data_type
+        self.data_type = datatype
         self.record_length = 0
         self.format_str = format_str 
         self.row_pos = row_pos
         self.default = default
         self.has_changed = False
         
-        if data_collection == None: 
-            self.data_collection = []
-        else:
-            self.data_collection = data_collection
-    
+        self.data_collection = []
+            
         self._min = 0
         self._max = len(self.data_collection)
         self._current = 0
@@ -352,14 +273,14 @@ class ADataRowObject(object):
         
 
 
-class IntDataRowObject(ADataRowObject):
+class IntData(ADataRowObject):
     """Concrete implememtation of the ADataRowObject for integer values.
     
     See Also:
         ADataRowObject
     """
     
-    def __init__(self, data_type, format_str, default, row_pos, data_collection = None):
+    def __init__(self, row_pos, datatype, format_str='{}', default=None):
         """Constructor.
         
         Args:
@@ -376,7 +297,7 @@ class IntDataRowObject(ADataRowObject):
             data_collection (list): A complete data collection if already built.    
         
         """
-        ADataRowObject.__init__(self, data_type, format_str, default, row_pos, data_collection)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
          
         
     def addValue(self, value=None, index = None):
@@ -429,12 +350,12 @@ class IntDataRowObject(ADataRowObject):
 
 
 
-class FloatDataRowObject(ADataRowObject):
+class FloatData(ADataRowObject):
     """Overrides the value return methods from ADataObject to return a 
     float value instead of a string.
     """
     
-    def __init__(self, data_type, format_str, default, row_pos, no_of_dps, data_collection = None):
+    def __init__(self, row_pos, datatype, format_str='{}', default=None, no_of_dps=0):
         """Constructor.
         
         Args:
@@ -454,7 +375,7 @@ class FloatDataRowObject(ADataRowObject):
         
         """
         self.no_of_dps = no_of_dps
-        ADataRowObject.__init__(self, data_type, format_str, default, row_pos, data_collection)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
          
         
     def addValue(self, value=None, index = None):
@@ -507,12 +428,12 @@ class FloatDataRowObject(ADataRowObject):
 
 
 
-class StringDataRowObject(ADataRowObject):
+class StringData(ADataRowObject):
     """Overrides the value return methods from ADataObject to return a 
     str value. 
     """
     
-    def __init__(self, data_type, format_str, default, row_pos, data_collection = None):
+    def __init__(self, row_pos, datatype, format_str='{}', default=None):
         """Constructor.
         Args:
             data_typei (str): Used to identify this DataRowObject.
@@ -526,8 +447,9 @@ class StringDataRowObject(ADataRowObject):
                 collection.
             data_collection (list): A complete data collection if already built.    
         """
-        ADataRowObject.__init__(self, data_type, format_str, default, row_pos, data_collection)
-         
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
+                                default)
+
         
     def addValue(self, value=None, index = None):
         """Adds a value to the collection.
@@ -584,12 +506,12 @@ class StringDataRowObject(ADataRowObject):
 
 
 
-class ConstantDataRowObject(ADataRowObject):
+class ConstantData(ADataRowObject):
     """Overrides the value return methods from ADataObject to return a 
     str value from a list of predefined constants.
     """
     
-    def __init__(self, data_type, format_str, default, row_pos, legal_values, data_collection = None):
+    def __init__(self, row_pos, datatype, legal_values, format_str='{}', default=None):
         """Constructor.
         Args:
             data_typei (str): Used to identify this DataRowObject.
@@ -611,7 +533,8 @@ class ConstantDataRowObject(ADataRowObject):
         if not isinstance(legal_values, tuple):
             raise AttributeError ('legal_values is not a tuple')
         self.legal_values = legal_values
-        ADataRowObject.__init__(self, data_type, format_str, default, row_pos, data_collection)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
+                                default)
          
         
     def addValue(self, value=None, index = None):
@@ -660,12 +583,12 @@ class ConstantDataRowObject(ADataRowObject):
 
 
 
-class SymbolDataRowObject(ADataRowObject):
+class SymbolData(ADataRowObject):
     """Overrides the value return methods from ADataObject to return a 
     float value instead of a string.
     """
     
-    def __init__(self, data_type, format_str, default, row_pos, symbol, data_collection = None):
+    def __init__(self, row_pos, datatype, symbol, format_str='{}', default=None):
         """Constructor.
         Args:
             data_typei (str): Used to identify this DataRowObject.
@@ -686,7 +609,8 @@ class SymbolDataRowObject(ADataRowObject):
         """
         self.symbol = symbol
         self.bool_type = bool # Used to test if a value is of type bool or not
-        ADataRowObject.__init__(self, data_type, format_str, default, row_pos, data_collection)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
+                                default)
          
         
     def addValue(self, value=None, index = None):

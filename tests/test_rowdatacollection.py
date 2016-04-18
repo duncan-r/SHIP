@@ -2,6 +2,8 @@
 import unittest
 
 from ship.data_structures.rowdatacollection import *
+from ship.data_structures import dataobject as do
+from ship.isis.datunits import ROW_DATA_TYPES as rdt
 
 
 class RowDataCollectionTests(unittest.TestCase):
@@ -9,17 +11,17 @@ class RowDataCollectionTests(unittest.TestCase):
     def setUp(self):
         # Create some object to use and add a couple of rows
         # create chainage in position 1
-        self.obj1 = FloatDataRowObject('chainage', '{:>10}', None, 0, 3)
+        self.obj1 = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj1.data_collection.append(0.00)
         self.obj1.data_collection.append(3.65)
         self.obj1.record_length = 1
         # Create elevation in position 2
-        self.obj2 = FloatDataRowObject('elevation', '{:>10}', None, 1, 3)
+        self.obj2 = do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj2.data_collection.append(32.345)
         self.obj2.data_collection.append(33.45)
         self.obj2.record_length = 1
         # Create roughness in position 3
-        self.obj3 = FloatDataRowObject('roughness', '{:>10}', None, 2, 3)
+        self.obj3 = do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj3.data_collection.append(0.035)
         self.obj3.data_collection.append(0.035)
         self.obj3.record_length = 1
@@ -34,9 +36,9 @@ class RowDataCollectionTests(unittest.TestCase):
         '''
         '''
         # Create a dummy collection
-        obj1 = FloatDataRowObject('chainage', '{:>10}', None, 0, 3)
-        obj2 = FloatDataRowObject('elevation', '{:>10}', None, 1, 3)
-        obj3 = FloatDataRowObject('roughness', '{:>10}', 0.0, 2, 3)
+        obj1 = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
+        obj2 = do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
+        obj3 = do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3)
         localcol = RowDataCollection()
         localcol._collection.append(obj1)
         localcol._collection.append(obj2)
@@ -44,9 +46,9 @@ class RowDataCollectionTests(unittest.TestCase):
 
         # Initiliase a real collection
         col = RowDataCollection()
-        col.initCollection(DataTypes.FLOAT_DATA, vars = ['chainage', '{:>10}', None, 0, 3])
-        col.initCollection(DataTypes.FLOAT_DATA, vars = ['elevation', '{:>10}', None, 1, 3])
-        col.initCollection(DataTypes.FLOAT_DATA, vars = ['roughness', '{:>10}', 0.0, 2, 3]) 
+        col.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
+        col.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
+        col.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
             
         # Check that they're the same
         col_eq, msg = self.checkCollectionEqual(localcol, col)
@@ -85,7 +87,7 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_addValue(self):
         '''
         '''
-        self.testcol.addValue('chainage', 14.32)
+        self.testcol.addValue(rdt.CHAINAGE, 14.32)
 
         self.assertEqual(0.00, self.testcol._collection[0].data_collection[0], 'Collection addValue() fail') 
         self.assertEqual(3.65, self.testcol._collection[0].data_collection[1], 'Collection addValue() fail') 
@@ -103,7 +105,7 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_addNewRow(self):
         '''
         '''
-        values = {'chainage': 1.34, 'elevation': 34.54, 'roughness': 0.035}
+        values = {rdt.CHAINAGE: 1.34, rdt.ELEVATION: 34.54, rdt.ROUGHNESS: 0.035}
         index = 1
         
         self.testcol.addNewRow(values, index)
@@ -120,7 +122,7 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_getCollectionTypes(self):
         '''
         '''
-        types_test = ['chainage', 'elevation', 'roughness']
+        types_test = [rdt.CHAINAGE, rdt.ELEVATION, rdt.ROUGHNESS]
         types = self.testcol.getCollectionTypes()
         self.assertListEqual(types_test, types, 'Collection getCollectionTypes() fail')
         
@@ -128,7 +130,7 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_getDataObject(self): 
         '''
         '''
-        new_obj = self.testcol.getDataObject('chainage')
+        new_obj = self.testcol.getDataObject(rdt.CHAINAGE)
         obj = self.testcol._collection[0]
         
         self.assertEqual(obj, new_obj, 'getDataObject() fail')
@@ -137,7 +139,7 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_getDataObjectCopy(self):
         '''
         '''
-        new_obj = self.testcol.getDataObjectCopy('chainage')
+        new_obj = self.testcol.getDataObjectCopy(rdt.CHAINAGE)
         obj = self.testcol._collection[0]
 
         self.assertNotEqual(new_obj, obj, 'getDataObjectCopy() fail')
@@ -148,12 +150,10 @@ class RowDataCollectionTests(unittest.TestCase):
         '''
         index = 1
         
-        value = self.testcol.getDataValue('elevation', index)
+        value = self.testcol.getDataValue(rdt.ELEVATION, index)
         self.assertEqual(33.45, value, 'getDataValue() right key fail')
-        value = self.testcol.getDataValue('redherring', index)
-        self.assertFalse(value, 'getDataValue() wrong key fail')
-        value = self.testcol.getDataValue('elevation', 3)
-        self.assertFalse(value, 'getDataValue() wrong index fail')
+        self.failUnlessRaises(KeyError, lambda: self.testcol.getDataValue('redherring', index)) 
+        self.failUnlessRaises(IndexError, lambda: self.testcol.getDataValue(rdt.ELEVATION, 3)) 
         
         
     def test_checkRowsInSync(self):
@@ -162,7 +162,7 @@ class RowDataCollectionTests(unittest.TestCase):
         test_sync = self.testcol.checkRowsInSync()
         self.assertTrue(self.testcol.checkRowsInSync(), 'checkRowsInSync() test true fail')
         
-        self.testcol.addValue('chainage', 17.343)
+        self.testcol.addValue(rdt.CHAINAGE, 17.343)
         self.assertFalse(self.testcol.checkRowsInSync(), 'checkRowsInSync() test false fail')
         
         

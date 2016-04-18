@@ -1,19 +1,19 @@
 
 import unittest
 
-from ship.data_structures.dataobject import ADataRowObject,FloatDataRowObject,\
-                                    SymbolDataRowObject, ConstantDataRowObject,\
-                                    StringDataRowObject
+from ship.data_structures import dataobject as do
+from ship.data_structures.dataobject import ADataRowObject
+from ship.isis.datunits import ROW_DATA_TYPES as rdt
 
 
 class DataObjectsTest(unittest.TestCase):
     
     def setUp(self):
         
-        self.flt = FloatDataRowObject('chainage', '{:>10}', None, 0, 3)
-        self.sym = SymbolDataRowObject('panelmarker', '{:<5}', False, 3, '*')
-        self.con = ConstantDataRowObject('bankmarker', '{:<10}', '', 5, ('LEFT', 'RIGHT', 'BED'))
-        self.txt = StringDataRowObject('special', '{:<10}', '~', 9)
+        self.flt = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3)
+        self.sym = do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False)
+        self.con = do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default='')
+        self.txt = do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~')
         
         self.data_objects = [self.flt, self.sym, self.con, self.txt] 
         
