@@ -81,7 +81,7 @@ class IsisUnitFactory(object):
             self._getFileKeys()
         except:
             logger.error('UNIT_VARS incorrectly set in some classes')
-            raise ('UNIT_VARS incorrectly set in some classes')
+            raise Exception ('UNIT_VARS incorrectly set in some classes')
         
     
     def _getFileKeys(self):

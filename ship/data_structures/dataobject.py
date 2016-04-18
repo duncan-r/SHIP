@@ -190,7 +190,7 @@ class ADataRowObject(object):
                 self.data_collection.insert(index, value)
             except IndexError:
                 logger.error('DataObject addValue() index out of bounds')
-                raise ('DataObject addValue() index out of bounds')
+                raise IndexError ('DataObject addValue() index out of bounds')
 
         self.has_changed = True
         self.record_length += 1
@@ -217,7 +217,7 @@ class ADataRowObject(object):
                 self.data_collection[index] = value
             except IndexError:
                 logger.error('DataObject setValue() index out of bounds')
-                raise ('DataObject setValue() index out of bounds')
+                raise IndexError ('DataObject setValue() index out of bounds')
         
         self.has_changed = True
 
@@ -240,7 +240,7 @@ class ADataRowObject(object):
             self.data_collection.remove(index)
         except IndexError:
             logger.error('DataObject deleteValue() index out of bounds')
-            raise ('DataObject deleteValue() index out of bounds')
+            raise IndexError ('DataObject deleteValue() index out of bounds')
         
         self.has_changed = True
         self.record_length -= 1
@@ -311,7 +311,7 @@ class IntData(ADataRowObject):
                 value = int(value)
             except ValueError:
                 logger.error('Attempted to add invalid value to IntDataObject')
-                raise ('Attempted to add invalid value to IntDataObject')
+                raise ValueError ('Attempted to add invalid value to IntDataObject')
         
         ADataRowObject.addValue(self, value, index)
     
@@ -326,7 +326,7 @@ class IntData(ADataRowObject):
             value = int(value)
         except ValueError:
             logger.error('Attempted to add invalid value to IntDataObject')
-            raise ('Attempted to add invalid value to IntDataObject')
+            raise ValueError ('Attempted to add invalid value to IntDataObject')
         
         ADataRowObject.setValue(self, value, index)
             
@@ -462,7 +462,7 @@ class StringData(ADataRowObject):
                 value = str(value)
             except ValueError:
                 logger.error('Attempted to add invalid value to StringDataObject')
-                raise ('Attempted to add invalid value to StringDataObject')
+                raise ValueError ('Attempted to add invalid value to StringDataObject')
             
             # Strip any whitespace off
             value = value.strip()
@@ -481,7 +481,7 @@ class StringData(ADataRowObject):
             value = str(value)
         except ValueError:
             logger.error('Attempted to add invalid value to StringDataObject')
-            raise ('Attempted to add invalid value to StringDataObject')
+            raise ValueError('Attempted to add invalid value to StringDataObject')
         
         # Get rid of any whitespace
         value = value.strip()

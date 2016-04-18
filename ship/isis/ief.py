@@ -254,7 +254,6 @@ class Ief(object):
         except KeyError:
             logger.debug('No ' + key + ' key found in ief')
             return False
-#             raise ('Key %s not found in dictionary' % (key))
          
         return variable
         

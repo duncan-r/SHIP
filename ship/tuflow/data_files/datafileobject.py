@@ -124,7 +124,7 @@ class ADataFileObject(object):
         except IOError:
             logger.error('Could not write contents for %s file to %s' %
                 (self.path_holder.extension, self.path_holder.getAbsolutePath()))
-            raise ('Unable to write file to disc')  
+            raise IOError ('Unable to write file to disc')  
         
         if self.subfiles and plus_subfiles:
             for subfile in self.subfiles:

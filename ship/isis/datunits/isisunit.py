@@ -187,7 +187,7 @@ class AIsisUnit( object ):
             return self.row_collection.getDataObject(key)
         except KeyError:
             logger.warning('Key %s does not exist in collection' % (key))
-            raise ('Key %s does not exist in collection' % (key))
+            raise KeyError ('Key %s does not exist in collection' % (key))
     
     
     def getRowDataAsList(self, key, collection_key='main'):
@@ -223,7 +223,7 @@ class AIsisUnit( object ):
             return vals
         except KeyError:
             logger.warning('Key %s does not exist in collection' % (key))
-            raise ('Key %s does not exist in collection' % (key))
+            raise KeyError ('Key %s does not exist in collection' % (key))
     
     
     def getHeadData(self):
