@@ -42,8 +42,6 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-# _global_order = 0
-# """Tracks the number of file parts."""
 
 class TuflowLoader(ATool, ALoader):
     """Loads all the data referenced by a .tcf file.
@@ -123,15 +121,11 @@ class TuflowLoader(ATool, ALoader):
         other files
         """
         
-        self._missing_model_files = []
-        """Collects tgc files etc that can't be loaded."""
-        
         self._global_order = 0
         """Tracks the number of file parts."""
 
         self._fetchTuflowModel(tcf_path)
         self.tuflow_model.model_order = self._model_order
-        self.tuflow_model._missing_model_files = self._missing_model_files
         return self.tuflow_model
 
     
@@ -146,7 +140,6 @@ class TuflowLoader(ATool, ALoader):
         
         # Add reference to the model route to the tuflow_model
         self.tuflow_model.root = file_d.root
-#         self.tuflow_model.part_order.append(file_d.head_hash)
 
         # Add file reference to the appropriate structures
         # Handed true because it is the root node.
@@ -160,9 +153,6 @@ class TuflowLoader(ATool, ALoader):
                                                            self.types.MODEL,
                                                            file_d.head_hash)
         self.tuflow_model.mainfile_hash = file_d.head_hash
-#         self.tuflow_model.file_parts[file_d.head_hash] = line_val
-#         self.tuflow_model._filename_lookup[line_val.getFileNameAndExtension()] = file_d.head_hash
-#         self.tuflow_model._hash_lookup[file_d.head_hash] = line_val.getFileNameAndExtension()
 
         self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
 
@@ -176,7 +166,7 @@ class TuflowLoader(ATool, ALoader):
             file_d = self._FileDetails(model_details, False)
             success = file_d.getFile()
             if success == False:
-                self._missing_model_files.append(file_d.filename)
+                self.tuflow_model.missing_model_files.append(file_d.filename)
                 continue
             
             else:
@@ -249,9 +239,6 @@ class TuflowLoader(ATool, ALoader):
                                                                        line_val,
                                                                        line_type,
                                                                        hex_hash)
-#                     self.tuflow_model.file_parts[hex_hash] = line_val
-#                     self.tuflow_model.part_order.append(hex_hash)
-        
         # Make sure we clear up any leftovers
         if unknown_contents:
             unknown_contents = _clearUnknownContents(file_d, line, model, 
@@ -379,8 +366,6 @@ class TuflowLoader(ATool, ALoader):
                                 self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
                                                                 line_val, command_type,
                                                                 hex_hash)
-#                                 self.tuflow_model._filename_lookup[multi_lines[i][0].getFileNameAndExtension()] = hex_hash
-#                                 self.tuflow_model._hash_lookup[hex_hash] = multi_lines[i][0].getFileNameAndExtension()
 
                             # TODO: currently the same _global_order for all the
                             #       files in a piped command. Should they be 
@@ -391,8 +376,6 @@ class TuflowLoader(ATool, ALoader):
                         self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
                                                                 line_val, command_type,
                                                                 hex_hash)
-#                         self.tuflow_model._filename_lookup[line_val.getFileNameAndExtension()] = hex_hash
-#                         self.tuflow_model._hash_lookup[hex_hash] = line_val.getFileNameAndExtension()
         else:
             command_type = self.types.UNKNOWN
             line_val = line
