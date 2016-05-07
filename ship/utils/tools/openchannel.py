@@ -57,7 +57,7 @@ def interpolateGaps(y_vals, space):
 
 
 def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[], 
-                        no_panels=False, interpolate_space=0):
+                        no_panels=False, interpolate_space=0, tolerance=0.0):
     """Calculate conveyance over a range of depths from min to max elevation.
     
     Args:
@@ -70,6 +70,9 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
             in the calculations.
         interpolate_space=0(int): float stipulating the maximum allowable space
             between depths. If zero then only section elevations will be used.
+        tolerance=0.0(float): tolerance used to identify negative conveyance.
+            if the reduction in conveyance is less than tolerance it will not
+            be flagged.
     
     Return:
         Tuple:  
@@ -267,8 +270,9 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         negative = False
         depth_k = sum(total_k)
         if not previous_k == -1 and previous_k > depth_k:
-            negative = True
-            has_negative = True
+            if (previous_k - depth_k) > tolerance:
+                negative = True
+                has_negative = True
         previous_k = depth_k
         
         results.append([depth_k, d, negative])
