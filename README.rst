@@ -1,6 +1,12 @@
 SHIP
 ====
 
+Notice
+------
+
+This library is very much in Beta at the moment and is likely to be altered in
+ways that may change the public facing API and the structure of packages. 
+
 SHIP (Simple Hydaulic model Interface for Python) is an API for interacting
 with 1D and 2D hydrulic models; principally ISIS/FMP and TUFLOW. A range
 of interfaces are provided to make accessing and updating model files with
