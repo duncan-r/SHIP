@@ -155,7 +155,7 @@ class TuflowLoader(ATool, ALoader):
 #                                                            line_val, 
 #                                                            self.types.MODEL,
 #                                                            file_d.head_hash)
-        self.tuflow_model.mainfile = [line_val, file_d.head_hash]
+        self.tuflow_model.mainfile = line_val
 
         
         #self.tuflow_model.mainfile_hash = file_d.head_hash

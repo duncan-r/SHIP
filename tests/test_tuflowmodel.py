@@ -6,6 +6,7 @@ import hashlib
 from ship.tuflow.tuflowmodel import *
 from ship.tuflow.tuflowmodelfile import *
 from ship.tuflow.tuflowfilepart import *
+from ship.tuflow import FILEPART_TYPES as ft
 
 
 def _encodeHash(salt):
@@ -22,52 +23,45 @@ class TuflowModelTests(unittest.TestCase):
         """Setup global test values"""
         
         self.tuflow_model = TuflowModel()
-        
         self.fake_root = 'c:\\some\\fake\\root'
-        
         self.tuflow_model.model_order = ModelOrder()
         
         # MODEL type
         tcfpath = 'c:\\some\\fake\\root\\main.tcf'
         self.tcf_hex_hash = _encodeHash(tcfpath)
-        tcf_part = TuflowFile(1, tcfpath, self.tcf_hex_hash, 0, 'tcf', self.fake_root, 'tcf')
-        self.tuflow_model.file_parts[self.tcf_hex_hash] = ModelFileEntry(tcf_part, 0, self.tcf_hex_hash)
-        model_file = TuflowModelFile('tcf', '3hh3h43ykjdhakjhf')
-        self.tuflow_model.files['tcf'][self.tcf_hex_hash] = model_file
-        self.tuflow_model.model_order.addRef(ModelRef(self.tcf_hex_hash, 'tcf'), True)
+        self.mfileTcf = TuflowFile(1, tcfpath, self.tcf_hex_hash, ft.MODEL, 'tcf', self.fake_root, category='tcf')
+        self.tuflowmodelfile = TuflowModelFile('tcf', self.mfileTcf.hex_hash, None)
+
+        tgcpath = 'c:\\some\\fake\\root\\model.tgc'
+        self.tgc_hex_hash = _encodeHash(tgcpath)
+        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', self.fake_root, category='tgc')
         
         # GIS type
         gfilepath = '..\\madeuppath\\file.shp'
         self.gis_hex_hash = _encodeHash(gfilepath)
-        gfile = GisFile(1, gfilepath, self.gis_hex_hash, 2, 'Read GIS', self.fake_root)
-        model_file.addContent(2, self.gis_hex_hash)
-        self.tuflow_model.file_parts[self.gis_hex_hash] = ModelFileEntry(gfile, 2, self.gis_hex_hash)
+        gfile = GisFile(1, gfilepath, self.gis_hex_hash, ft.GIS, 'Read GIS', self.fake_root)
 
         # RESULTS type
         dfilepath = '..\\madeuppath\\2d\\results'
         self.result_hex_hash = _encodeHash(dfilepath)
-        dfile = TuflowFile(1, dfilepath, self.result_hex_hash, 1, 'OUTPUT FOLDER', self.fake_root)
-        model_file.addContent(1, self.result_hex_hash)
-        self.tuflow_model.file_parts[self.result_hex_hash] = ModelFileEntry(dfile, 1, self.result_hex_hash)
+        dfile = TuflowFile(1, dfilepath, self.result_hex_hash, ft.RESULT, 'OUTPUT FOLDER', self.fake_root)
 
         # VARIABLE type
         vinput = 'h v q d MB1 ZUK0  ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
         self.vars_hex_hash = _encodeHash(vinput)
-        vinput = ModelVariables(1, vinput, self.vars_hex_hash, 4, 'Map Output Data Types')
-        model_file.addContent(4, self.vars_hex_hash)
-        self.tuflow_model.file_parts[self.vars_hex_hash] = ModelFileEntry(vinput, 4, self.vars_hex_hash)
+        vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types')
         
+        self.tuflowmodelfile.addContent(ft.MODEL, mfileTgc)
+        self.tuflowmodelfile.addContent(ft.GIS, gfile)
+        self.tuflowmodelfile.addContent(ft.RESULT, dfile)
+        self.tuflowmodelfile.addContent(ft.VARIABLE, vfile)
+        self.tuflow_model.files['tcf'][self.tcf_hex_hash] = self.tuflowmodelfile
+        self.tuflow_model.model_order.addRef(ModelRef(self.tcf_hex_hash, 'tcf'), True)
+        self.tuflow_model.mainfile = self.mfileTcf
+
     
     def test_defaultValues(self):
         """Check that default values are correct"""
-        self.assertTrue(self.tuflow_model.MODEL == 0, 'Default MODEL value fail')
-        self.assertTrue(self.tuflow_model.RESULT == 1, 'Default RESULT value fail')
-        self.assertTrue(self.tuflow_model.GIS == 2, 'Default GIS value fail')
-        self.assertTrue(self.tuflow_model.DATA == 3, 'Default DATA value fail')
-        self.assertTrue(self.tuflow_model.VARIABLE == 4, 'Default VARIABLE value fail')
-        self.assertTrue(self.tuflow_model.UNKNOWN_FILE == 5, 'Default UNKNOWN_FILE value fail')
-        self.assertTrue(self.tuflow_model.UNKNOWN == 6, 'Default UNKNOWN value fail')
-        self.assertTrue(self.tuflow_model.COMMENT == 7, 'Default COMMENT value fail')
         self.assertTrue(self.tuflow_model.has_estry_auto == False, 'Default COMMENT value fail')
         
     
@@ -75,32 +69,33 @@ class TuflowModelTests(unittest.TestCase):
         """Ensure that the file path root is properly updated."""
         new_root = r'c:\new\path\testroot'
         self.tuflow_model.changeRoot(new_root)
-        self.assertTrue(self.tuflow_model.file_parts[self.gis_hex_hash].filepart.root == new_root, 'Update root path fail')
-        self.assertTrue(self.tuflow_model.file_parts[self.result_hex_hash].filepart.root == new_root, 'Update root path fail')
-        self.assertTrue(self.tuflow_model.file_parts[self.tcf_hex_hash].filepart.root == new_root, 'Update root path fail')
-    
-    
+        
+        for c in self.tuflow_model.files['tcf']['aa30168421c3c035ced927454f532b82'].contents:
+            if not isinstance(c[1], ModelVariables):
+                self.assertTrue(c[1].root == new_root, 'Update root path fail')
+            
+        
     def test_getPrintableContents(self):
         """Check that the contents are returned correctly"""
         contents = self.tuflow_model.getPrintableContents()
         
         test_dict = {'c:\\some\\fake\\root\\main.tcf': 
-                     ['Read GIS == ..\\madeuppath\\file.shp\n',
-                     'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n',
-                     'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n'
-                     ]
-                     }
-        self.assertDictEqual(contents, test_dict, 'Contents dict match fail')
+                        ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc\n', 
+                         'Read GIS == ..\\madeuppath\\file.shp\n', 'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n', 
+                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n'
+                        ]
+                    }
+        self.assertDictEqual(contents, test_dict, 'Contents dict match fail: \n' + str(contents))
         
 
     def test_testExists(self):
         """Check the test exists works properly"""
-        missing_tcf = ('8707338802f0a1d1c77ffd03d4f661d7', 'file.shp', 'c:\\some\\fake\\root')
-        missing_gis = ('aa30168421c3c035ced927454f532b82', 'main.tcf', 'c:\\some\\fake\\root')
+        missing_tgc = ['model.tgc', 'c:\\some\\fake\\root\\model.tgc']
+        missing_gis = ['file.shp', 'c:\\some\\fake\\madeuppath\\file.shp']
         
         missing_files = self.tuflow_model.testExists()
-        self.assertTupleEqual(missing_files[0], missing_tcf, 'Missing Tcf fail')
-        self.assertTupleEqual(missing_files[1], missing_gis, 'Missing Gis fail')
+        self.assertListEqual(missing_files[0], missing_tgc, 'Missing Tgc fail: ' + str(missing_files[0]))
+        self.assertListEqual(missing_files[1], missing_gis, 'Missing Gis fail: ' + str(missing_files[1]))
         
     
     def test_getFilenames(self):
@@ -112,105 +107,46 @@ class TuflowModelTests(unittest.TestCase):
         """
         
         # Using default args
-        testnames = ['file.shp', 'main.tcf']
-        filenames = self.tuflow_model.getFileNames(FilesFilter())
-        self.assertListEqual(testnames, filenames, 'filenames check fail')
+        testnames = ['model.tgc', 'file.shp']
+        filenames = self.tuflow_model.getFilePaths(name_only=True, include_results=False)
+        self.assertListEqual(testnames, filenames, 'filenames check fail: ' + str(filenames))
         
         # Using content types
         testnames = ['file.shp']
-        filenames = self.tuflow_model.getFileNames(FilesFilter(content_type=self.tuflow_model.GIS))
-        self.assertListEqual(testnames, filenames, 'filenames GIS only check fail')
-        
-        # Using file types
-        testnames = ['file.shp']
-        filenames = self.tuflow_model.getFileNames(FilesFilter(modelfile_type=['tcf']))
-        self.assertListEqual(testnames, filenames, 'filenames tcf only check fail')
-        
-        # Using a empty file type
-        testnames = []
-        filenames = self.tuflow_model.getFileNames(FilesFilter(modelfile_type=['tbc']))
-        self.assertListEqual(testnames, filenames, 'filenames empty check fail')
-        
-        # Using content types and file types
-        testnames = ['file.shp']
-        filenames = self.tuflow_model.getFileNames(FilesFilter(content_type=self.tuflow_model.GIS, modelfile_type=['tcf']))
-        self.assertListEqual(testnames, filenames, 'filenames GIS and tcf only check fail')
-        
-        
-class TuflowModelFileTests(unittest.TestCase):
-    """Tests the TuflowModel class"""
+        filenames = self.tuflow_model.getFilePaths(file_type=ft.GIS, name_only=True)
+        self.assertListEqual(testnames, filenames, 'filenames GIS only check fail: ' + str(filenames))
     
-    def setUp(self):
-        """Setup global test values"""
+    
+    def test_getModelFiles(self):
+        """Check that we get all of the TuflowFile ft.MODEL objects."""
         
-        self.tcf_file = TuflowModelFile('tcf', 'b93yey483yrhfheu33')
-        
-        self.fake_root = 'c:\\some\\fake\\root'
-        
-        # GIS type
-        gfilepath = '..\\madeuppath\\file.shp'
-        self.gis_hex_hash = _encodeHash(gfilepath)
-        self.tcf_file.addContent(2, self.gis_hex_hash)
-        
-        # RESULTS type
-        dfilepath = '..\\madeuppath\\2d\\results'
-        self.result_hex_hash = _encodeHash(dfilepath)
-        self.tcf_file.addContent(1, self.result_hex_hash)
-        
-        # VARIABLE type
-        vinput = 'h v q d MB1 ZUK0  ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
-        self.vars_hex_hash = _encodeHash(vinput)
-        self.tcf_file.addContent(4, self.vars_hex_hash)
+        model_files = self.tuflow_model.getModelFiles()
+        tcf_hex = model_files['tcf'][0].hex_hash
+        tgc_hex = model_files['tgc'][0].hex_hash
+        self.assertEqual(len(model_files['tcf']), 1, 'tcf length fail: Length = ' + str(len(model_files['tcf'])))
+        self.assertEqual(len(model_files['ecf']), 0, 'ecf length fail: Length = ' + str(len(model_files['ecf'])))
+        self.assertEqual(len(model_files['tgc']), 1, 'tgc length fail: Length = ' + str(len(model_files['tgc'])))
+        self.assertEqual(len(model_files['tbc']), 0, 'tbc length fail: Length = ' + str(len(model_files['tbc'])))
+        self.assertEqual(tcf_hex, self.tcf_hex_hash, 'getModelFiles tcf hex fail: ' + tcf_hex)
+        self.assertEqual(tgc_hex, self.tgc_hex_hash, 'getModelFiles tgc hex fail: ' + tgc_hex)
         
     
-    def test_addContent(self):
-        """Make sure that adding different types of content works.
+    def test_getTMFFromTuflowFile(self):
+        """Check we get the right TuflowModelFile from a TuflowFile."""
         
-        If this doesn't work it will probably throw an error anyway because the
-        setup uses it to make default values.
+        model = self.tuflow_model.getTMFFromTuflowFile(self.mfileTcf)
+        test_hex = self.tuflowmodelfile.hex_hash
+        self.assertEqual(model.hex_hash, test_hex, 'getTMF hash fail: ' + model.hex_hash)
         
-        This test just makes sure it's doing exactly what we think.
-        """
-        gfilepath = '..\\madeuppath\\file2.mif'
-        local_hash = _encodeHash(gfilepath)
-        self.tcf_file.addContent(2, local_hash)
-        
-        self.assertEqual(self.tcf_file.content_order[-1][0], 2, 'Added content hash not found')
-        self.assertEqual(self.tcf_file.content_order[-1][1], local_hash, 'Added content hash not found')
 
-        unknown_contents = '''!Probably a comment or something\n
-                          \n
-                          # Broken over multiple lines\n'
-                          \n'''
+    def test_getTuflowFileFromTMF(self):
+        """Check we get the right TuflowFile from a TuflowModelFile."""
         
-        local_hash = _encodeHash(unknown_contents)
-        self.tcf_file.addContent(6, local_hash, unknown_contents)
+        model = self.tuflow_model.getTuflowFileFromTMF(self.tuflowmodelfile)
+        test_hex = self.mfileTcf.hex_hash
+        self.assertEqual(model.hex_hash, test_hex, 'getTuflowFile hash fail: ' + model.hex_hash)
         
-        self.assertEqual(self.tcf_file.content_order[-1][0], 6, 'Added unknown content type not found')
-        self.assertEqual(self.tcf_file.content_order[-1][1], local_hash, 'Added unknown content hash not found')
-        self.assertEqual(self.tcf_file.content_order[-1][2], unknown_contents, 'Added unknown content details not found')
-        
-        
-    def test_getHashCategory(self):
-        """Test access to hash hexes by category"""
 
-        # With no type given
-        testlist = ['8707338802f0a1d1c77ffd03d4f661d7',
-                    '7e544dd862b6fb14c19bfa2ed41e38d3',
-                    '099a63e4d3fa9bbc50ec9c1a006a5ac7']
-        hashlist = self.tcf_file.getHashCategory()
-        self.assertListEqual(testlist, hashlist, 'No type fail')
-        
-        # With GIS type given
-        testlist = ['8707338802f0a1d1c77ffd03d4f661d7']
-        hashlist = self.tcf_file.getHashCategory(2)
-        self.assertListEqual(testlist, hashlist, 'GIS type fail')
-        
-        # With variable type given
-        testlist = ['099a63e4d3fa9bbc50ec9c1a006a5ac7']
-        hashlist = self.tcf_file.getHashCategory(4)
-        self.assertListEqual(testlist, hashlist, 'Variable type fail') 
-        
 
 class TuflowTypesTests(unittest.TestCase):
     """
@@ -219,23 +155,6 @@ class TuflowTypesTests(unittest.TestCase):
     def setUp(self):
         """Setup what we need"""
         self.types = TuflowTypes()
-        
-    
-    def test_defaultValues(self):
-        """Check that default values are correct
-        
-        This is important becuase these are declared separately in both the
-        TuflowModel class and TuflowTypes class. It's stupid, but at least the
-        tests should pick up if either of them change.
-        """
-        self.assertTrue(self.types.MODEL == 0, 'Default MODEL value fail')
-        self.assertTrue(self.types.RESULT == 1, 'Default RESULT value fail')
-        self.assertTrue(self.types.GIS == 2, 'Default GIS value fail')
-        self.assertTrue(self.types.DATA == 3, 'Default DATA value fail')
-        self.assertTrue(self.types.VARIABLE == 4, 'Default VARIABLE value fail')
-        self.assertTrue(self.types.UNKNOWN_FILE == 5, 'Default UNKNOWN_FILE value fail')
-        self.assertTrue(self.types.UNKNOWN == 6, 'Default UNKNOWN value fail')
-        self.assertTrue(self.types.COMMENT == 7, 'Default COMMENT value fail')
         
     
     def test_find(self):

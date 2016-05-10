@@ -34,58 +34,14 @@
 import os
 import operator
 
-from ship.tuflow.tuflowfilepart import TuflowFile
+from ship.tuflow.tuflowfilepart import TuflowFile, ModelVariables
+from ship.tuflow.tuflowmodelfile import TuflowModelFile
 from ship.tuflow import FILEPART_TYPES as ft
 
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-
-class FilesFilter(object):
-    """Filter class to use when requesting file data from TuflowModel.
-    
-    This is for convenience to avoid multiple long method argument calls
-    when dealing with TuflowModel methods that return file objects or 
-    filenames.
-    """
-    
-    def __init__(self, modelfile_type=[], content_type=None, 
-                 filename_only=False, no_duplicates=False, 
-                 in_model_order = False, all_types=False, with_extension=True):
-        
-        self.modelfile_type = modelfile_type
-        """The type of model file to return for.
-        
-        This could be 'main', 'tcf', 'ecf', 'tgc', or 'tbc'.
-        
-        'main' returns only the main '.tcf' file. I.e. the tcf file that is
-        called to load the model.
-        
-        If None all types will be returned.
-        """
-        
-        self.content_type = content_type
-        """ The type of filepart to return.
-        
-        This could be TuflowModel.GIS/MODEL/RESULT/etc.
-        """
-        
-        self.filename_only = filename_only
-        """Get the TuflowFilePart of only the filename."""
-
-        self.no_duplicates = no_duplicates
-        """Remove any duplicate filename entries."""
-        
-        self.in_model_order = in_model_order
-        """Return in the order that the file parts were read in."""
-        
-        self.all_types = all_types
-        """If True will return all associated file extensions (e.g. mid/mif)"""
-        
-        self.with_extension = with_extension
-        """Include the file extension in the filename."""
-        
 
     
 class TuflowModel(object):
@@ -103,38 +59,18 @@ class TuflowModel(object):
     # tbc
     # ecf
     
-    The file_parts are :class:'<TuflowFilePart>' instances.
-
-    This class is the only object to hold the actual data found in the tuflow
-    files (model variables, file paths, etc), within the file_parts dictionary.
-    Any other references held by other classes are only hash codes that can 
-    be used to access the actual data in the file_parts dict. This approach
-    has been taken to avoid complications arising in having mutliple instances
-    of the TuflowFilePart objects in many places. This can be complicated by,
-    for instance, the tcf having a reference to a tgc, whicha has a reference
-    to a TuflowFilePart (e.g. a Gis file command in the tgc file). If the 
-    objects themselves were referenced by the the different TuflowModelFile's
-    there would be multiple versions of the same TuflowFilePart held in 
-    memory. In this case updating it would prove problematic and it would be
-    easy to introduce bugs. This setup centralies the path and makes looking
-    up the actual data simple. The hash codes held by the different model files
-    are created during load time and will not change throughout the life of
-    the TuflowModel object.
+    
     """
     
     def __init__(self):
         """Initialise constants and dictionaries.
         """
-#         self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
-#         self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
-        """Constants for accessing categories in class"""
 
         self.files = {}
         self.files['tcf'] = {}
         self.files['tgc'] = {}
         self.files['tbc'] = {}
         self.files['ecf'] = {}
-        #self.file_parts = {}
         
         self.model_order = None
         """Reference to a :class:'ModelOrder' object"""
@@ -154,14 +90,21 @@ class TuflowModel(object):
     
     
     def getPrintableContents(self):    
-        """
+        """Get the TuflowModel ready to write to disk.
+        
+        Returns a dictionary with the absolute path of the different model
+        files making up the model as keys and a list containing the lines of
+        the files (with newline characters appended) as the values.
+        
+        Return:
+            dict.
         """
         order = self.model_order.getRefOrder()
         output = {}
         for o in order:
             
             if o[2] is None:  # It's the root of the order tree
-                model_file = self.mainfile[0]
+                model_file = self.mainfile
             else:
                 model_file = self.files[o[3]][o[2]].getEntryByHash(o[0])
             output[model_file.getAbsolutePath()] = self._getFilePrintableContents(self.files[o[1]][o[0]])
@@ -225,163 +168,6 @@ class TuflowModel(object):
         return output
     
     
-#     def getPrintableContents(self):
-#         """Returns a dictionary of all the file contents ready to write to disk.
-#         
-#         Each dict entry contains a list. The list can be written to file by
-#         iterating and writing each entry as a new line.
-#         
-#         The lines already contain newline chars.
-#         
-#         Returns:
-#             Dict containing entries for each model file loaded.
-#         """
-#         orders = self.model_order.getRefOrder()
-#         output = {}
-#         for order in orders:
-#             filename = self.file_parts[order[0]].filepart.getAbsolutePath()
-#             output[filename] = self._getFilePrintableContents(self.files[order[1]][order[0]])
-#             
-#         return output
-    
-
-#     def _getFilePrintableContents(self, model_file):
-#         """Get the printable contents from each file referenced by this class.
-#         
-#         Args:
-#             model_file(self.file): file to retrive the contents from.
-#             
-#         Results:
-#             List containing the entries in the model_file.
-#         """
-#         skip_codes = []
-#         output = []
-#         
-#         '''Read the order of the contents in the model file.
-#         [0] = the type of file part: MODEL, COMMENT, GIS, etc
-#         [1] = the hex_hash of the file part
-#         [2] = the comment contents (or None if it's not a comment section
-#         '''
-#         for entry in model_file.content_order:
-#             
-#             line_type = entry[0]
-#             hex_hash = entry[1]
-#             if hash in skip_codes: continue
-# 
-#             if line_type == self.COMMENT:
-#                 output.append(''.join(entry[2]))
-#             else:
-#                 f = self.file_parts[hex_hash].filepart 
-#                 
-#                 if f.category == 'ecf':
-#                     if self.has_estry_auto:
-#                         temp = ' '.join([f.command, 'Auto !', f.comment])
-#                         output.append(temp)
-#                 else:
-#                     
-#                     # If there's piped files
-#                     if isinstance(f, TuflowFile) and not f.child_hash is None:
-#                         out_line = []
-#                         has_children = True
-#                         out_line.append(f.getPrintableContents())
-#                         
-#                         # Keep looping through until there are no more piped files
-#                         while has_children:
-#                             if not f.child_hash is None:
-#                                 f = self.file_parts[f.child_hash].filepart
-#                                 out_line.append(f.getPrintableContents())
-#                                 skip_codes.append(f.hex_hash)
-#                             else:
-#                                 output.append(' | '.join(out_line) + '\n')
-#                                 has_children = False
-#                             
-#                     else:
-#                         output.append(f.getPrintableContents() + '\n')
-#         
-#         return output
-    
-
-    def getModelFilesByAllTypes(self, files_filter):
-        """Get all of the model files referenced by this instance.
-        
-        Args:
-            files_filter(FilesFilter): containing parametres used to define 
-                the output of the return values,
-        
-        See Also:  
-            :class:'FilesFilter <FilesFilter>'
-        """
-        model_files = {}
-        for f in self.files.keys():
-            
-            # If there's a KeyError it means there are no files of that type
-            # so move on
-            try:
-                files_filter.modelfile_type = [f]
-                model_files[f] = self.getModelFilesByType(files_filter) 
-            except KeyError:
-                pass
-        
-        return model_files
-        
-    
-    def getModelFilesByType(self, files_filter):
-        """Get the file names for the given model type.
-        
-        If model_type left as the default 'main' it will return a list
-        containing only the entry file value. i.e. either the tcf or ecf that
-        was called to load the model.
-        
-        Args:
-            files_filter(FilesFilter): settings class for determing the setup
-                of the return values.
-        
-        Return:
-            list - Either the TuflowModelFile's as found based on the 
-                model_type provided, or the filenames for entry tcf/ecf file 
-                if name_only=True.
-        
-        Raises:
-            KeyError: when the given model_type does not exist.
-            AttributeError: if the given model_type is None. 
-                getModelFilesByAllTypes() function should be used in this case.
-        
-        See Also:
-            :class: 'FilesFilter <FilesFilter>'
-        """
-        if not files_filter.modelfile_type:
-            logger.error('FilesFilter.model_type == []: Use getModelFilesByAllTypes() function to return all types')
-            raise AttributeError ('FilesFilter.model_type == []: Use getModelFilesByAllTypes() function to return all types')
-            
-        
-        model_files = []
-        if files_filter.modelfile_type == 'main':
-            model_files = [self.file_parts[self.mainfile_hash].filepart]
-            #[self.file_parts[self.file_parts[0]].filepart]
-        else:
-            for mtype in files_filter.modelfile_type:
-                try:
-                    file_type = self.files[mtype]
-                except KeyError:
-                    logger.error('Key %s does not exist in files' % (mtype))
-                    raise KeyError ('Key %s does not exist in files' % (mtype))
-                
-                if not files_filter.filename_only: 
-                    for val in file_type.values():
-                        model_files.append(val)
-                else:
-                    for f in file_type:
-                        model_files.append(self.file_parts[f].filepart)
-            
-        output = []
-        if files_filter.filename_only:
-            for m in model_files:
-                output.append(m.getFileNameAndExtension())
-            model_files = output
-        
-        return model_files
-        
-        
     def changeRoot(self, new_root):
         """Update the root value of all files.
         
@@ -393,12 +179,15 @@ class TuflowModel(object):
         suchlike.
         
         """
-        for part in self.file_parts.values():
-            if part.isTuflowFile():
-                part.filepart.root = new_root
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                for content in model_file.contents:
+                    if isinstance(content[1], TuflowFile):
+                        content[1].root = new_root
         
-        self.root = new_root 
-    
+        self.mainfile.root = new_root
+        self.root = new_root
+        
     
     def testExists(self):
         """Tests all of the files referenced by this model to see if they exist.
@@ -411,205 +200,238 @@ class TuflowModel(object):
                 that doesn't exist or an empty list if all exist.
         """
         missing = []
-        for hex_hash, part in self.file_parts.iteritems():
-            
-            if part.isTuflowFile():
-                if not part.part_type == self.RESULT:
-                    p = part.filepart.getAbsolutePath() # DEBUG
-                    if not os.path.exists(part.filepart.getAbsolutePath()):
-                        missing.append((hex_hash, part.filepart.getFileNameAndExtension(), part.filepart.root))
-        
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                missing.extend(model_file.testExists())
+                        
         return missing
     
     
-    def getFileNamesFromModelFile(self, modelfile):
-        """Get all of the file names from a partcular TuflowModelFile.
-        
-        Retrieves a list of the all of the hash codes held by the model file.
-        Performs a lookup in the TuflowFileParts dictionary and returns all
-        parts derived from TuflowFile.
+    def getVariables(self, no_duplicates=False):
+        """Get ModelVariable's included in the model.
         
         Args:
-            modelfile(TuflowModelFile): used to retrive all file names from.
-            
-        Returns:
-            list - containing all of the filename.ext's referenced by the
-                given TuflowModelFile.
+            no_duplicates=False(bool): if set to True any duplicate variables
+                will be removed. This is based on the command. The last call to
+                that command will be the one returned.
         """
-        files = []
-        all_hashes = modelfile.getHashCategory(include_comments=False)
-        for part_hash in all_hashes:
-            part = self.file_parts[part_hash]
-            if part.isTuflowFile():
-                files.append(part.filepart.getFileNameAndExtension())
+        output = []
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                output.extend(model_file.getVariables())
         
-        return files
+        
+        if no_duplicates:
+            output = self.orderByGlobal(output, reverse=True)
+            output = self.removeDuplicateVariables(output)
+            output = self.orderByGlobal(output, reverse=False)
+        else:
+            output = self.orderByGlobal(output, reverse=False)
+        
+        return output
     
     
-    def getNameFromModelFile(self, modelfile):
-        """Return the filename.ext of the given TuflowModelFile.
+    def getFiles(self, file_type=None, no_duplicates=False, include_results=True):
+        """Get TuflowFile's included in the model.
         
         Args:
-            modelfile(TuflowModelFile): the file to retirve the name for.
+            file_type=None(FILEPART_TYPE): the type of file to return (e.g.
+                MODEL, GIS, etc)
+            no_duplicates=False(bool): the same file can be called multiple
+                times in Tuflow configuration files for different purposes.
+                If True this will only return one instance of it.
+            include_results=True(bool): will exclude any output files from the list.
+                Output, Check and Log files are often only a path without a 
+                filename. If name_only=True is used it will return blank
+                filenames. Setting this to False means they will be ignored.
+        
+        Return:
+            list - containing the matching TuflowFile's.
+        """
+        output = []
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                output.extend(model_file.getFiles(file_type, 
+                                                  include_results=include_results))
+        
+        output = self.orderByGlobal(output)
+        
+        if no_duplicates:
+            output = self.removeDuplicateFiles(output)
+        
+        return output
+    
+    
+    def getFilePaths(self, file_type=None, no_duplicates=False, in_order=False, 
+                      name_only=False, include_results=True):
+        """Get the absolute file paths of all TuflowFile objects in the model.
+        
+        Args:
+            file_type=None(FILEPART_TYPE): the type of file to return (e.g.
+                MODEL, GIS, etc)
+            no_duplicates=False(bool): the same file can be called multiple
+                times in Tuflow configuration files for different purposes.
+                If True this will only return one of them.
+            in_order=False(bool): if True the file paths will be returned in
+                the order that they are read by Tuflow.
+            name_only=False(bool): if True only the filename rather than the
+                complete absolute path will be returned.
+            include_results=True(bool): will exclude any output files from the list.
+                Output, Check and Log files are often only a path without a 
+                filename. If name_only=True is used it will return blank
+                filenames. Setting this to False means they will be ignored.
+        
+        Return:
+            list - containing the matching paths.
+        """
+        output = []
+        files = self.getFiles(file_type=file_type, include_results=include_results)
+
+        if in_order:
+            files = self._orderByGlobal(files)
+        
+        if no_duplicates:
+            output = self._removeDuplicateFilenames(output)
+
+        if name_only:
+            output = [i.getFileNameAndExtension() for i in files]
+        else:
+            output = [i.getAbsolutePath() for i in files]
+
+        return output
+        
+                
+    def getTuflowModelFiles(self):
+        """Returns the TuflowModelFile objects.
+        
+        TuflowModelFile's are containers for all of the main model files (tcf,
+        tgc, tbc, ecf) in the TuflowModel. They contain all of the TuflowFile,
+        ModelVariable and any unknown contents (like comments) loaded.
+        
+        See Also:
+            getModelFiles - which returns the TuflowFile references for each
+                of the TuflowModelFile's in the TuflowModel.  
+            
+            getTMFFromTuflowFile - return the TuflowModelFile object associated
+                with a TuflowFile of FILEPART_TYPES.MODEL.  
+            
+            getTuflowFileFromTMF - return the TuflowFile object associated with
+                a TuflowModelFile of FILEPART_TYPES.MODEL.
+        
+        Return:
+            dict - keys are the TuflowModelFile category (tcf, tcf, etc) and
+                the values are lists of tuples (TuflowModelFile, filename). As
+                the TuflowModelFile does not contain it's own TuflowFile 
+                reference it's filename is returned for reference.
+        """
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': []}
+        for key, val in self.files.iteritems():
+            for tmf in val.values():
+                name = self.getTuflowFile(tmf).getFileNameAndExtension()
+                output[key].append([tmf, name])
+        
+        return output
+        
+
+    def getModelFiles(self):
+        """Returns the TuflowFiles corresponding to each of the TuflowModelFile's.
+        
+        These are the values that are loaded under FILEPART_TYPES.MODEL. This
+        function only returns the TuflowFile (TuflowFilePart subclass), it 
+        does not contain any references to other files they refer to.
+        
+        See Also:
+            getTuflowModelFiles - which will return a container referencing all
+                of the contents of the tcf, tgc, etc file.  
+                
+            getTMFFromTuflowFile - return the TuflowModelFile object associated
+                with a TuflowFile of FILEPART_TYPES.MODEL.  
+            
+            getTuflowFileFromTMF - return the TuflowFile object associated with
+                a TuflowModelFile of FILEPART_TYPES.MODEL.
+        
+        Return:
+            dict - keys are the TuflowModelFile category (tcf, tgc, etc). Values
+                are the TuflowFiles for that type.
+        """
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': []}
+        output[self.mainfile.category].append(self.mainfile)
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                files = model_file.getFiles(ft.MODEL)
+                
+                for f in files:
+                    output[f.category].append(f)
+        
+        return output
+
+    
+    def getTMFFromTuflowFile(self, tuflowfile):
+        """Get the TuflowModelFile associated with the given TuflowFile.
+        
+        Tuflow control files (tcf, tgc, etc) are represented in two ways. They
+        are TuflowFile's like any other file and they are TuflowModelFile's
+        which are containers for the other data they hold.
+        
+        This is a convenience function to access the TuflowFile from a given
+        TuflowModelFile. 
+        
+        Args:
+            tuflowfile(TuflowFile): 
             
         Return:
-            string - name.extension of the given TuflowModelFile.
-        """
-        return self.file_parts[modelfile.hex_hash].filepart.getFileNameAndExtension()
-    
-    
-    def getFileNames(self, files_filter, extensions=[]):
-        """Return file names referenced by this class.
+            TuflowModelFile.
         
-        If no options are given all files referenced by this object will be
-        returned.
+        Raises:
+            AttributeError - if tuflowfile is not an instance of TuflowFile or
+                it is not of type FILEPART_TYPES.MODEL.
+        """
+        if not isinstance(tuflowfile, TuflowFile):
+            raise AttributeError
+        if not tuflowfile.TYPE == ft.MODEL:
+            raise AttributeError
+        
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                if model_file.hex_hash == tuflowfile.hex_hash:
+                    return model_file
+    
+    
+    def getTuflowFileFromTMF(self, tuflowmodelfile):
+        """Get the TuflowFile associated with the given TuflowModelFile.
+        
+        Tuflow control files (tcf, tgc, etc) are represented in two ways. They
+        are TuflowFile's like any other file and they are TuflowModelFile's
+        which are containers for the other data they hold.
+        
+        This is a convenience function to access the TuflowModelFile from a given
+        TuflowFile. 
         
         Args:
-            content_type(int): class constant defining which type of file to
-                return (e.g self.GIS).
-            file_type(str): Optional - the str denoting a specific type of file
-                to interogate (e.g. 'tbc').
-            all_types=False(Bool): If True it will return all file extensions
-                associated with the name (e.g. mid, mif). Always return name
-                + extension, i.e. with_extension has no affect.
-            with_extension=False(Bool): If True, returns the file extension
-                appended to the name. 
-            extensions=[](list): If set returns only the files with the 
-                given extensions.
-            in_order=False(Bool): if True the selected parts will be return in
-                the order that they were loaded.
-            no_duplicates=False(Bool): Remove all duplicated entries from
-                the output list.
-                
-        Returns:
-            List - filenames found.
+            tuflowmodelfile(TuflowModelFile): 
             
-        Note:
-            Attempts to return all file names, which include the result files,
-            which can be emtpy strings i.e. may not have an actual filename
-            as they are only a directory.
+        Return:
+            TuflowFile.
+        
+        Raises:
+            AttributeError - if tuflowmodelfile is not an instance of 
+                TuflowModelFile. 
         """
-        contents = self.getContents(files_filter.content_type, files_filter.modelfile_type, 
-                                    extensions, files_filter.in_model_order,
-                                    files_filter.no_duplicates)
+        if not isinstance(tuflowmodelfile, TuflowModelFile):
+            raise AttributeError
         
-        files = [f for f in contents if isinstance(f, TuflowFile)]
+        if tuflowmodelfile.parent_hash is None:
+            return self.mainfile
         
-        filenames = []
-        for f in files:
-            
-            if files_filter.all_types:
-                ftypes = f.getFileNameAndExtensionAllTypes()
-                for ftype in ftypes:
-                    if ftype == '': continue  # This can be blank for result/check files
-                    filenames.append(ftype)
-            else:
-                if files_filter.with_extension:
-                    fname = f.getFileNameAndExtension()
-                    if fname == '': continue 
-                    filenames.append(fname)
-                else:
-                    fname = f.file_name
-                    if fname == '': continue 
-                    filenames.append(fname)
+        for key, val in self.files.iteritems():
+            for h, tmf in val.iteritems():
+                if h == tuflowmodelfile.parent_hash:
+                    return tmf.getEntryByHash(tuflowmodelfile.hex_hash)
         
-        return filenames
-                
-                
-    def getAbsolutePaths(self, files_filter, extensions=[]): #content_type=None, file_type=None, all_types=False):
-        """
-        """
-        contents = self.getContents(files_filter.content_type, 
-                                    files_filter.modelfile_type, extensions,
-                                    files_filter.in_model_order, 
-                                    files_filter.no_duplicates)
-        filenames = []
-        if files_filter.all_types:
-            for f in contents:
-                if isinstance(f, TuflowFile):
-                    rel_paths = f.getAbsolutePath(all_types=True)
-                    for r in rel_paths:
-                        filenames.append(r)
-        else:
-            for f in contents:
-                if isinstance(f, TuflowFile):
-                    filenames.append(f.getAbsolutePath())
-        return filenames
-        
-
-    def getContents(self, content_type=None, modelfile_type=[], extensions=[],
-                                        in_order=False, no_duplicates=False):
-        """Get the objects stored by this tuflow model.
-        
-        If no options are given allfile parts referenced by this object will be
-        returned.
-        
-        Args:
-            content_type(int): class constant defining which type of file to
-                return (e.g self.GIS).
-            file_type(str): Optional - the str denoting a specific type of model
-                file to interogate (e.g. 'tbc').
-            extensions=[](list): If set returns only the files with the 
-                given extensions.
-            in_order=False(Bool): if True the selected parts will be return in
-                the order that they were loaded.
-            no_duplicates=False(Bool): Only call if setting content_type to a
-                TuflowFile type (GIS, MODEL, DATA - Not VARIABLE). Removes any
-                duplicate file entries. Useful if, for example, there are 
-                multiple calls the same file, such as a boundary conditions 
-                file and you only want a single reference.
-                
-        Returns:
-            List - TuflowFilePart's found.
-        """
-        extensions = [x.upper() for x in extensions]        
-        
-        content = []
-        if not modelfile_type:
-            if content_type is None:
-                content = [c.filepart for c in self.file_parts.values()] 
-            else:
-                content = [c.filepart for c in self.file_parts.values() if c.part_type == content_type]
-        
-        else:
-            hashes = None
-            for mtype in modelfile_type:
-                if mtype in self.files:
-                    
-                    # If file type has no entries
-                    if not self.files[mtype]:
-                        return []
-                    
-                    hashes = [f.getHashCategory(content_type) for f in self.files[mtype].values()][0]
-                else:
-                    hashes = []
-                    for file_type in self.files:
-                        hashes += [f.getHashCategory(content_type) for f in self.files[file_type].values()][0]
-
-                content = [self.file_parts[x].filepart for x in hashes]
-        
-        # If only TuflowFile types with a certain extension are wanted.
-        if len(extensions) > 0:
-            temp = []
-            for c in content:
-                if isinstance(c, TuflowFile):
-                    if c.extension.upper() in extensions:
-                        temp.append(c)
-            content = temp
-        
-        # Order list by global_order if requested
-        if in_order:
-            self._orderByGlobal(content)
-        
-        # Remove any duplicate file names if requested
-        # Only works for TuflowFile type objects
-        if no_duplicates and not content_type == self.VARIABLE:
-            content = self._removeDuplicateFilenames(content)
-
-        return content
-
+        return False
     
-    def _orderByGlobal(self, in_list, reverse=False):
+    
+    def orderByGlobal(self, in_list, reverse=False):
         """Order list by global_order attribute of TuflowFilePart.
         
         Args:
@@ -622,9 +444,30 @@ class TuflowModel(object):
         in_list.sort(key=operator.attrgetter('global_order'), reverse=reverse)
         return in_list
 
+
+    def removeDuplicateVariables(self, in_list):
+        """Removes duplicate entries from the given TuflowVariable list.
+        
+        Args:
+            in_list(list): list to remove duplicates from.
+        
+        Return::
+            list - with duplicates removed.
+        """
+        seen = {}
+        result = []
+        for item in in_list:
+            if not isinstance(item, ModelVariables): continue
+            marker = item.command
+            if marker in seen: continue
+            seen[marker] = 1
+            result.append(item)
+        
+        return result
+        
     
-    def _removeDuplicateFilenames(self, in_list):
-        """Removes duplicate entries from the given list.
+    def removeDuplicateFiles(self, in_list):
+        """Removes duplicate entries from the TuflowFile list.
         
         Args:
             in_list(list): list to remove duplicates from.
