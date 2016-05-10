@@ -30,23 +30,24 @@
 """
 
 from ship.tuflow.tuflowfilepart import TuflowFile
+from ship.tuflow import FILEPART_TYPES as ft
 
-class ModelFileEntry(object):
-    
-    def __init__(self, filepart, part_type, hex_hash):
-        self.filepart = filepart
-        self.hex_hash = hex_hash
-        self.part_type = part_type
-        self.file_name = None
-
-        if isinstance(self.filepart, TuflowFile):
-            self.file_name = self.filepart.file_name
-            
-
-    def isTuflowFile(self):
-        """
-        """
-        return isinstance(self.filepart, TuflowFile)
+# class ModelFileEntry(object):
+#     
+#     def __init__(self, filepart, part_type, hex_hash):
+#         self.filepart = filepart
+#         self.hex_hash = hex_hash
+#         self.part_type = part_type
+#         self.file_name = None
+# 
+#         if isinstance(self.filepart, TuflowFile):
+#             self.file_name = self.filepart.file_name
+#             
+# 
+#     def isTuflowFile(self):
+#         """
+#         """
+#         return isinstance(self.filepart, TuflowFile)
     
         
 
@@ -67,7 +68,7 @@ class TuflowModelFile(object):
         :module: 'tuflowfilepart <ship.tuflow.tuflowfilepart>'
     """
 
-    def __init__(self, line_type, hex_hash):
+    def __init__(self, line_type, hex_hash, parent_hash):
         """Constructor.
 
         Checks if the path to the file is absolute. If it doesn't it converts
@@ -79,10 +80,12 @@ class TuflowModelFile(object):
         """
         self.TYPE = line_type
         self.hex_hash = hex_hash
-        self.content_order = []
+        self.parent_hash = parent_hash
+#         self.content_order = []
+        self.contents = []
 
     
-    def addContent(self, line_type, hex_hash, unknown_contents=None):
+    def addContent(self, line_type, filepart): #, unknown_contents=None):
         """Add an entry to the content_order list.
         
         Entries are added in order so that the order can be maintained.
@@ -101,28 +104,48 @@ class TuflowModelFile(object):
                 loader cannot work out what to do with it. This way it can go
                 back out the same as it came in.
         """
+        self.contents.append([line_type, filepart])
 #         self.content_order.append(modelfile_entry)
-        if unknown_contents is None:
-            self.content_order.append([line_type, hex_hash])
-        else:
-            self.content_order.append([line_type, hex_hash, unknown_contents])
+#         if unknown_contents is None:
+#             self.content_order.append([line_type, hex_hash, tuflowpart])
+#         else:
+#             self.content_order.append([line_type, hex_hash, unknown_contents])
  
-     
-    def getHashCategory(self, line_type=None, include_comments=False):
-        """Returns the hex hash codes for all the objects of type.
-         
-        Args:
-            line_type (int): denotes the code find. This is one of the constants 
-            in :class:'TuflowModel' (GIS, MODEL, etc).
-         
-        Returns:
-            list - all of the hash codes in category type.
+    
+    def getEntryByHash(self, hex_hash):
         """
-        if line_type is None: 
-            if include_comments:
-                results = [c[1] for c in self.content_order]
-            else:
-                results = [c[1] for c in self.content_order if not len(c) > 2] 
+        """
+        for c in self.contents:
+            if c[0] == ft.UNKNOWN or c[0] == ft.COMMENT: continue
+            if c[1].hex_hash == hex_hash:
+                return c[1]
         else:
-            results = [c[1] for c in self.content_order if c[0] is line_type]
-        return results
+            raise AttributeError ("No entry found with hex_hash: " + hex_hash)
+    
+    
+     
+#     def getHashCategory(self, line_type=None, include_comments=False):
+#         """Returns the hex hash codes for all the objects of type.
+#          
+#         Args:
+#             line_type (int): denotes the code find. This is one of the constants 
+#             in :class:'TuflowModel' (GIS, MODEL, etc).
+#          
+#         Returns:
+#             list - all of the hash codes in category type.
+#         """
+#         if line_type is None: 
+#             if include_comments:
+#                 results = [c[1] for c in self.content_order]
+#             else:
+#                 results = [c[1] for c in self.content_order if not len(c) > 2] 
+#         else:
+#             results = [c[1] for c in self.content_order if c[0] is line_type]
+#         return results
+    
+    
+    
+    
+    
+    
+    

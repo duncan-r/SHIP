@@ -35,7 +35,9 @@ from ship.utils import utilfunctions as uuf
 from ship.utils.atool import ATool
 from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, \
                                               ModelRef, ModelOrder
-from ship.tuflow.tuflowmodelfile import TuflowModelFile, ModelFileEntry
+# from ship.tuflow.tuflowmodelfile import TuflowModelFile, ModelFileEntry
+from ship.tuflow.tuflowmodelfile import TuflowModelFile
+from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfilepart as tfp
 
 import logging
@@ -146,13 +148,17 @@ class TuflowLoader(ATool, ALoader):
         self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension), True)
         
         # Need to create one here becuase it's the first
-        line_val = file_d.generateModelTuflowFile(self.types.MODEL, self._global_order)
+#         line_val = file_d.generateModelTuflowFile(self.types.MODEL, self._global_order)
+        line_val = file_d.generateModelTuflowFile(ft.MODEL, self._global_order)
         self._global_order += 1
-        self.tuflow_model.file_parts[file_d.head_hash] = ModelFileEntry(
-                                                           line_val, 
-                                                           self.types.MODEL,
-                                                           file_d.head_hash)
-        self.tuflow_model.mainfile_hash = file_d.head_hash
+#         self.tuflow_model.file_parts[file_d.head_hash] = ModelFileEntry(
+#                                                            line_val, 
+#                                                            self.types.MODEL,
+#                                                            file_d.head_hash)
+        self.tuflow_model.mainfile = [line_val, file_d.head_hash]
+
+        
+        #self.tuflow_model.mainfile_hash = file_d.head_hash
 
         self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
 
@@ -199,7 +205,8 @@ class TuflowLoader(ATool, ALoader):
 
             c_hash = file_d.generateHash('comment' + line + str(
                                                 file_d.parent_hash))
-            model.addContent(self.types.COMMENT, c_hash, unknown_contents)
+#             model.addContent(self.types.COMMENT, c_hash, unknown_contents)
+            model.addContent(ft.COMMENT, unknown_contents)
             unknown_contents = []
             return unknown_contents
 
@@ -211,7 +218,8 @@ class TuflowLoader(ATool, ALoader):
             
             line_type = line_contents[0][2]
 
-            if line_type == self.types.COMMENT or line_type == self.types.UNKNOWN:
+#             if line_type == self.types.COMMENT or line_type == self.types.UNKNOWN:
+            if line_type == ft.COMMENT or line_type == ft.UNKNOWN:
                 unknown_contents.append(line_contents[0][0])
             else:
                 # Stash and clear any unknown stuff first if it's there.
@@ -224,9 +232,9 @@ class TuflowLoader(ATool, ALoader):
                     
                     line_val, hex_hash, line_type, ext = l
 
-                    model.addContent(line_type, hex_hash)
+                    model.addContent(line_type, line_val)
                     
-                    if line_type is self.types.MODEL:
+                    if line_type == ft.MODEL: #self.types.MODEL:
                         line_val, hex_hash, line_type, ext = line_contents[0]
 
                         rel_root = ''
@@ -235,10 +243,10 @@ class TuflowLoader(ATool, ALoader):
                         self._file_queue.enqueue([line_val.getAbsolutePath(), hex_hash, 
                                                   file_d.head_hash, rel_root])
 
-                    self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-                                                                       line_val,
-                                                                       line_type,
-                                                                       hex_hash)
+#                     self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
+#                                                                        line_val,
+#                                                                        line_type,
+#                                                                        hex_hash)
         # Make sure we clear up any leftovers
         if unknown_contents:
             unknown_contents = _clearUnknownContents(file_d, line, model, 
@@ -279,10 +287,10 @@ class TuflowLoader(ATool, ALoader):
         # It's a comment or blank line
         if line.startswith('#') or line.startswith('!'):
             line_val = line
-            command_type = self.types.COMMENT
+            command_type = ft.COMMENT #self.types.COMMENT
             
         elif line.strip() == '':
-            command_type = self.types.COMMENT
+            command_type = ft.COMMENT #self.types.COMMENT
         
         elif '==' in line or 'AUTO' in line.upper():
 
@@ -298,10 +306,10 @@ class TuflowLoader(ATool, ALoader):
             #       going into UNKNOWN FILE, if a file, so we can still update 
             #       them when needed. Even if we don't know what they do?
             if not found:
-                command_type = self.types.UNKNOWN
+                command_type = ft.UNKNOWN #self.types.UNKNOWN
                 line_val = line
             else:
-                if command_type == self.types.VARIABLE:
+                if command_type == ft.VARIABLE: #self.types.VARIABLE:
                     line_val = tfp.ModelVariables(self._global_order, instruction, 
                                             hex_hash, command_type, command)
                     self._global_order += 1
@@ -313,15 +321,17 @@ class TuflowLoader(ATool, ALoader):
 
                     if not isfile:
                         line_val = line
-                        command_type = self.types.COMMENT
+                        command_type = ft.COMMENT #self.types.COMMENT
                     else:    
                         ext = self.extractExtension(instruction)
                         f_type = self.file_types.get(ext)
                         
-                        # It's a model file
+                        # It's a model file or a results file
                         # TODO: Not safe yet...needs more work.
                         if f_type == None:
 
+                            # If it's a .trd file give it the extension of the
+                            # model file type that it's in (.tcf/.tgc/etc)
                             if ext is 'trd':
                                 ext = file_d.extension
                             line_val = tfp.TuflowFile(self._global_order, instruction, 
@@ -330,7 +340,7 @@ class TuflowLoader(ATool, ALoader):
                                                     file_d.relative_root, ext)
                             self._global_order += 1
 
-                            if command_type is self.types.RESULT:
+                            if command_type is ft.RESULT: #self.types.RESULT:
                                 line_val = self._resolveResult(line_val)
                         
                         # It's one of the files in self.types
@@ -363,9 +373,9 @@ class TuflowLoader(ATool, ALoader):
                                                    command_type,
                                                    ext]) 
                                 
-                                self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-                                                                line_val, command_type,
-                                                                hex_hash)
+#                                 self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
+#                                                                 line_val, command_type,
+#                                                                 hex_hash)
 
                             # TODO: currently the same _global_order for all the
                             #       files in a piped command. Should they be 
@@ -373,11 +383,11 @@ class TuflowLoader(ATool, ALoader):
                             self._global_order += 1
                             return multi_lines
 
-                        self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-                                                                line_val, command_type,
-                                                                hex_hash)
+#                         self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
+#                                                                 line_val, command_type,
+#                                                                 hex_hash)
         else:
-            command_type = self.types.UNKNOWN
+            command_type = ft.UNKNOWN #self.types.UNKNOWN
             line_val = line
         
         # Needs to be return in a list because of the multi_lines setup above.
@@ -643,7 +653,7 @@ class TuflowLoader(ATool, ALoader):
             Returns:
                 TuflowModelFile - based on extension in class.
             """
-            return TuflowModelFile(self.extension, self.head_hash) 
+            return TuflowModelFile(self.extension, self.head_hash, self.parent_hash) 
             
 
         def generateModelTuflowFile(self, line_type, global_order):

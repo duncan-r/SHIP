@@ -35,6 +35,7 @@ import os
 import operator
 
 from ship.tuflow.tuflowfilepart import TuflowFile
+from ship.tuflow import FILEPART_TYPES as ft
 
 import logging
 logger = logging.getLogger(__name__)
@@ -124,8 +125,8 @@ class TuflowModel(object):
     def __init__(self):
         """Initialise constants and dictionaries.
         """
-        self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
-        self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
+#         self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
+#         self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
         """Constants for accessing categories in class"""
 
         self.files = {}
@@ -133,7 +134,7 @@ class TuflowModel(object):
         self.files['tgc'] = {}
         self.files['tbc'] = {}
         self.files['ecf'] = {}
-        self.file_parts = {}
+        #self.file_parts = {}
         
         self.model_order = None
         """Reference to a :class:'ModelOrder' object"""
@@ -147,30 +148,27 @@ class TuflowModel(object):
         self.missing_model_files = []
         """Contains any tcf, tgs, etc files that could not be loaded."""
         
-        self.mainfile_hash = ''
-        """Hash code for the main file. I.e. the one that the model is loaded from."""
+        self.mainfile = []
+        """"""
         
     
-    def getPrintableContents(self):
-        """Returns a dictionary of all the file contents ready to write to disk.
-        
-        Each dict entry contains a list. The list can be written to file by
-        iterating and writing each entry as a new line.
-        
-        The lines already contain newline chars.
-        
-        Returns:
-            Dict containing entries for each model file loaded.
+    
+    def getPrintableContents(self):    
         """
-        orders = self.model_order.getRefOrder()
+        """
+        order = self.model_order.getRefOrder()
         output = {}
-        for order in orders:
-            filename = self.file_parts[order[0]].filepart.getAbsolutePath()
-            output[filename] = self._getFilePrintableContents(self.files[order[1]][order[0]])
+        for o in order:
             
+            if o[2] is None:  # It's the root of the order tree
+                model_file = self.mainfile[0]
+            else:
+                model_file = self.files[o[3]][o[2]].getEntryByHash(o[0])
+            output[model_file.getAbsolutePath()] = self._getFilePrintableContents(self.files[o[1]][o[0]])
+        
         return output
     
-
+    
     def _getFilePrintableContents(self, model_file):
         """Get the printable contents from each file referenced by this class.
         
@@ -180,7 +178,7 @@ class TuflowModel(object):
         Results:
             List containing the entries in the model_file.
         """
-        skip_codes = []
+        skip_lines = []
         output = []
         
         '''Read the order of the contents in the model file.
@@ -188,17 +186,15 @@ class TuflowModel(object):
         [1] = the hex_hash of the file part
         [2] = the comment contents (or None if it's not a comment section
         '''
-        for entry in model_file.content_order:
+        for i, entry in enumerate(model_file.contents, 0):
             
             line_type = entry[0]
-            hex_hash = entry[1]
-            if hash in skip_codes: continue
+            if i in skip_lines: continue
 
-            if line_type == self.COMMENT:
-                output.append(''.join(entry[2]))
+            if line_type == ft.COMMENT:
+                output.append(''.join(entry[1]))
             else:
-                f = self.file_parts[hex_hash].filepart 
-                
+                f = entry[1]
                 if f.category == 'ecf':
                     if self.has_estry_auto:
                         temp = ' '.join([f.command, 'Auto !', f.comment])
@@ -212,11 +208,13 @@ class TuflowModel(object):
                         out_line.append(f.getPrintableContents())
                         
                         # Keep looping through until there are no more piped files
+                        child_count = 1
                         while has_children:
                             if not f.child_hash is None:
-                                f = self.file_parts[f.child_hash].filepart
+                                f = model_file.contents[i + child_count][1]
                                 out_line.append(f.getPrintableContents())
-                                skip_codes.append(f.hex_hash)
+                                skip_lines.append(i + child_count)
+                                child_count += 1
                             else:
                                 output.append(' | '.join(out_line) + '\n')
                                 has_children = False
@@ -225,6 +223,82 @@ class TuflowModel(object):
                         output.append(f.getPrintableContents() + '\n')
         
         return output
+    
+    
+#     def getPrintableContents(self):
+#         """Returns a dictionary of all the file contents ready to write to disk.
+#         
+#         Each dict entry contains a list. The list can be written to file by
+#         iterating and writing each entry as a new line.
+#         
+#         The lines already contain newline chars.
+#         
+#         Returns:
+#             Dict containing entries for each model file loaded.
+#         """
+#         orders = self.model_order.getRefOrder()
+#         output = {}
+#         for order in orders:
+#             filename = self.file_parts[order[0]].filepart.getAbsolutePath()
+#             output[filename] = self._getFilePrintableContents(self.files[order[1]][order[0]])
+#             
+#         return output
+    
+
+#     def _getFilePrintableContents(self, model_file):
+#         """Get the printable contents from each file referenced by this class.
+#         
+#         Args:
+#             model_file(self.file): file to retrive the contents from.
+#             
+#         Results:
+#             List containing the entries in the model_file.
+#         """
+#         skip_codes = []
+#         output = []
+#         
+#         '''Read the order of the contents in the model file.
+#         [0] = the type of file part: MODEL, COMMENT, GIS, etc
+#         [1] = the hex_hash of the file part
+#         [2] = the comment contents (or None if it's not a comment section
+#         '''
+#         for entry in model_file.content_order:
+#             
+#             line_type = entry[0]
+#             hex_hash = entry[1]
+#             if hash in skip_codes: continue
+# 
+#             if line_type == self.COMMENT:
+#                 output.append(''.join(entry[2]))
+#             else:
+#                 f = self.file_parts[hex_hash].filepart 
+#                 
+#                 if f.category == 'ecf':
+#                     if self.has_estry_auto:
+#                         temp = ' '.join([f.command, 'Auto !', f.comment])
+#                         output.append(temp)
+#                 else:
+#                     
+#                     # If there's piped files
+#                     if isinstance(f, TuflowFile) and not f.child_hash is None:
+#                         out_line = []
+#                         has_children = True
+#                         out_line.append(f.getPrintableContents())
+#                         
+#                         # Keep looping through until there are no more piped files
+#                         while has_children:
+#                             if not f.child_hash is None:
+#                                 f = self.file_parts[f.child_hash].filepart
+#                                 out_line.append(f.getPrintableContents())
+#                                 skip_codes.append(f.hex_hash)
+#                             else:
+#                                 output.append(' | '.join(out_line) + '\n')
+#                                 has_children = False
+#                             
+#                     else:
+#                         output.append(f.getPrintableContents() + '\n')
+#         
+#         return output
     
 
     def getModelFilesByAllTypes(self, files_filter):
@@ -598,20 +672,21 @@ class TuflowTypes(object):
     def __init__(self):
         """Initialise the categories and known keywords"""
 
-        self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
-        self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
+#         self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
+#         self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
+        
         
         self.types = {}
-        self.types[self.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
+        self.types[ft.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
                                   'READ_FILE',
                                   'ESTRY CONTROL FILE', 'READ RESTART FILE']
-        self.types[self.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
+        self.types[ft.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
                                    'LOG FOLDER']
-        self.types[self.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
+        self.types[ft.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
                                 'SHP PROJECTION', 'MI PROJECTION']
-        self.types[self.DATA] =  ['READ MATERIALS FILE', 
+        self.types[ft.DATA] =  ['READ MATERIALS FILE', 
                                   'BC DATABASE']
-        self.types[self.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
+        self.types[ft.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
                                 'SET IWL', 'MAP OUTPUT INTERVAL', 
                                 'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
                                 'CELL SIDE WET/DRY DEPTH', 'SET IWL',
@@ -720,7 +795,7 @@ class ModelOrder(object):
             List containing the hex hash values of all the nodes in order.
         """
         order = []
-        order.append([self.root_hex, self.model_refs[self.root_hex].extension])
+        order.append([self.root_hex, self.model_refs[self.root_hex].extension, None, None])
         order = self._findAllSubRefs(order, self.root_hex)
         return order
     
@@ -737,7 +812,9 @@ class ModelOrder(object):
         """
         for child in self.model_refs[model_ref].children:
         
-            order.append([child, self.model_refs[child].extension])
+            order.append([child, self.model_refs[child].extension, 
+                          self.model_refs[child].parent_hash,
+                          self.model_refs[model_ref].extension])
             self._findAllSubRefs(order, child)
         
         return order
