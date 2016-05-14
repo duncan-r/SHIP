@@ -214,36 +214,51 @@ TUFLOW Files
 			created during the load process.
 		* The TuflowModel will then be returned by the FileLoader.
 		
-	The TuflowModel class contains all of the methods needed to access and update 
-	content in the different parts of the files. This may include:
-		* Fetching file names, checking they exists, or updating them.
-		* Changing the contents of a model file (tcf, tgc, etc).
-		* Getting certain TuflowFilePart's which may be:
-			* SomeFile - tuflow commands that involve files.
-			* ModelVariable - tuflow commands that involve variables.
-		* Accessing data of certain type using class constants:
-			* MODEL - files that contain other model data (tcf, tgc, etc)
-			* DATA - files that contain links to other files.
-			* GIS - gis file references.
-			* VARIABLE - model variables.
-			* RESULT - result, check, or log file references.
+	The TuflowModel class provides methods for accessing all of the data in the
+	model. These include convenience functions, such as:  
+		* Fetching file names or checking they exist.
+		* Getting list of all of the model files (tcf, tgc, etc)
+		* Getting TuflowFilePart by type (GIS, DATA, MODEL, RESULT, VARIABLE)
+		* Getting TuflowModelFiles, i.e. particular control files in the model.
+
+	When greater control is required you can obtain the TuflowModelFile's from the
+	TuflowModel. Particular categories can be specified (tcf, tgc, etc). These objects
+	contain the TuflowFilePart's loaded from the specific file. More detail on these
+	are given below. The TuflowModel allows you to:	
+		* Get TuflowModelFile's by category (tcf, tgc, etc)
+		* Get the TuflowFilePart corresponding to a particular TuflowModelFile.
+		* Get the TuflowModelFile corresponding to a particular TuflowFilePart (MODEL type).
+		
+	Accessing data of certain types is done using the FILEPART_TYPES enum in the tuflow package.
+	These include the following:
+		* MODEL - files that contain other model data (tcf, tgc, etc)
+		* DATA - files that contain links to other files.
+		* GIS - gis file references.
+		* VARIABLE - model variables.
+		* RESULT - result, check, or log file references.
 		
 	The TuflowModel is made up of several key components. Which are covered in
 	more depth below.
 	
 	
-ATuflowModelFile
+TuflowModelFile
 ----------------
 
-	This is used to store the type and hashcode of all TuflowFileParts that are
-	in a certain Tuflow model file (tcf, tgc, etc). It maintains a list of the
-	order that certain commands were read in and also keeps track of any content
-	that was unknown by the loader. This will be written out in exactly the same
-	way as it was read in.
+	This is the object that stores all of the data loaded from a Tuflow control
+	file. You can obtain either an individual TuflowModelFile, types of
+	TuflowModelFile (tcf, tgc, etc), or all TuflowModelFile's from the TuflowModel.
 	
-	The main purpose of this class is to keep track of what content was read in 
-	from what file and the order that it was read in. It also makes it simple to
-	access certain different types of TuflowFilePart.
+	The TuflowModelFile's contain a list, called contents, with all of the 
+	TuflowFileParts in the order that they were loaded (as well as any unknown
+	contents (comments etc) but these aren't much use in general).
+	
+	The contents list and it's components can be accessed using the class methods
+	including:  
+		* Getting file names
+		* Getting absolute or relative paths
+		* Getting TuflowFile's
+		* Getting ModelVariables
+		* and more.
 	
 	
 TuflowFilePart
