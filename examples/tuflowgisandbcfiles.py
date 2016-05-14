@@ -21,8 +21,8 @@
 from ship.utils.fileloaders import fileloader as fl
 # Used for loading tuflow data files
 from ship.tuflow.data_files import datafileloader as dfl
-# Used for function args in tuflow model
-from ship.tuflow.tuflowmodel import FilesFilter  
+# Enum for accessing TuflowFilePart types (GIS, MODEL, RESULT, VARIABLE, DATA)
+from ship.tuflow import FILEPART_TYPES as ft
 
 
 def tuflowFileExample():
@@ -37,21 +37,23 @@ def tuflowFileExample():
     loader = fl.FileLoader()
     tuflow_model = loader.loadFile(tcf_file)
     
-    # Create a filter object to set specific function arg status with 
-    # additional arguments set to defaults
-    f = FilesFilter(content_type=tuflow_model.GIS, no_duplicates=True)
-    
     # Get file names and absolute paths of all gis files referenced by the model
-    gis_files = tuflow_model.getFileNames(f)
-    gis_paths = tuflow_model.getAbsolutePaths(f)
-    combined = dict(zip(gis_files, gis_paths))
+    # First we get all GIS type files in the TuflowModel and to avoid getting the
+    # same type twice, caused by the same GIS file referenced in two locations
+    # in the model control files, we set no_duplicates=True.
+    gis_files = tuflow_model.getFiles(file_type=ft.GIS, no_duplicates=True)
+    names = []
+    paths = []
+    for g in gis_files:
+        names.append(g.getFileNameAndExtension())
+        paths.append(g.getAbsolutePath())
+
+    gis_combined = dict(zip(names, paths))
     
     # Get the data files objs referenced by the model.
     # These are files that point to additional data (tmf, bcdbase, 1d_xs, etc)
-    # In this case we want the the object itself, not just the filename, so 
-    # we use the getContents method instead
     bc_combined = []
-    data_objs = tuflow_model.getContents(content_type=tuflow_model.DATA, no_duplicates=True)
+    data_objs = tuflow_model.getFiles(file_type=ft.DATA, no_duplicates=True)
     
     # Loop through the data_objs and extract the names and file sources for 
     # each of the BC Database type files
@@ -64,7 +66,8 @@ def tuflowFileExample():
             bc_combined.append((data.getFileNameAndExtension(), dict(zip(names, sources))))
         
     print 'GIS files in model:'
-    for g in gis_files: print g
+    for name, path in gis_combined.items(): 
+        print name + ':\n' + path
     print '\nBC Database files in model:'
     for b in bc_combined:
         print b[0]
