@@ -246,6 +246,71 @@ class FileQueue(object):
     def size(self):
         """Get the size of the queue
         """
-        return len(self.items)   
+        return len(self.items)
+
+
+
+class LoadStack(object):
+    """Stack class for loading logic."""
+    
+    def __init__(self, max_size=-1):
+        self.items = []
+        self.max_size = max_size
+        
+    
+    def isEmpty(self):
+        """Return True if stack is empty."""
+        return self.items == []
+    
+    
+    def add(self, item):
+        """Add an item to the stack.
+        
+        Args:
+            item: the item to add to the stack.
+            
+        Raises:
+            IndexError: if max_size has been set and adding another item would
+                make the stack bigger than max size.
+        """
+        if not self.max_size == -1:
+            if len(self.items) + 1 > self.max_size:
+                raise IndexError
+        self.items.append(item)
+        
+    
+    def pop(self):
+        """Get an item From the stack.
+        
+        Return:
+            item from the top of the stack.
+            
+        Raises:
+            IndexError: if the stack is empty.
+        """
+        if len(self.items) == 0:
+            raise IndexError
+        return self.items.pop()
+        
+    
+    def peek(self):
+        """See what the next item on the stack is, but don't remove it.
+        
+        Return:
+            item from the top of the stack.
+            
+        Raises:
+            IndexError: if the stack is empty.
+        """
+        if len(self.items) == 0:
+            raise IndexError
+        return self.items[-1]
+    
+    
+    def size(self):
+        """Return the number of items in the stack."""
+        return len(self.items)
+    
+    
     
 

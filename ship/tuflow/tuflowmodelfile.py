@@ -31,10 +31,80 @@
 
 import os
 
-from ship.tuflow.tuflowfilepart import TuflowFile
+from ship.tuflow.tuflowfilepart import TuflowFile, TuflowFilePart
 from ship.tuflow import FILEPART_TYPES as ft
+from ship.utils import utilfunctions as uf
 
+
+class TuflowScenario(object):
+    """
+    """
+    IF, ELSE, TUFLOW_PART, SCENARIO_PART = range(4)
+    
+    def __init__(self, if_type, values, hex_hash, order, comment, comment_char):
+        """Constructor.
         
+        Args:
+            values(list): containing the different scenarios that are included
+                in this class.
+        """
+        self.order = order
+        self.if_type = if_type
+        self.hex_hash = hex_hash
+        self.values = values
+        self.part_list = []
+        self.comment = comment
+        self.comment_char = comment_char
+        self.has_endif = False
+        self._first_tfp = None
+        self.current_part_index = 0
+
+    
+    def addPartRef(self, ref_type, hex_hash):
+        """Add a reference to a command that's included in this scenario.
+        
+        Args:
+            ref_type(int): indicating if the ref in a TuflowFilePart or another
+                TuflowScenario. Use the class constants TUFLOW_PART or SCENARIO_PART.
+            hex_hash(str): hash code of a TuflowFilePart to include.
+        """
+        self.part_list.append([ref_type, hex_hash])
+        if ref_type == TuflowScenario.TUFLOW_PART:
+            if self._first_tfp is None:
+                self._first_tfp = hex_hash
+    
+    
+    def getOpeningStatement(self):
+        """
+        """
+        output = []
+        if self.values[0] == 'ELSE':
+            output.append('ELSE')
+        else:
+            if self.if_type == TuflowScenario.IF:
+                output.append('IF SCENARIO ==')
+            else:
+                output.append('ELSE IF SCENARIO ==')
+            
+            val = []
+            for v in self.values:
+                val.append(v)
+            val = ' | '.join(val) 
+            output.append(val)
+        
+        output = ' '.join(output)
+        return output
+    
+    
+    def getClosingStatement(self):
+        """
+        """
+        if self.has_endif:
+            return 'END IF'
+        else:
+            return ''
+    
+    
 
 class TuflowModelFile(object):
     """ Contains data pertaining to TUFLOW model files.
@@ -71,6 +141,103 @@ class TuflowModelFile(object):
         self.hex_hash = hex_hash
         self.parent_hash = parent_hash
         self.contents = []
+        self.scenarios = []
+
+
+    def getPrintableContents(self, has_estry_auto):
+        """Get the printable contents from each file referenced by this class.
+        
+        Args:
+            model_file(self.file): file to retrive the contents from.
+            
+        Results:
+            List containing the entries in the model_file.
+        """
+        output = []
+        skip_lines = []
+        
+        def getPrintableFilepart(f, indent):
+            """
+            """
+            # If there's piped files
+            if isinstance(f, TuflowFile) and not f.child_hash is None:
+                out_line = []
+                has_children = True
+                out_line.append(f.getPrintableContents())
+                
+                # Keep looping through until there are no more piped files
+                child_count = 1
+                while has_children:
+                    if not f.child_hash is None:
+                        f = self.contents[i + child_count][1]
+                        out_line.append(f.getPrintableContents())
+                        skip_lines.append(i + child_count)
+                        child_count += 1
+                    else:
+                        output.append(indent + ' | '.join(out_line) + '\n')
+                        has_children = False
+                    
+            else:
+                output.append(indent + f.getPrintableContents() + '\n')
+        
+        ##
+        # END INNER FUNCTION
+        ##
+        
+        scen_stack = uf.LoadStack()
+        indent_spacing = 0
+        indent = ''
+        scenarios = [s for s in sorted(self.scenarios)]
+        
+        '''Read the order of the contents in the model file.
+        [0] = the type of file part: MODEL, COMMENT, GIS, etc
+        [1] = the hex_hash of the file part
+        [2] = the comment contents (or None if it's not a comment section
+        '''
+        for i, entry in enumerate(self.contents, 0):
+            
+            line_type = entry[0]
+            if i in skip_lines: continue
+
+            if line_type == ft.COMMENT:
+                output.append(''.join(entry[1]))
+            else:
+                
+                if entry[0] == ft.SCENARIO:
+                    scen_stack.add(scenarios.pop(0))
+                    output.append(indent + scen_stack.peek().getOpeningStatement())
+                    indent_spacing += 4
+                    indent = ''.join([' '] * indent_spacing)
+                
+                elif entry[0] == ft.SCENARIO_END:
+                    indent_spacing -= 4
+                    indent = ''.join([' '] * indent_spacing)
+                    output.append(indent + scen_stack.peek().getClosingStatement())
+                    scen_stack.pop()
+                
+                else: 
+                    f = entry[1]
+                    if f.category == 'ecf':
+                        if has_estry_auto:
+                            temp = ' '.join([f.command, 'Auto !', f.comment])
+                            output.append(indent + temp)
+                    else:
+                        getPrintableFilepart(f, indent)
+                    
+        
+        return output
+    
+    
+    def getScenarioVariables(self):
+        """
+        """
+        vals = []
+        for s in self.scenarios:
+            for v in s.values:
+                if not v in vals:
+                    vals.append(v)
+        
+        return vals
 
     
     def addContent(self, line_type, filepart): 
@@ -90,6 +257,19 @@ class TuflowModelFile(object):
                 identify all parts of the tuflow model.
         """
         self.contents.append([line_type, filepart])
+    
+    
+    def addScenario(self, scenario):
+        """Add a TuflowScenario.
+        
+        TuflowScenario's are used to store information about if else clauses in
+        the control files, such as the logic terms of the clause and which 
+        TuflowFileParts are within the clause.
+        
+        Args:
+            scenario(TuflowScenario):
+        """
+        self.scenarios.append(scenario)
  
     
     def getEntryByHash(self, hex_hash):
@@ -257,6 +437,8 @@ class TuflowModelFile(object):
                 output.append(c[1])
         
         return output
+    
+    
     
 
 

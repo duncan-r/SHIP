@@ -1,0 +1,62 @@
+GIS Format == MIF
+MI Projection == ..\model\mi\Projection.mif
+!Write Empty MI Files == ..\model\mi\empty
+
+
+!###############################################
+! Read in all related files
+!###############################################
+
+! Get the materials file
+Read Materials File == ..\model\Materials.csv
+
+! Get the 1D node locations
+Read GIS ISIS Nodes == ..\model\mi\1d_nodes_v3.3.mif
+Read GIS ISIS Network == ..\model\mi\_1d_nwk_v1.0.mif
+Read MI ISIS WLL == ..\model\mi\_1d_WLL_v1.0.mif
+
+IF SCENARIO == SCEN01 | SCEN11
+
+	IF SCENARIO == SCEN01
+		Read GIS PO == ..\model\mi\_2d_po_somescenS01_1.mif
+		Timestep == 1
+		
+		IF SCENARIO == SCEN01_1
+			Read GIS PO == ..\model\mi\_2d_po_somescenS01_1_1.mif
+			Timestep == 111
+		END IF
+		
+	ELSE IF SCENARIO == SCEN11
+		Read GIS PO == ..\model\mi\_2d_po_somescenS11_2.mif
+		Timestep == 11
+	END IF
+	
+	Read GIS PO == ..\model\mi\_2d_po_somescenS01S11_1.mif
+
+ELSE IF SCENARIO == SCEN02
+	Read GIS PO == ..\model\mi\_2d_po_somescenS02_1.mif
+	Read GIS PO == ..\model\mi\_2d_po_somescenS02_2.mif
+	Timestep == 2
+
+ELSE
+	Read GIS PO == ..\model\mi\_2d_po_somescenS03_1.mif
+	Read GIS PO == ..\model\mi\_2d_po_somescenS03_2.mif
+	Timestep == 3
+
+END IF
+
+
+Time Series Output Interval == 120
+
+!#################################################
+! All the output related stuff 
+!#################################################
+Start Time == 0  
+End Time == 7  
+Log Folder == Log  
+Output Folder == ..\results\2d\_1%AEP_FINAL_v5.18\  
+Write Check Files == ..\check\2d\_1%AEP_FINAL_v5.18\_1%AEP_FINAL_v5.18  
+Map Output Data Types == h v q d MB1 ZUK0  
+Map Output Interval == 120  
+Store Maximums and Minimums == ON MAXIMUMS ONLY  
+Mass Balance Output == ON

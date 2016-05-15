@@ -88,7 +88,6 @@ class TuflowModel(object):
         """"""
         
     
-    
     def getPrintableContents(self):    
         """Get the TuflowModel ready to write to disk.
         
@@ -107,63 +106,7 @@ class TuflowModel(object):
                 model_file = self.mainfile
             else:
                 model_file = self.files[o[3]][o[2]].getEntryByHash(o[0])
-            output[model_file.getAbsolutePath()] = self._getFilePrintableContents(self.files[o[1]][o[0]])
-        
-        return output
-    
-    
-    def _getFilePrintableContents(self, model_file):
-        """Get the printable contents from each file referenced by this class.
-        
-        Args:
-            model_file(self.file): file to retrive the contents from.
-            
-        Results:
-            List containing the entries in the model_file.
-        """
-        skip_lines = []
-        output = []
-        
-        '''Read the order of the contents in the model file.
-        [0] = the type of file part: MODEL, COMMENT, GIS, etc
-        [1] = the hex_hash of the file part
-        [2] = the comment contents (or None if it's not a comment section
-        '''
-        for i, entry in enumerate(model_file.contents, 0):
-            
-            line_type = entry[0]
-            if i in skip_lines: continue
-
-            if line_type == ft.COMMENT:
-                output.append(''.join(entry[1]))
-            else:
-                f = entry[1]
-                if f.category == 'ecf':
-                    if self.has_estry_auto:
-                        temp = ' '.join([f.command, 'Auto !', f.comment])
-                        output.append(temp)
-                else:
-                    
-                    # If there's piped files
-                    if isinstance(f, TuflowFile) and not f.child_hash is None:
-                        out_line = []
-                        has_children = True
-                        out_line.append(f.getPrintableContents())
-                        
-                        # Keep looping through until there are no more piped files
-                        child_count = 1
-                        while has_children:
-                            if not f.child_hash is None:
-                                f = model_file.contents[i + child_count][1]
-                                out_line.append(f.getPrintableContents())
-                                skip_lines.append(i + child_count)
-                                child_count += 1
-                            else:
-                                output.append(' | '.join(out_line) + '\n')
-                                has_children = False
-                            
-                    else:
-                        output.append(f.getPrintableContents() + '\n')
+            output[model_file.getAbsolutePath()] = self.files[o[1]][o[0]].getPrintableContents(self.has_estry_auto)
         
         return output
     
@@ -487,20 +430,6 @@ class TuflowModel(object):
         return result
         
         
-
-class ScenarioScope(object):
-    """
-    """
-    
-    def __init__(self, name):
-        """
-        """
-        self.name = name
-        self.scoped_hashcodes = []
-        self.scoped_ifelse = []
-    
-    
-    
 
 class TuflowTypes(object):
     """Contains key words from Tuflow files for lookup.

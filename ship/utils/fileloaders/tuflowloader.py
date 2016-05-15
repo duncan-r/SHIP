@@ -31,12 +31,10 @@ import re
 
 from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
-from ship.utils import utilfunctions as uuf
+from ship.utils import utilfunctions as uf
 from ship.utils.atool import ATool
-from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, \
-                                              ModelRef, ModelOrder
-# from ship.tuflow.tuflowmodelfile import TuflowModelFile, ModelFileEntry
-from ship.tuflow.tuflowmodelfile import TuflowModelFile
+from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder
+from ship.tuflow.tuflowmodelfile import TuflowModelFile, TuflowScenario
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfilepart as tfp
 
@@ -82,21 +80,37 @@ class TuflowLoader(ATool, ALoader):
     def loadFile(self, tcf_path, arg_dict={}):
         """Loads all content referenced by the given path.
         
+        The arg_dict dictionary is used to pass in any values needed at runtime
+        for resolving scenario and event logic in the control files. These are
+        the ~s~ and ~e~ values that are specified either in the tcf file or
+        on the command line/batch file. They are submitted as two separate
+        sub-dicts that contain the values for this run. E.g:
+        ::
+            > tuflow.exe -s1 scen1 -e1 100yr -e2 4h myfile_~s1~_~e1~_~e2~_place.tcf  
+            
+            To provide these variables for use by the tuflow loader, so it would
+            know how to load any .tcf file with those tilde values in, you could
+            do:  
+            
+            tcfpath = 'C:\path\to\tcf\myfile_~s1~_~e1~_~e2~_place.tcf'
+            args_dict = {'scenario': {'s1': 'scen1'}, 'event': {'e1': '100yr', 'e2': '4h'}}
+            loader = FileLoader()
+            tuflow_model = loader.loadFile(tcfpath, args_dict)            
+        
         Args:
             tcf_path(str): path to a .tcf file.
             arg_dict={}(Dict): contains scenario variables for the tuflow model
                 being loaded. E.g. tuflow files can be referenced using 
-                charactars within tildes (~s~) to indicate placeholders. In 
-                this case setting arg_dict={'s': 2.5} would replace all 
-                instances of s with 2.5.  
-                Can also be used with scenario logic.
+                charactars within tildes (~s~ or ~e~) to indicate placeholders.
+                The scenario and event values are passed in as two separate 
+                dicts under the main dict keys 'scenario' and 'event'.
         
         Raises:
             ValueError: if tcf_path is not a .tcf file.
             IOError: if tcf_path doesn't exist.
         """
         logger.info('Loading Tuflow model')
-        if not uuf.checkFileType(tcf_path, ext=['.tcf', '.TCF']):
+        if not uf.checkFileType(tcf_path, ext=['.tcf', '.TCF']):
             logger.error('File: ' + tcf_path + '\nDoes not match tcf extension (*.tcf or *.TCF)')
             logger.error('Illegal File Error: %s in not of type tcf' % (tcf_path))
             raise AttributeError ('Illegal File Error: %s in not of type tcf' % (tcf_path))
@@ -106,13 +120,20 @@ class TuflowLoader(ATool, ALoader):
             logger.error('.tfc path must exist and MUST be absolute')
             raise IOError ('Tcf file does not exist')
         
-        self.scenario_vals = arg_dict
+        self.scenario_vals = {}
         """Any scenario values that are passed through."""
+        
+        if 'scenario' in arg_dict.keys(): self.scenario_vals = arg_dict['scenario']
+        
+        self.event_vals = {}
+        """Any event values that are passed through."""
+        
+        if 'event' in arg_dict.keys(): self.event_vals = arg_dict['event']
 
         self.tuflow_model = TuflowModel()
         """TuflowModel class instance"""
         
-        self._file_queue = uuf.FileQueue()
+        self._file_queue = uf.FileQueue()
         """FileQueue instance. Used to store all TuflowModelFile references
         found during loading so that they can be loaded in order.
         """
@@ -148,18 +169,9 @@ class TuflowLoader(ATool, ALoader):
         self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension), True)
         
         # Need to create one here becuase it's the first
-#         line_val = file_d.generateModelTuflowFile(self.types.MODEL, self._global_order)
         line_val = file_d.generateModelTuflowFile(ft.MODEL, self._global_order)
         self._global_order += 1
-#         self.tuflow_model.file_parts[file_d.head_hash] = ModelFileEntry(
-#                                                            line_val, 
-#                                                            self.types.MODEL,
-#                                                            file_d.head_hash)
         self.tuflow_model.mainfile = line_val
-
-        
-        #self.tuflow_model.mainfile_hash = file_d.head_hash
-
         self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
 
         # Parse the contents into object form
@@ -203,24 +215,56 @@ class TuflowLoader(ATool, ALoader):
         def _clearUnknownContents(file_d, line, model, unknown_contents):
             """Stash and clear any unkown stuff."""
 
-            c_hash = file_d.generateHash('comment' + line + str(
-                                                file_d.parent_hash))
-#             model.addContent(self.types.COMMENT, c_hash, unknown_contents)
+#             c_hash = file_d.generateHash('comment' + line + str(
+#                                                 file_d.parent_hash))
             model.addContent(ft.COMMENT, unknown_contents)
             unknown_contents = []
             return unknown_contents
 
         
-        contents = []
+#         contents = []
+        scenario_stack = uf.LoadStack()
+        scenario_order = 0
         unknown_contents = []
         for line in file_d.raw_contents:
             line_contents = self._getLineDetails(line, file_d)
-            
             line_type = line_contents[0][2]
 
-#             if line_type == self.types.COMMENT or line_type == self.types.UNKNOWN:
             if line_type == ft.COMMENT or line_type == ft.UNKNOWN:
                 unknown_contents.append(line_contents[0][0])
+            
+            # Add or remove an if-else scenario object from the stack. When they
+            # are removed they are added to the model. 
+            elif line_type == ft.SCENARIO:
+                rettype, scenario = self.breakScenario(line_contents[0][0],
+                                                       line_contents[0][1],
+                                                       scenario_order)
+                if rettype == 'IF':
+                    # If it's an embedded if we need to give a reference to the
+                    # parent TuflowScenario as well
+                    if not scenario_stack.isEmpty():
+                        scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
+                                                          line_contents[0][1])
+                    scenario_stack.add(scenario)
+                    scenario_order +=1
+                    model.addContent(line_type, line_contents[0][1])
+
+                elif rettype == 'ELSE':
+                    model.addContent(ft.SCENARIO_END, '')
+                    s = scenario_stack.pop()
+                    model.addScenario(s)
+                    scenario_order +=1
+                    if not scenario_stack.isEmpty():
+                        scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
+                                                          line_contents[0][1])
+                    scenario_stack.add(scenario)
+                    model.addContent(line_type, line_contents[0][1])
+                else:
+                    s = scenario_stack.pop()
+                    s.has_endif = True
+                    model.addContent(ft.SCENARIO_END, '')
+                    model.addScenario(s)
+            
             else:
                 # Stash and clear any unknown stuff first if it's there.
                 if unknown_contents:
@@ -233,8 +277,11 @@ class TuflowLoader(ATool, ALoader):
                     line_val, hex_hash, line_type, ext = l
 
                     model.addContent(line_type, line_val)
+                    if not scenario_stack.isEmpty():
+                        scenario_stack.peek().addPartRef(TuflowScenario.TUFLOW_PART, 
+                                                          hex_hash)
                     
-                    if line_type == ft.MODEL: #self.types.MODEL:
+                    if line_type == ft.MODEL: 
                         line_val, hex_hash, line_type, ext = line_contents[0]
 
                         rel_root = ''
@@ -243,10 +290,6 @@ class TuflowLoader(ATool, ALoader):
                         self._file_queue.enqueue([line_val.getAbsolutePath(), hex_hash, 
                                                   file_d.head_hash, rel_root])
 
-#                     self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-#                                                                        line_val,
-#                                                                        line_type,
-#                                                                        hex_hash)
         # Make sure we clear up any leftovers
         if unknown_contents:
             unknown_contents = _clearUnknownContents(file_d, line, model, 
@@ -280,17 +323,24 @@ class TuflowLoader(ATool, ALoader):
         """
         hex_hash = file_d.generateHash(file_d.filename + line + str(
                                                         file_d.parent_hash))
-        line = line.lstrip() 
+        line = line.lstrip()
+        upline = line.upper()
         line_val = '\n'
         ext = ''
         
         # It's a comment or blank line
         if line.startswith('#') or line.startswith('!'):
             line_val = line
-            command_type = ft.COMMENT #self.types.COMMENT
+            command_type = ft.COMMENT 
             
         elif line.strip() == '':
-            command_type = ft.COMMENT #self.types.COMMENT
+            command_type = ft.COMMENT 
+        
+        # If scenario statement
+        elif upline.startswith('IF SCENARIO') or upline.startswith('ELSE IF') \
+                    or upline.startswith('END IF') or upline.startswith('ELSE'):
+            command_type = ft.SCENARIO
+            line_val = line
         
         elif '==' in line or 'AUTO' in line.upper():
 
@@ -306,10 +356,10 @@ class TuflowLoader(ATool, ALoader):
             #       going into UNKNOWN FILE, if a file, so we can still update 
             #       them when needed. Even if we don't know what they do?
             if not found:
-                command_type = ft.UNKNOWN #self.types.UNKNOWN
+                command_type = ft.UNKNOWN 
                 line_val = line
             else:
-                if command_type == ft.VARIABLE: #self.types.VARIABLE:
+                if command_type == ft.VARIABLE: 
                     line_val = tfp.ModelVariables(self._global_order, instruction, 
                                             hex_hash, command_type, command)
                     self._global_order += 1
@@ -321,7 +371,7 @@ class TuflowLoader(ATool, ALoader):
 
                     if not isfile:
                         line_val = line
-                        command_type = ft.COMMENT #self.types.COMMENT
+                        command_type = ft.COMMENT 
                     else:    
                         ext = self.extractExtension(instruction)
                         f_type = self.file_types.get(ext)
@@ -340,7 +390,7 @@ class TuflowLoader(ATool, ALoader):
                                                     file_d.relative_root, ext)
                             self._global_order += 1
 
-                            if command_type is ft.RESULT: #self.types.RESULT:
+                            if command_type is ft.RESULT: 
                                 line_val = self._resolveResult(line_val)
                         
                         # It's one of the files in self.types
@@ -373,26 +423,63 @@ class TuflowLoader(ATool, ALoader):
                                                    command_type,
                                                    ext]) 
                                 
-#                                 self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-#                                                                 line_val, command_type,
-#                                                                 hex_hash)
-
                             # TODO: currently the same _global_order for all the
                             #       files in a piped command. Should they be 
                             #       different?
                             self._global_order += 1
                             return multi_lines
 
-#                         self.tuflow_model.file_parts[hex_hash] = ModelFileEntry(
-#                                                                 line_val, command_type,
-#                                                                 hex_hash)
         else:
-            command_type = ft.UNKNOWN #self.types.UNKNOWN
+            command_type = ft.UNKNOWN 
             line_val = line
         
         # Needs to be return in a list because of the multi_lines setup above.
         return [[line_val, hex_hash, command_type, ext]]
     
+    
+    def breakScenario(self, instruction, hex_hash, order):
+        """Breaks a scenario IF statement down into parts.
+        
+        Args:
+            instruction(str): the if statement to break up.
+            hex_hash(str): the hash code for this line.
+            order(int): the order this scenario appears in the file.
+            
+        Return:
+            tuple(str, TuflowScenario or None):  
+        """
+        found, split, comment_char = self.separateComment(instruction)
+        comment = ''
+        if found: comment = split[1].strip()
+        instruction = split[0].strip()
+        
+        scenario = None
+        upinstruction = instruction.upper()
+        
+        if 'ELSE' in upinstruction and not 'IF' in upinstruction:
+            scen_vals = ['ELSE']
+            return_type = 'ELSE'
+            scenario = TuflowScenario(TuflowScenario.ELSE, scen_vals, hex_hash,
+                                       order, comment, comment_char)
+        elif 'ELSE IF SCENARIO' in upinstruction:
+            scen_vals = instruction.split('==')[1].strip()
+            scen_vals = scen_vals.split('|')
+            scen_vals = [val.strip() for val in scen_vals]
+            return_type = 'ELSE'
+            scenario = TuflowScenario(TuflowScenario.ELSE, scen_vals, hex_hash,
+                                       order, comment, comment_char)
+        elif 'IF SCENARIO' in upinstruction:
+            scen_vals = instruction.split('==')[1].strip()
+            scen_vals = scen_vals.split('|')
+            scen_vals = [val.strip() for val in scen_vals]
+            return_type = 'IF'
+            scenario = TuflowScenario(TuflowScenario.IF, scen_vals, hex_hash,
+                                       order, comment, comment_char)       
+        else:
+            return_type = 'END'
+        
+        return return_type, scenario
+        
     
     def checkForPipes(self, instruction, file_d, hex_hash):
         """Checks the instruction command to see if it contains multiple files.
