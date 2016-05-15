@@ -149,6 +149,8 @@ class TuflowLoader(ATool, ALoader):
 
         self._fetchTuflowModel(tcf_path)
         self.tuflow_model.model_order = self._model_order
+        self.tuflow_model.scenario_vals = self.scenario_vals
+        self.tuflow_model.event_vals = self.event_vals
         return self.tuflow_model
 
     

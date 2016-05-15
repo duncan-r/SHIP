@@ -72,10 +72,32 @@ class TuflowScenario(object):
         if ref_type == TuflowScenario.TUFLOW_PART:
             if self._first_tfp is None:
                 self._first_tfp = hex_hash
+                
+                
+    def getTuflowFilePartRefs(self):
+        """Return all TuflowFileParts referenced by this scenario object.
+        
+        Return:
+            list - containing TuflowFilePart hash codes, if any found.
+        """
+        refs = []
+        for p in self.part_list:
+            if p[0] == TuflowScenario.TUFLOW_PART:
+                refs.append(p[1])
+        
+        return refs
     
     
     def getOpeningStatement(self):
-        """
+        """Get the opeing statement from this scenario block.
+        
+        All scenarios have an opening statement of some form. This could be
+        either 'IF SCENARIO == X', 'ELSE IF SCENARIO == X', or 'ELSE'. This
+        function will return the appropriate str based on the setup of this
+        scenario object.
+        
+        Return:
+            str - containing the appropriate opening statement.
         """
         output = []
         if self.values[0] == 'ELSE':
@@ -97,7 +119,14 @@ class TuflowScenario(object):
     
     
     def getClosingStatement(self):
-        """
+        """Get the closing statement from this scenario block.
+        
+        Some will have an 'END IF' and some won't. E.g. an if statement followed
+        by an if-else will not because it's close is the same as the opening
+        statement of the else section.
+        
+        Return:
+            str - containing an 'END IF' or ''.
         """
         if self.has_endif:
             return 'END IF'
@@ -229,15 +258,53 @@ class TuflowModelFile(object):
     
     
     def getScenarioVariables(self):
-        """
+        """Returns all of the scenario variables in this file.
+        
+        Tuflow control files can use if-else logic on scenario setups. These are
+        variables, separated by pipes, that can be given to a model at run time
+        to specifiy which files and variables to use.
+        
+        Return:
+            list - all of the variables found in this control file.
         """
         vals = []
         for s in self.scenarios:
             for v in s.values:
-                if not v in vals:
+                if not v in vals and not v == 'ELSE':
                     vals.append(v)
         
         return vals
+    
+    
+    def getContentsByScenario(self, scenario_vals):
+        """Returns a list of TuflowFilePart's based on the given scenario_vals.
+        
+        Any TuflowFilePart that is within a TuflowScenario with the values set
+        to those provided in the list will be returned.
+        
+        Args:
+            scenario_vals(list): str's representing a scenario variable in
+                this control file.
+        
+        Return:
+            list - containing TuflowFilePart's that meet the criteris of the
+                given scenario_vals.
+        """
+        hashes = []
+        for s in self.scenarios:
+            vals = s.values
+            for v in vals:
+                if v in scenario_vals:
+                    hashes.extend(s.getTuflowFilePartRefs())
+                    continue
+        
+        file_parts = []
+        for c in self.contents:
+            if isinstance(c[1], TuflowFilePart):
+                if c[1].hex_hash in hashes:
+                    file_parts.append(c[1])
+            
+        return file_parts
 
     
     def addContent(self, line_type, filepart): 

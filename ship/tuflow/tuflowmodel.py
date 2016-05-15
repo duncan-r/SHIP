@@ -87,6 +87,12 @@ class TuflowModel(object):
         self.mainfile = []
         """"""
         
+        self.scenario_vals = {}
+        """Key, value pairs for scenarios handed in when loading the model."""
+
+        self.event_vals = {}
+        """Key, value pairs for events handed in when loading the model."""
+        
     
     def getPrintableContents(self):    
         """Get the TuflowModel ready to write to disk.
@@ -109,6 +115,48 @@ class TuflowModel(object):
             output[model_file.getAbsolutePath()] = self.files[o[1]][o[0]].getPrintableContents(self.has_estry_auto)
         
         return output
+    
+    
+    def getAllScenarioVariables(self):
+        """Return all scenario variables found in control files.
+        
+        Return:
+            list - containing all of the scenario variables in the control files.
+        """
+        variables = []
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                variables.extend(model_file.getScenarioVariables())
+        
+        return variables
+
+    
+    def getTuflowFilePartsByScenario(self, scenario_vals):
+        """Get all the TuflowFilePart's that are within the given scenario params.
+        
+        Note:
+            To get a list of all of the available scenario variables you can
+            use the getAllScenarioVariables method.
+        
+        Args:
+            scenario_vals(list): str's representing the scenario variables that
+                will be used to identify the TuflowFilePart's to return.
+                
+        Return:
+            list - of TuflowFilePart's that are with the scenario blocks defined
+                by the given scenario_vals.
+        """
+        file_parts = []
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                file_parts.extend(model_file.getContentsByScenario(scenario_vals))
+        
+        return file_parts
+    
+    
+    def getSetScenarioVals(self):
+        """Returns the varible dict given to load the model."""
+        return self.scenario_vals
     
     
     def changeRoot(self, new_root):
