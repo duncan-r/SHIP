@@ -49,11 +49,38 @@ class TuflowModelFileTests(unittest.TestCase):
         self.vars_hex_hash = _encodeHash(vinput)
         vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types')
         
+        # Scenarion parts
+        opening_line = 'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff'
+        opening_hash = _encodeHash(opening_line)
+        closing_line = 'END IF'
+        closing_hash = _encodeHash(closing_line)
+        scenario = TuflowScenario(TuflowScenario.IF, ['SCEN1', 'SCEN2'], opening_hash,
+                                  0, 'Some comment stuff', '#')
+        scenario.has_endif = True
+
+        gfilepathS = '..\\madeuppath\\S_file.mif'
+        self.gis_hex_hashS = _encodeHash(gfilepathS)
+        gfileS = GisFile(1, gfilepathS, self.gis_hex_hashS, ft.GIS, 'Read GIS', self.fake_root)
+
+        vinputS = '2  ! Timestep'
+        self.vars_hex_hashS = _encodeHash(vinputS)
+        vfileS = ModelVariables(1, vinputS, self.vars_hex_hashS, ft.VARIABLE, 'Timestep')
+        
+        scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.gis_hex_hashS)
+        scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.vars_hex_hashS)
+        
+        # Add it all to the model
         self.tuflowmodelfile.addContent(ft.MODEL, mfileTgc)
         self.tuflowmodelfile.addContent(ft.GIS, gfile)
         self.tuflowmodelfile.addContent(ft.GIS, gfile2)
         self.tuflowmodelfile.addContent(ft.RESULT, dfile)
         self.tuflowmodelfile.addContent(ft.VARIABLE, vfile)
+        self.tuflowmodelfile.addContent(ft.SCENARIO, opening_hash)
+
+        self.tuflowmodelfile.addScenario(scenario)
+        self.tuflowmodelfile.addContent(ft.GIS, gfileS)
+        self.tuflowmodelfile.addContent(ft.VARIABLE, vfileS)
+        self.tuflowmodelfile.addContent(ft.SCENARIO_END, closing_hash)
         
     
     def test_addContent(self):
@@ -101,25 +128,25 @@ class TuflowModelFileTests(unittest.TestCase):
         # Default params
         files = self.tuflowmodelfile.getFiles()
         files = [f.hex_hash for f in files]
-        testfile_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash]
+        testfile_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash, self.gis_hex_hashS]
         self.assertListEqual(testfile_hashes, files, 'Default params fail: ' + str(files))
         
         # No result params
         files = self.tuflowmodelfile.getFiles(include_results=False)
         files = [f.hex_hash for f in files]
-        testfile_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2]
+        testfile_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.gis_hex_hashS]
         self.assertListEqual(testfile_hashes, files, 'Default params fail: ' + str(files))
         
         # file_type arg
         files = self.tuflowmodelfile.getFiles(file_type=ft.GIS)
         files = [f.hex_hash for f in files]
-        testfile_hashes = [self.gis_hex_hash, self.gis_hex_hash2]
+        testfile_hashes = [self.gis_hex_hash, self.gis_hex_hash2, self.gis_hex_hashS]
         self.assertListEqual(testfile_hashes, files, 'file_type params fail: ' + str(files))
         
         # file_type and extension args
         files = self.tuflowmodelfile.getFiles(file_type=ft.GIS, extensions=['mif'])
         files = [f.hex_hash for f in files]
-        testfile_hashes = [self.gis_hex_hash2]
+        testfile_hashes = [self.gis_hex_hash2, self.gis_hex_hashS]
         self.assertListEqual(testfile_hashes, files, 'file_type params fail: ' + str(files))
         
     
@@ -128,17 +155,17 @@ class TuflowModelFileTests(unittest.TestCase):
         
         # Default params
         names = self.tuflowmodelfile.getFileNames()
-        testnames = ['model.tgc', 'file.shp', 'file2.mif', '']
+        testnames = ['model.tgc', 'file.shp', 'file2.mif', '', 'S_file.mif']
         self.assertListEqual(testnames, names, 'Default params fail: ' + str(names))
         
         # No result
         names = self.tuflowmodelfile.getFileNames(include_results=False)
-        testnames = ['model.tgc', 'file.shp', 'file2.mif']
+        testnames = ['model.tgc', 'file.shp', 'file2.mif', 'S_file.mif']
         self.assertListEqual(testnames, names, 'no results params fail: ' + str(names))
         
         # file_type
         names = self.tuflowmodelfile.getFileNames(file_type=ft.GIS)
-        testnames = ['file.shp', 'file2.mif']
+        testnames = ['file.shp', 'file2.mif', 'S_file.mif']
         self.assertListEqual(testnames, names, 'file_type params fail: ' + str(names))
         
         # Extensions
@@ -148,7 +175,7 @@ class TuflowModelFileTests(unittest.TestCase):
         
         # with_extension
         names = self.tuflowmodelfile.getFileNames(with_extension=False)
-        testnames = ['model', 'file', 'file2', '']
+        testnames = ['model', 'file', 'file2', '', 'S_file']
         self.assertListEqual(testnames, names, 'with_extension params fail: ' + str(names))
        
         # all_types
@@ -162,10 +189,104 @@ class TuflowModelFileTests(unittest.TestCase):
         
         vars = self.tuflowmodelfile.getVariables()
         vars = [v.hex_hash for v in vars]
-        testvar_hashes = [self.vars_hex_hash]
+        testvar_hashes = [self.vars_hex_hash, self.vars_hex_hashS]
         self.assertListEqual(testvar_hashes, vars, 'ModelVariables hash match fail: ' + str(vars))
+        
+    
+    def test_getScenarioVariables(self):
+        """Check that we can correctly identify all of the available scenario variables."""
+        
+        test_vars = ['SCEN1', 'SCEN2']
+        vars = self.tuflowmodelfile.getScenarioVariables()
+        self.assertListEqual(test_vars, vars, 'Scenario Variables find fail: ' + str(vars))
+    
+    
+    def test_getContentsByScenario(self):
+        """Check we get back only the data inside a specific scenario."""
+        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN1'])
+        hashes = [p.hex_hash for p in parts]
+        self.assertListEqual(test_hashes, hashes, 'Contents by scenario 1 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
+        
+        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN2'])
+        hashes = [p.hex_hash for p in parts]
+        self.assertListEqual(test_hashes, hashes, 'Contents by scenario 2 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
        
+        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN1', 'SCEN2'])
+        hashes = [p.hex_hash for p in parts]
+        self.assertListEqual(test_hashes, hashes, 'Contents by scenario Both fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
+        
+    
+    def test_getPrintableContents(self):
+        """Check that it's returning the right formatted contents."""
+        test_contents = ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc\n',
+                         'Read GIS == ..\\madeuppath\\file.shp\n',
+                         'Read GIS == ..\\madeuppath\\file2.mif\n',
+                         'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n',
+                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n',
+                         'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff',
+                         '    Read GIS == ..\\madeuppath\\S_file.mif\n',
+                         '    Timestep == 2 ! Timestep\n',
+                         'END IF']
+        contents = self.tuflowmodelfile.getPrintableContents(False)
+        self.assertEqual(test_contents, contents, 'Get printable contents fail')
+        
+        
        
+class TuflowScenarioTests(unittest.TestCase):
+    """Tests the TuflowModel class"""
+    
+    def setUp(self):
+        """Setup global test values""" 
+        tgcpath = 'c:\\some\\fake\\root\\model.tgc'
+        self.tgc_hex_hash = _encodeHash(tgcpath)
+        gispath1 = 'c:\\some\\fake\\root\\gis1.shp'
+        self.gis_hex_hash1 = _encodeHash(gispath1)
+        gispath2 = 'c:\\some\\fake\\root\\gis2.shp'
+        self.gis_hex_hash2 = _encodeHash(gispath2)
+        varline1 = '2 # Some timestep comment'
+        self.var_hex_hash1 = _encodeHash(varline1)
+        varline2 = 'h v q ! Some output comment'
+        self.var_hex_hash2 = _encodeHash(varline2)
+        
+        # Main scenarion
+        self.opening_line = 'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff'
+        opening_hash = _encodeHash(self.opening_line)
+        self.closing_line = 'END IF'
+        closing_hash = _encodeHash(self.closing_line)
+        self.scenario = TuflowScenario(TuflowScenario.IF, ['SCEN1', 'SCEN2'], opening_hash,
+                                  0, 'Some comment stuff', '#')
+        self.scenario.has_endif = True
+        
+        # Nested scenario
+        opening_line2 = 'IF SCENARIO == SCEN1 # Some other comment stuff'
+        self.opening_hash2 = _encodeHash(opening_line2)
+       
+        # Add all the bits
+        self.scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.tgc_hex_hash)
+        self.scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.gis_hex_hash1)
+        self.scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.gis_hex_hash2)
+        self.scenario.addPartRef(TuflowScenario.SCENARIO_PART, self.opening_hash2)
+        self.scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.var_hex_hash1)
+        self.scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.var_hex_hash2)
+    
+    
+    def test_getTuflowFilePartRefs(self):
+        """Check that we return only the TuflowFilePart's."""
+        
+        test_hashes = [self.tgc_hex_hash, self.gis_hex_hash1, self.gis_hex_hash2,
+                       self.var_hex_hash1, self.var_hex_hash2]
+        hashes = self.scenario.getTuflowFilePartRefs()
+        self.assertListEqual(test_hashes, hashes, 'FilePart ref fail: test = ' + str(test_hashes) + ' hashes = ' + str(hashes))
+       
+    
+    def test_getOpeningStatement(self): 
+        """Check we return the correct line contents for the opening if."""
+        
+        line = self.scenario.getOpeningStatement()
+        self.assertEqual(line, self.opening_line, 'Opening statement fail: line = ' + line)
        
        
        

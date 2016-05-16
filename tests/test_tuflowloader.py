@@ -103,8 +103,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
     
     
     def test_resolveResult(self):
-        """
-        """
+        """Check that result file commands can be correctly identified and setup."""
         # Result as folder only
         result_path = 'S:\\007\\tuflow\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
@@ -154,7 +153,35 @@ class TuflowModelLoaderTests(unittest.TestCase):
         self.assertEqual(output_check.relative_root, '', 'Check relative_root equal fail.')
         self.assertEqual(output_check.parent_relative_root, '', 'Check parent_relative_root equal fail.')
         self.assertFalse(output_check.file_name_is_prefix)
+    
+    
+    def test_breakScenario(self):
+        """Check that we can correctly identify and break up a scenario line."""
         
+        hash_text = 'Some random test for creating a hash'
+        hex_hash = hashlib.md5(hash_text)
+        hex_hash = hex_hash.hexdigest()
+        
+        # Test an opening if
+        line = 'IF SCENARIO == SCEN01 | SCEN11'
+        return_type, scenario = self.loader.breakScenario(line, hex_hash, 0)
+        self.assertEqual(return_type, 'IF', 'IF scenario return type fail: ' + str(return_type))
+        self.assertListEqual(scenario.values, ['SCEN01', 'SCEN11'])
+        
+        # Test an if else
+        line = 'ELSE IF SCENARIO == SCEN01 | SCEN11'
+        return_type, scenario = self.loader.breakScenario(line, hex_hash, 0)
+        self.assertEqual(return_type, 'ELSE', 'ELSE scenario return type fail: ' + str(return_type))
+        self.assertListEqual(scenario.values, ['SCEN01', 'SCEN11'])
+        
+        # Test an end
+        line = 'END IF'
+        return_type, scenario = self.loader.breakScenario(line, hex_hash, 0)
+        self.assertEqual(return_type, 'END', 'END scenario return type fail: ' + str(return_type))
+        self.assertEqual(scenario, None, 'END scenario None fail')
+        
+    
+    
     
     
     

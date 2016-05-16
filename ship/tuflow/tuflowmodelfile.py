@@ -114,6 +114,9 @@ class TuflowScenario(object):
             val = ' | '.join(val) 
             output.append(val)
         
+        if not self.comment_char == '':
+            output.append(self.comment_char + ' ' + self.comment)
+        
         output = ' '.join(output)
         return output
     

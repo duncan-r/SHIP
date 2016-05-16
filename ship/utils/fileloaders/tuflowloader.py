@@ -217,14 +217,11 @@ class TuflowLoader(ATool, ALoader):
         def _clearUnknownContents(file_d, line, model, unknown_contents):
             """Stash and clear any unkown stuff."""
 
-#             c_hash = file_d.generateHash('comment' + line + str(
-#                                                 file_d.parent_hash))
             model.addContent(ft.COMMENT, unknown_contents)
             unknown_contents = []
             return unknown_contents
 
         
-#         contents = []
         scenario_stack = uf.LoadStack()
         scenario_order = 0
         unknown_contents = []
