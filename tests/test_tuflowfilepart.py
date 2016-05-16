@@ -4,6 +4,7 @@ import unittest
 import hashlib
 
 from ship.tuflow import tuflowfilepart as tfp
+from ship.tuflow import FILEPART_TYPES as ft
 
 
 class TuflowFilePartTests(unittest.TestCase):
@@ -158,11 +159,20 @@ class TuflowFilePartTests(unittest.TestCase):
         sf = None
         sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command)
         p = sf.getPrintableContents()
-        #print 'printing p: \n' + p
         self.assertEqual('Read MI Z Line RIDGE == c:\\first\\second\\third\\fourth\\TuflowFile.mid', sf.getPrintableContents(), 'printable contents for absolute path do not match')
 
         mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 3, self.real_command_var)
         self.assertEqual('Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard', mv.getPrintableContents(), 'printable contents do not match')
+        
+        # Test that it works with a scenario/event placholder path
+        sf = None
+        path = '..\\testinputdata\\someplace_ROUGH_4h_v2.0.tgc # Some comment stuff'
+        actual_name = 'someplace_~s1~_~e1~_v2.0'
+        command = 'READ GEOMETRY FILE'
+        sf = tfp.TuflowFile(1, path, self.hex_hash, ft.MODEL, command, self.fake_root)
+        sf.actual_name = actual_name
+        self.assertEqual('READ GEOMETRY FILE == ..\\testinputdata\\someplace_~s1~_~e1~_v2.0.tgc ! Some comment stuff', sf.getPrintableContents(), 'printable contents do not match: ' + sf.getPrintableContents())
+       
        
     def test_gisFile_setup(self):
         '''Check that we create a GisFile instance when given the right file name

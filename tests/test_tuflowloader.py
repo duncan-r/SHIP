@@ -15,6 +15,8 @@ class TuflowModelLoaderTests(unittest.TestCase):
         self.fake_tcf_path = 'c:\user\model\runs\testtcf.tcf'
         self.file_dets = TuflowLoader._FileDetails(self.fake_tcf_path, True)
         self.loader = TuflowLoader()
+        self.loader.scenario_vals = {'s1': '100yr', 's2': 'ROUGH'}
+        self.loader.event_vals = {'e1': '4h', 'e2': '6h'}
         
         
     def test_extractExtension(self):
@@ -181,8 +183,22 @@ class TuflowModelLoaderTests(unittest.TestCase):
         self.assertEqual(scenario, None, 'END scenario None fail')
         
     
+    def test_checkForTildes(self):
+        """Check that we can resolve scenario tildes in filepaths."""
+        
+        # Check that it works for paths with tildes
+        instruction1_input = 'MyModel_~s1~_~s2~_~e1~_something.tgc # Some comment stuff'
+        test_instruction1 = 'MyModel_100yr_ROUGH_4h_something.tgc # Some comment stuff'
+        test_orig_name = 'MyModel_~s1~_~s2~_~e1~_something'
+        instruction1, orig_instruction1 = self.loader.checkForTildes(instruction1_input)
+        self.assertEqual(test_instruction1, instruction1, 'Instruction1 test fail: ' + instruction1)
+        self.assertEqual(test_orig_name, orig_instruction1, 'Instruction1 orig_instruction test fail: ' + orig_instruction1)
     
-    
-    
+        # And paths with no tildes
+        instruction2_input = 'MyModel_100yr_ROUGH_4h_something.tgc # Some comment stuff'
+        test_instruction2 = 'MyModel_100yr_ROUGH_4h_something.tgc # Some comment stuff'
+        instruction2, orig_instruction2 = self.loader.checkForTildes(instruction2_input)
+        self.assertEqual(test_instruction2, instruction2, 'Instruction2 test fail: ' + instruction2)
+        self.assertIsNone(orig_instruction2, 'Instruction2 orig_instruction test fail')
     
     

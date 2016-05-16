@@ -371,7 +371,8 @@ class TuflowLoader(ATool, ALoader):
                     if not isfile:
                         line_val = line
                         command_type = ft.COMMENT 
-                    else:    
+                    else:
+                        instruction, orig_instruction = self.checkForTildes(instruction)
                         ext = self.extractExtension(instruction)
                         f_type = self.file_types.get(ext)
                         
@@ -387,6 +388,7 @@ class TuflowLoader(ATool, ALoader):
                                                     hex_hash, command_type, 
                                                     command, file_d.root, 
                                                     file_d.relative_root, ext)
+                            line_val.actual_name = orig_instruction
                             self._global_order += 1
 
                             if command_type is ft.RESULT: 
@@ -417,6 +419,7 @@ class TuflowLoader(ATool, ALoader):
                                                                 file_d.relative_root,
                                                                 parent_hash=parent_hash,
                                                                 child_hash=child_hash)
+                                line_val.actual_name = orig_instruction
                                 multi_lines.append([line_val,
                                                    hex_hash,
                                                    command_type,
@@ -434,6 +437,54 @@ class TuflowLoader(ATool, ALoader):
         
         # Needs to be return in a list because of the multi_lines setup above.
         return [[line_val, hex_hash, command_type, ext]]
+    
+    
+    def checkForTildes(self, instruction):
+        """Check the file for tildes so we can try and replace them.
+        
+        Some filenames can caontain placeholders in the for ~something~. These
+        correspond to scenario or event variables. This method checks the given
+        file path to see if it has any of these and replaces them if it can.
+        
+        Args:
+            instruction(str): the filename as read from file.
+        
+        Return:
+            str - the filename with the tildes replaced, or False if none were found.
+        """
+        if '!' in instruction:
+            comment_char = '!'
+            new_instruction, comment = instruction.split('!')
+        if '#' in instruction:
+            comment_char = '#'
+            new_instruction, comment = instruction.split('#')
+        
+        orig_instruction = new_instruction
+            
+        if not '~' in new_instruction:
+            return instruction, None
+        
+        found = False
+        # Check for scenarion stuff
+        for key, val in self.scenario_vals.items():
+            temp = '~' + key + '~'
+            if temp in new_instruction:
+                found = True
+                new_instruction = new_instruction.replace(temp, val)
+                i=0
+
+        # Check for event stuff
+        for key, val in self.event_vals.items():
+            temp = '~' + key + '~'
+            if temp in new_instruction:
+                found = True
+                new_instruction = new_instruction.replace(temp, val)
+        
+        if not found:
+            return instruction, None
+        else:
+            orig_instruction = os.path.splitext(orig_instruction)[0]
+            return new_instruction + comment_char + comment, orig_instruction
     
     
     def breakScenario(self, instruction, hex_hash, order):

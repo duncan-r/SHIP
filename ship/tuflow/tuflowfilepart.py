@@ -223,14 +223,18 @@ class TuflowFile(TuflowFilePart, PathHolder):
             path (str): the path to the file that this object holds the meta 
                 data for.
             hex_hash(str): hexidecimal code for this object.
-            type(int): the TuflowTypes value for this object.
+            type(int): the tuflow.FILEPART_TYPES value for this object.
             command (str): the command that was used to call this path in the 
                 model file.
             root=None (str): the path to the directory that is the root of 
                 this file.
             parent_relative_root=''(str): the path section relative to the main
                 file read in (the tcf or ecf).
-            category=None(str): Any category specification for the file.
+            category=None(str): Any category specification for the file. E.g.
+                This is used by the MODEL type to declare what type of file it 
+                is (tcf, tgc, etc) because they can all have a .trd extension.
+                This therefore makes it possible to distinguish between different
+                types of .trd file.
             parent=None(str): the hash code of any parent that this file may
                 have. This will be non-None if the file is read in after a 
                 pipe command (e.g. with: file_1.mif | file_2.mif | file_3.mif 
@@ -257,6 +261,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
         self.all_types = None
         self.parent_hash = parent_hash
         self.child_hash = child_hash
+        self.actual_name = None  # Name with placeholders e.g. ~s1~
         
         # If it's an absolute path then we will set the root to be that rather
         # than the normal root used for absolute paths so this will be True.
@@ -288,7 +293,14 @@ class TuflowFile(TuflowFilePart, PathHolder):
             start = ''
         else:
             start = self.command + ' == '
-            
+        
+        # Need to do a quick switch with the origin name here so that it's set
+        # the same as it was when read in
+        resolved_name = self.file_name
+        actual_name = self.actual_name
+        if not actual_name is None:
+            self.file_name = actual_name
+        
         if not self.relative_root == None:
             contents = start + self.getRelativePath()
         
@@ -300,6 +312,9 @@ class TuflowFile(TuflowFilePart, PathHolder):
 
         if not self.comment == None or self.comment == '':
             contents += ' ! ' + self.comment 
+        
+        if not actual_name is None:
+            self.file_name = resolved_name
             
         return contents
     
