@@ -193,28 +193,28 @@ class TuflowModelFileTests(unittest.TestCase):
         self.assertListEqual(testvar_hashes, vars, 'ModelVariables hash match fail: ' + str(vars))
         
     
-    def test_getScenarioVariables(self):
+    def test_getSEVariables(self):
         """Check that we can correctly identify all of the available scenario variables."""
         
-        test_vars = ['SCEN1', 'SCEN2']
-        vars = self.tuflowmodelfile.getScenarioVariables()
-        self.assertListEqual(test_vars, vars, 'Scenario Variables find fail: ' + str(vars))
+        test_vars = {'event': [], 'scenario': ['SCEN1', 'SCEN2']}
+        vars = self.tuflowmodelfile.getSEVariables()
+        self.assertDictEqual(test_vars, vars, 'Scenario Variables find fail: ' + str(vars))
     
     
-    def test_getContentsByScenario(self):
+    def test_getContentsBySE(self):
         """Check we get back only the data inside a specific scenario."""
         test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
-        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN1'])
+        parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN1']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario 1 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
         
         test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
-        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN2'])
+        parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN2']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario 2 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
        
         test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
-        parts = self.tuflowmodelfile.getContentsByScenario(['SCEN1', 'SCEN2'])
+        parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN1', 'SCEN2']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario Both fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
         
@@ -226,10 +226,10 @@ class TuflowModelFileTests(unittest.TestCase):
                          'Read GIS == ..\\madeuppath\\file2.mif\n',
                          'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n',
                          'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n',
-                         'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff',
+                         'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff\n',
                          '    Read GIS == ..\\madeuppath\\S_file.mif\n',
                          '    Timestep == 2 ! Timestep\n',
-                         'END IF']
+                         'END IF\n']
         contents = self.tuflowmodelfile.getPrintableContents(False)
         self.assertEqual(test_contents, contents, 'Get printable contents fail')
         
@@ -286,7 +286,7 @@ class TuflowScenarioTests(unittest.TestCase):
         """Check we return the correct line contents for the opening if."""
         
         line = self.scenario.getOpeningStatement()
-        self.assertEqual(line, self.opening_line, 'Opening statement fail: line = ' + line)
+        self.assertEqual(line, self.opening_line + '\n', 'Opening statement fail: line = ' + line)
        
        
        

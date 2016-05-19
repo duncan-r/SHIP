@@ -404,16 +404,16 @@ class TuflowModelFile(object):
         hashes = []
         if 'scenario' in vals.keys():
             for s in self.scenarios:
-                vals = s.values
-                for v in vals:
+                scen_vals = s.values
+                for v in scen_vals:
                     if v in vals['scenario']:
                         hashes.extend(s.getTuflowFilePartRefs())
                         continue
 
         if 'event' in vals.keys():
             for e in self.events:
-                vals = e.values
-                for v in vals:
+                evt_vals = e.values
+                for v in evt_vals:
                     if v in vals['event']:
                         hashes.extend(e.getTuflowFilePartRefs())
                         continue
