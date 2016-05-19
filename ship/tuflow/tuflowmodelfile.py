@@ -39,7 +39,7 @@ from ship.utils import utilfunctions as uf
 class TuflowScenario(object):
     """
     """
-    IF, ELSE, TUFLOW_PART, SCENARIO_PART = range(4)
+    IF, ELSE, TUFLOW_PART, SCENARIO_PART, EVENT_PART = range(5)
     
     def __init__(self, if_type, values, hex_hash, order, comment, comment_char):
         """Constructor.
@@ -115,7 +115,9 @@ class TuflowScenario(object):
             output.append(val)
         
         if not self.comment_char == '':
-            output.append(self.comment_char + ' ' + self.comment)
+            output.append(self.comment_char + ' ' + self.comment + '\n')
+        else:
+            output.append('\n')
         
         output = ' '.join(output)
         return output
@@ -132,9 +134,84 @@ class TuflowScenario(object):
             str - containing an 'END IF' or ''.
         """
         if self.has_endif:
-            return 'END IF'
+            return 'END IF\n'
         else:
             return ''
+
+
+class TuflowEvent(object):
+    """
+    """
+    DEFINE, END = range(2)
+    
+    def __init__(self, if_type, value, hex_hash, order, comment, comment_char):
+        """Constructor.
+        
+        Args:
+            values(list): containing the different scenarios that are included
+                in this class.
+        """
+        self.order = order
+        self.if_type = if_type
+        self.hex_hash = hex_hash
+        self.value = value
+        self.part_list = []
+        self.comment = comment
+        self.comment_char = comment_char
+        self.current_part_index = 0
+
+    
+    def addPartRef(self, hex_hash):
+        """Add a reference to a command that's included in this scenario.
+        
+        Args:
+            hex_hash(str): hash code of a TuflowFilePart to include.
+        """
+        self.part_list.append(hex_hash)
+                
+                
+    def getTuflowFilePartRefs(self):
+        """Return all TuflowFileParts referenced by this scenario object.
+        
+        Return:
+            list - containing TuflowFilePart hash codes, if any found.
+        """
+        refs = []
+        for p in self.part_list:
+            if p[0] == TuflowScenario.TUFLOW_PART:
+                refs.append(p[1])
+        
+        return refs
+    
+    
+    def getOpeningStatement(self):
+        """Get the opeing statement from this scenario block.
+        
+        All scenarios have an opening statement of some form. This could be
+        either 'IF SCENARIO == X', 'ELSE IF SCENARIO == X', or 'ELSE'. This
+        function will return the appropriate str based on the setup of this
+        scenario object.
+        
+        Return:
+            str - containing the appropriate opening statement.
+        """
+#         output = []
+#         if self.values[0] == 'DEFINE':
+        output = 'DEFINE EVENT == ' + self.value + self.comment_char + self.comment + '\n'
+#         else:
+#             output.append('END DEFINE')
+        
+        return output
+    
+    
+    def getClosingStatement(self):
+        """Get the closing statement from this scenario block.
+        
+        Return:
+            str - containing an 'END DEFINE'.
+        """
+        return 'END DEFINE\n'
+
     
     
 
@@ -174,6 +251,7 @@ class TuflowModelFile(object):
         self.parent_hash = parent_hash
         self.contents = []
         self.scenarios = []
+        self.events = []
 
 
     def getPrintableContents(self, has_estry_auto):
@@ -217,9 +295,11 @@ class TuflowModelFile(object):
         ##
         
         scen_stack = uf.LoadStack()
+        scenarios = [s for s in sorted(self.scenarios)]
+        evt_stack = uf.LoadStack()
+        events = [e for e in sorted(self.events)]
         indent_spacing = 0
         indent = ''
-        scenarios = [s for s in sorted(self.scenarios)]
         
         '''Read the order of the contents in the model file.
         [0] = the type of file part: MODEL, COMMENT, GIS, etc
@@ -247,6 +327,18 @@ class TuflowModelFile(object):
                     output.append(indent + scen_stack.peek().getClosingStatement())
                     scen_stack.pop()
                 
+                elif entry[0] == ft.EVENT:
+                    evt_stack.add(events.pop(0))
+                    output.append(indent + evt_stack.peek().getOpeningStatement())
+                    indent_spacing += 4
+                    indent = ''.join([' '] * indent_spacing)
+                
+                elif entry[0] == ft.EVENT_END:
+                    indent_spacing -= 4
+                    indent = ''.join([' '] * indent_spacing)
+                    output.append(indent + evt_stack.peek().getClosingStatement())
+                    evt_stack.pop()
+                
                 else: 
                     f = entry[1]
                     if f.category == 'ecf':
@@ -260,7 +352,7 @@ class TuflowModelFile(object):
         return output
     
     
-    def getScenarioVariables(self):
+    def getSEVariables(self):
         """Returns all of the scenario variables in this file.
         
         Tuflow control files can use if-else logic on scenario setups. These are
@@ -270,36 +362,61 @@ class TuflowModelFile(object):
         Return:
             list - all of the variables found in this control file.
         """
-        vals = []
+        vals = {'scenario': [], 'event': []}
         for s in self.scenarios:
             for v in s.values:
                 if not v in vals and not v == 'ELSE':
-                    vals.append(v)
+                    vals['scenario'].append(v)
+        
+        for e in self.events:
+            for v in e.values:
+                if not v in vals:
+                    vals['event'].append(v)
+        
         
         return vals
     
     
-    def getContentsByScenario(self, scenario_vals):
+    def getContentsBySE(self, vals):
         """Returns a list of TuflowFilePart's based on the given scenario_vals.
         
-        Any TuflowFilePart that is within a TuflowScenario with the values set
-        to those provided in the list will be returned.
+        Any TuflowFilePart that is within a TuflowScenario or TuflowEvent with 
+        the values set to those provided in the list will be returned.
+        
+        The vals dict must contain at least one list as a value under a key of
+        either 'scenario' or 'event'. Or it may contain both. E.g.
+            :: vals = {'scenario': [s1, s2], 'event': [e1, e2]}
         
         Args:
-            scenario_vals(list): str's representing a scenario variable in
-                this control file.
+            vals(dict{list, list}): lists of str's representing scenario and 
+                event variables in this control file.
         
         Return:
             list - containing TuflowFilePart's that meet the criteris of the
-                given scenario_vals.
+                given scenario and event vals.
+        
+        Raises:
+            KeyError - if neither 'scenario' or 'event' are keys in vals.
         """
+        k = vals.keys()
+        if not 'scenario' in k and not 'event' in k: raise KeyError
+
         hashes = []
-        for s in self.scenarios:
-            vals = s.values
-            for v in vals:
-                if v in scenario_vals:
-                    hashes.extend(s.getTuflowFilePartRefs())
-                    continue
+        if 'scenario' in vals.keys():
+            for s in self.scenarios:
+                vals = s.values
+                for v in vals:
+                    if v in vals['scenario']:
+                        hashes.extend(s.getTuflowFilePartRefs())
+                        continue
+
+        if 'event' in vals.keys():
+            for e in self.events:
+                vals = e.values
+                for v in vals:
+                    if v in vals['event']:
+                        hashes.extend(e.getTuflowFilePartRefs())
+                        continue
         
         file_parts = []
         for c in self.contents:
@@ -340,6 +457,18 @@ class TuflowModelFile(object):
             scenario(TuflowScenario):
         """
         self.scenarios.append(scenario)
+    
+    
+    def addEvent(self, event):
+        """Add a TuflowEvent.
+        
+        TuflowEvents's are used to store information about define-event clauses 
+        in the control files, such as which TuflowFileParts are within the clause.
+        
+        Args:
+            event(TuflowEvent):
+        """
+        self.events.append(event)
  
     
     def getEntryByHash(self, hex_hash):

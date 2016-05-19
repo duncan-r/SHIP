@@ -1,0 +1,18 @@
+
+Output folder == ..\results\2d\
+write check files == ..\check\2d\
+log folder == log\
+
+Define Event == RGH20
+	BC Event Source == ~Event~ | rgh_20
+	BC Event Source == ~Duration~ | rgh_20
+	Start time == 0
+	End time == 10
+End define
+
+Define Event == Q20
+	BC Event Source == ~Event~ | q20
+	BC Event Source == ~Duration~ | q20
+	Start time == 0
+	End time == 15
+End define

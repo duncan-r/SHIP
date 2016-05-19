@@ -34,7 +34,7 @@ from ship.utils.fileloaders.loader import ALoader
 from ship.utils import utilfunctions as uf
 from ship.utils.atool import ATool
 from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder
-from ship.tuflow.tuflowmodelfile import TuflowModelFile, TuflowScenario
+from ship.tuflow.tuflowmodelfile import TuflowModelFile, TuflowScenario, TuflowEvent
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfilepart as tfp
 
@@ -123,12 +123,16 @@ class TuflowLoader(ATool, ALoader):
         self.scenario_vals = {}
         """Any scenario values that are passed through."""
         
-        if 'scenario' in arg_dict.keys(): self.scenario_vals = arg_dict['scenario']
+        if 'scenario' in arg_dict.keys():
+            self._has_scenario = True 
+            self.scenario_vals = arg_dict['scenario']
         
         self.event_vals = {}
         """Any event values that are passed through."""
         
-        if 'event' in arg_dict.keys(): self.event_vals = arg_dict['event']
+        if 'event' in arg_dict.keys(): 
+            self._has_event = True 
+            self.event_vals = arg_dict['event']
 
         self.tuflow_model = TuflowModel()
         """TuflowModel class instance"""
@@ -224,6 +228,8 @@ class TuflowLoader(ATool, ALoader):
         
         scenario_stack = uf.LoadStack()
         scenario_order = 0
+        event_stack = uf.LoadStack()
+        event_order = 0
         unknown_contents = []
         for line in file_d.raw_contents:
             line_contents = self._getLineDetails(line, file_d)
@@ -235,34 +241,22 @@ class TuflowLoader(ATool, ALoader):
             # Add or remove an if-else scenario object from the stack. When they
             # are removed they are added to the model. 
             elif line_type == ft.SCENARIO:
-                rettype, scenario = self.breakScenario(line_contents[0][0],
-                                                       line_contents[0][1],
-                                                       scenario_order)
-                if rettype == 'IF':
-                    # If it's an embedded if we need to give a reference to the
-                    # parent TuflowScenario as well
-                    if not scenario_stack.isEmpty():
-                        scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
-                                                          line_contents[0][1])
-                    scenario_stack.add(scenario)
-                    scenario_order +=1
-                    model.addContent(line_type, line_contents[0][1])
-
-                elif rettype == 'ELSE':
-                    model.addContent(ft.SCENARIO_END, '')
-                    s = scenario_stack.pop()
-                    model.addScenario(s)
-                    scenario_order +=1
-                    if not scenario_stack.isEmpty():
-                        scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
-                                                          line_contents[0][1])
-                    scenario_stack.add(scenario)
-                    model.addContent(line_type, line_contents[0][1])
-                else:
-                    s = scenario_stack.pop()
-                    s.has_endif = True
-                    model.addContent(ft.SCENARIO_END, '')
-                    model.addScenario(s)
+                model, scenario_stack, scenario_order = self.buildScenario(
+                                                           line_type,
+                                                           line_contents[0][0], 
+                                                           line_contents[0][1], 
+                                                           scenario_order, 
+                                                           scenario_stack,
+                                                           model)
+            
+            elif line_type == ft.EVENT:
+                model, event_stack, event_order = self.buildEvent(
+                                                           line_type,
+                                                           line_contents[0][0], 
+                                                           line_contents[0][1], 
+                                                           event_order, 
+                                                           event_stack,
+                                                           model)
             
             else:
                 # Stash and clear any unknown stuff first if it's there.
@@ -276,9 +270,18 @@ class TuflowLoader(ATool, ALoader):
                     line_val, hex_hash, line_type, ext = l
 
                     model.addContent(line_type, line_val)
+                    
+                    # Add the hash refs to the scenario and event objects if
+                    # we have any currently active
                     if not scenario_stack.isEmpty():
-                        scenario_stack.peek().addPartRef(TuflowScenario.TUFLOW_PART, 
-                                                          hex_hash)
+                        if line_type == ft.EVENT or line_type == ft.EVENT_END:
+                            scenario_stack.peek().addPartRef(TuflowScenario.EVENT_PART, 
+                                                              hex_hash)
+                        else:
+                            scenario_stack.peek().addPartRef(TuflowScenario.TUFLOW_PART, 
+                                                              hex_hash)
+                    if not event_stack.isEmpty():
+                        event_stack.peek().addPartRef(hex_hash)
                     
                     if line_type == ft.MODEL: 
                         line_val, hex_hash, line_type, ext = line_contents[0]
@@ -341,6 +344,11 @@ class TuflowLoader(ATool, ALoader):
             command_type = ft.SCENARIO
             line_val = line
         
+        # Define event statement
+        elif upline.startswith('DEFINE EVENT') or upline.startswith('END DEFINE'):
+            command_type = ft.EVENT
+            line_val = line
+        
         elif '==' in line or 'AUTO' in line.upper():
 
             # Estry AUTO 
@@ -359,8 +367,20 @@ class TuflowLoader(ATool, ALoader):
                 line_val = line
             else:
                 if command_type == ft.VARIABLE: 
-                    line_val = tfp.ModelVariables(self._global_order, instruction, 
-                                            hex_hash, command_type, command)
+                    
+                    # If there's no scenario values handed in use the file
+                    # specified ones
+                    if 'MODEL SCENARIOS' in command.upper():
+                        self.addScenarioVars(instruction)
+                    
+                    if command.strip().upper() == 'BC EVENT SOURCE':
+                        line_val = tfp.ModelVariableKeyVal(self._global_order, 
+                                                          instruction, hex_hash, 
+                                                          command_type, command)
+                    else:
+                        line_val = tfp.ModelVariables(self._global_order, 
+                                                      instruction, hex_hash, 
+                                                      command_type, command)
                     self._global_order += 1
                 else:
                     # Do a check for MI Projection and SHP projection
@@ -439,53 +459,40 @@ class TuflowLoader(ATool, ALoader):
         return [[line_val, hex_hash, command_type, ext]]
     
     
-    def checkForTildes(self, instruction):
-        """Check the file for tildes so we can try and replace them.
-        
-        Some filenames can caontain placeholders in the for ~something~. These
-        correspond to scenario or event variables. This method checks the given
-        file path to see if it has any of these and replaces them if it can.
-        
-        Args:
-            instruction(str): the filename as read from file.
-        
-        Return:
-            str - the filename with the tildes replaced, or False if none were found.
+    def buildScenario(self, line_type, line, hex_hash, scenario_order, 
+                      scenario_stack, model):
         """
-        if '!' in instruction:
-            comment_char = '!'
-            new_instruction, comment = instruction.split('!')
-        if '#' in instruction:
-            comment_char = '#'
-            new_instruction, comment = instruction.split('#')
-        
-        orig_instruction = new_instruction
-            
-        if not '~' in new_instruction:
-            return instruction, None
-        
-        found = False
-        # Check for scenarion stuff
-        for key, val in self.scenario_vals.items():
-            temp = '~' + key + '~'
-            if temp in new_instruction:
-                found = True
-                new_instruction = new_instruction.replace(temp, val)
-                i=0
+        """
+        rettype, scenario = self.breakScenario(line, hex_hash, scenario_order)
 
-        # Check for event stuff
-        for key, val in self.event_vals.items():
-            temp = '~' + key + '~'
-            if temp in new_instruction:
-                found = True
-                new_instruction = new_instruction.replace(temp, val)
-        
-        if not found:
-            return instruction, None
+        if rettype == 'IF':
+            # If it's an embedded if we need to give a reference to the
+            # parent TuflowScenario as well
+            if not scenario_stack.isEmpty():
+                scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
+                                                  hex_hash)
+            scenario_stack.add(scenario)
+            scenario_order +=1
+            model.addContent(line_type, hex_hash)
+
+        elif rettype == 'ELSE':
+            model.addContent(ft.SCENARIO_END, '')
+            s = scenario_stack.pop()
+            model.addScenario(s)
+            scenario_order +=1
+            if not scenario_stack.isEmpty():
+                scenario_stack.peek().addPartRef(TuflowScenario.SCENARIO_PART,
+                                                  hex_hash)
+            scenario_stack.add(scenario)
+            model.addContent(line_type, hex_hash)
         else:
-            orig_instruction = os.path.splitext(orig_instruction)[0]
-            return new_instruction + comment_char + comment, orig_instruction
-    
+            s = scenario_stack.pop()
+            s.has_endif = True
+            model.addContent(ft.SCENARIO_END, '')
+            model.addScenario(s)
+        
+        return model, scenario_stack, scenario_order
+        
     
     def breakScenario(self, instruction, hex_hash, order):
         """Breaks a scenario IF statement down into parts.
@@ -529,6 +536,135 @@ class TuflowLoader(ATool, ALoader):
             return_type = 'END'
         
         return return_type, scenario
+
+    
+    def buildEvent(self, line_type, line, hex_hash, event_order, 
+                   event_stack, model):
+        """
+        """
+        rettype, event = self.breakEvent(line, hex_hash, event_order)
+
+        if rettype == 'DEFINE':
+            event_stack.add(event)
+            event_order +=1
+            model.addContent(line_type, hex_hash)
+
+        else:
+            e = event_stack.pop()
+            e.has_endif = True
+            model.addContent(ft.EVENT_END, '')
+            model.addEvent(e)
+        
+        return model, event_stack, event_order
+        
+    
+    def breakEvent(self, instruction, hex_hash, order):
+        """Breaks a scenario IF statement down into parts.
+        
+        Args:
+            instruction(str): the if statement to break up.
+            hex_hash(str): the hash code for this line.
+            order(int): the order this scenario appears in the file.
+            
+        Return:
+            tuple(str, TuflowScenario or None):  
+        """
+        found, split, comment_char = self.separateComment(instruction)
+        comment = ''
+        if found: comment = split[1].strip()
+        instruction = split[0].strip()
+        upinstruction = instruction.upper()
+        event = None
+        
+        if 'DEFINE EVENT' in upinstruction:
+            evt_vals = instruction.split('==')[1].strip()
+            evt_vals = evt_vals.strip()
+            return_type = 'DEFINE'
+            event = TuflowEvent(TuflowEvent.DEFINE, evt_vals, hex_hash,
+                                       order, comment, comment_char)       
+        else:
+            return_type = 'END'
+        
+        return return_type, event
+                    
+    
+    def checkForTildes(self, instruction):
+        """Check the file for tildes so we can try and replace them.
+        
+        Some filenames can caontain placeholders in the for ~something~. These
+        correspond to scenario or event variables. This method checks the given
+        file path to see if it has any of these and replaces them if it can.
+        
+        Args:
+            instruction(str): the filename as read from file.
+        
+        Return:
+            str - the filename with the tildes replaced, or False if none were found.
+        """
+        
+        if '!' in instruction:
+            comment_char = '!'
+            new_instruction, comment = instruction.split('!')
+        elif '#' in instruction:
+            comment_char = '#'
+            new_instruction, comment = instruction.split('#')
+        else:
+            comment_char = ''
+            comment = ''
+            new_instruction = instruction
+        
+        orig_instruction = new_instruction
+            
+        if not '~' in new_instruction:
+            return instruction, None
+        
+        found = False
+        # Check for scenarion stuff
+        for key, val in self.scenario_vals.items():
+            temp = '~' + key + '~'
+            if temp in new_instruction:
+                found = True
+                new_instruction = new_instruction.replace(temp, val)
+                i=0
+
+        # Check for event stuff
+        for key, val in self.event_vals.items():
+            temp = '~' + key + '~'
+            if temp in new_instruction:
+                found = True
+                new_instruction = new_instruction.replace(temp, val)
+        
+        if not found:
+            return instruction, None
+        else:
+            orig_instruction = os.path.splitext(orig_instruction)[0]
+            return new_instruction + comment_char + comment, orig_instruction
+    
+    
+    def addScenarioVars(self, instruction):
+        """Checks the contents of a Model Scenarios == command.
+        
+        'Model Scenarios ==' commands are overridden by any matching values 
+        that are specified when loading the model. This functions checks the
+        contents of instruction and updates the global scenario variables IF
+        it is not already being used.
+        
+        Args:
+            instruction(str): everything after the '==' in the file line.
+        """
+        if self.scenario_vals.values(): return
+        
+        if '!' in instruction:
+            instruction = instruction.split('!')
+        if '#' in instruction:
+            instruction = instruction.split('#')
+        
+        instruction = instruction.strip()
+        
+        vals = instruction.split('|')
+        for i, v in enumerate(vals):
+            key = 's' + str(i+1)
+            self.scenario_vals[key] = v
         
     
     def checkForPipes(self, instruction, file_d, hex_hash):

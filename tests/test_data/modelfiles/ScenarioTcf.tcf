@@ -2,6 +2,10 @@ GIS Format == MIF
 MI Projection == ..\model\mi\Projection.mif
 !Write Empty MI Files == ..\model\mi\empty
 
+Model Scenarios == SCEN01 | SCEN11
+Model Events == RGH20
+
+Event File == Event.tef
 
 !###############################################
 ! Read in all related files

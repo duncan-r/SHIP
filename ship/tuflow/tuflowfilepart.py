@@ -177,6 +177,38 @@ class ModelVariables(TuflowFilePart):
             contents += ' ! ' + self.comment
         
         return contents
+
+
+class ModelVariableKeyVal(ModelVariables):
+    """Stores information on Tuflow model file variable(s).
+    
+    
+    """
+    
+    def __init__(self, global_order, var, hex_hash, type, command):
+        """Constructor.
+
+        """
+        ModelVariables.__init__(self, global_order, var, hex_hash, type, command)
+        self.multi_var = None
+        piped_vars = self.raw_var.split('|')
+        self.key_var = piped_vars[0].strip()
+        self.value_var = piped_vars[1].strip()
+        
+        
+    def getPrintableContents(self):
+        """Return the contents formatted for printing.
+        
+        Returns:
+            String - variables line formatted for writing to a file.
+        """
+        contents = self.command + ' == ' + self.key_var + ' | ' + self.value_var
+        
+        # Add the comment back on if it exists.
+        if not self.comment == None and not self.comment == '':
+            contents += ' ! ' + self.comment
+        
+        return contents
             
 
             

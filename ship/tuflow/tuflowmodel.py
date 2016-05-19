@@ -71,6 +71,7 @@ class TuflowModel(object):
         self.files['tgc'] = {}
         self.files['tbc'] = {}
         self.files['ecf'] = {}
+        self.files['tef'] = {}
         
         self.model_order = None
         """Reference to a :class:'ModelOrder' object"""
@@ -492,33 +493,31 @@ class TuflowTypes(object):
     def __init__(self):
         """Initialise the categories and known keywords"""
 
-#         self.MODEL, self.RESULT, self.GIS, self.DATA, self.VARIABLE, \
-#         self.UNKNOWN_FILE, self.UNKNOWN, self.COMMENT = range(8)
-        
-        
         self.types = {}
         self.types[ft.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
-                                  'READ_FILE',
-                                  'ESTRY CONTROL FILE', 'READ RESTART FILE']
+                                'READ_FILE', 'ESTRY CONTROL FILE', 
+                                'EVENT FILE']
         self.types[ft.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
-                                   'LOG FOLDER']
+                                 'LOG FOLDER']
         self.types[ft.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
-                                'SHP PROJECTION', 'MI PROJECTION']
+                              'SHP PROJECTION', 'MI PROJECTION']
         self.types[ft.DATA] =  ['READ MATERIALS FILE', 
-                                  'BC DATABASE']
+                                'BC DATABASE']
         self.types[ft.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
-                                'SET IWL', 'MAP OUTPUT INTERVAL', 
-                                'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
-                                'CELL SIDE WET/DRY DEPTH', 'SET IWL',
-                                'TIME SERIES OUTPUT INTERVAL',
-                                'SCREEN/LOG DISPLAY INTERVAL', 'CSV TIME',
-                                'START OUTPUT', 'OUTPUT INTERVAL',
-                                'STRUCTURE LOSSES', 'WLL APPROACH',
-                                'WLL ADJUST XS WIDTH', 'WLL ADDITIONAL POINTS',
-                                'DEPTH LIMIT FACTOR', 'BC EVENT TEXT',
-                                'BC EVENT NAME', 'CELL SIZE', 'SET CODE',
-                                'GRID SIZE (X,Y)', 'SET ZPTS', 'SET MAT',
-                                'MASS BALANCE OUTPUT', 'GIS FORMAT']
+                                    'SET IWL', 'MAP OUTPUT INTERVAL', 
+                                    'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
+                                    'CELL SIDE WET/DRY DEPTH', 'SET IWL',
+                                    'TIME SERIES OUTPUT INTERVAL',
+                                    'SCREEN/LOG DISPLAY INTERVAL', 'CSV TIME',
+                                    'START OUTPUT', 'OUTPUT INTERVAL',
+                                    'STRUCTURE LOSSES', 'WLL APPROACH',
+                                    'WLL ADJUST XS WIDTH', 'WLL ADDITIONAL POINTS',
+                                    'DEPTH LIMIT FACTOR', 'BC EVENT TEXT',
+                                    'BC EVENT NAME', 'BC EVENT SOURCE',
+                                    'CELL SIZE', 'SET CODE',
+                                    'GRID SIZE (X,Y)', 'SET ZPTS', 'SET MAT',
+                                    'MASS BALANCE OUTPUT', 'GIS FORMAT',
+                                    'MODEL SCENARIOS', 'MODEL EVENTS']
         
         
     def find(self, find_val, file_type='*'):
