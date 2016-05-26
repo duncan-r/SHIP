@@ -333,7 +333,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
         if not actual_name is None:
             self.file_name = actual_name
         
-        if not self.relative_root == None:
+        if not self.relative_root == None and not self.has_own_root:
             contents = start + self.getRelativePath()
         
         elif not self.root == None:

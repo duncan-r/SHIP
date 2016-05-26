@@ -154,7 +154,7 @@ class TuflowEvent(object):
         self.order = order
         self.if_type = if_type
         self.hex_hash = hex_hash
-        self.value = value
+        self.values = [value]
         self.part_list = []
         self.comment = comment
         self.comment_char = comment_char
@@ -197,7 +197,7 @@ class TuflowEvent(object):
         """
 #         output = []
 #         if self.values[0] == 'DEFINE':
-        output = 'DEFINE EVENT == ' + self.value + self.comment_char + self.comment + '\n'
+        output = 'DEFINE EVENT == ' + self.values[0] + self.comment_char + self.comment + '\n'
 #         else:
 #             output.append('END DEFINE')
         
@@ -352,7 +352,7 @@ class TuflowModelFile(object):
         return output
     
     
-    def getSEVariables(self):
+    def getSEVariables(self, scenario=True, event=True):
         """Returns all of the scenario variables in this file.
         
         Tuflow control files can use if-else logic on scenario setups. These are
@@ -485,7 +485,8 @@ class TuflowModelFile(object):
             
         """
         for c in self.contents:
-            if c[0] == ft.UNKNOWN or c[0] == ft.COMMENT: continue
+#             if c[0] == ft.UNKNOWN or c[0] == ft.COMMENT: continue
+            if not isinstance(c[1], TuflowFilePart): continue
             if c[1].hex_hash == hex_hash:
                 return c[1]
         else:

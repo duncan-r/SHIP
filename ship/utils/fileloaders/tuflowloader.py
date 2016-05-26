@@ -241,6 +241,10 @@ class TuflowLoader(ATool, ALoader):
             # Add or remove an if-else scenario object from the stack. When they
             # are removed they are added to the model. 
             elif line_type == ft.SCENARIO:
+                # Stash and clear any unknown stuff first if it's there.
+                if unknown_contents:
+                    unknown_contents = _clearUnknownContents(file_d, line, model, 
+                                                             unknown_contents)
                 model, scenario_stack, scenario_order = self.buildScenario(
                                                            line_type,
                                                            line_contents[0][0], 
@@ -250,6 +254,10 @@ class TuflowLoader(ATool, ALoader):
                                                            model)
             
             elif line_type == ft.EVENT:
+                # Stash and clear any unknown stuff first if it's there.
+                if unknown_contents:
+                    unknown_contents = _clearUnknownContents(file_d, line, model, 
+                                                             unknown_contents)
                 model, event_stack, event_order = self.buildEvent(
                                                            line_type,
                                                            line_contents[0][0], 

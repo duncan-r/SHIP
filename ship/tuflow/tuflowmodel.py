@@ -118,16 +118,17 @@ class TuflowModel(object):
         return output
     
     
-    def getAllScenarioVariables(self):
+    def getAllSEVariables(self):
         """Return all scenario variables found in control files.
         
         Return:
             list - containing all of the scenario variables in the control files.
         """
-        variables = []
+        variables = {'scenario': [], 'event': []}
         for model_file_type in self.files.values():
             for model_file in model_file_type.values():
-                variables.extend(model_file.getScenarioVariables())
+                variables['scenario'].extend(model_file.getSEVariables(event=False))
+                variables['event'].extend(model_file.getSEVariables(scenario=False))
         
         return variables
 
@@ -140,8 +141,10 @@ class TuflowModel(object):
             use the getAllScenarioVariables method.
         
         Args:
-            scenario_vals(list): str's representing the scenario variables that
-                will be used to identify the TuflowFilePart's to return.
+            scenario_vals(dict(list, list)): str's representing the scenario 
+                variables that will be used to identify the TuflowFilePart's to 
+                return. This must contain at least one of 'scenario' or 'event'
+                as keys.
                 
         Return:
             list - of TuflowFilePart's that are with the scenario blocks defined
@@ -150,7 +153,7 @@ class TuflowModel(object):
         file_parts = []
         for model_file_type in self.files.values():
             for model_file in model_file_type.values():
-                file_parts.extend(model_file.getContentsByScenario(scenario_vals))
+                file_parts.extend(model_file.getContentsBySE(scenario_vals))
         
         return file_parts
     
