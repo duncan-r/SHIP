@@ -46,18 +46,42 @@ logger = logging.getLogger(__name__)
 
 
     
-def loadDataFile(datafile):
+def loadDataFile(datafile, args_dict={}):
     """Factory function for creating DataFileObject type objects.
     
     Loads the contents of the DataFileObject based on the composition of the
     given object and returns the newly created DataFileObject of that type.
     
+    The args_dict is a dict of key-value pairs where the key represents a 
+    placeholder used within one of the data files and the value reprents the
+    variables that should be used to replace that value. This is common in
+    bc_dbase file for instance where '__event__' may be used as a place holder
+    with BC Event Text and BC Event Name used in the control files to define
+    what should be used. Other options are the use of scenario and event 
+    definitions. Within these BC Event Source can be defined to associate 
+    certain placeholders with values e.g.:
+    ::
+        Define Event == 8hr
+            BC Event Source == ~DUR~ | 8hr
+            BC Database == ..\bc_dbase\my_bcdbase.csv
+        End Define
+    
+    These are stored in the tuflow model when loaded and can be passed when 
+    loading data files to use.
+    
     Args:
         datafile(TuflowFile): FilePart to create the DataFileObject from.
+        args_dict={}(dict): This is a dictionary of keywords and associated 
+            values that can be used to identify and replace placeholders in the
+            source file names or column names within data files. NOTE CURRENTLY
+            NOT USED. 
         
     Return:
         DataFileObject: of type identified from the composition of the given
             TuflowFile object.
+    
+    Note:
+        The args_dict is CURRENTLY NOT USED, but will be supported soon.
             
     See Also:
         :class:'TuflowFile'.
@@ -88,17 +112,17 @@ def loadDataFile(datafile):
             return tmf
 
         if datafile.extension.lower() == 'csv':
-            row_data, comments, subfile_details = readMatCsvFile(datafile)
+            row_data, comments, subfile_details = readMatCsvFile(datafile, args_dict)
             mat = dataobj.MatCsvDataObject(row_data, datafile, comments)
             
             # Load any subfiles
             for path, header_list in subfile_details.iteritems():
-                mat.addSubfile(readMatSubfile(datafile, path, header_list))
+                mat.addSubfile(readMatSubfile(datafile, path, header_list, args_dict))
             
             return mat
 
     elif command == 'BC DATABASE':
-        row_data, comments = readBcFile(datafile)
+        row_data, comments = readBcFile(datafile, args_dict)
         bc = dataobj.BcDataObject(row_data, datafile, comments)
         return bc 
     
@@ -230,7 +254,7 @@ def readXsFile(datafile):
     
  
 
-def readBcFile(datafile):
+def readBcFile(datafile, args_dict={}):
     """Loads the contents of the BC Database file refernced by datafile.
     
     Loads the data from the file referenced by the given TuflowFile object into
@@ -374,7 +398,7 @@ def readBcFile(datafile):
     return row_collection, comment_lines
 
 
-def readMatCsvFile(datafile):
+def readMatCsvFile(datafile, args_dict={}):
     """Loads the contents of the Materials CSV file referenced by datafile.
     
     Loads the data from the file referenced by the given TuflowFile object into
@@ -584,7 +608,7 @@ def readMatCsvFile(datafile):
     return row_collection, comment_lines, subfile_details
 
 
-def readMatSubfile(main_datafile, filename, header_list): #path, root, header1, header2):
+def readMatSubfile(main_datafile, filename, header_list, args_dict): 
     """
     """
     value_separator = ','

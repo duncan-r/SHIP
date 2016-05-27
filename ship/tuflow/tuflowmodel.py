@@ -34,7 +34,8 @@
 import os
 import operator
 
-from ship.tuflow.tuflowfilepart import TuflowFile, ModelVariables
+from ship.tuflow.tuflowfilepart import TuflowFile, ModelVariables,\
+    ModelVariableKeyVal
 from ship.tuflow.tuflowmodelfile import TuflowModelFile
 from ship.tuflow import FILEPART_TYPES as fpt
 
@@ -93,6 +94,9 @@ class TuflowModel(object):
 
         self.event_vals = {}
         """Key, value pairs for events handed in when loading the model."""
+        
+        self.event_source_data = None
+        """Stores all BC Event Source key values pairs for the particular scenario/event."""
         
     
     def getPrintableContents(self):    
@@ -206,6 +210,9 @@ class TuflowModel(object):
         """Get ModelVariable's included in the model.
         
         Args:
+            se_only=False(bool): if set to True only the variables that are
+                within the scenario and event variable setups defined during
+                file loading will be returned.
             no_duplicates=False(bool): if set to True any duplicate variables
                 will be removed. This is based on the command. The last call to
                 that command will be the one returned.
@@ -247,6 +254,9 @@ class TuflowModel(object):
                 Output, Check and Log files are often only a path without a 
                 filename. If name_only=True is used it will return blank
                 filenames. Setting this to False means they will be ignored.
+            se_only=False(bool): if set to True only the filepaths that are
+                within the scenario and event variable setups defined during
+                file loading will be returned.
         
         Return:
             list - containing the matching TuflowFile's.
@@ -293,6 +303,9 @@ class TuflowModel(object):
                 Output, Check and Log files are often only a path without a 
                 filename. If name_only=True is used it will return blank
                 filenames. Setting this to False means they will be ignored.
+            se_only=False(bool): if set to True only the filepaths that are
+                within the scenario and event variable setups defined during
+                file loading will be returned.
         
         Return:
             list - containing the matching paths.
@@ -330,6 +343,11 @@ class TuflowModel(object):
         TuflowModelFile's are containers for all of the main model files (tcf,
         tgc, tbc, ecf) in the TuflowModel. They contain all of the TuflowFile,
         ModelVariable and any unknown contents (like comments) loaded.
+        
+        Args:
+            se_only=False(bool): if set to True only the files that are
+                within the scenario and event variable setups defined during
+                file loading will be returned.
         
         See Also:
             getModelFiles - which returns the TuflowFile references for each
@@ -371,6 +389,11 @@ class TuflowModel(object):
         These are the values that are loaded under FILEPART_TYPES.MODEL. This
         function only returns the TuflowFile (TuflowFilePart subclass), it 
         does not contain any references to other files they refer to.
+        
+        Args:
+            se_only=False(bool): if set to True only the files that are
+                within the scenario and event variable setups defined during
+                file loading will be returned.
         
         See Also:
             getTuflowModelFiles - which will return a container referencing all
@@ -495,8 +518,12 @@ class TuflowModel(object):
         seen = {}
         result = []
         for item in in_list:
-            if not isinstance(item, ModelVariables): continue
-            marker = item.command
+            if isinstance(item, ModelVariableKeyVal):
+                marker = item.command + item.key_var
+            elif isinstance(item, ModelVariables):
+                marker = item.command
+            else:
+                continue
             if marker in seen: continue
             seen[marker] = 1
             result.append(item)
@@ -544,7 +571,50 @@ class TuflowModel(object):
         
         return files, se_vals
         
+
+
+class EventSourceData(object):
+    """Used to store the BC Data Source variables for the current scenario/event.
+    
+    These are the: BC Event Source == ~somekey~ | someval entries in either
+    control files or .tef files.
+    
+    Also stores any reference to other event key variable paires that can be
+    set in the control files such as: BC Event Name and BC Event Text.
+    
+    An object of this class is constructed when the tuflow model is loaded and
+    it is populated with all the of the event source data defined by the 
+    current scenario and/or event variables either passed in to the loader or
+    stated in the .tcf file.
+    
+    This class creates a convenience object that can be used for quickly 
+    accessing or identifying the varibles defined in the model. These may need
+    to be used when loading FILEPART_TYPES.DATA files or suchlike.
+    """
+    
+    def __init__(self):
+        """
+        """
+        self.cur_source = {}
+        self.all_source = {}
+        self.cur_event_name = ''
+        self.all_event_name = []
+        self.cur_event_text = ''
+        self.all_event_text = []
+    
+    
+    def getSourceKeys(self):
+        """
+        """
+        return self.source_data.keys()
+    
+    
+    def getSourceDict(self):
+        """
+        """
+        return self.source_data
         
+
 
 class TuflowTypes(object):
     """Contains key words from Tuflow files for lookup.

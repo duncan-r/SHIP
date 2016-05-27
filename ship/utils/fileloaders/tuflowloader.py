@@ -34,7 +34,7 @@ from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
 from ship.utils import utilfunctions as uf
 from ship.utils.atool import ATool
-from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder
+from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder, EventSourceData
 from ship.tuflow.tuflowmodelfile import TuflowModelFile, TuflowScenario, TuflowEvent
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfilepart as tfp
@@ -165,7 +165,49 @@ class TuflowLoader(ATool, ALoader):
         self.tuflow_model.model_order = self._model_order
         self.tuflow_model.scenario_vals = self.scenario_vals
         self.tuflow_model.event_vals = self.event_vals
+        self.buildSourceData()
+        
         return self.tuflow_model
+
+    
+    def buildSourceData(self):
+        """Creates an EventSourceData object from loaded TuflowVariables.
+        
+        Builds an EventSourceData object by searching through all of the 
+        ModelVariables loaded. It creates two sets:  
+            - Those that fall within the current scenario/event vals only.
+            - All that are noted in the file.
+            
+        This method then adds a copy of the new EventSourceData class to the
+        loaded TuflowModel.
+        """
+        variables = self.tuflow_model.getVariables(se_only=True, no_duplicates=True)
+        evt_src = EventSourceData()
+        for v in variables:
+            if v.command.upper() == 'BC EVENT SOURCE':
+                if not v.key_var in evt_src.cur_source.keys():
+                    evt_src.cur_source[v.key_var] = v.value_var
+                
+            elif v.command.upper() == 'BC EVENT TEXT':
+                evt_src.cur_event_text = v.raw_var
+
+            elif v.command.upper() == 'BC EVENT NAME':
+                evt_src.cur_event_name = v.raw_var
+        
+        variables = self.tuflow_model.getVariables(se_only=False)
+        for v in variables:
+            if v.command.upper() == 'BC EVENT SOURCE':
+                if not v.key_var in evt_src.all_source.keys():
+                    evt_src.all_source[v.key_var] = []
+                evt_src.all_source[v.key_var].append(v.value_var)
+
+            elif v.command.upper() == 'BC EVENT TEXT':
+                evt_src.all_event_text.append(v.raw_var)
+
+            elif v.command.upper() == 'BC EVENT NAME':
+                evt_src.all_event_name.append(v.raw_var)
+        
+        self.tuflow_model.event_source_data = evt_src
 
     
     def _fetchTuflowModel(self, tcf_path):

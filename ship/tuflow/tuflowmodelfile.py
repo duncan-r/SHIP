@@ -194,12 +194,7 @@ class TuflowEvent(object):
         Return:
             str - containing the appropriate opening statement.
         """
-#         output = []
-#         if self.values[0] == 'DEFINE':
         output = 'DEFINE EVENT == ' + self.values[0] + self.comment_char + self.comment + '\n'
-#         else:
-#             output.append('END DEFINE')
-        
         return output
     
     
@@ -530,7 +525,6 @@ class TuflowModelFile(object):
             
         """
         for c in self.contents:
-#             if c[0] == fpt.UNKNOWN or c[0] == fpt.COMMENT: continue
             if not isinstance(c[1], TuflowFilePart): continue
             if c[1].hex_hash == hex_hash:
                 return c[1]
@@ -692,14 +686,6 @@ class TuflowModelFile(object):
             for c in self.contents:
                 if c[0] == fpt.VARIABLE:
                     output.append(c[1])
-#         for h in hashes:
-#             output.append(self.getEntryByHash(h))
-#         for c in self.contents:
-# #             if c[0] == fpt.VARIABLE:
-#             if not se_vals is None and not c[1].hex_hash in hashes:
-#                 continue
-#             else:
-#                 output.append(c[1])
         
         return output
     
