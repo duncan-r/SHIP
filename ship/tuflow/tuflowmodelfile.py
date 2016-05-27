@@ -405,14 +405,20 @@ class TuflowModelFile(object):
         has_scen = 'scenario' in se_vals.keys()
         has_evt = 'event' in se_vals.keys()
         hashes = []
+        miss_hashes = []
         for s in self.scenarios:
             scen_vals = s.values
             for v in scen_vals:
                 if has_scen and v in se_vals['scenario']: 
-                    continue
+                    miss_hashes.extend(s.getTuflowFilePartRefs())
                 else:
                     hashes.extend(s.getTuflowFilePartRefs())
         
+        # Need this in case a scenario has more than one argument. 
+        hashes = [h for h in hashes if not h in miss_hashes]
+
+        
+        miss_hashes = []
         for e in self.events:
             evt_vals = e.values
             for v in evt_vals:
@@ -425,25 +431,9 @@ class TuflowModelFile(object):
         for c in self.contents:
             if isinstance(c[1], TuflowFilePart):
                 if not c[1].hex_hash in hashes:
-                    out_hashes.append(c[1].hex_hash)
+                    if filepart_type is None or c[0] == filepart_type:
+                        out_hashes.append(c[1].hex_hash)
                     
-        
-#         if 'scenario' in se_vals.keys():
-#             for s in self.scenarios:
-#                 scen_vals = s.values
-#                 for v in scen_vals:
-#                     if v in se_vals['scenario']:
-#                         hashes.extend(s.getTuflowFilePartRefs())
-#                         continue
-# 
-#         if 'event' in se_vals.keys():
-#             for e in self.events:
-#                 evt_vals = e.values
-#                 for v in evt_vals:
-#                     if v in se_vals['event']:
-#                         hashes.extend(e.getTuflowFilePartRefs())
-#                         continue
-        
         return out_hashes
     
     
@@ -468,34 +458,14 @@ class TuflowModelFile(object):
         Raises:
             KeyError - if neither 'scenario' or 'event' are keys in vals.
         """
-#         k = se_vals.keys()
-#         if not 'scenario' in k and not 'event' in k: raise KeyError
-# 
-#         hashes = []
-#         if 'scenario' in se_vals.keys():
-#             for s in self.scenarios:
-#                 scen_vals = s.values
-#                 for v in scen_vals:
-#                     if v in se_vals['scenario']:
-#                         hashes.extend(s.getTuflowFilePartRefs())
-#                         continue
-# 
-#         if 'event' in se_vals.keys():
-#             for e in self.events:
-#                 evt_vals = e.values
-#                 for v in evt_vals:
-#                     if v in se_vals['event']:
-#                         hashes.extend(e.getTuflowFilePartRefs())
-#                         continue
         
         hashes = self.getHashesBySE(se_vals, filepart_type)
         file_parts = []
         for c in self.contents:
-            if c[0] == fpt.COMMENT:
+            if not isinstance(c[1], TuflowFilePart):
                 continue
             if not filepart_type is None and not c[0] == filepart_type:
                 continue
-#             if isinstance(c[1], TuflowFilePart):
             if c[1].hex_hash in hashes:
                 file_parts.append(c[1])
             
@@ -709,7 +679,7 @@ class TuflowModelFile(object):
         return files
     
     
-    def getVariables(self, se_vals):
+    def getVariables(self, se_vals=None):
         """Get all of the ModelVariable's referenced by this object.
         
         Return:

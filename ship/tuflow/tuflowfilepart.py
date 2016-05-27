@@ -77,6 +77,7 @@ class TuflowFilePart(object):
         self.hex_hash = hex_hash
         self.TYPE = type
         self.modelfile_type = modelfile_type
+        self.category = ''
         
     def getPrintableContents(self):
         """Return contents formatted for writing to file.
@@ -498,7 +499,7 @@ class GisFile(TuflowFile):
     with the file path for it to work and any command specific behaviour
     that is associated with GIS file types.
     """
-    def __init__(self, global_order, path, hex_hash, type, command=None, 
+    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
                        root=None, parent_relative_root='', category=None,  
                        parent_hash=None, child_hash=None):
         """Constructor.
@@ -518,8 +519,8 @@ class GisFile(TuflowFile):
             TuflowFile
         """
         TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
-                                root, parent_relative_root, category,  
-                                parent_hash, child_hash)
+                                modelfile_type, root, parent_relative_root, 
+                                category,  parent_hash, child_hash)
         
         # Make sure that we know what all the other associated file types should
         # be for the type of GIS file we are creating. Sets the file category to
@@ -555,7 +556,7 @@ class DataFile(TuflowFile):
         DataFileObject
     """
     
-    def __init__(self, global_order, path, hex_hash, type, command=None, 
+    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
                        root=None, parent_relative_root='', category=None,  
                        parent_hash=None, child_hash=None):
         """Constructor.
@@ -571,8 +572,8 @@ class DataFile(TuflowFile):
             TuflowFile
         """
         TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
-                                root, parent_relative_root, category,  
-                                parent_hash, child_hash)
+                                modelfile_type, root, parent_relative_root, 
+                                category, parent_hash, child_hash)
         # Make sure that we know what all the other associated file types should
         # be for the type of GIS file we are creating. Sets the file category to
         # that defined by the key of the gis_types dictionary.

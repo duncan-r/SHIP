@@ -28,7 +28,7 @@ class TuflowModelFileTests(unittest.TestCase):
         # MODEL type
         tgcpath = 'c:\\some\\fake\\root\\model.tgc'
         self.tgc_hex_hash = _encodeHash(tgcpath)
-        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', self.fake_root, 'tgc')
+        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', 'tgc', self.fake_root)
         
         # GIS type
         gfilepath = '..\\madeuppath\\file.shp'
@@ -47,7 +47,7 @@ class TuflowModelFileTests(unittest.TestCase):
         # VARIABLE type
         vinput = 'h v q d MB1 ZUK0  ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
         self.vars_hex_hash = _encodeHash(vinput)
-        vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types')
+        vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types', 'tcf')
         
         # Scenarion parts
         opening_line = 'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff'
@@ -64,7 +64,8 @@ class TuflowModelFileTests(unittest.TestCase):
 
         vinputS = '2  ! Timestep'
         self.vars_hex_hashS = _encodeHash(vinputS)
-        vfileS = ModelVariables(1, vinputS, self.vars_hex_hashS, ft.VARIABLE, 'Timestep')
+        vfileS = ModelVariables(1, vinputS, self.vars_hex_hashS, ft.VARIABLE, 
+                                'Timestep', 'tcf')
         
         scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.gis_hex_hashS)
         scenario.addPartRef(TuflowScenario.TUFLOW_PART, self.vars_hex_hashS)
@@ -203,20 +204,25 @@ class TuflowModelFileTests(unittest.TestCase):
     
     def test_getContentsBySE(self):
         """Check we get back only the data inside a specific scenario."""
-        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        test_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash, self.vars_hex_hash, self.gis_hex_hashS, self.vars_hex_hashS]
         parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN1']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario 1 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
         
-        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        test_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash, self.vars_hex_hash, self.gis_hex_hashS, self.vars_hex_hashS]
         parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN2']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario 2 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
        
-        test_hashes = [self.gis_hex_hashS, self.vars_hex_hashS]
+        test_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash, self.vars_hex_hash, self.gis_hex_hashS, self.vars_hex_hashS]
         parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN1', 'SCEN2']})
         hashes = [p.hex_hash for p in parts]
         self.assertListEqual(test_hashes, hashes, 'Contents by scenario Both fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
+        
+        test_hashes = [self.tgc_hex_hash, self.gis_hex_hash, self.gis_hex_hash2, self.result_hex_hash, self.vars_hex_hash]
+        parts = self.tuflowmodelfile.getContentsBySE({'scenario': ['SCEN4']})
+        hashes = [p.hex_hash for p in parts]
+        self.assertListEqual(test_hashes, hashes, 'Contents by scenario 2 fail: test_hashes = ' + str(test_hashes) + 'found_hashes = ' + str(hashes))
         
     
     def test_getPrintableContents(self):

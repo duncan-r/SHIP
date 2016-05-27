@@ -110,7 +110,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         result_path = 'S:\\007\\tuflow\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder')
+        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder', 'tcf')
         output = self.loader._resolveResult(result_file)
         
         self.assertEqual(output.root, 'S:\\007\\tuflow\\results\\2d\\calibration\\', 'Result root no filename equal fail.')
@@ -122,7 +122,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         result_path = '..\\results\\2d\\calibration\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder')
+        result_file = TuflowFile(0, result_path, hex_hash, 1, 'Output Folder', 'tcf')
         output = self.loader._resolveResult(result_file)
         
         self.assertEqual(output.root, '', 'Result relative root no filename equal fail.')
@@ -134,7 +134,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         check_path_prefix = 'S:\\007\\tuflow\\checks\\2d\\calibration'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        check_file_prefix = TuflowFile(0, check_path_prefix, hex_hash, 1, 'WRITE CHECK FILES')
+        check_file_prefix = TuflowFile(0, check_path_prefix, hex_hash, 1, 'WRITE CHECK FILES', 'tcf')
         output_check_prefix = self.loader._resolveResult(check_file_prefix)
         
         self.assertEqual(output_check_prefix.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check prefix root equal fail.')
@@ -147,7 +147,7 @@ class TuflowModelLoaderTests(unittest.TestCase):
         check_path = 'S:\\007\\tuflow\\checks\\2d\\'
         hex_hash = hashlib.md5(result_path.encode())
         hex_hash = hex_hash.hexdigest()
-        check_file = TuflowFile(0, check_path, hex_hash, 1, 'WRITE CHECK FILES')
+        check_file = TuflowFile(0, check_path, hex_hash, 1, 'WRITE CHECK FILES', 'tcf')
         output_check = self.loader._resolveResult(check_file)
         
         self.assertEqual(output_check.root, 'S:\\007\\tuflow\\checks\\2d\\', 'Check root equal fail.')

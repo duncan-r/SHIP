@@ -23,7 +23,7 @@ class DataFileObjectTests(unittest.TestCase):
         bc_path = os.path.join(self.curd, r'tests\test_data\bc_dbase\bc_dbase_test.csv') 
         hex_hash = hashlib.md5(bc_path.encode())
         hex_hash = hex_hash.hexdigest()
-        datafile = DataFile(1, bc_path, hex_hash, 3, 'BC Database')
+        datafile = DataFile(1, bc_path, hex_hash, 3, 'BC Database', 'tcf')
         bc = datafileloader.loadDataFile(datafile)
         
         test_contents = ['Name, Source, Column1_or_Time, Column2_or_Value_or_ID, TimeAdd, ValueMult, ValueAdd, IMultF, IAddF',
@@ -41,7 +41,7 @@ class DataFileObjectTests(unittest.TestCase):
         mat_path = os.path.join(self.curd, r'tests\test_data\Materials_TMF.tmf') 
         hex_hash = hashlib.md5(mat_path.encode())
         hex_hash = hex_hash.hexdigest()
-        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File')
+        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File', 'tcf')
         mat = datafileloader.loadDataFile(datafile)
         
         test_contents = ['! Materials file test.',
@@ -65,7 +65,7 @@ class DataFileObjectTests(unittest.TestCase):
         mat_path = os.path.join(self.curd, r'tests\test_data\materials_csv\Materials_CSV.csv') 
         hex_hash = hashlib.md5(mat_path.encode())
         hex_hash = hex_hash.hexdigest()
-        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File')
+        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File', 'tcf')
         mat = datafileloader.loadDataFile(datafile)
         
         test_contents = ["Material ID, Manning's n, Infiltration Parameters, Land Us Hazard ID, ! Description",
@@ -89,7 +89,7 @@ class DataFileObjectTests(unittest.TestCase):
         mat_path = os.path.join(self.curd, r'tests\test_data\materials_csv\Materials_CSV.csv') 
         hex_hash = hashlib.md5(mat_path.encode())
         hex_hash = hex_hash.hexdigest()
-        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File')
+        datafile = DataFile(1, mat_path, hex_hash, 3, 'Read Materials File', 'tcf')
         mat = datafileloader.loadDataFile(datafile)
         
         test_contents = ['Depth, light values, heavy values, , ',
@@ -106,7 +106,7 @@ class DataFileObjectTests(unittest.TestCase):
         gis_path = os.path.join(self.curd, r'tests\test_data\xs\1d_xs_test.mif') 
         hex_hash = hashlib.md5(gis_path.encode())
         hex_hash = hex_hash.hexdigest()
-        datafile = GisFile(1, gis_path, hex_hash, 3, 'Read MI Table Links')
+        datafile = GisFile(1, gis_path, hex_hash, 3, 'Read MI Table Links', 'tgc')
         gis = datafileloader.loadDataFile(datafile)
 
         self.assertRaises(NotImplementedError, lambda: gis._getPrintableContents())

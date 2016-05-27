@@ -33,9 +33,9 @@ class TuflowFilePartTests(unittest.TestCase):
         
         
     def test_instance(self):
-        sf = tfp.TuflowFile(1, 'c:\\madeuppath\\file.mif', self.hex_hash, 3, 'Read GIS')
+        sf = tfp.TuflowFile(1, 'c:\\madeuppath\\file.mif', self.hex_hash, 3, 'Read GIS', 'tcf')
         self.assertIsInstance(sf, tfp.TuflowFilePart, 'TuflowFile is not TuflowFilePartInstance')
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command_var)
+        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command_var, 'tcf')
         self.assertIsInstance(mv, tfp.TuflowFilePart, 'ModelVariables is not TuflowFilePartInstance')
         
         
@@ -55,7 +55,7 @@ class TuflowFilePartTests(unittest.TestCase):
         
         # Check that an absolute path works
         sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 2, self.real_command)
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 2, self.real_command, 'tcf')
         self.assertEqual(sf.relative_root, None, 'relative root should be None')
         self.assertEqual(sf.comment, None, 'Comment should be None')
         self.assertEqual(sf.command, 'Read MI Z Line RIDGE', 'command was not set properly')
@@ -70,12 +70,12 @@ class TuflowFilePartTests(unittest.TestCase):
         '''
         # Check the absolute path is set and returned correctly
         sf = None
-        sf = tfp.TuflowFile(1, self.path_with_comment, self.hex_hash, 3, self.real_command, self.fake_root, self.fake_parent_relative_root)
-        self.assertEqual(os.path.join(self.fake_root, '..\model\mi\someplace_2d_zln_bridge_v1.0.mif'), sf.getAbsolutePath(), 'abspath does not match')
+        sf = tfp.TuflowFile(1, self.path_with_comment, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
+        self.assertEqual(os.path.join(self.fake_root, '..\model\mi\someplace_2d_zln_bridge_v1.0.mif'), sf.getAbsolutePath(), 'abspath does not match: ' + sf.getAbsolutePath())
         
         # Check that the root and relative root are set and combined correctly
         sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, self.fake_root, self.fake_parent_relative_root)
+        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
         self.assertEqual(os.path.join(self.fake_root, self.fake_parent_relative_root, self.real_relative_path), sf.getAbsolutePath(), 'abspath is not root + relative root')
         
 
@@ -84,12 +84,12 @@ class TuflowFilePartTests(unittest.TestCase):
         '''
         # Check that the relative path is set and returned correctly
         sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, self.fake_root)
+        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root)
         self.assertEqual(self.real_relative_path, sf.getRelativePath(), 'relative path does not match')
         
         # Check that setting an absolute path sets the relative path to None
         sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command )
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
         self.assertFalse(sf.getRelativePath(), 'relative path is not False')
         
      
@@ -97,7 +97,7 @@ class TuflowFilePartTests(unittest.TestCase):
         '''Check that we can get the file name with the extension without problems
         '''
         sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command)
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
         self.assertEqual('TuflowFile.mid', sf.getFileNameAndExtension(), 'name and extension do not match')
         
         
@@ -107,14 +107,14 @@ class TuflowFilePartTests(unittest.TestCase):
         # Check path setting works without keeping relative path
         sf = None
         path = 'c:\\some\\random\\path\\with\\file.shp'
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command)
+        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf')
         sf.setPathsWithAbsolutePath(path, False)
         self.assertEqual(path, sf.getAbsolutePath(), 'absolute paths do not match')
         self.assertFalse(sf.getRelativePath(), 'relative path does not match')
 
         # and with keeping the relative path
         sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, self.fake_root, self.fake_parent_relative_root)
+        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
         sf.setPathsWithAbsolutePath(path, True)
         self.assertEqual(os.path.join('c:\\some\\random\\path\\with', self.fake_parent_relative_root, '..\\testinputdata', 'file.shp'), sf.getAbsolutePath(), 'absolute paths do not match')
        
@@ -122,11 +122,11 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_setFileName(self):
         '''Check that the fileName is set properly.
         '''
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command)
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
         sf.setFileName('newfile')
         self.assertEqual('newfile.mid', sf.getFileNameAndExtension(), 'fileName with no extension not set properly')
 
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command)
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
         sf.setFileName('newfile1.shp', True)
         self.assertEqual('newfile1.mid', sf.getFileNameAndExtension(), 'fileName and removed extension not set properly')
        
@@ -157,11 +157,11 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual('Read MI Z Line RIDGE == mi\someplace_2d_zln_bridge_v1.0.mif ! Some comment', sf.getPrintableContents(), 'printable contents do not match')
 
         sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command)
+        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
         p = sf.getPrintableContents()
         self.assertEqual('Read MI Z Line RIDGE == c:\\first\\second\\third\\fourth\\TuflowFile.mid', sf.getPrintableContents(), 'printable contents for absolute path do not match')
 
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 3, self.real_command_var)
+        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 3, self.real_command_var, 'tcf')
         self.assertEqual('Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard', mv.getPrintableContents(), 'printable contents do not match')
         
         # Test that it works with a scenario/event placholder path
@@ -203,7 +203,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_inputVars(self):
         '''Check that all of the variables in the object have been loaded properly
         '''
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command)
+        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command, 'tcf')
         self.assertEqual(mv.comment, 'Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard', 'comment does not match')
         self.assertEqual(mv.raw_var, 'h v q d MB1 ZUK0', 'raw_var does not match')
 

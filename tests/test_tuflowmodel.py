@@ -29,27 +29,30 @@ class TuflowModelTests(unittest.TestCase):
         # MODEL type
         tcfpath = 'c:\\some\\fake\\root\\main.tcf'
         self.tcf_hex_hash = _encodeHash(tcfpath)
-        self.mfileTcf = TuflowFile(1, tcfpath, self.tcf_hex_hash, ft.MODEL, 'tcf', self.fake_root, category='tcf')
+        self.mfileTcf = TuflowFile(1, tcfpath, self.tcf_hex_hash, ft.MODEL, 'tcf', 'tcf', 
+                                   root=self.fake_root, category='tcf')
         self.tuflowmodelfile = TuflowModelFile('tcf', self.mfileTcf.hex_hash, None)
 
         tgcpath = 'c:\\some\\fake\\root\\model.tgc'
         self.tgc_hex_hash = _encodeHash(tgcpath)
-        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', self.fake_root, category='tgc')
+        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', 
+                              'tgc', root=self.fake_root, category='tgc')
         
         # GIS type
         gfilepath = '..\\madeuppath\\file.shp'
         self.gis_hex_hash = _encodeHash(gfilepath)
-        gfile = GisFile(1, gfilepath, self.gis_hex_hash, ft.GIS, 'Read GIS', self.fake_root)
+        gfile = GisFile(1, gfilepath, self.gis_hex_hash, ft.GIS, 'Read GIS', 'tcf', 
+                        root=self.fake_root)
 
         # RESULTS type
         dfilepath = '..\\madeuppath\\2d\\results'
         self.result_hex_hash = _encodeHash(dfilepath)
-        dfile = TuflowFile(1, dfilepath, self.result_hex_hash, ft.RESULT, 'OUTPUT FOLDER', self.fake_root)
+        dfile = TuflowFile(1, dfilepath, self.result_hex_hash, ft.RESULT, 'OUTPUT FOLDER', 'tcf', root=self.fake_root)
 
         # VARIABLE type
         vinput = 'h v q d MB1 ZUK0  ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
         self.vars_hex_hash = _encodeHash(vinput)
-        vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types')
+        vfile = ModelVariables(1, vinput, self.vars_hex_hash, ft.VARIABLE, 'Map Output Data Types', 'tcf')
         
         self.tuflowmodelfile.addContent(ft.MODEL, mfileTgc)
         self.tuflowmodelfile.addContent(ft.GIS, gfile)
