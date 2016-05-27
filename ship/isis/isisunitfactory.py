@@ -113,7 +113,7 @@ class IsisUnitFactory(object):
         '''
         if key == 'river':
             # River can also be used for Muskingham units
-            if not contents[file_line+1].strip() == 'SECTION':
+            if not contents[file_line+1].strip().startswith('SECTION'):
                 return file_line, False
             
             reach_no = self._getReachNumber(reach_number)
@@ -123,7 +123,7 @@ class IsisUnitFactory(object):
             unit = self.available_units[key](file_order, self.ic_rows)
         
         elif key == 'bridge':
-            if contents[file_line + 1].strip() == 'USBPR1978':
+            if contents[file_line + 1].strip().startswith('USBPR1978'):
                 unit = bridgeunit.BridgeUnitUsbpr(file_order)
             else:
                 unit = bridgeunit.BridgeUnitArch(file_order)

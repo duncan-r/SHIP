@@ -222,8 +222,9 @@ class BridgeUnit (AIsisUnit):
         if is_head_item:
             item = self.head_data[item]
         if not no_of_dps == None:
-            form = '%0.' + str(no_of_dps) + 'f'
-            item = form % float(item)
+            if not item == '':
+                form = '%0.' + str(no_of_dps) + 'f'
+                item = form % float(item)
         
         if align_right:
             final_str = '{:>' + str(col_width) + '}'
