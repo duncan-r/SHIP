@@ -66,7 +66,7 @@ class TuflowFilePart(object):
     """
     
     
-    def __init__(self, global_order, hex_hash, type):
+    def __init__(self, global_order, hex_hash, type, modelfile_type):
         """Constructor.
 
         Initialises the file order to -1 and the unknown_contents to a list
@@ -76,8 +76,7 @@ class TuflowFilePart(object):
         self.unknown_contents = []
         self.hex_hash = hex_hash
         self.TYPE = type
-        self.category = ''
-        
+        self.modelfile_type = modelfile_type
         
     def getPrintableContents(self):
         """Return contents formatted for writing to file.
@@ -115,7 +114,7 @@ class ModelVariables(TuflowFilePart):
         individual variable list AND the raw_var variable.
     """
     
-    def __init__(self, global_order, var, hex_hash, type, command):
+    def __init__(self, global_order, var, hex_hash, type, command, modelfile_type):
         """Constructor.
 
         Takes the two parts of a variables command line in a tuflow model file.
@@ -134,7 +133,8 @@ class ModelVariables(TuflowFilePart):
             command: The command part of the tuflow command (the bit before
                the '==')
         """
-        TuflowFilePart.__init__(self, global_order, hex_hash, type)
+        TuflowFilePart.__init__(self, global_order, hex_hash, type, 
+                                modelfile_type)
 
         # extract the variables and the comment (if it exists)
         self.comment = None
@@ -185,11 +185,12 @@ class ModelVariableKeyVal(ModelVariables):
     
     """
     
-    def __init__(self, global_order, var, hex_hash, type, command):
+    def __init__(self, global_order, var, hex_hash, type, command, modelfile_type):
         """Constructor.
 
         """
-        ModelVariables.__init__(self, global_order, var, hex_hash, type, command)
+        ModelVariables.__init__(self, global_order, var, hex_hash, type, command, 
+                                modelfile_type)
         self.multi_var = None
         piped_vars = self.raw_var.split('|')
         self.key_var = piped_vars[0].strip()
@@ -231,9 +232,9 @@ class TuflowFile(TuflowFilePart, PathHolder):
             Read GIS Z HX Line == mi\2d_bc_v1.MIF | mi\2d_zpt_v2.MIF
     """
     
-    def __init__(self, global_order, path, hex_hash, type, command, root=None, 
-                       parent_relative_root='', category=None, parent_hash=None, 
-                       child_hash=None ):
+    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type,
+                       root=None, parent_relative_root='', category=None,  
+                       parent_hash=None, child_hash=None ):
         """Constructor.
         
 
@@ -285,7 +286,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
         if not isinstance(path, basestring):
             raise TypeError
         
-        TuflowFilePart.__init__(self, global_order, hex_hash, type)
+        TuflowFilePart.__init__(self, global_order, hex_hash, type, modelfile_type)
         
         self.command = command
         self.category = category

@@ -32,7 +32,7 @@
 import os
 
 from ship.tuflow.tuflowfilepart import TuflowFile, TuflowFilePart
-from ship.tuflow import FILEPART_TYPES as ft
+from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
 
 
@@ -178,8 +178,7 @@ class TuflowEvent(object):
         """
         refs = []
         for p in self.part_list:
-            if p[0] == TuflowScenario.TUFLOW_PART:
-                refs.append(p[1])
+            refs.append(p)
         
         return refs
     
@@ -311,29 +310,29 @@ class TuflowModelFile(object):
             line_type = entry[0]
             if i in skip_lines: continue
 
-            if line_type == ft.COMMENT:
+            if line_type == fpt.COMMENT:
                 output.append(''.join(entry[1]))
             else:
                 
-                if entry[0] == ft.SCENARIO:
+                if entry[0] == fpt.SCENARIO:
                     scen_stack.add(scenarios.pop(0))
                     output.append(indent + scen_stack.peek().getOpeningStatement())
                     indent_spacing += 4
                     indent = ''.join([' '] * indent_spacing)
                 
-                elif entry[0] == ft.SCENARIO_END:
+                elif entry[0] == fpt.SCENARIO_END:
                     indent_spacing -= 4
                     indent = ''.join([' '] * indent_spacing)
                     output.append(indent + scen_stack.peek().getClosingStatement())
                     scen_stack.pop()
                 
-                elif entry[0] == ft.EVENT:
+                elif entry[0] == fpt.EVENT:
                     evt_stack.add(events.pop(0))
                     output.append(indent + evt_stack.peek().getOpeningStatement())
                     indent_spacing += 4
                     indent = ''.join([' '] * indent_spacing)
                 
-                elif entry[0] == ft.EVENT_END:
+                elif entry[0] == fpt.EVENT_END:
                     indent_spacing -= 4
                     indent = ''.join([' '] * indent_spacing)
                     output.append(indent + evt_stack.peek().getClosingStatement())
@@ -377,7 +376,78 @@ class TuflowModelFile(object):
         return vals
     
     
-    def getContentsBySE(self, vals):
+    def getHashesBySE(self, se_vals, filepart_type=None):
+        """Get the hash codes for all TuflowFileParts in scenario/events.
+        
+        Returns the hex_hash values for all of the TuflowFilePart's held by
+        this object that are within the TuflowScenario and TuflowEvent classes
+        defined by the values in se_vals.
+        
+        The actual operation of this function is a little contrary to what
+        you might expect. Instead of getting the values inside the required
+        scenarios it gets the values that are in all of the other scenarios and
+        then discounts them when comparing against all of the hex_hash values
+        in this classes self.contents. This is done becuase not all values are
+        inside scenarios and events, i.e. they are global and always used. This
+        approach is a lot simpler than most of the other methods of dealing
+        with this.
+        
+        Args:
+        
+        
+        Return:
+        
+        
+        """
+        k = se_vals.keys()
+        if not 'scenario' in k and not 'event' in k: raise KeyError
+
+        has_scen = 'scenario' in se_vals.keys()
+        has_evt = 'event' in se_vals.keys()
+        hashes = []
+        for s in self.scenarios:
+            scen_vals = s.values
+            for v in scen_vals:
+                if has_scen and v in se_vals['scenario']: 
+                    continue
+                else:
+                    hashes.extend(s.getTuflowFilePartRefs())
+        
+        for e in self.events:
+            evt_vals = e.values
+            for v in evt_vals:
+                if has_evt and v in se_vals['event']:
+                    continue
+                else:
+                    hashes.extend(e.getTuflowFilePartRefs())
+        
+        out_hashes = []
+        for c in self.contents:
+            if isinstance(c[1], TuflowFilePart):
+                if not c[1].hex_hash in hashes:
+                    out_hashes.append(c[1].hex_hash)
+                    
+        
+#         if 'scenario' in se_vals.keys():
+#             for s in self.scenarios:
+#                 scen_vals = s.values
+#                 for v in scen_vals:
+#                     if v in se_vals['scenario']:
+#                         hashes.extend(s.getTuflowFilePartRefs())
+#                         continue
+# 
+#         if 'event' in se_vals.keys():
+#             for e in self.events:
+#                 evt_vals = e.values
+#                 for v in evt_vals:
+#                     if v in se_vals['event']:
+#                         hashes.extend(e.getTuflowFilePartRefs())
+#                         continue
+        
+        return out_hashes
+    
+    
+    def getContentsBySE(self, se_vals, filepart_type=None):
         """Returns a list of TuflowFilePart's based on the given scenario_vals.
         
         Any TuflowFilePart that is within a TuflowScenario or TuflowEvent with 
@@ -398,31 +468,36 @@ class TuflowModelFile(object):
         Raises:
             KeyError - if neither 'scenario' or 'event' are keys in vals.
         """
-        k = vals.keys()
-        if not 'scenario' in k and not 'event' in k: raise KeyError
-
-        hashes = []
-        if 'scenario' in vals.keys():
-            for s in self.scenarios:
-                scen_vals = s.values
-                for v in scen_vals:
-                    if v in vals['scenario']:
-                        hashes.extend(s.getTuflowFilePartRefs())
-                        continue
-
-        if 'event' in vals.keys():
-            for e in self.events:
-                evt_vals = e.values
-                for v in evt_vals:
-                    if v in vals['event']:
-                        hashes.extend(e.getTuflowFilePartRefs())
-                        continue
+#         k = se_vals.keys()
+#         if not 'scenario' in k and not 'event' in k: raise KeyError
+# 
+#         hashes = []
+#         if 'scenario' in se_vals.keys():
+#             for s in self.scenarios:
+#                 scen_vals = s.values
+#                 for v in scen_vals:
+#                     if v in se_vals['scenario']:
+#                         hashes.extend(s.getTuflowFilePartRefs())
+#                         continue
+# 
+#         if 'event' in se_vals.keys():
+#             for e in self.events:
+#                 evt_vals = e.values
+#                 for v in evt_vals:
+#                     if v in se_vals['event']:
+#                         hashes.extend(e.getTuflowFilePartRefs())
+#                         continue
         
+        hashes = self.getHashesBySE(se_vals, filepart_type)
         file_parts = []
         for c in self.contents:
-            if isinstance(c[1], TuflowFilePart):
-                if c[1].hex_hash in hashes:
-                    file_parts.append(c[1])
+            if c[0] == fpt.COMMENT:
+                continue
+            if not filepart_type is None and not c[0] == filepart_type:
+                continue
+#             if isinstance(c[1], TuflowFilePart):
+            if c[1].hex_hash in hashes:
+                file_parts.append(c[1])
             
         return file_parts
 
@@ -485,7 +560,7 @@ class TuflowModelFile(object):
             
         """
         for c in self.contents:
-#             if c[0] == ft.UNKNOWN or c[0] == ft.COMMENT: continue
+#             if c[0] == fpt.UNKNOWN or c[0] == fpt.COMMENT: continue
             if not isinstance(c[1], TuflowFilePart): continue
             if c[1].hex_hash == hex_hash:
                 return c[1]
@@ -504,7 +579,7 @@ class TuflowModelFile(object):
         for c in self.contents:
             if isinstance(c[1], TuflowFile):
                 p = c[1].getAbsolutePath()
-                if c[0] == ft.RESULT:
+                if c[0] == fpt.RESULT:
                     continue
                 else:
                     if not os.path.exists(p):
@@ -514,7 +589,8 @@ class TuflowModelFile(object):
         return failed
     
     
-    def getFiles(self, file_type=None, extensions=[], include_results=True):
+    def getFiles(self, file_type=None, extensions=[], include_results=True,
+                 se_vals=None):
         """Get the TuflowFile objects referenced by this object.
         
         Args:
@@ -528,13 +604,18 @@ class TuflowModelFile(object):
         Return:
             list - containing TuflowFile objects.
         """
+        hashes = []
+        if not se_vals is None:
+            hashes = self.getHashesBySE(se_vals, file_type)
         output = []
         for c in self.contents:
             if isinstance(c[1], TuflowFile):
                 
                 if not file_type is None and not c[0] == file_type: 
                     continue
-                elif not include_results and c[0] == ft.RESULT:
+                elif not se_vals is None and not c[1].hex_hash in hashes:
+                    continue
+                elif not include_results and c[0] == fpt.RESULT:
                     continue
                 else:
                     if extensions and not c[1].extension in extensions:
@@ -545,7 +626,7 @@ class TuflowModelFile(object):
     
     
     def getFileNames(self, file_type=None, extensions=[], with_extension=True, 
-                     all_types=False, include_results=True):
+                     all_types=False, include_results=True, se_vals=None):
         """Get all of the file names for TuflowFile object in this class.
         
         This is a convenience method. It calls the getFiles method and extracts
@@ -564,12 +645,13 @@ class TuflowModelFile(object):
         Return:
             list - containing file names as strings.
         """
-        files = self.getFiles(file_type, extensions, include_results)
+        files = self.getFiles(file_type, extensions, include_results, se_vals)
         
         output = []
         if with_extension:
             if all_types:
                 for f in files:
+                    
                     output.extend(f.getFileNameAndExtensionAllTypes())
             else:
                 output = [f.getFileNameAndExtension() for f in files]
@@ -579,7 +661,8 @@ class TuflowModelFile(object):
         return output
     
     
-    def getAbsolutePaths(self, file_type=None, extension=None, all_types=False):
+    def getAbsolutePaths(self, file_type=None, extension=None, all_types=False,
+                         se_vals=None):
         """Get all of the absolute paths for TuflowFile objects in this class.
         
         This is a convenience method. It calls the getFiles method and extracts
@@ -596,13 +679,14 @@ class TuflowModelFile(object):
         Return:
             list - containing absolute paths as strings.
         """
-        files = self.getFiles(file_type, extension)
+        files = self.getFiles(file_type, extension, se_vals=se_vals)
         files = [f.getAbsolutePath(all_types=all_types) for f in files]
 
         return files
             
 
-    def getRelativePaths(self, file_type=None, extension=None, all_types=False):
+    def getRelativePaths(self, file_type=None, extension=None, all_types=False,
+                         se_vals=None):
         """Get all of the relative paths for TuflowFile objects in this class.
         
         This is a convenience method. It calls the getFiles method and extracts
@@ -619,22 +703,33 @@ class TuflowModelFile(object):
         Return:
             list - containing relative paths as strings.
         """
-        files = self.getFiles(file_type, extension)
+        files = self.getFiles(file_type, extension, se_vals=se_vals)
         files = [f.getRelativePath(all_types=all_types) for f in files]
 
         return files
     
     
-    def getVariables(self):
+    def getVariables(self, se_vals):
         """Get all of the ModelVariable's referenced by this object.
         
         Return:
             list - of ModelVariable's.
         """
         output = []
-        for c in self.contents:
-            if c[0] == ft.VARIABLE:
-                output.append(c[1])
+        if not se_vals is None:
+            output = self.getContentsBySE(se_vals, fpt.VARIABLE)
+        else:
+            for c in self.contents:
+                if c[0] == fpt.VARIABLE:
+                    output.append(c[1])
+#         for h in hashes:
+#             output.append(self.getEntryByHash(h))
+#         for c in self.contents:
+# #             if c[0] == fpt.VARIABLE:
+#             if not se_vals is None and not c[1].hex_hash in hashes:
+#                 continue
+#             else:
+#                 output.append(c[1])
         
         return output
     

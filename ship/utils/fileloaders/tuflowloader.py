@@ -28,6 +28,7 @@
 import os
 import hashlib
 import re
+import random
 
 from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
@@ -95,7 +96,16 @@ class TuflowLoader(ATool, ALoader):
             tcfpath = 'C:\path\to\tcf\myfile_~s1~_~e1~_~e2~_place.tcf'
             args_dict = {'scenario': {'s1': 'scen1'}, 'event': {'e1': '100yr', 'e2': '4h'}}
             loader = FileLoader()
-            tuflow_model = loader.loadFile(tcfpath, args_dict)            
+            tuflow_model = loader.loadFile(tcfpath, args_dict)
+            
+            Events and scenarios can be provided that do not have placeholders
+            in the filename. When this is the case tuflow will add them to the
+            end of the filename. For example:
+            
+            tcfpath = 'C:\path\to\tcf\myfile_~s1~_~e1~_place.tcf'
+            args_dict = {'scenario': {'s1': 'scen1'}, 'event': {'e1': '100yr', 'e2': '4h'}}
+            
+            Would give a file name of 'C:\path\to\tcf\myfile_scen1_100yr_place4h.tcf'
         
         Args:
             tcf_path(str): path to a .tcf file.
@@ -384,11 +394,13 @@ class TuflowLoader(ATool, ALoader):
                     if command.strip().upper() == 'BC EVENT SOURCE':
                         line_val = tfp.ModelVariableKeyVal(self._global_order, 
                                                           instruction, hex_hash, 
-                                                          command_type, command)
+                                                          command_type, command,
+                                                          file_d.extension)
                     else:
                         line_val = tfp.ModelVariables(self._global_order, 
                                                       instruction, hex_hash, 
-                                                      command_type, command)
+                                                      command_type, command,
+                                                      file_d.extension)
                     self._global_order += 1
                 else:
                     # Do a check for MI Projection and SHP projection
@@ -400,7 +412,7 @@ class TuflowLoader(ATool, ALoader):
                         line_val = line
                         command_type = ft.COMMENT 
                     else:
-                        instruction, orig_instruction = self.checkForTildes(instruction)
+#                         instruction, orig_instruction = self.checkForTildes(instruction)     # DEBUG
                         ext = self.extractExtension(instruction)
                         f_type = self.file_types.get(ext)
                         
@@ -414,13 +426,16 @@ class TuflowLoader(ATool, ALoader):
                                 ext = file_d.extension
                             line_val = tfp.TuflowFile(self._global_order, instruction, 
                                                     hex_hash, command_type, 
-                                                    command, file_d.root, 
+                                                    command, file_d.extension, 
+                                                    file_d.root, 
                                                     file_d.relative_root, ext)
-                            line_val.actual_name = orig_instruction
+#                             line_val.actual_name = orig_instruction     # DEBUG
                             self._global_order += 1
 
                             if command_type is ft.RESULT: 
                                 line_val = self._resolveResult(line_val)
+                                line_val.category = None
+#                                 line_val.modelfile_type = file_d.extension
                         
                         # It's one of the files in self.types
                         else:
@@ -443,11 +458,12 @@ class TuflowLoader(ATool, ALoader):
                                 line_val = self.file_types[ext](self._global_order, 
                                                                 p, hex_hash, 
                                                                 command_type, command, 
+                                                                file_d.extension,
                                                                 file_d.root, 
                                                                 file_d.relative_root,
                                                                 parent_hash=parent_hash,
                                                                 child_hash=child_hash)
-                                line_val.actual_name = orig_instruction
+#                                 line_val.actual_name = orig_instruction    # DEBUG
                                 multi_lines.append([line_val,
                                                    hex_hash,
                                                    command_type,
@@ -937,7 +953,7 @@ class TuflowLoader(ATool, ALoader):
             return TuflowModelFile(self.extension, self.head_hash, self.parent_hash) 
             
 
-        def generateModelTuflowFile(self, line_type, global_order):
+        def generateModelTuflowFile(self, line_type, global_order, modelfile_type=None):
             """Creates a TuflowFile object from the current state.
             
             Generates the class the self params.
@@ -949,11 +965,11 @@ class TuflowLoader(ATool, ALoader):
                 TuflowFile object.
             """
             return tfp.TuflowFile(global_order, self.filename, self.head_hash, 
-                        line_type, self.extension, self.root, 
+                        line_type, self.extension, modelfile_type, self.root, 
                         self.relative_root, self.extension)
             
 
-        def generateHash(self, salt):
+        def generateHash(self, salt, add_random=True):
             """Generate an md5sum hashcode from the salt.
              
             Md5 should be good enough for the number of them we will be 
@@ -965,6 +981,8 @@ class TuflowLoader(ATool, ALoader):
             Returns:
                 Hexadecimal version of the hash value.
             """
+            if add_random:
+                salt += str(random.randint(-500, 500))
             head_hash = hashlib.md5(salt.encode())
             head_hash = head_hash.hexdigest()
             return head_hash

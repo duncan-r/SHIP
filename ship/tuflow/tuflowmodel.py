@@ -36,7 +36,7 @@ import operator
 
 from ship.tuflow.tuflowfilepart import TuflowFile, ModelVariables
 from ship.tuflow.tuflowmodelfile import TuflowModelFile
-from ship.tuflow import FILEPART_TYPES as ft
+from ship.tuflow import FILEPART_TYPES as fpt
 
 import logging
 logger = logging.getLogger(__name__)
@@ -133,7 +133,7 @@ class TuflowModel(object):
         return variables
 
     
-    def getTuflowFilePartsByScenario(self, scenario_vals):
+    def getTuflowFilePartsBySE(self, scenario_vals):
         """Get all the TuflowFilePart's that are within the given scenario params.
         
         Note:
@@ -158,10 +158,10 @@ class TuflowModel(object):
         return file_parts
     
     
-    def getSetScenarioVals(self):
-        """Returns the varible dict given to load the model."""
-        return self.scenario_vals
-    
+    def getCurrentSEVals(self):
+        """Returns the scenario variable dict given to load the model."""
+        return {'scenario': self.scenario_vals.values(), 'event': self.event_vals.values()}
+
     
     def changeRoot(self, new_root):
         """Update the root value of all files.
@@ -202,7 +202,7 @@ class TuflowModel(object):
         return missing
     
     
-    def getVariables(self, no_duplicates=False):
+    def getVariables(self, se_only=False, no_duplicates=False):
         """Get ModelVariable's included in the model.
         
         Args:
@@ -211,10 +211,17 @@ class TuflowModel(object):
                 that command will be the one returned.
         """
         output = []
-        for model_file_type in self.files.values():
-            for model_file in model_file_type.values():
-                output.extend(model_file.getVariables())
         
+        if se_only:
+            tmfs, se_vals = self._fetchSEOnlySetup()
+            for model_file_type in tmfs.values():
+                for model_file in model_file_type:
+                    output.extend(model_file[0].getVariables(se_vals))
+                    
+        else:
+            for model_file_type in self.files.values():
+                for model_file in model_file_type.values():
+                    output.extend(model_file.getVariables())
         
         if no_duplicates:
             output = self.orderByGlobal(output, reverse=True)
@@ -226,7 +233,8 @@ class TuflowModel(object):
         return output
     
     
-    def getFiles(self, file_type=None, no_duplicates=False, include_results=True):
+    def getFiles(self, file_type=None, no_duplicates=False, include_results=True,
+                 se_only=False):
         """Get TuflowFile's included in the model.
         
         Args:
@@ -244,10 +252,20 @@ class TuflowModel(object):
             list - containing the matching TuflowFile's.
         """
         output = []
-        for model_file_type in self.files.values():
-            for model_file in model_file_type.values():
-                output.extend(model_file.getFiles(file_type, 
+        
+        if se_only:
+            files, se_vals = self._fetchSEOnlySetup()
+            for model_file_type in files.values():
+                for model_file in model_file_type:
+                    output.extend(model_file[0].getFiles(file_type, se_vals=se_vals,
                                                   include_results=include_results))
+                    
+        else:
+            for model_file_type in self.files.values():
+                for model_file in model_file_type.values():
+                    
+                    output.extend(model_file.getFiles(file_type, 
+                                                      include_results=include_results))
         
         output = self.orderByGlobal(output)
         
@@ -258,7 +276,7 @@ class TuflowModel(object):
     
     
     def getFilePaths(self, file_type=None, no_duplicates=False, in_order=False, 
-                      name_only=False, include_results=True):
+                      name_only=False, include_results=True, se_only=False):
         """Get the absolute file paths of all TuflowFile objects in the model.
         
         Args:
@@ -280,7 +298,17 @@ class TuflowModel(object):
             list - containing the matching paths.
         """
         output = []
-        files = self.getFiles(file_type=file_type, include_results=include_results)
+
+        if se_only:
+            tmfs, se_vals = self._fetchSEOnlySetup()
+            for model_file_type in tmfs.values():
+                for model_file in model_file_type:
+                    output.extend(model_file[0].getFiles(file_type=file_type, 
+                                                      include_results=include_results,
+                                                      se_vals=se_vals))
+        else:
+            files = self.getFiles(file_type=file_type, 
+                                  include_results=include_results)
 
         if in_order:
             files = self._orderByGlobal(files)
@@ -296,7 +324,7 @@ class TuflowModel(object):
         return output
         
                 
-    def getTuflowModelFiles(self):
+    def getTuflowModelFiles(self, se_only=False):
         """Returns the TuflowModelFile objects.
         
         TuflowModelFile's are containers for all of the main model files (tcf,
@@ -319,16 +347,25 @@ class TuflowModel(object):
                 the TuflowModelFile does not contain it's own TuflowFile 
                 reference it's filename is returned for reference.
         """
-        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': []}
-        for key, val in self.files.iteritems():
-            for tmf in val.values():
-                name = self.getTuflowFile(tmf).getFileNameAndExtension()
-                output[key].append([tmf, name])
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
+        if se_only:
+            files = self.getModelFiles(se_only)
+            for key, var in files.items():
+                for i, v in enumerate(var):
+                    tmf = self.getTMFFromTuflowFile(v)
+                    name = v.getFileNameAndExtension()
+                    output[key].append([tmf, name])
+        
+        else:
+            for key, val in self.files.items():
+                for tmf in val.values():
+                    name = self.getTuflowFileFromTMF(tmf).getFileNameAndExtension()
+                    output[key].append([tmf, name])
         
         return output
         
 
-    def getModelFiles(self):
+    def getModelFiles(self, se_only=False):
         """Returns the TuflowFiles corresponding to each of the TuflowModelFile's.
         
         These are the values that are loaded under FILEPART_TYPES.MODEL. This
@@ -349,11 +386,17 @@ class TuflowModel(object):
             dict - keys are the TuflowModelFile category (tcf, tgc, etc). Values
                 are the TuflowFiles for that type.
         """
-        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': []}
+        if se_only and not self.scenario_vals == {} and not self.event_vals == {}:
+            se_vals = {'scenario': self.scenario_vals.values(),
+                       'event': self.event_vals.values()}
+        else:
+            se_vals = None
+
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
         output[self.mainfile.category].append(self.mainfile)
         for model_file_type in self.files.values():
             for model_file in model_file_type.values():
-                files = model_file.getFiles(ft.MODEL)
+                files = model_file.getFiles(fpt.MODEL, se_vals=se_vals)
                 
                 for f in files:
                     output[f.category].append(f)
@@ -383,7 +426,7 @@ class TuflowModel(object):
         """
         if not isinstance(tuflowfile, TuflowFile):
             raise AttributeError
-        if not tuflowfile.TYPE == ft.MODEL:
+        if not tuflowfile.TYPE == fpt.MODEL:
             raise AttributeError
         
         for model_file_type in self.files.values():
@@ -474,12 +517,32 @@ class TuflowModel(object):
         result = []
         for item in in_list:
             if not isinstance(item, TuflowFile): continue
-            marker = item.getFileNameAndExtension()
+            name = item.getFileNameAndExtension()
+            if name == '':
+                marker = item.getAbsolutePath()
+            else:
+                marker = item.getFileNameAndExtension()
             if marker in seen: continue
             seen[marker] = 1
             result.append(item)
         
         return result
+    
+    
+    def _fetchSEOnlySetup(self):
+        """Used to get the standard setup for searching for SE only files.
+        
+        Returns the model files to search and the scenario and event values
+        currently set.
+        """
+        files = self.getTuflowModelFiles(se_only=True)
+        if not self.scenario_vals == {} and not self.event_vals == {}:
+            se_vals = {'scenario': self.scenario_vals.values(),
+                       'event': self.event_vals.values()}
+        else:
+            se_vals = None
+        
+        return files, se_vals
         
         
 
@@ -497,16 +560,16 @@ class TuflowTypes(object):
         """Initialise the categories and known keywords"""
 
         self.types = {}
-        self.types[ft.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
+        self.types[fpt.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
                                 'READ_FILE', 'ESTRY CONTROL FILE', 
                                 'EVENT FILE']
-        self.types[ft.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
+        self.types[fpt.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
                                  'LOG FOLDER']
-        self.types[ft.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
+        self.types[fpt.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
                               'SHP PROJECTION', 'MI PROJECTION']
-        self.types[ft.DATA] =  ['READ MATERIALS FILE', 
+        self.types[fpt.DATA] =  ['READ MATERIALS FILE', 
                                 'BC DATABASE']
-        self.types[ft.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
+        self.types[fpt.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
                                     'SET IWL', 'MAP OUTPUT INTERVAL', 
                                     'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
                                     'CELL SIDE WET/DRY DEPTH', 'SET IWL',
