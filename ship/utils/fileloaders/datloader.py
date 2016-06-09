@@ -58,7 +58,9 @@ class DatLoader(ATool, ALoader):
     
     def __init__ (self): 
         """Constructor."""
-
+        
+        ATool.__init__(self)
+        ALoader.__init__(self)
         logger.debug('Instantiating DatLoader')
 
         self.cur_no_of_units = 0

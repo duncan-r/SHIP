@@ -47,6 +47,8 @@ class IefLoader(ATool, ALoader):
     
     def __init__(self):
         """Constructor."""
+        ATool.__init__(self)
+        ALoader.__init__(self)
         logger.debug('Initialising IEFLoader')
     
     
