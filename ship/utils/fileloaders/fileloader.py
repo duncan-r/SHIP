@@ -41,7 +41,7 @@ class FileLoader(object):
                              'dat': datloader.DatLoader,
                              'ied': datloader.DatLoader}
         
-        self.error_store = []
+        self.warnings = []
     
     
     def loadFile(self, filepath, arg_dict={}):
@@ -75,6 +75,7 @@ class FileLoader(object):
         
         loader = self._known_files[ext]()
         contents = loader.loadFile(filepath, arg_dict)
+        self.warnings = loader.warnings
         
         del loader
         return contents

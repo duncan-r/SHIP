@@ -29,7 +29,7 @@ class ALoader(object):
     def __init__(self):
         """
         """
-        self.warning_store = []
+        self.warnings= []
     
     
     def loadFile(self, filepath, arg_dict={}):
@@ -49,7 +49,7 @@ class ALoader(object):
         raise NotImplementedError
         
     
-    def _addWarning(self, title, msg):
+    def addWarning(self, title, msg):
         """Can be used to store non-deadly errors during load for easy lookup.
         
         The errors/warnings will be added to the warning_store list so that
@@ -63,7 +63,7 @@ class ALoader(object):
             title (str): the title of the warning.
             msg (str): the message body of the warning.
         """
-        self.warning_store.append((title, msg))
+        self.warnings.append((title, msg))
         
         
         

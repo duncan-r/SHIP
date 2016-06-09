@@ -63,6 +63,7 @@ class TuflowLoader(ATool, ALoader):
         """Initialise defaults"""
 
         ATool.__init__(self)
+        ALoader.__init__(self)
         logger.debug('Initialising TuflowLoader')
         
         self.file_types = {'mif': tfp.GisFile, 'mid': tfp.GisFile, 
@@ -165,7 +166,11 @@ class TuflowLoader(ATool, ALoader):
         self.tuflow_model.model_order = self._model_order
         self.tuflow_model.scenario_vals = self.scenario_vals
         self.tuflow_model.event_vals = self.event_vals
-        self.buildSourceData()
+        
+        if self.tuflow_model.missing_model_files:
+            self.tuflow_model.event_source_data = EventSourceData()
+        else:
+            self.buildSourceData()
         
         return self.tuflow_model
 
@@ -243,6 +248,7 @@ class TuflowLoader(ATool, ALoader):
             success = file_d.getFile()
             if success == False:
                 self.tuflow_model.missing_model_files.append(file_d.filename)
+                self.addWarning('Missing File', 'File could not be loader at: ' + file_d.filename)
                 continue
             
             else:
