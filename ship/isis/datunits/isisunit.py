@@ -529,7 +529,8 @@ class CommentUnit(AIsisUnit):
         """
         """
         no_of_rows = int(data[file_line+1].strip())
-        out_line = file_line + no_of_rows + 3
+        out_line = file_line + no_of_rows + 2
+#         d = [''.join(data[file_line:out_line]).strip()]
         self.data = [''.join(data[file_line:out_line]).strip()]
         
         return out_line - 1
