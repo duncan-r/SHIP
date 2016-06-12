@@ -353,6 +353,28 @@ class TuflowFile(TuflowFilePart, PathHolder):
         return contents
     
     
+    def getFileNameAndExtension(self):
+        """Get the filename with extension.
+        
+        Performs a quick check to see if the filename is a prefix or an actual
+        full filename. It can be a prefix if the file is a tuflow check file.
+        In that case it should have the extension added becuase it will lead to
+        a '.' followed by an empty string.
+        
+        Overriddes the superclass method if PathHolder.
+        
+        See Also:
+            :class:'<ship.utils.filetools.PathHolder>'
+        
+        Return:
+            str - filepath and extension.
+        """
+        if self.file_name_is_prefix:
+            return self.file_name
+        else:
+            return PathHolder.getFileNameAndExtension(self)
+        
+    
     def getFileNameAndExtensionAllTypes(self):
         """Get the filename with extension for all types.
         
