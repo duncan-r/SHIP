@@ -337,7 +337,7 @@ class TuflowModel(object):
         return output
         
                 
-    def getTuflowModelFiles(self, se_only=False):
+    def getTuflowModelFiles(self, se_only=False, no_duplicates=False):
         """Returns the TuflowModelFile objects.
         
         TuflowModelFile's are containers for all of the main model files (tcf,
@@ -348,6 +348,7 @@ class TuflowModel(object):
             se_only=False(bool): if set to True only the files that are
                 within the scenario and event variable setups defined during
                 file loading will be returned.
+            no_duplicates=False(bool):
         
         See Also:
             getModelFiles - which returns the TuflowFile references for each
@@ -367,7 +368,7 @@ class TuflowModel(object):
         """
         output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
         if se_only:
-            files = self.getModelFiles(se_only)
+            files = self.getModelFiles(se_only, no_duplicates)
             for key, var in files.items():
                 for i, v in enumerate(var):
                     tmf = self.getTMFFromTuflowFile(v)
@@ -383,7 +384,7 @@ class TuflowModel(object):
         return output
         
 
-    def getModelFiles(self, se_only=False):
+    def getModelFiles(self, se_only=False, no_duplicates=False):
         """Returns the TuflowFiles corresponding to each of the TuflowModelFile's.
         
         These are the values that are loaded under FILEPART_TYPES.MODEL. This
@@ -394,6 +395,7 @@ class TuflowModel(object):
             se_only=False(bool): if set to True only the files that are
                 within the scenario and event variable setups defined during
                 file loading will be returned.
+            no_duplicates=False(bool):
         
         See Also:
             getTuflowModelFiles - which will return a container referencing all
@@ -416,13 +418,18 @@ class TuflowModel(object):
             se_vals = None
 
         output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
+        found_names = []
+        
         output[self.mainfile.category].append(self.mainfile)
         for model_file_type in self.files.values():
             for model_file in model_file_type.values():
                 files = model_file.getFiles(fpt.MODEL, se_vals=se_vals)
                 
                 for f in files:
+                    if no_duplicates and f.getFileNameAndExtension() in found_names:
+                        continue
                     output[f.category].append(f)
+                    found_names = f.getFileNameAndExtension()
         
         return output
 

@@ -161,6 +161,9 @@ class TuflowLoader(ATool, ALoader):
         
         self._global_order = 0
         """Tracks the number of file parts."""
+        
+#         self._added_control_files = []
+        """Tracks loaded control files to avoid loading the same one twice."""
 
         self._fetchTuflowModel(tcf_path)
         self.tuflow_model.model_order = self._model_order
@@ -252,11 +255,14 @@ class TuflowLoader(ATool, ALoader):
                 continue
             
             else:
+#                 self._added_control_files.append(file_d.filename)
                 model = file_d.getModel()
                 self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension, 
                                                             file_d.parent_hash))
                 self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
                 self._parseFileContents(file_d, model)
+                
+                    
 
 
     def _parseFileContents(self, file_d, model):
