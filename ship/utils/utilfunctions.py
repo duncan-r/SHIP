@@ -193,6 +193,45 @@ def fileExtensionWithoutPeriod(filepath, name_only=False):
 def findWholeWord(w):
     """Find a whole word amoungst a string."""
     return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
+
+
+def convertRunOptionsToSEDict(options):
+    """Converts tuflow command line options to scenario/event dict.
+    
+    Tuflow uses command line option (e.g. -s1 blah -e1 blah) to set scenario
+    values which can either be provided on the command line or through the
+    FMP run form. The TuflowLoader can use these arguments but requires a 
+    slightly different setup.
+    
+    This function converts the command line string into the scenarion and
+    event dictionary expected by the TuflowLoader.
+    
+    Args:
+        options(str): command line options.
+        
+    Return:
+        dict - {'scenario': {'s1': blah}, 'event': {'e1': blah}}
+    
+    Raises:
+        AttributeError: if both -s and -s1 or -e and -e1 occurr in the options
+            string. -x and -x1 are treated as the same variable by tuflow and
+            one of the values would be ignored.
+    """
+    
+    if ' -s ' in options and ' -s1 ' in options:
+        raise AttributeError
+    if ' -e ' in options and ' -e2 ' in options:
+        raise AttributeError
+    
+    outvals = {'scenario': {}, 'event': {}}
+    vals = options.split(" ")
+    for i in range(len(vals)):
+        if vals[i].startswith('-s'):
+            outvals['scenario'][vals[i][1:]] = vals[i+1]
+        elif vals[i].startswith('-e'):
+            outvals['event'][vals[i][1:]] = vals[i+1]
+    
+    return outvals
     
 
 def enum(*sequential, **named):
