@@ -100,7 +100,7 @@ class TuflowModel(object):
         """Stores all BC Event Source key values pairs for the particular scenario/event."""
         
     
-    def getPrintableContents(self):    
+    def getPrintableContents(self, se_only=False, strip_comments=False):    
         """Get the TuflowModel ready to write to disk.
         
         Returns a dictionary with the absolute path of the different model
@@ -110,6 +110,10 @@ class TuflowModel(object):
         Return:
             dict.
         """
+        se_vals = {}
+        if se_only:
+            se_vals = {'scenario': self.scenario_vals, 'event': self.event_vals}
+
         order = self.model_order.getRefOrder()
         output = {}
         for o in order:
@@ -118,7 +122,8 @@ class TuflowModel(object):
                 model_file = self.mainfile
             else:
                 model_file = self.files[o[3]][o[2]].getEntryByHash(o[0])
-            output[model_file.getAbsolutePath()] = self.files[o[1]][o[0]].getPrintableContents(self.has_estry_auto)
+            output[model_file.getAbsolutePath()] = self.files[o[1]][o[0]].getPrintableContents(
+                                    self.has_estry_auto, se_vals, strip_comments)
         
         return output
     

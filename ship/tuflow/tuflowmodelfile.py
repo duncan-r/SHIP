@@ -248,17 +248,29 @@ class TuflowModelFile(object):
         self.events = []
 
 
-    def getPrintableContents(self, has_estry_auto):
+    def getPrintableContents(self, has_estry_auto, se_vals={}, 
+                             strip_comments=False):
         """Get the printable contents from each file referenced by this class.
+        
+        If the model control files should be reconstructed to remove any
+        scenario and event logic leaving only hard coded setups then an se_vals
+        dict should be provided. This should be in the format used by the
+        TuflowLoader i.e. {'scenario': {'s1': a}, 'event': {'e1': b}}
         
         Args:
             model_file(self.file): file to retrive the contents from.
+            se_vals={}(dict): scenario and event arguments. 
             
         Results:
             List containing the entries in the model_file.
         """
         output = []
         skip_lines = []
+        skip_hashes = []
+        if se_vals:
+            do_se = True
+        else:
+            do_se = False
         
         def getPrintableFilepart(f, indent):
             """
@@ -294,6 +306,8 @@ class TuflowModelFile(object):
         events = [e for e in sorted(self.events)]
         indent_spacing = 0
         indent = ''
+        do_s_end = []
+        do_e_end = []
         
         '''Read the order of the contents in the model file.
         [0] = the type of file part: MODEL, COMMENT, GIS, etc
@@ -306,38 +320,62 @@ class TuflowModelFile(object):
             if i in skip_lines: continue
 
             if line_type == fpt.COMMENT:
-                output.append(''.join(entry[1]))
+                if not strip_comments:
+                    output.append(''.join(entry[1]))
             else:
                 
                 if entry[0] == fpt.SCENARIO:
-                    scen_stack.add(scenarios.pop(0))
-                    output.append(indent + scen_stack.peek().getOpeningStatement())
-                    indent_spacing += 4
-                    indent = ''.join([' '] * indent_spacing)
+                    s = scenarios.pop(0)
+                    if not do_se:
+#                     scen_stack.add(scenarios.pop(0))
+                        scen_stack.add(s)
+                        output.append(indent + scen_stack.peek().getOpeningStatement())
+                        indent_spacing += 4
+                        indent = ''.join([' '] * indent_spacing)
+                        do_s_end.append(True)
+                    elif not set(s.values).isdisjoint(se_vals['scenario'].values()):
+                        do_s_end.append(False)
+                    else:
+                        skip_hashes.extend(h[1] for h in s.part_list)
+                        do_s_end.append(False)
                 
                 elif entry[0] == fpt.SCENARIO_END:
-                    indent_spacing -= 4
-                    indent = ''.join([' '] * indent_spacing)
-                    cs = scen_stack.peek().getClosingStatement()
-                    if not cs == '':
-                        output.append(indent + cs)
-#                     output.append(indent + scen_stack.peek().getClosingStatement())
-                    scen_stack.pop()
+                    if do_s_end.pop(-1):
+                        indent_spacing -= 4
+                        indent = ''.join([' '] * indent_spacing)
+                        cs = scen_stack.peek().getClosingStatement()
+                        if not cs == '':
+                            output.append(indent + cs)
+    #                     output.append(indent + scen_stack.peek().getClosingStatement())
+                        scen_stack.pop()
+                    
                 
                 elif entry[0] == fpt.EVENT:
-                    evt_stack.add(events.pop(0))
-                    output.append(indent + evt_stack.peek().getOpeningStatement())
-                    indent_spacing += 4
-                    indent = ''.join([' '] * indent_spacing)
+                    e = events.pop(0)
+                    if not do_se:
+#                         evt_stack.add(events.pop(0))
+                        evt_stack.add(e)
+                        output.append(indent + evt_stack.peek().getOpeningStatement())
+                        indent_spacing += 4
+                        indent = ''.join([' '] * indent_spacing)
+                        do_e_end.append(True)
+                    elif not set(e.values).isdisjoint(se_vals['event'].values()):
+                        do_e_end.append(False)
+                    else:
+                        skip_hashes.extend(e.part_list)
+                        do_e_end.append(False)
+                        
                 
                 elif entry[0] == fpt.EVENT_END:
-                    indent_spacing -= 4
-                    indent = ''.join([' '] * indent_spacing)
-                    output.append(indent + evt_stack.peek().getClosingStatement())
-                    evt_stack.pop()
+                    if do_e_end.pop(-1):
+                        indent_spacing -= 4
+                        indent = ''.join([' '] * indent_spacing)
+                        output.append(indent + evt_stack.peek().getClosingStatement())
+                        evt_stack.pop()
                 
                 else: 
                     f = entry[1]
+                    if f.hex_hash in skip_hashes: continue
                     if f.category == 'ecf':
                         if has_estry_auto:
                             temp = ' '.join([f.command, 'Auto !', f.comment])
