@@ -30,6 +30,7 @@
 
 import re
 import os
+import operator
 
 import logging
 logger = logging.getLogger(__name__)
@@ -232,6 +233,72 @@ def convertRunOptionsToSEDict(options):
             outvals['event'][vals[i][1:]] = vals[i+1]
     
     return outvals
+
+
+def getSEResolvedFilename(filename, se_vals):
+    """"Replace a tuflow placeholder filename with the scenario/event values.
+        
+    Replaces all of the placholder values (e.g. ~s1~_~e1~) in a tuflow 
+    filename with the corresponding values provided in the run options string.
+    If the run options flags are not found in the filename their values will
+    be appended to the end of the string.
+    
+    The setup of the returned filename is always the same:  
+        - First replace all placeholders with corresponding flag values.
+        - s1 == s and e1 == e.
+        - Append additional e values to end with '_' before first and '+' before others.
+        - Append additional s values to end with '_' before first and '+' before others.
+    
+    Args:
+        filename(str): the filename to update.
+        se_vals(str): the run options string containing the 's' and 
+            'e' flags and their corresponding values. 
+    
+    Return:
+        str - the updated filename.
+    """
+    if not 'scenario' in se_vals.keys(): se_vals['scenario'] = {}
+    if not 'event' in se_vals.keys(): se_vals['event'] = {}
+    
+    # Format the key value pairs into a list and combine the scenario and
+    # event list together and sort them into e, e1, e2, s, s1, s2 order.
+    scen_keys = ['-' + a for a in se_vals['scenario'].keys()]
+    scen_vals = se_vals['scenario'].values()
+    event_keys = ['-' + a for a in se_vals['event'].keys()]
+    event_vals = se_vals['event'].values()
+    scen = [list(a) for a in zip(scen_keys, scen_vals)]
+    event = [list(a) for a in zip(event_keys, event_vals)]
+    se_vals = scen + event
+    vals = sorted(se_vals, key=operator.itemgetter(0))
+        
+    # Build a new filename by replacing or adding the flag values
+    outname = filename
+    in_e = False
+    for v in vals:
+        placeholder = ''.join(['~', v[0][1:], '~'])
+        
+        if placeholder in filename:
+            outname = outname.replace(placeholder, v[1])
+        elif v[0] == '-e1' and '~e~' in filename and not '-e' in se_vals:
+            outname = outname.replace('~e~', v[1])
+        elif v[0] == '-s1' and '~s~' in filename and not '-s' in se_vals:
+            outname = outname.replace('~s~', v[1])
+        else:
+            if v[0].startswith('-e'):
+                if not in_e: 
+                    prefix = '_'
+                else:
+                    prefix = '+'
+                in_e = True
+            elif v[0].startswith('-s'):
+                if in_e: 
+                    prefix = '_'
+                else:
+                    prefix = '+'
+                in_e = False
+            outname += prefix + v[1]
+        
+    return outname
     
 
 def enum(*sequential, **named):

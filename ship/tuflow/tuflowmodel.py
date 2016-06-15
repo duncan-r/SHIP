@@ -38,6 +38,7 @@ from ship.tuflow.tuflowfilepart import TuflowFile, ModelVariables,\
     ModelVariableKeyVal
 from ship.tuflow.tuflowmodelfile import TuflowModelFile
 from ship.tuflow import FILEPART_TYPES as fpt
+from ship.utils import utilfunctions as uf
 
 import logging
 logger = logging.getLogger(__name__)
@@ -577,6 +578,9 @@ class TuflowModel(object):
             - Append additional e values to end with '_' before first and '+' before others.
             - Append additional s values to end with '_' before first and '+' before others.
         
+        See Also:
+            :function:'<ship.utils.utilfunctions.py>'
+        
         Args:
             filename=None(str): the filename to update. If filename == None
                 the self.mainfile will be used.
@@ -592,53 +596,12 @@ class TuflowModel(object):
             
         if se_vals is None:
             if not self.scenario_vals and not self.event_vals: return filename
-            if not '~' in filename: return filename
-            s = self.scenario_vals
-            e = self.event_vals
+            se_vals = {'scenario': self.scenario_vals, 'event': self.event_vals}
         else:
             if not 'scenario' in se_vals.keys(): se_vals['scenario'] = {}
             if not 'event' in se_vals.keys(): se_vals['event'] = {}
-            s = se_vals['scenario']
-            e = se_vals['event']
         
-        # Format the key value pairs into a list and combine the scenario and
-        # event list together and sort them into e, e1, e2, s, s1, s2 order.
-        scen_keys = ['-' + a for a in s.keys()]
-        scen_vals = s.values()
-        event_keys = ['-' + a for a in e.keys()]
-        event_vals = e.values()
-        scen = [list(a) for a in zip(scen_keys, scen_vals)]
-        event = [list(a) for a in zip(event_keys, event_vals)]
-        se_vals = scen + event
-        vals = sorted(se_vals, key=operator.itemgetter(0))
-            
-        # Build a new filename by replacing or adding the flag values
-        outname = filename
-        in_e = False
-        for v in vals:
-            placeholder = ''.join(['~', v[0][1:], '~'])
-            
-            if placeholder in filename:
-                outname = outname.replace(placeholder, v[1])
-            elif v[0] == '-e1' and '~e~' in filename and not '-e' in se_vals:
-                outname = outname.replace('~e~', v[1])
-            elif v[0] == '-s1' and '~s~' in filename and not '-s' in se_vals:
-                outname = outname.replace('~s~', v[1])
-            else:
-                if v[0].startswith('-e'):
-                    if not in_e: 
-                        prefix = '_'
-                    else:
-                        prefix = '+'
-                    in_e = True
-                elif v[0].startswith('-s'):
-                    if in_e: 
-                        prefix = '_'
-                    else:
-                        prefix = '+'
-                    in_e = False
-                outname += prefix + v[1]
-            
+        outname = uf.getSEResolvedFilename(filename, se_vals)
         return outname
     
     
