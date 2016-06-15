@@ -284,7 +284,8 @@ class TuflowLoader(ATool, ALoader):
         """
         def _clearUnknownContents(file_d, line, model, unknown_contents):
             """Stash and clear any unkown stuff."""
-
+            
+            unknown_contents[-1] = unknown_contents[-1].rstrip()
             model.addContent(ft.COMMENT, unknown_contents)
             unknown_contents = []
             return unknown_contents

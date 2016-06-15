@@ -100,13 +100,13 @@ class TuflowScenario(object):
             str - containing the appropriate opening statement.
         """
         output = []
-        if self.values[0] == 'ELSE':
-            output.append('ELSE')
+        if self.values[0] == 'Else':
+            output.append('Else')
         else:
             if self.if_type == TuflowScenario.IF:
-                output.append('IF SCENARIO ==')
+                output.append('If Scenario ==')
             else:
-                output.append('ELSE IF SCENARIO ==')
+                output.append('Else If Scenario ==')
             
             val = []
             for v in self.values:
@@ -115,9 +115,9 @@ class TuflowScenario(object):
             output.append(val)
         
         if not self.comment_char == '':
-            output.append(self.comment_char + ' ' + self.comment + '\n')
-        else:
-            output.append('\n')
+            output.append(self.comment_char + ' ' + self.comment)# + '\n')
+#         else:
+#             output.append('\n')
         
         output = ' '.join(output)
         return output
@@ -134,7 +134,7 @@ class TuflowScenario(object):
             str - containing an 'END IF' or ''.
         """
         if self.has_endif:
-            return 'END IF\n'
+            return 'End If'#\n'
         else:
             return ''
 
@@ -194,7 +194,7 @@ class TuflowEvent(object):
         Return:
             str - containing the appropriate opening statement.
         """
-        output = 'DEFINE EVENT == ' + self.values[0] + self.comment_char + self.comment + '\n'
+        output = 'Define Event == ' + self.values[0] + self.comment_char + self.comment# + '\n'
         return output
     
     
@@ -204,7 +204,7 @@ class TuflowEvent(object):
         Return:
             str - containing an 'END DEFINE'.
         """
-        return 'END DEFINE\n'
+        return 'End Define'#\n'
 
     
     
@@ -278,11 +278,11 @@ class TuflowModelFile(object):
                         skip_lines.append(i + child_count)
                         child_count += 1
                     else:
-                        output.append(indent + ' | '.join(out_line) + '\n')
+                        output.append(indent + ' | '.join(out_line))# + '\n')
                         has_children = False
                     
             else:
-                output.append(indent + f.getPrintableContents() + '\n')
+                output.append(indent + f.getPrintableContents())# + '\n')
         
         ##
         # END INNER FUNCTION
@@ -318,7 +318,10 @@ class TuflowModelFile(object):
                 elif entry[0] == fpt.SCENARIO_END:
                     indent_spacing -= 4
                     indent = ''.join([' '] * indent_spacing)
-                    output.append(indent + scen_stack.peek().getClosingStatement())
+                    cs = scen_stack.peek().getClosingStatement()
+                    if not cs == '':
+                        output.append(indent + cs)
+#                     output.append(indent + scen_stack.peek().getClosingStatement())
                     scen_stack.pop()
                 
                 elif entry[0] == fpt.EVENT:
