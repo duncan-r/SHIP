@@ -39,6 +39,7 @@
 import os
 
 from ship.utils.filetools import PathHolder
+from ship.tuflow import FILEPART_TYPES as fpt
 
 import logging
 logger = logging.getLogger(__name__)
@@ -313,6 +314,10 @@ class TuflowFile(TuflowFilePart, PathHolder):
         
         # Call superclass constructor
         PathHolder.__init__(self, path, root)
+        
+        # Needed to catch GIS files without an extension
+        if self.file_name == '' and type == fpt.GIS: self.file_name = os.path.basename(path)
+        
         self.parent_relative_root = parent_relative_root
 
     
@@ -370,6 +375,8 @@ class TuflowFile(TuflowFilePart, PathHolder):
             str - filepath and extension.
         """
         if self.file_name_is_prefix:
+            return self.file_name
+        elif self.extension == '' and self.TYPE == fpt.GIS:
             return self.file_name
         else:
             return PathHolder.getFileNameAndExtension(self)
