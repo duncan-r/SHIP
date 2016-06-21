@@ -165,6 +165,15 @@ class TuflowLoader(ATool, ALoader):
 #         self._added_control_files = []
         """Tracks loaded control files to avoid loading the same one twice."""
 
+        self._in_output_define = False
+        """Very hacky way of dealing with the fact the matching End Define's.
+        
+        Both the Event logic and the Define Output Zones commands use End Define
+        to close the switch. This is used in very simplistic terms to stop the
+        loader from trying to close a non-existent event if statement when it
+        finds an End Define from an output zone.
+        """
+
         self._fetchTuflowModel(tcf_path)
         self.tuflow_model.model_order = self._model_order
         self.tuflow_model.scenario_vals = self.scenario_vals
@@ -409,7 +418,7 @@ class TuflowLoader(ATool, ALoader):
             command_type = ft.COMMENT 
             
         elif line.strip() == '':
-            command_type = ft.COMMENT 
+            command_type = ft.COMMENT
         
         # If scenario statement
         elif upline.startswith('IF SCENARIO') or upline.startswith('ELSE IF') \
@@ -418,9 +427,19 @@ class TuflowLoader(ATool, ALoader):
             line_val = line
         
         # Define event statement
-        elif upline.startswith('DEFINE EVENT') or upline.startswith('END DEFINE'):
+        elif upline.startswith('DEFINE EVENT') or (upline.startswith('END DEFINE') and not self._in_output_define):
             command_type = ft.EVENT
             line_val = line
+        
+        # TODO - Hacky fix for matching End Defines with Event logic.
+        elif line.strip().upper().startswith('END DEFINE') and self._in_output_define:
+            line_val = line
+            command_type = ft.COMMENT
+            self._in_output_define = False
+        elif line.strip().upper().startswith('DEFINE OUTPUT ZONE'):
+            line_val = line
+            command_type = ft.COMMENT
+            self._in_output_define = True
         
         elif '==' in line or 'AUTO' in line.upper():
 
