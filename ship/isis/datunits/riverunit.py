@@ -149,8 +149,21 @@ class RiverUnit (AIsisUnit):
                 self.row_collection.addValue(rdt.PANEL_MARKER, unit_data[i][30:35].strip())
                 self.row_collection.addValue(rdt.RPL, unit_data[i][35:40].strip())
                 self.row_collection.addValue(rdt.BANKMARKER, unit_data[i][40:50].strip())
-                self.row_collection.addValue(rdt.EASTING, unit_data[i][50:60].strip())
-                self.row_collection.addValue(rdt.NORTHING, unit_data[i][60:70].strip())
+                
+                # It seems that ISIS will allow models to load that have no
+                # value in the easting and northing parts. This checks 
+                east = unit_data[i][50:60].strip()
+                north = unit_data[i][60:70].strip()
+                if east == '': east = None
+                if north == '': north = None
+#                     self.row_collection.addValue(rdt.EASTING)
+#                 else:
+                self.row_collection.addValue(rdt.EASTING, east)
+#                 if north == '':
+#                     self.row_collection.addValue(rdt.NORTHING)
+#                 else:
+                self.row_collection.addValue(rdt.NORTHING, north)
+                    
                 self.row_collection.addValue(rdt.DEACTIVATION, unit_data[i][70:80].strip())
                 self.row_collection.addValue(rdt.SPECIAL, unit_data[i][80:90].strip())
 
