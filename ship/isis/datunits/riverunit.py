@@ -151,17 +151,13 @@ class RiverUnit (AIsisUnit):
                 self.row_collection.addValue(rdt.BANKMARKER, unit_data[i][40:50].strip())
                 
                 # It seems that ISIS will allow models to load that have no
-                # value in the easting and northing parts. This checks 
+                # value in the easting and northing parts. This checks if they
+                # do and if not replaces with None so a default will be used.
                 east = unit_data[i][50:60].strip()
                 north = unit_data[i][60:70].strip()
                 if east == '': east = None
                 if north == '': north = None
-#                     self.row_collection.addValue(rdt.EASTING)
-#                 else:
                 self.row_collection.addValue(rdt.EASTING, east)
-#                 if north == '':
-#                     self.row_collection.addValue(rdt.NORTHING)
-#                 else:
                 self.row_collection.addValue(rdt.NORTHING, north)
                     
                 self.row_collection.addValue(rdt.DEACTIVATION, unit_data[i][70:80].strip())
