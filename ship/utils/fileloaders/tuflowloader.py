@@ -510,6 +510,9 @@ class TuflowLoader(ATool, ALoader):
                         command_type = ft.COMMENT 
                     else:
                         ext = self.extractExtension(instruction)
+                        if (ext is None or ext == '') and not command_type == ft.RESULT: 
+                            parent_path = os.path.join(file_d.root, file_d.relative_root)
+                            instruction, ext = self._findFileType(parent_path, instruction)
                         f_type = self.file_types.get(ext)
                         
                         # It's a model file or a results file
@@ -572,6 +575,26 @@ class TuflowLoader(ATool, ALoader):
         # Needs to be return in a list because of the multi_lines setup above.
         return [[line_val, hex_hash, command_type, ext]]
     
+    
+    def _findFileType(self, parent_path, instruction):
+        """
+        """
+        found, split, comchar = self.separateComment(instruction)
+        
+        ret_comment = ''
+        if found:
+            ret_comment = ' ' + comchar + split[1]
+        
+        f = split[0].strip()
+        if os.path.exists(os.path.join(parent_path, f + '.mif')):
+            return f + '.mif' + ret_comment, 'mif'
+        elif os.path.exists(os.path.join(parent_path, f + '.mid')):
+            return f + '.mid' + ret_comment, 'mid'
+        elif os.path.exists(os.path.join(parent_path, f + '.shp')):
+            return f + '.shp' + ret_comment, 'shp'
+        else:
+            return instruction, ''
+        
     
     def buildScenario(self, line_type, line, hex_hash, scenario_order, 
                       scenario_stack, model):

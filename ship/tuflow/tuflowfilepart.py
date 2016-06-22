@@ -311,9 +311,6 @@ class TuflowFile(TuflowFilePart, PathHolder):
         # Call superclass constructor
         PathHolder.__init__(self, path, root)
         
-        # Needed to catch GIS files without an extension
-        if self.file_name == '' and type == fpt.GIS: self.file_name = os.path.basename(path)
-        
         self.parent_relative_root = parent_relative_root
 
     
@@ -371,8 +368,6 @@ class TuflowFile(TuflowFilePart, PathHolder):
             str - filepath and extension.
         """
         if self.file_name_is_prefix:
-            return self.file_name
-        elif self.extension == '' and self.TYPE == fpt.GIS:
             return self.file_name
         else:
             return PathHolder.getFileNameAndExtension(self)
@@ -575,6 +570,10 @@ class GisFile(TuflowFile):
                                 modelfile_type, root, parent_relative_root, 
                                 category,  parent_hash, child_hash)
         
+        # Needed to catch GIS files without an extension
+        if self.file_name == '': 
+            self.file_name = os.path.basename(path)
+        
         # Make sure that we know what all the other associated file types should
         # be for the type of GIS file we are creating. Sets the file category to
         # that defined by the key of the gis_types dictionary.
@@ -582,6 +581,17 @@ class GisFile(TuflowFile):
             if self.extension in gis_types[key]:
                 self.all_types = gis_types[key]
                 self.category = key
+    
+    
+    def getFileNameAndExtension(self):
+        """Overrides superclass method.
+        
+        GIS type files can be provided with no extension. 
+        """
+        if self.extension == '':
+            return self.file_name
+        else:
+            return PathHolder.getFileNameAndExtension(self)
                 
                 
 
