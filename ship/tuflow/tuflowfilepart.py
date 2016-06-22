@@ -267,9 +267,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
                 file read in (the tcf or ecf).
             category=None(str): Any category specification for the file. E.g.
                 This is used by the MODEL type to declare what type of file it 
-                is (tcf, tgc, etc) because they can all have a .trd extension.
-                This therefore makes it possible to distinguish between different
-                types of .trd file.
+                is (tcf, tgc, etc).
             parent=None(str): the hash code of any parent that this file may
                 have. This will be non-None if the file is read in after a 
                 pipe command (e.g. with: file_1.mif | file_2.mif | file_3.mif 

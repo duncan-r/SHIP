@@ -74,6 +74,7 @@ class TuflowModel(object):
         self.files['tbc'] = {}
         self.files['ecf'] = {}
         self.files['tef'] = {}
+        self.files['trd'] = {}
         
         self.model_order = None
         """Reference to a :class:'ModelOrder' object"""
@@ -372,7 +373,7 @@ class TuflowModel(object):
                 the TuflowModelFile does not contain it's own TuflowFile 
                 reference it's filename is returned for reference.
         """
-        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': [], 'trd': []}
         if se_only:
             files = self.getModelFiles(se_only, no_duplicates)
             for key, var in files.items():
@@ -423,7 +424,7 @@ class TuflowModel(object):
         else:
             se_vals = None
 
-        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': []}
+        output = {'tcf': [], 'ecf': [], 'tgc': [], 'tbc': [], 'tef': [], 'trd': []}
         found_names = []
         
         output[self.mainfile.category].append(self.mainfile)
@@ -685,7 +686,7 @@ class TuflowTypes(object):
 
         self.types = {}
         self.types[fpt.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
-                                'READ_FILE', 'ESTRY CONTROL FILE', 
+                                'READ FILE', 'ESTRY CONTROL FILE', 
                                 'EVENT FILE']
         self.types[fpt.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
                                  'LOG FOLDER']

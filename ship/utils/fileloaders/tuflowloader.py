@@ -264,14 +264,11 @@ class TuflowLoader(ATool, ALoader):
                 continue
             
             else:
-#                 self._added_control_files.append(file_d.filename)
                 model = file_d.getModel()
                 self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension, 
                                                             file_d.parent_hash))
                 self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
                 self._parseFileContents(file_d, model)
-                
-                    
 
 
     def _parseFileContents(self, file_d, model):
@@ -432,6 +429,7 @@ class TuflowLoader(ATool, ALoader):
             line_val = line
         
         # TODO - Hacky fix for matching End Defines with Event logic.
+        #        Output zones use same closure which causing false catches.
         elif line.strip().upper().startswith('END DEFINE') and self._in_output_define:
             line_val = line
             command_type = ft.COMMENT
@@ -486,7 +484,6 @@ class TuflowLoader(ATool, ALoader):
                         line_val = line
                         command_type = ft.COMMENT 
                     else:
-#                         instruction, orig_instruction = self.checkForTildes(instruction)     # DEBUG
                         ext = self.extractExtension(instruction)
                         f_type = self.file_types.get(ext)
                         
@@ -494,22 +491,16 @@ class TuflowLoader(ATool, ALoader):
                         # TODO: Not safe yet...needs more work.
                         if f_type == None:
 
-                            # If it's a .trd file give it the extension of the
-                            # model file type that it's in (.tcf/.tgc/etc)
-                            if ext is 'trd':
-                                ext = file_d.extension
                             line_val = tfp.TuflowFile(self._global_order, instruction, 
                                                     hex_hash, command_type, 
                                                     command, file_d.extension, 
                                                     file_d.root, 
                                                     file_d.relative_root, ext)
-#                             line_val.actual_name = orig_instruction     # DEBUG
                             self._global_order += 1
 
                             if command_type is ft.RESULT: 
                                 line_val = self._resolveResult(line_val)
                                 line_val.category = None
-#                                 line_val.modelfile_type = file_d.extension
                         
                         # It's one of the files in self.types
                         else:
@@ -537,7 +528,6 @@ class TuflowLoader(ATool, ALoader):
                                                                 file_d.relative_root,
                                                                 parent_hash=parent_hash,
                                                                 child_hash=child_hash)
-#                                 line_val.actual_name = orig_instruction    # DEBUG
                                 multi_lines.append([line_val,
                                                    hex_hash,
                                                    command_type,
