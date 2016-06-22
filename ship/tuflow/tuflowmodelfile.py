@@ -226,7 +226,7 @@ class TuflowModelFile(object):
         :module: 'tuflowfilepart <ship.tuflow.tuflowfilepart>'
     """
 
-    def __init__(self, category, hex_hash, parent_hash):
+    def __init__(self, category, hex_hash, parent_hash, name):
         """Constructor.
 
         Checks if the path to the file is absolute. If it doesn't it converts
@@ -246,6 +246,7 @@ class TuflowModelFile(object):
         self.contents = []
         self.scenarios = []
         self.events = []
+        self.name = name
 
 
     def getPrintableContents(self, has_estry_auto, se_vals={}, 

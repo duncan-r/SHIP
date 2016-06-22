@@ -244,7 +244,9 @@ class TuflowLoader(ATool, ALoader):
         self._model_order.addRef(ModelRef(file_d.head_hash, file_d.extension), True)
         
         # Need to create one here becuase it's the first
-        line_val = file_d.generateModelTuflowFile(ft.MODEL, self._global_order)
+        tmf_hash = file_d.generateModelfileHash(tcf_path)
+        line_val = file_d.generateModelTuflowFile(ft.MODEL, self._global_order, tmf_hash)
+        line_val.tmf_hash = tmf_hash
         self._global_order += 1
         self.tuflow_model.mainfile = line_val
         self.tuflow_model.files[file_d.extension][file_d.head_hash] = model
@@ -257,10 +259,16 @@ class TuflowLoader(ATool, ALoader):
             
             model_details = self._file_queue.dequeue()
             file_d = self._FileDetails(model_details, False)
+            
+            # Check to see if this control file has already been loaded. If it
+            # has then don't load it again
+            if file_d.head_hash in self.tuflow_model.files[file_d.extension]:
+                continue
+            
             success = file_d.getFile()
             if success == False:
                 self.tuflow_model.missing_model_files.append(file_d.filename)
-                self.addWarning('Missing File', 'File could not be loader at: ' + file_d.filename)
+                self.addWarning('Missing File', 'File could not be loaded at: ' + file_d.filename)
                 continue
             
             else:
@@ -348,6 +356,20 @@ class TuflowLoader(ATool, ALoader):
                     
                     line_val, hex_hash, line_type, ext = l
 
+                    # DEBUG - probably move all MODEL specific logic here, but
+                    #         check doesn't need to be further down first
+                    if line_type == ft.MODEL:
+#                         tmf_hash = file_d.generateModelfileHash(line_val.getAbsolutePath())
+#                         line_val.tmf_hash = tmf_hash
+#                         line_val, hex_hash, line_type, ext = line_contents[0]
+
+                        rel_root = ''
+                        if not line_val.relative_root is None:
+                            rel_root = line_val.relative_root
+                        
+                        self._file_queue.enqueue([line_val.getAbsolutePath(), 
+                                                  line_val.tmf_hash, 
+                                                  file_d.head_hash, rel_root])
                     model.addContent(line_type, line_val)
                     
                     # Add the hash refs to the scenario and event objects if
@@ -362,14 +384,16 @@ class TuflowLoader(ATool, ALoader):
                     if not event_stack.isEmpty():
                         event_stack.peek().addPartRef(hex_hash)
                     
-                    if line_type == ft.MODEL: 
-                        line_val, hex_hash, line_type, ext = line_contents[0]
-
-                        rel_root = ''
-                        if not line_val.relative_root is None:
-                            rel_root = line_val.relative_root
-                        self._file_queue.enqueue([line_val.getAbsolutePath(), hex_hash, 
-                                                  file_d.head_hash, rel_root])
+#                     if line_type == ft.MODEL: 
+#                         # DEBUG - unnecessary repeated tuple extraction
+#                         line_val, hex_hash, line_type, ext = line_contents[0]
+# 
+#                         rel_root = ''
+#                         if not line_val.relative_root is None:
+#                             rel_root = line_val.relative_root
+#                         
+#                         self._file_queue.enqueue([line_val.getAbsolutePath(), hex_hash, 
+#                                                   file_d.head_hash, rel_root])
 
         # Make sure we clear up any leftovers
         if unknown_contents:
@@ -475,7 +499,8 @@ class TuflowLoader(ATool, ALoader):
                                                       file_d.extension)
                     self._global_order += 1
                 else:
-                    # Do a check for MI Projection and SHP projection
+                    # Do a check for MI Projection and SHP projection. These can
+                    # be either a WKT str or a file.
                     isfile = True
                     if command.upper() == 'MI PROJECTION' or command.upper() == 'SHP PROJECTION':
                         isfile = self._checkProjectionIsFile(instruction)
@@ -491,11 +516,12 @@ class TuflowLoader(ATool, ALoader):
                         # TODO: Not safe yet...needs more work.
                         if f_type == None:
 
-                            line_val = tfp.TuflowFile(self._global_order, instruction, 
+                            line_val = tfp.ModelFile(self._global_order, instruction, 
                                                     hex_hash, command_type, 
                                                     command, file_d.extension, 
                                                     file_d.root, 
                                                     file_d.relative_root, ext)
+                            line_val.tmf_hash = file_d.generateModelfileHash(line_val.getAbsolutePath())
                             self._global_order += 1
 
                             if command_type is ft.RESULT: 
@@ -1000,7 +1026,8 @@ class TuflowLoader(ATool, ALoader):
             self.root, self.filename = os.path.split(self.path)
             self.extension = os.path.splitext(self.filename)[1][1:]
             if gen_hash:
-                self.head_hash = self.generateHash(self.filename + 'HEAD')
+#                 self.head_hash = self.generateHash(self.filename + 'HEAD')
+                self.head_hash = self.generateModelfileHash(self.path)
                 self.parent_hash = None
             else:
                 self.head_hash = details[1]
@@ -1014,10 +1041,12 @@ class TuflowLoader(ATool, ALoader):
             Returns:
                 TuflowModelFile - based on extension in class.
             """
-            return TuflowModelFile(self.extension, self.head_hash, self.parent_hash) 
+            return TuflowModelFile(self.extension, self.head_hash, 
+                                   self.parent_hash, self.filename) 
             
 
-        def generateModelTuflowFile(self, line_type, global_order, modelfile_type=None):
+        def generateModelTuflowFile(self, line_type, global_order, 
+                                    modelfile_type=None):
             """Creates a TuflowFile object from the current state.
             
             Generates the class the self params.
@@ -1028,9 +1057,32 @@ class TuflowLoader(ATool, ALoader):
             Returns:
                 TuflowFile object.
             """
-            return tfp.TuflowFile(global_order, self.filename, self.head_hash, 
+            return tfp.ModelFile(global_order, self.filename, self.head_hash, 
                         line_type, self.extension, modelfile_type, self.root, 
                         self.relative_root, self.extension)
+        
+        
+        def generateModelfileHash(self, absolute_path): 
+            """Generate an md5sum hashcode for a model file.
+            
+            Uses the absolute path of the model file to generate the hash code.
+            This way when the same file is read twice it will always produce 
+            the same hashcode and we won't need to create two different 
+            TuflowModelFile's for the same control file.
+            
+            In order to do this the path is normalised before hashing so that
+            any difference in the relative path structure is removed.
+            
+            Args:
+                absolute_path(str): the absolute path to the model file.
+            
+            Return:
+                str - hexidecimal hashcode created from the path.
+            """
+            salt = os.path.normpath(absolute_path)
+            head_hash = hashlib.md5(salt.encode())
+            head_hash = head_hash.hexdigest()
+            return head_hash
             
 
         def generateHash(self, salt, add_random=True):

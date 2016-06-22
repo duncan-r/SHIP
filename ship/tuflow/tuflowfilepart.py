@@ -229,9 +229,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
         TuflowFilePart and PathHolder    
 
     TODO:
-        Need to make it so that this class can read in / write out piped file
-        commands. e.g:
-            Read GIS Z HX Line == mi\2d_bc_v1.MIF | mi\2d_zpt_v2.MIF
+        
     """
     
     def __init__(self, global_order, path, hex_hash, type, command, modelfile_type,
@@ -241,7 +239,7 @@ class TuflowFile(TuflowFilePart, PathHolder):
         
 
         Most tuflow files are referenced relative to the file that they are
-        called from. This method eakes a 'root' as an optional argument.
+        called from. This method takes a 'root' as an optional argument.
         The root will allow for an absolute path to be created from the 
         relative path. 
         
@@ -512,6 +510,34 @@ class TuflowFile(TuflowFilePart, PathHolder):
             return True
         
         return not_found
+
+
+class ModelFile(TuflowFile):
+    """Extends the TuflowFile class with MODEL file specific behaviour.
+    
+    The main difference is the inclusion of a reference to the hashcode held
+    by the TuflowModelFile that is associated with this TuflowFilePart.
+    """
+    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
+                       root=None, parent_relative_root='', category=None,
+                       tmf_hash=''):
+        """Constructor.
+
+        Provides the all_types variable to TuflowFile according to the file
+        extension of the path. This will include the other files associated
+        with the type of GIS file found.
+        
+        See Also:
+            :class:'<ship.tuflowfilepart.TuflowFile>' for full args description.
+        
+        Args:
+            tmf_hash(str): the hexhash value of the TuflowModelFile associated
+                with this MODEL file.
+        """
+        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
+                                modelfile_type, root, parent_relative_root, 
+                                category)
+        self.tmf_hash = tmf_hash
 
 
 

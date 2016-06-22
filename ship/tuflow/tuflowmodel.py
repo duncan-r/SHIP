@@ -385,7 +385,8 @@ class TuflowModel(object):
         else:
             for key, val in self.files.items():
                 for tmf in val.values():
-                    name = self.getTuflowFileFromTMF(tmf).getFileNameAndExtension()
+#                     name = self.getTuflowFileFromTMF(tmf).getFileNameAndExtension()
+                    name = '.'.join(tmf.name, tmf.TYPE)
                     output[key].append([tmf, name])
         
         return output
@@ -468,42 +469,42 @@ class TuflowModel(object):
         
         for model_file_type in self.files.values():
             for model_file in model_file_type.values():
-                if model_file.hex_hash == tuflowfile.hex_hash:
+                if model_file.hex_hash == tuflowfile.tmf_hash:
                     return model_file
     
     
-    def getTuflowFileFromTMF(self, tuflowmodelfile):
-        """Get the TuflowFile associated with the given TuflowModelFile.
-        
-        Tuflow control files (tcf, tgc, etc) are represented in two ways. They
-        are TuflowFile's like any other file and they are TuflowModelFile's
-        which are containers for the other data they hold.
-        
-        This is a convenience function to access the TuflowModelFile from a given
-        TuflowFile. 
-        
-        Args:
-            tuflowmodelfile(TuflowModelFile): 
-            
-        Return:
-            TuflowFile.
-        
-        Raises:
-            AttributeError - if tuflowmodelfile is not an instance of 
-                TuflowModelFile. 
-        """
-        if not isinstance(tuflowmodelfile, TuflowModelFile):
-            raise AttributeError
-        
-        if tuflowmodelfile.parent_hash is None:
-            return self.mainfile
-        
-        for key, val in self.files.iteritems():
-            for h, tmf in val.iteritems():
-                if h == tuflowmodelfile.parent_hash:
-                    return tmf.getEntryByHash(tuflowmodelfile.hex_hash)
-        
-        return False
+#     def getTuflowFileFromTMF(self, tuflowmodelfile):
+#         """Get the TuflowFile associated with the given TuflowModelFile.
+#         
+#         Tuflow control files (tcf, tgc, etc) are represented in two ways. They
+#         are TuflowFile's like any other file and they are TuflowModelFile's
+#         which are containers for the other data they hold.
+#         
+#         This is a convenience function to access the TuflowModelFile from a given
+#         TuflowFile. 
+#         
+#         Args:
+#             tuflowmodelfile(TuflowModelFile): 
+#             
+#         Return:
+#             TuflowFile.
+#         
+#         Raises:
+#             AttributeError - if tuflowmodelfile is not an instance of 
+#                 TuflowModelFile. 
+#         """
+#         if not isinstance(tuflowmodelfile, TuflowModelFile):
+#             raise AttributeError
+#         
+#         if tuflowmodelfile.parent_hash is None:
+#             return self.mainfile
+#         
+#         for key, val in self.files.iteritems():
+#             for h, tmf in val.iteritems():
+#                 if h == tuflowmodelfile.parent_hash:
+#                     return tmf.getEntryByHash(tuflowmodelfile.hex_hash)
+#         
+#         return False
     
     
     def orderByGlobal(self, in_list, reverse=False):
