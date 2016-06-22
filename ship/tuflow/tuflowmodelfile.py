@@ -31,7 +31,7 @@
 
 import os
 
-from ship.tuflow.tuflowfilepart import TuflowFile, TuflowFilePart
+from ship.tuflow.tuflowfilepart import TuflowFile, ModelFile, TuflowFilePart
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
 
@@ -573,7 +573,28 @@ class TuflowModelFile(object):
         else:
             raise KeyError ("No entry found with hex_hash: " + hex_hash)
     
+
+    def getEntryByTmfHash(self, hex_hash):
+        """Return the ModelFile referenced by a particular hash code. 
+        
+        Args:
+            hex_hash(str): the hash code.
+        
+        Return:
+            :class:'ModelFile <ship.tuflow.tuflowfilepart.ModelFile>'
+            
+        Raises:
+            KeyError - if no part was found with the given hash code.
+            
+        """
+        for c in self.contents:
+            if not isinstance(c[1], ModelFile): continue
+            if c[1].tmf_hash == hex_hash:
+                return c[1]
+        else:
+            raise KeyError ("No entry found with hex_hash: " + hex_hash)
     
+
     def testExists(self):
         """Tests each file to see if it exists.
         

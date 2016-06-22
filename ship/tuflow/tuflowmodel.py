@@ -122,7 +122,8 @@ class TuflowModel(object):
             if o[2] is None:  # It's the root of the order tree
                 model_file = self.mainfile
             else:
-                model_file = self.files[o[3]][o[2]].getEntryByHash(o[0])
+                
+                model_file = self.files[o[3]][o[2]].getEntryByTmfHash(o[0])
             output[model_file.getAbsolutePath()] = self.files[o[1]][o[0]].getPrintableContents(
                                     self.has_estry_auto, se_vals, strip_comments)
         
