@@ -387,7 +387,7 @@ class TuflowModel(object):
             for key, val in self.files.items():
                 for tmf in val.values():
 #                     name = self.getTuflowFileFromTMF(tmf).getFileNameAndExtension()
-                    name = '.'.join(tmf.name, tmf.TYPE)
+                    name = '.'.join([tmf.name, tmf.TYPE])
                     output[key].append([tmf, name])
         
         return output
