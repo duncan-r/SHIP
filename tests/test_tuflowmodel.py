@@ -29,9 +29,9 @@ class TuflowModelTests(unittest.TestCase):
         # MODEL type
         tcfpath = 'c:\\some\\fake\\root\\main.tcf'
         self.tcf_hex_hash = _encodeHash(tcfpath)
-        self.mfileTcf = TuflowFile(1, tcfpath, self.tcf_hex_hash, ft.MODEL, 'tcf', 'tcf', 
-                                   root=self.fake_root, category='tcf')
-        self.tuflowmodelfile = TuflowModelFile('tcf', self.mfileTcf.hex_hash, None)
+        self.mfileTcf = ModelFile(1, tcfpath, self.tcf_hex_hash, ft.MODEL, 'tcf', 'tcf', 
+                                   root=self.fake_root, category='tcf', tmf_hash=self.tcf_hex_hash)
+        self.tuflowmodelfile = TuflowModelFile('tcf', self.mfileTcf.hex_hash, None, 'main.tcf')
 
         tgcpath = 'c:\\some\\fake\\root\\model.tgc'
         self.tgc_hex_hash = _encodeHash(tgcpath)
@@ -83,9 +83,9 @@ class TuflowModelTests(unittest.TestCase):
         contents = self.tuflow_model.getPrintableContents()
         
         test_dict = {'c:\\some\\fake\\root\\main.tcf': 
-                        ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc\n', 
-                         'Read GIS == ..\\madeuppath\\file.shp\n', 'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n', 
-                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n'
+                        ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc', 
+                         'Read GIS == ..\\madeuppath\\file.shp', 'OUTPUT FOLDER == ..\\madeuppath\\2d\\', 
+                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
                         ]
                     }
         self.assertDictEqual(contents, test_dict, 'Contents dict match fail: \n' + str(contents))
@@ -142,12 +142,12 @@ class TuflowModelTests(unittest.TestCase):
         self.assertEqual(model.hex_hash, test_hex, 'getTMF hash fail: ' + model.hex_hash)
         
 
-    def test_getTuflowFileFromTMF(self):
-        """Check we get the right TuflowFile from a TuflowModelFile."""
-        
-        model = self.tuflow_model.getTuflowFileFromTMF(self.tuflowmodelfile)
-        test_hex = self.mfileTcf.hex_hash
-        self.assertEqual(model.hex_hash, test_hex, 'getTuflowFile hash fail: ' + model.hex_hash)
+#     def test_getTuflowFileFromTMF(self):
+#         """Check we get the right TuflowFile from a TuflowModelFile."""
+#         
+#         model = self.tuflow_model.getTuflowFileFromTMF(self.tuflowmodelfile)
+#         test_hex = self.mfileTcf.hex_hash
+#         self.assertEqual(model.hex_hash, test_hex, 'getTuflowFile hash fail: ' + model.hex_hash)
         
 
 

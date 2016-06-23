@@ -22,13 +22,13 @@ class TuflowModelFileTests(unittest.TestCase):
     def setUp(self):
         """Setup global test values"""
         
-        self.tuflowmodelfile = TuflowModelFile('tcf', 'b93yey483yrhfheu33', 'b93yey763yrhfheu33')
+        self.tuflowmodelfile = TuflowModelFile('tcf', 'b93yey483yrhfheu33', 'b93yey763yrhfheu33', 'tmf')
         self.fake_root = 'c:\\some\\fake\\root'
         
         # MODEL type
         tgcpath = 'c:\\some\\fake\\root\\model.tgc'
         self.tgc_hex_hash = _encodeHash(tgcpath)
-        mfileTgc = TuflowFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', 'tgc', self.fake_root)
+        mfileTgc = ModelFile(1, tgcpath, self.tgc_hex_hash, ft.MODEL, 'READ GEOMETRY FILE', 'tgc', self.fake_root, 'b93yey483yrhfheu33')
         
         # GIS type
         gfilepath = '..\\madeuppath\\file.shp'
@@ -227,15 +227,15 @@ class TuflowModelFileTests(unittest.TestCase):
     
     def test_getPrintableContents(self):
         """Check that it's returning the right formatted contents."""
-        test_contents = ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc\n',
-                         'Read GIS == ..\\madeuppath\\file.shp\n',
-                         'Read GIS == ..\\madeuppath\\file2.mif\n',
-                         'OUTPUT FOLDER == ..\\madeuppath\\2d\\\n',
-                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard\n',
-                         'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff\n',
-                         '    Read GIS == ..\\madeuppath\\S_file.mif\n',
-                         '    Timestep == 2 ! Timestep\n',
-                         'END IF\n']
+        test_contents = ['READ GEOMETRY FILE == c:\\some\\fake\\root\\model.tgc',
+                         'Read GIS == ..\\madeuppath\\file.shp',
+                         'Read GIS == ..\\madeuppath\\file2.mif',
+                         'OUTPUT FOLDER == ..\\madeuppath\\2d\\',
+                         'Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard',
+                         'If Scenario == SCEN1 | SCEN2 # Some comment stuff',
+                         '    Read GIS == ..\\madeuppath\\S_file.mif',
+                         '    Timestep == 2 ! Timestep',
+                         'End If']
         contents = self.tuflowmodelfile.getPrintableContents(False)
         self.assertEqual(test_contents, contents, 'Get printable contents fail')
         
@@ -258,16 +258,16 @@ class TuflowScenarioTests(unittest.TestCase):
         self.var_hex_hash2 = _encodeHash(varline2)
         
         # Main scenarion
-        self.opening_line = 'IF SCENARIO == SCEN1 | SCEN2 # Some comment stuff'
+        self.opening_line = 'If Scenario == SCEN1 | SCEN2 # Some comment stuff'
         opening_hash = _encodeHash(self.opening_line)
-        self.closing_line = 'END IF'
+        self.closing_line = 'End If'
         closing_hash = _encodeHash(self.closing_line)
         self.scenario = TuflowScenario(TuflowScenario.IF, ['SCEN1', 'SCEN2'], opening_hash,
                                   0, 'Some comment stuff', '#')
         self.scenario.has_endif = True
         
         # Nested scenario
-        opening_line2 = 'IF SCENARIO == SCEN1 # Some other comment stuff'
+        opening_line2 = 'If Scenario == SCEN1 # Some other comment stuff'
         self.opening_hash2 = _encodeHash(opening_line2)
        
         # Add all the bits
@@ -292,7 +292,7 @@ class TuflowScenarioTests(unittest.TestCase):
         """Check we return the correct line contents for the opening if."""
         
         line = self.scenario.getOpeningStatement()
-        self.assertEqual(line, self.opening_line + '\n', 'Opening statement fail: line = ' + line)
+        self.assertEqual(line, self.opening_line, 'Opening statement fail: line = ' + line)
        
        
        
