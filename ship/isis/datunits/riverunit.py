@@ -178,6 +178,7 @@ class RiverUnit (AIsisUnit):
         Return:
             List of strings formated for writing to .dat file.
         """
+        self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
         out_data = self._getHeadData()
         out_data.extend(self._getRowData()) 
         
@@ -207,7 +208,7 @@ class RiverUnit (AIsisUnit):
             List of strings - The formatted header list.
         """
         out_data = []
-        self.head_data['rowcount'] = self.unit_length
+#         self.head_data['rowcount'] = self.unit_length
         out_data.append('RIVER ' + self.head_data['comment'])
         out_data.append('SECTION')
         
@@ -216,6 +217,7 @@ class RiverUnit (AIsisUnit):
         
         out_data.append('{:>10}'.format(self.head_data['distance']) + '{:>20}'.format(self.head_data['slope']) +
                         '{:>10}'.format(self.head_data['density']))
+#         self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
         out_data.append('{:>10}'.format(self.head_data['rowcount']))
         
         return out_data
@@ -262,8 +264,9 @@ class RiverUnit (AIsisUnit):
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
+        
         # Call superclass method to add the new row
-        AIsisUnit.updateDataRow(self, index=index, row_vals=row_vals)
+        AIsisUnit.updateDataRow(self, row_vals=row_vals, index=index)
         
     
     def addDataRow(self, row_vals, index=None): 

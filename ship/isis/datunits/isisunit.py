@@ -305,26 +305,20 @@ class AIsisUnit( object ):
             raise IndexError ('Given index is outside bounds of row_collection data')
         
         # Check that there won't be a negative change in chainage across row.
-        if check_negative:
+        c = row_vals.get(rdt.CHAINAGE)
+        if check_negative and not c is None:
             if self._checkChainageIncreaseNotNegative(index, 
                                         row_vals.get(rdt.CHAINAGE)) == False:
                 logger.error('Chainage increase is negative')
                 raise ValueError ('Chainage increase is negative')
         
         # Call the row collection add row method to add the new row.
-#         try:
         if collection_name is None:
             self.row_collection.updateRow(values_dict=row_vals, index=index)
         
         else:
             self.additional_row_collections[collection_name].updateRow(
                                         values_dict=row_vals, index=index)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             logger.warning('Given index does not exist')
-#             raise 
             
     
     def addDataRow(self, row_vals, collection_name=None, index=None, 
@@ -383,12 +377,6 @@ class AIsisUnit( object ):
         else:
             self.additional_row_collections[collection_name].addNewRow(
                                         values_dict=row_vals, index=index)
-            
-#         except ValueError:
-#             raise  
-#         except IndexError:
-#             logger.warning('Given index does not exist')
-#             raise 
     
     
     def _checkChainageIncreaseNotNegative(self, index, chainageValue, 

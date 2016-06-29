@@ -205,10 +205,10 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
-        new_keys = sorted(list(values_dict))
-        cur_keys = sorted(self.getCollectionTypes())
-        if not new_keys == cur_keys:
-            raise KeyError
+#         new_keys = sorted(list(values_dict))
+#         cur_keys = sorted(self.getCollectionTypes())
+#         if not new_keys == cur_keys:
+#             raise KeyError
         if index > self.getNumberOfRows():
             raise IndexError
         
@@ -218,11 +218,13 @@ class RowDataCollection(object):
             # in the different objects out of sync.
             temp_list = self._deepCopyDataObjects(self._collection) 
             
-            for obj in self._collection:
-                obj.setValue(values_dict[obj.data_type], index)
+            for key, val in values_dict.items():
+                
+                self.setValue(key, val, index)
             
-        except (IndexError, ValueError, Exception):
+        except (IndexError, ValueError, Exception), err:
             self._resetDataObject(temp_list)
+            raise err
         finally:
             for o in temp_list:
                 del o
