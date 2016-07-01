@@ -43,13 +43,6 @@ class SpillUnit (AIsisUnit):
     See Also:
         AIsisUnit
     """
-    
-    # Name constants the values dictionary
-    CHAINAGE = 'chainage'
-    ELEVATION = 'elevation'
-    EASTING = 'easting'
-    NORTHING = 'northing'
-    
     UNIT_TYPE = 'Spill'
     CATEGORY = 'Spill'
     FILE_KEY = 'SPILL'
@@ -65,8 +58,9 @@ class SpillUnit (AIsisUnit):
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
-        self.head_data = {'section_label': '', 'spill_ds': '', 'coeff': 0, 
-                          'modular_limit': 0, 'comment': '', 'rowcount': 0} 
+        self.head_data = {'section_label': 'Spill', 'spill_ds': 'SpillDS', 
+                          'coeff': 0.000, 'modular_limit': 0.000, 'comment': '', 
+                          'rowcount': 0} 
 
         self.unit_type = SpillUnit.UNIT_TYPE
         self.unit_category = SpillUnit.CATEGORY
@@ -124,16 +118,6 @@ class SpillUnit (AIsisUnit):
         Args:
             unit_data: the data pertaining to this unit.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.row_collection = RowDataCollection()
-#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
-#         self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
-
         out_line = file_line + self.unit_length
         try:
             # Load the geometry data
@@ -217,7 +201,7 @@ class SpillUnit (AIsisUnit):
         
     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, 
                                                         northing = 0.00): 
-        """Adds a new row to the bridge unit.
+        """Adds a new row to the spill unit.
 
         Ensures that certain requirements of the data rows, such as the 
         chainage needing to increase for each row down are met, then call the 

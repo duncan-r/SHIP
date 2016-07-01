@@ -7,4 +7,4 @@ ROW_DATA_TYPES = uf.enum('CHAINAGE', 'ELEVATION', 'ROUGHNESS', 'PANEL_MARKER',
                          'OPEN_END', 'SPRINGING_LEVEL', 'SOFFIT_LEVEL', 
                          'CULVERT_INVERT', 'CULVERT_SOFFIT', 'CULVERT_AREA',
                          'CULVERT_CD_PART', 'CULVERT_CD_FULL', 
-                         'CULVERT_DROWNING') 
+                         'CULVERT_DROWNING', 'TIME') 
