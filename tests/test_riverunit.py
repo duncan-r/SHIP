@@ -129,7 +129,7 @@ class RiverUnitTests(unittest.TestCase):
         
         self.assertTrue(river.getUnitCategory() == 'River', 'River.unit_category fail:  River.unit_category = ' + river.unit_category)
         self.assertTrue(river.getName() == '1.069', 'River.name fail:  River.name = ' + river.name)
-        self.assertTrue(river.getFileOrder() == 1, 'River.file_order fail:  River.file_order = ' + str(river.file_order))
+#         self.assertTrue(river.getFileOrder() == 1, 'River.file_order fail:  River.file_order = ' + str(river.file_order))
          
  
     def test_readHeadData(self):
@@ -138,7 +138,7 @@ class RiverUnitTests(unittest.TestCase):
         This should help to narrow down the problem if tests fail.
         '''
         # create a unloaded river unit to just check the readHeadData() method.
-        r = riverunit.RiverUnit(0, 1)
+        r = riverunit.RiverUnit(1)
         # Put the test data into the method
         r._readHeadData(self.unit_data_test, 0) 
         # Need to manually create the rowcount value here as it's not done in this method.
@@ -153,7 +153,7 @@ class RiverUnitTests(unittest.TestCase):
         This should help to narrow down the problem if tests fail.
         '''
         # create a unloaded river unit to just check the readHeadData() method.
-        river = riverunit.RiverUnit(0, 1)
+        river = riverunit.RiverUnit(1)
         # Put the test data into the readrowData() method
         river.readUnitData(self.unit_data_test, 0)
        
@@ -173,7 +173,7 @@ class RiverUnitTests(unittest.TestCase):
     def test_getData_method(self):
         '''Test to check the suitability of the getData() method.
         '''
-        river = riverunit.RiverUnit(1, 1)
+        river = riverunit.RiverUnit(1)
         river.head_data = self.header_vars
         river.unit_length = 18
         river.row_collection
@@ -254,7 +254,7 @@ class RiverUnitTests(unittest.TestCase):
         ]
          
         # Get a RiverUnit object
-        river = riverunit.RiverUnit(1, 1)
+        river = riverunit.RiverUnit(1)
         # Set its header values with list created in setUp() method
         river.head_data = self.header_vars
         # Set the number of rows in the unit attribute
@@ -271,7 +271,7 @@ class RiverUnitTests(unittest.TestCase):
     def test_addDataRow_method(self):       
         '''Test adding a new row to the river section
         '''
-        river = riverunit.RiverUnit(1, 1)
+        river = riverunit.RiverUnit(1)
         river.head_data = self.header_vars
         river.unit_length = 18
         river.row_collection
@@ -363,7 +363,7 @@ class RiverUnitTests(unittest.TestCase):
                is done in the calling method.
         '''
         # Create RiverUnit object and give it a chainage object with some data
-        river = riverunit.RiverUnit(1, 1)
+        river = riverunit.RiverUnit(1)
         chainage = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
         chainage.data_collection = self.chainage
         chainage.record_length = 18

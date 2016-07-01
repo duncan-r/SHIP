@@ -44,13 +44,13 @@ class OrificeUnit(AIsisUnit):
         AIsisUnit.__init__(self)
         self.unit_type = OrificeUnit.UNIT_TYPE
         self.unit_category = OrificeUnit.CATEGORY
-        self.name = 'Orifice'
+        self._name = 'Orifice'
         self.has_datarows = False
         
         self.head_data = {'comment': '',
-                          'type': '',
-                          'us_label': '',
-                          'ds_label': '',
+                          'type': 'OPEN',
+                          'section_label': 'OrificUS',
+                          'ds_label': 'OrificeDS',
                           'invert_level': 0.000,
                           'soffit_level': 0.000,
                           'bore_area': 0.000,
@@ -73,7 +73,7 @@ class OrificeUnit(AIsisUnit):
         '''
         self.head_data = {'comment': unit_data[file_line][8:].strip(), 
                           'type': unit_data[file_line + 1].strip(),
-                          'us_label': unit_data[file_line + 2][:12].strip(),
+                          'section_label': unit_data[file_line + 2][:12].strip(),
                           'ds_label': unit_data[file_line + 2][12:].strip(),
                           'invert_level': unit_data[file_line + 3][:10].strip(),
                           'soffit_level': unit_data[file_line + 3][10:20].strip(),
@@ -84,7 +84,7 @@ class OrificeUnit(AIsisUnit):
                           'surcharged_flow': unit_data[file_line + 4][10:20].strip(),
                           'modular_limit': unit_data[file_line + 4][20:30].strip()
                          }
-        
+        self._name = self.head_data['section_label']
         return file_line + 4
         
         
@@ -99,9 +99,10 @@ class OrificeUnit(AIsisUnit):
         '''
         out_data = []
         
+        self.head_data['section_label'] = self._name
         out_data.append(self.unit_type.upper() + ' ' + self.head_data['comment'])
         out_data.append(self.head_data['type'])
-        out_data.append('{:<12}'.format(self.head_data['us_label']) +
+        out_data.append('{:<12}'.format(self.head_data['section_label']) +
                         '{:<12}'.format(self.head_data['ds_label']))
         out_data.append('{:>10}'.format(self.head_data['invert_level']) +
                         '{:>10}'.format(self.head_data['soffit_level']) +
@@ -134,9 +135,10 @@ class OutfallUnit(OrificeUnit):
         OrificeUnit.__init__(self)
         self.unit_type = OutfallUnit.UNIT_TYPE
         self.unit_category = OutfallUnit.CATEGORY
-        self.name = 'Outfall'
+        self._name = 'Outfall'
         self.has_datarows = False
-            
+        self.head_data['section_label'] = 'OutfallUS' 
+        self.head_data['ds_label'] = 'OutfallDS' 
     
         
         

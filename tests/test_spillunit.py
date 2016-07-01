@@ -30,7 +30,7 @@ class test_SpillUnit(unittest.TestCase):
 
         spill_rows = [[0.0, 5.0, 6.55], [37.651, 38.0, 37.9], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
         
-        spill = spillunit.SpillUnit(0)
+        spill = spillunit.SpillUnit()
         spill.readUnitData(self.spill_unitdata, 0)
         row_data = spill.row_collection.getRowDataAsList()
         self.assertListEqual(spill_rows, row_data)
@@ -49,7 +49,7 @@ class test_SpillUnit(unittest.TestCase):
                       ]
                      
         
-        spill = spillunit.SpillUnit(0)
+        spill = spillunit.SpillUnit()
         spill.readUnitData(self.spill_unitdata, 0)
         output = spill.getData()
 

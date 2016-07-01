@@ -64,7 +64,7 @@ class BridgeUnit (AIsisUnit):
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
-        self.head_data = {'upstream': '', 'downstream': '', 'remote_us': '',
+        self.head_data = {'section_label': '', 'ds_label': '', 'remote_us': '',
                           'remote_ds': '', 'roughness_type': 'MANNING',
                           'calibration_coef': 1, 'skew_angle': 1, 'width': 0,
                           'dual_distance': 0, 'no_of_orifices': 0, 
@@ -136,7 +136,7 @@ class BridgeUnit (AIsisUnit):
                 this section. 
         """
         file_line = self._readHeadData(unit_data, file_line)
-        self.name = self.head_data['upstream']
+        self._name = self.head_data['section_label']
         file_line = self._readMainRowData(unit_data, file_line)
         file_line = self._readAdditionalRowData(unit_data, file_line)
         self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
@@ -363,13 +363,7 @@ class BridgeUnit (AIsisUnit):
         kw[rdt.CHAINAGE] = row_vals.get(rdt.CHAINAGE)
         kw[rdt.ELEVATION] = row_vals.get(rdt.ELEVATION)
         kw[rdt.ROUGHNESS] = row_vals.get(rdt.ROUGHNESS, 0.039)
-        kw[rdt.PANEL_MARKER] = row_vals.get(rdt.PANEL_MARKER, False)
-        kw[rdt.RPL] = row_vals.get(rdt.RPL, 1.0)
-        kw[rdt.BANKMARKER] = row_vals.get(rdt.BANKMARKER, '')
-        kw[rdt.EASTING] = row_vals.get(rdt.EASTING, 0.0)
-        kw[rdt.NORTHING] = row_vals.get(rdt.NORTHING, 0.0)
-        kw[rdt.DEACTIVATION] = row_vals.get(rdt.DEACTIVATION, '')
-        kw[rdt.SPECIAL] = row_vals.get(rdt.SPECIAL, '')
+        kw[rdt.EMBANKMENT] = row_vals.get(rdt.EMBANKMENT, False)
 
         # Call superclass method to add the new row
         AIsisUnit.addDataRow(self, index=index, row_vals=kw, 
@@ -480,8 +474,8 @@ class BridgeUnitUsbpr (BridgeUnit):
         out_data = []
         out_data.append('BRIDGE ' + self.head_data['comment'])
         out_data.append('USBPR1978')
-        out_data.append(self._formatDataItem('upstream', 12, align_right=False) + 
-                        self._formatDataItem('downstream', 12, align_right=False) +
+        out_data.append(self._formatDataItem('section_label', 12, align_right=False) + 
+                        self._formatDataItem('ds_label', 12, align_right=False) +
                         self._formatDataItem('remote_us', 12, align_right=False) +
                         self._formatDataItem('remote_ds', 12, align_right=False)
                         )
@@ -514,8 +508,8 @@ class BridgeUnitUsbpr (BridgeUnit):
             BridgeUnit
         """
         self.head_data['comment'] = unit_data[file_line][6:].strip()
-        self.name = self.head_data['upstream'] = unit_data[file_line + 2][:12].strip()
-        self.head_data['downstream'] = unit_data[file_line + 2][12:24].strip()
+        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
+        self.head_data['ds_label'] = unit_data[file_line + 2][12:24].strip()
         self.head_data['remote_us'] = unit_data[file_line + 2][24:36].strip()
         self.head_data['remote_ds'] = unit_data[file_line + 2][36:48].strip()
         self.head_data['calibration_coef'] = unit_data[file_line + 4][:10].strip()
@@ -695,8 +689,8 @@ class BridgeUnitArch (BridgeUnit):
         out_data = []
         out_data.append('BRIDGE ' + self.head_data['comment'])
         out_data.append('ARCH')
-        out_data.append(self._formatDataItem('upstream', 12, align_right=False) + 
-                        self._formatDataItem('downstream', 12, align_right=False) +
+        out_data.append(self._formatDataItem('section_label', 12, align_right=False) + 
+                        self._formatDataItem('ds_label', 12, align_right=False) +
                         self._formatDataItem('remote_us', 12, align_right=False) +
                         self._formatDataItem('remote_ds', 12, align_right=False)
                         )
@@ -722,8 +716,8 @@ class BridgeUnitArch (BridgeUnit):
             BridgeUnit
         """
         self.head_data['comment'] = unit_data[file_line][6:].strip()
-        self.name = self.head_data['upstream'] = unit_data[file_line + 2][:12].strip()
-        self.head_data['downstream'] = unit_data[file_line + 2][12:24].strip()
+        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
+        self.head_data['ds_label'] = unit_data[file_line + 2][12:24].strip()
         self.head_data['remote_us'] = unit_data[file_line + 2][24:36].strip()
         self.head_data['remote_ds'] = unit_data[file_line + 2][36:48].strip()
         self.head_data['calibration_coef'] = unit_data[file_line + 4][:10].strip()

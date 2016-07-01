@@ -68,7 +68,7 @@ class AIsisUnit( object ):
         # and data_objects are set in the readUnitData() method.
         # Both of these are called at or immediately after initialisation.
         
-        self.name = 'Unknown'                   # Unit name
+        self._name = 'Unknown'                   # Unit name
         
         # This is used for catch-all data storage, such as in the UnknownSection.
         # Classes that override the readUnitData() and getData() methods are
@@ -95,6 +95,19 @@ class AIsisUnit( object ):
                       
         self.head_data = None                   # Dictionary of unit header values.
         
+    
+    @property
+    def name(self):
+        return self._name
+    
+    @name.setter
+    def name(self, value):
+        self._name = value
+        try:
+            self.head_data['section_label'] = value
+        except KeyError:
+            return
+    
     
     def getUnitVars(self): 
         """Getter for the unit variables needed for loading this Unit. 
@@ -126,7 +139,7 @@ class AIsisUnit( object ):
         Returns:
             str - The name of the unit
         """
-        return self.name
+        return self._name
         
 
     def getUnitType( self ):
@@ -351,7 +364,7 @@ class AIsisUnit( object ):
             index = None
             
         # Check that there won't be a negative change in chainage across row.
-        if check_negative:
+        if check_negative and not self.row_collection.getNumberOfRows() == 0:
             if self._checkChainageIncreaseNotNegative(index, chainage) == False:
                 logger.error('Chainage increase is negative')
                 raise ValueError ('Chainage increase is negative')
@@ -386,13 +399,15 @@ class AIsisUnit( object ):
         if index == None:
             if collection_name is None:
                 length = self.row_collection.getNumberOfRows()
-                if self.row_collection.getDataValue(rdt.CHAINAGE, length - 1) >= chainageValue:
-                    return False
+                if length > 0:
+                    if self.row_collection.getDataValue(rdt.CHAINAGE, length - 1) >= chainageValue:
+                        return False
             else:
                 length = self.additional_row_collections[collection_name].getNumberOfRows()
-                if self.additional_row_collections[collection_name].getDataValue(
-                                    rdt.CHAINAGE, length - 1) >= chainageValue:
-                    return False
+                if length > 0:
+                    if self.additional_row_collections[collection_name].getDataValue(
+                                        rdt.CHAINAGE, length - 1) >= chainageValue:
+                        return False
             return True
         
         # Otherwise need to check that it's less than the next one too
@@ -400,10 +415,13 @@ class AIsisUnit( object ):
             if collection_name is None:
                 logger.debug('Previous index chainage:\t' + 
                     str(self.row_collection.getDataValue(rdt.CHAINAGE, index-1)))
-                temp = self.row_collection.getDataValue(rdt.CHAINAGE, index-1)
-                if self.row_collection.getDataValue(
-                                rdt.CHAINAGE, index - 1) >= chainageValue:
-                    return False
+                length = self.row_collection.getNumberOfRows()
+                if length > 0:
+                    temp = self.row_collection.getDataValue(rdt.CHAINAGE, index-1)
+                    if self.row_collection.getDataValue(
+                                    rdt.CHAINAGE, index - 1) >= chainageValue:
+                        return False
+                
                 temp2 = self.row_collection.getDataValue(rdt.CHAINAGE, index)
                 if self.row_collection.getDataValue(
                                 rdt.CHAINAGE, index) <= chainageValue:
@@ -413,9 +431,11 @@ class AIsisUnit( object ):
                 logger.debug('Previous index chainage:\t' + 
                     self.additional_row_collections[collection_name].getDataValue(
                                                         rdt.CHAINAGE, index-1))
-                if self.additional_row_collections[collection_name].getDataValue(
-                                    rdt.CHAINAGE, index - 1) >= chainageValue:
-                    return False
+                length = self.row_collection.getNumberOfRows()
+                if length > 0:
+                    if self.additional_row_collections[collection_name].getDataValue(
+                                        rdt.CHAINAGE, index - 1) >= chainageValue:
+                        return False
                 if self.additional_row_collections[collection_name].getDataValue(
                                 rdt.CHAINAGE, index) <= chainageValue:
                     return False
@@ -467,7 +487,7 @@ class UnknownSection(AIsisUnit):
         AIsisUnit.__init__(self) 
         self.unit_type = 'Unknown'
         self.unit_category = 'Unknown'
-        self.name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
+        self._name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
     
 
 
@@ -490,7 +510,7 @@ class CommentUnit(AIsisUnit):
         AIsisUnit.__init__(self) 
         self.unit_type = 'Comment'
         self.unit_category = 'Meta'
-        self.name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
+        self._name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
         self.has_datarows = True
         self.data = []
     
@@ -541,7 +561,7 @@ class HeaderUnit(AIsisUnit):
         AIsisUnit.__init__(self)
         self.unit_type = 'Header'
         self.unit_category = 'Meta'
-        self.name = 'Header'
+        self._name = 'Header'
         self.has_datarows = False
             
     

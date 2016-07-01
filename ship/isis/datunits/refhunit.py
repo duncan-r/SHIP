@@ -109,7 +109,7 @@ class RefhUnit(AIsisUnit):
                 to this section 
         """
         file_line = self._readHeadData(unit_data, file_line)
-        self.name = self.head_data['section_label']
+        self._name = self.head_data['section_label']
         file_line = self._readStormData(unit_data, file_line)
         file_line = self._readSuffix(unit_data, file_line)
         return file_line
@@ -123,7 +123,7 @@ class RefhUnit(AIsisUnit):
         """
         self.head_data['revision'] = unit_data[file_line][18:19]
         self.head_data['comment'] = unit_data[file_line][20:].strip()
-        self.name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
+        self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
         self.head_data['z'] = unit_data[file_line + 2][:10].strip()
         self.head_data['easting'] = unit_data[file_line + 2][10:20].strip()
         self.head_data['northing'] = unit_data[file_line + 2][20:30].strip()

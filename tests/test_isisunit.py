@@ -55,13 +55,13 @@ class HeaderUnitTests(unittest.TestCase):
         '''
         # Create the river unit with a file order and give it a file_line
         # variable and the dat file contents list.
-        header = isisunit.HeaderUnit(0)
+        header = isisunit.HeaderUnit()
         header.readUnitData(self.input_contents, 0) 
          
         self.assertTrue(header.getUnitType() == 'Header', 'Header.unit_type fail:  Header.unit_type = ' + header.unit_type)
         self.assertTrue(header.getUnitCategory() == 'Meta', 'Header.unit_category fail:  Header.unit_category = ' + header.unit_category)
         self.assertTrue(header.getName() == 'Header', 'Header.name fail:  Header.name = ' + header.name)
-        self.assertTrue(header.getFileOrder() == 0, 'Header.file_order fail:  Header.file_order = ' + str(header.file_order))
+#         self.assertTrue(header.getFileOrder() == 0, 'Header.file_order fail:  Header.file_order = ' + str(header.file_order))
          
      
      
@@ -72,7 +72,7 @@ class HeaderUnitTests(unittest.TestCase):
         This test and others should be a lot more comprehensive when the HeaderUnit
         is fully implemented.
         '''
-        header = isisunit.HeaderUnit(2)
+        header = isisunit.HeaderUnit()
         header.readUnitData(self.input_contents, 0)
          
         # Make sure the loaded dictionary matched what we expect.

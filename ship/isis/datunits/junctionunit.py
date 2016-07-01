@@ -44,7 +44,7 @@ class JunctionUnit(AIsisUnit):
         AIsisUnit.__init__(self)
         self.unit_type = JunctionUnit.UNIT_TYPE
         self.unit_category = JunctionUnit.CATEGORY
-        self.name = 'Junction'
+        self._name = 'Junction'
         self.has_datarows = False
             
     
@@ -65,7 +65,7 @@ class JunctionUnit(AIsisUnit):
         names = ' '.join(unit_data[file_line + 2].split())
         names = names.split(' ')
         self.head_data['Names'] = names
-        self.name = names[0]
+        self._name = names[0]
         return file_line + 2
         
         

@@ -56,7 +56,7 @@ class InitialConditionsUnit (AIsisUnit):
         AIsisUnit.__init__(self)
         self.unit_type = "InitialConditions"
         self.unit_category = "InitialConditions"
-        self.name = "Initial Conditions"
+        self._name = "Initial Conditions"
         self.has_datarows = True
         self.node_count = node_count
     

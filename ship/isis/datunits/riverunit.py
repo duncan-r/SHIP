@@ -62,9 +62,9 @@ class RiverUnit (AIsisUnit):
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
-        self.head_data = {'section_label': '', 'spill1': '', 'spill2': '', 'lateral1': '',
+        self.head_data = {'section_label': 'RivUS', 'spill1': '', 'spill2': '', 'lateral1': '',
                        'lateral2': '', 'lateral3': '', 'lateral4': '', 'distance': 0,
-                       'slope': '', 'density': 1000, 'comment': '', 'rowcount': 0} 
+                       'slope': 0.0000, 'density': 1000, 'comment': '', 'rowcount': 0} 
 
         self.unit_type = RiverUnit.UNIT_TYPE
         self.unit_category = RiverUnit.CATEGORY
@@ -113,7 +113,7 @@ class RiverUnit (AIsisUnit):
             unit_data (list): containing the data to read.
         """
         self.head_data['comment'] = unit_data[file_line + 0][5:].strip()
-        self.name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
+        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
         self.head_data['spill1'] = unit_data[file_line + 2][12:24].strip()
         self.head_data['spill2'] = unit_data[file_line + 2][24:36].strip()
         self.head_data['lateral1'] = unit_data[file_line + 2][36:48].strip()

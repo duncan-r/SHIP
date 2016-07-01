@@ -95,7 +95,7 @@ class SpillUnit (AIsisUnit):
             AIsisUnit - readUnitData()
         """
         file_line = self._readHeadData(unit_data, file_line)
-        self.name = self.head_data['section_label']
+        self._name = self.head_data['section_label']
         file_line = self._readRowData(unit_data, file_line)
         self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
         return file_line - 1
@@ -107,7 +107,7 @@ class SpillUnit (AIsisUnit):
             unit_data (list): contains data for this unit.
         """
         self.head_data['comment'] = unit_data[file_line][5:].strip()
-        self.name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
+        self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
         self.head_data['spill_ds'] = unit_data[file_line + 1][12:24].strip()
         self.head_data['coeff'] = unit_data[file_line + 2][:10].strip()
         self.head_data['modular_limit'] = unit_data[file_line + 2][10:20].strip()

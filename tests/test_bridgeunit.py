@@ -64,7 +64,7 @@ class BridgeUnitTests(unittest.TestCase):
         self.arch_header_vars = \
         {'calibration_coef': '1.000',
          'comment': 'Main Road bridge - Trimmed to BT',
-         'downstream': '1.056_BD',
+         'ds_label': '1.056_BD',
          'dual_distance': '0.000',
          'no_of_orifices': '',
          'op_cd': '1',
@@ -77,7 +77,7 @@ class BridgeUnitTests(unittest.TestCase):
          'row_count_additional': {'Opening': 1},
          'rowcount': 15,
          'skew_angle': '40.000',
-         'upstream': '1.056_BU',
+         'section_label': '1.056_BU',
          'width': '0.000'}
         
         self.usbpr_header_vars = \
@@ -85,7 +85,7 @@ class BridgeUnitTests(unittest.TestCase):
          'abutment_type': '3',
          'calibration_coef': '1.000',
          'comment': 'Bridge over the weir at bend in river based on section 1.042',
-         'downstream': '1.042_BD',
+         'ds_label': '1.042_BD',
          'dual_distance': '0.000',
          'no_arches': 0,
          'no_culverts': 0,
@@ -106,7 +106,7 @@ class BridgeUnitTests(unittest.TestCase):
          'row_count_additional': {'Opening': 1, 'Orifice': 0},
          'rowcount': 11,
          'skew_angle': '0.000',
-         'upstream': '1.042_BU',
+         'section_label': '1.042_BU',
          'width': '0.000'}
         
 
@@ -123,7 +123,7 @@ class BridgeUnitTests(unittest.TestCase):
         ]
         arch_openings = [[0.71], [6.441], [34.47], [36.0]]
 
-        arch = bridgeunit.BridgeUnitArch(0)
+        arch = bridgeunit.BridgeUnitArch()
         arch.readUnitData(self.arch_unitdata, 0)
         row_data = arch.row_collection.getRowDataAsList()
         self.assertListEqual(arch_rows, row_data)
@@ -147,7 +147,7 @@ class BridgeUnitTests(unittest.TestCase):
         usbpr_orifice = [[], [], [], [], [], []]
 
 
-        usbpr = bridgeunit.BridgeUnitUsbpr(0)
+        usbpr = bridgeunit.BridgeUnitUsbpr()
         usbpr.readUnitData(self.usbpr_unitdata, 0)
         row_data = usbpr.row_collection.getRowDataAsList()
         self.assertListEqual(usbpr_rows, row_data)
@@ -185,7 +185,7 @@ class BridgeUnitTests(unittest.TestCase):
                          '     6.557    36.229     0.025           ',
                          '         1',
                          '     0.710     6.441    34.470    36.000'] 
-        arch = bridgeunit.BridgeUnitArch(0)
+        arch = bridgeunit.BridgeUnitArch()
         arch.readUnitData(self.arch_unitdata, 0)
         output = arch.getData()
 
@@ -217,7 +217,7 @@ class BridgeUnitTests(unittest.TestCase):
                          '         1',
                          '    11.587    15.231    33.680    33.680',
                          '         0']
-        usbpr = bridgeunit.BridgeUnitUsbpr(0)
+        usbpr = bridgeunit.BridgeUnitUsbpr()
         usbpr.readUnitData(self.usbpr_unitdata, 0)
         output = usbpr.getData()
 

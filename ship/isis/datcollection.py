@@ -102,9 +102,17 @@ class DatCollection(object):
     def addUnit(self, isisUnit, index=None):
         """Adds a new isisunit type to the collection.
         
+        Be aware that you will almost always want to provide an index. At the
+        moment when no index is provided the unit will be appended to the end
+        of the units list. This works fine when loading a dat file, but once
+        the dat file is loaded any new units will be appended to the end (i.e.
+        after the initial conditions etc). This behaviour may be improved later,
+        but for now, unless you are building a dat file from scratch, always
+        provide an index.
+        
         Args:
             isisUnit (AIsisInit): The instance to add to the collection. 
-            index (int): Index to insert the unit at - Optional.
+            index=None(int): Index to insert the unit at.
         
         Raises:
             AttributeError: When a non-isisunit type is given.
@@ -140,6 +148,43 @@ class DatCollection(object):
                 return True
             else:
                 return False
+    
+    
+    def getIndex(self, unit, unit_type=None):
+        """Get the index a particular AIsisUnit in the collection.
+        
+        Either the unit itself or its name can be provided as the argument.
+        
+        If a name is supplied a unit_type should also be given. This is because 
+        some units can have the same name (e.g. river and refh) and it is not
+        possible to know which one to return with the name alone. If no unit_type
+        is given the first unit with the matching name will be returned.
+        
+        Args:
+            unit(AIsisUnit or str): the AIsisUnit or the name of the AIsisUnit
+                to find the index for.
+            unit_type=None(str): the unit_type member of the AIsisUnit (e.g. 
+                for a USBPR bridge the category == Bridge and unit_type == 'Usbpr').
+        
+        Return:
+            int - the index of the given unit, or -1 if it could not be found.
+        """
+        index = -1
+        if isinstance(unit, AIsisUnit):
+            index = self.units.index(unit)
+        elif isinstance(unit, basestring):
+            for i, u in enumerate(self.units):
+                if u.name == unit:
+                    if unit_type == u.unit_type:
+                        index = i
+                        break
+                    elif unit_type is None:
+                        index = i
+                        break
+        else:
+            index = -1
+        
+        return index
         
         
     def getPrintableContents(self):

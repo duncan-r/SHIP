@@ -40,7 +40,7 @@ class Culvert(AIsisUnit):
         AIsisUnit.__init__(self)
         self.unit_type = Culvert.UNIT_TYPE
         self.unit_category = Culvert.CATEGORY
-        self.name = 'Outfall'
+        self._name = 'Outfall'
         self.has_datarows = False
 
 class CulvertUnit(AIsisUnit):
@@ -75,8 +75,8 @@ class CulvertInletUnit(CulvertUnit):
         self.unit_type = CulvertInletUnit.UNIT_TYPE
         
         self.head_data = {'comment': '',
-                          'us_label': '',
-                          'ds_label': '',
+                          'section_label': 'CulvInUs',
+                          'ds_label': 'CulvInDs',
                           'K': 0.000,
                           'M': 0.000,
                           'C': 0.000,
@@ -103,7 +103,7 @@ class CulvertInletUnit(CulvertUnit):
             unit_data (list): The raw file data to be processed.
         '''
         self.head_data = {'comment': unit_data[file_line][8:].strip(), 
-                          'us_label': unit_data[file_line + 2][:12].strip(),
+                          'section_label': unit_data[file_line + 2][:12].strip(),
                           'ds_label': unit_data[file_line + 2][12:].strip(),
                           'K': unit_data[file_line + 3][:10].strip(),
                           'M': unit_data[file_line + 3][10:20].strip(),
@@ -119,7 +119,7 @@ class CulvertInletUnit(CulvertUnit):
                           'headloss_type': unit_data[file_line + 4][50:60].strip(),
                           'trash_screen_height': unit_data[file_line + 4][60:].strip()
                          }
-        
+        self._name = self.head_data['section_label']
         return file_line + 4
         
         
@@ -134,9 +134,10 @@ class CulvertInletUnit(CulvertUnit):
         '''
         out_data = []
         
+        self.head_data['section_label'] = self._name
         out_data.append('CULVERT ' + self.head_data['comment'])
         out_data.append('INLET')
-        out_data.append('{:<12}'.format(self.head_data['us_label']) +
+        out_data.append('{:<12}'.format(self.head_data['section_label']) +
                         '{:<12}'.format(self.head_data['ds_label']))
         out_data.append('{:>10}'.format(self.head_data['K']) +
                         '{:>10}'.format(self.head_data['M']) +
@@ -169,8 +170,8 @@ class CulvertOutletUnit(CulvertUnit):
         self.unit_type = CulvertOutletUnit.UNIT_TYPE
         
         self.head_data = {'comment': '',
-                          'us_label': '',
-                          'ds_label': '',
+                          'section_label': 'CulveOutUS',
+                          'ds_label': 'CulveOutDS',
                           'loss_coefficient': 0.000,
                           'reverse_flow_model': 'CALCULATED',
                           'headloss_type': 'STATIC',
@@ -187,13 +188,13 @@ class CulvertOutletUnit(CulvertUnit):
             unit_data (list): The raw file data to be processed.
         '''
         self.head_data = {'comment': unit_data[file_line][8:].strip(), 
-                          'us_label': unit_data[file_line + 2][:12].strip(),
+                          'section_label': unit_data[file_line + 2][:12].strip(),
                           'ds_label': unit_data[file_line + 2][12:].strip(),
                           'loss_coefficient': unit_data[file_line + 3][:10].strip(),
                           'reverse_flow_model': unit_data[file_line + 3][10:20].strip(),
                           'headloss_type': unit_data[file_line + 3][20:].strip()
                          }
-        
+        self._name = self.head_data['section_label']
         return file_line + 3
         
         
@@ -210,7 +211,7 @@ class CulvertOutletUnit(CulvertUnit):
         
         out_data.append('CULVERT ' + self.head_data['comment'])
         out_data.append('OUTLET')
-        out_data.append('{:<12}'.format(self.head_data['us_label']) +
+        out_data.append('{:<12}'.format(self.head_data['section_label']) +
                         '{:<12}'.format(self.head_data['ds_label']))
         out_data.append('{:>10}'.format(self.head_data['loss_coefficient']) +
                         '{:<10}'.format(self.head_data['reverse_flow_model']) +
