@@ -24,6 +24,7 @@
 import os
 
 from ship.utils import utilfunctions as uf
+from ship.utils import filetools as ft
 
 import logging
 logger = logging.getLogger(__name__)
@@ -317,7 +318,30 @@ class Ief(object):
         
         return contents
 
-
+    
+    def write(self, filepath=None):
+        """Write the contents of this file to disk.
+        
+        Writes out to file in the format required for reading by ISIS/FMP.
+        
+        Note:
+            If a filepath is not provided and the settings in this objects
+            PathHolder class have not been updated you will write over the
+            file that was loaded.
+        
+        Args:
+            filepath=None(str): if a filename is provided it the file will be
+                written to that location. If not, the current settings in this
+                object path_holder object will be used.
+        
+        Raises:
+            IOError - If unable to write to file.
+        """
+        if filepath is None:
+            filepath = self.path_holder.getAbsolutePath()
+            
+        contents = self.getPrintableContents()
+        ft.writeFile(contents, filepath)
 
 
         
