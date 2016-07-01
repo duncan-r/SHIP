@@ -46,6 +46,20 @@ class OrificeUnit(AIsisUnit):
         self.unit_category = OrificeUnit.CATEGORY
         self.name = 'Orifice'
         self.has_datarows = False
+        
+        self.head_data = {'comment': '',
+                          'type': '',
+                          'us_label': '',
+                          'ds_label': '',
+                          'invert_level': 0.000,
+                          'soffit_level': 0.000,
+                          'bore_area': 0.000,
+                          'us_sill_level': 0.000,
+                          'ds_sill_level': 0.000,
+                          'weir_flow': 0.000,
+                          'surcharged_flow': 0.000,
+                          'modular_limit': 0.000,
+                         }
             
     
     def readUnitData(self, unit_data, file_line): 

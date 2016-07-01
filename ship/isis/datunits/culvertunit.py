@@ -73,6 +73,24 @@ class CulvertInletUnit(CulvertUnit):
         '''
         CulvertUnit.__init__(self)
         self.unit_type = CulvertInletUnit.UNIT_TYPE
+        
+        self.head_data = {'comment': '',
+                          'us_label': '',
+                          'ds_label': '',
+                          'K': 0.000,
+                          'M': 0.000,
+                          'C': 0.000,
+                          'Y': 0.000,
+                          'Ki': 0.000,
+                          'conduit_type': 'A',
+                          'screen_width': 0.000,
+                          'bar_proportion': 0.000,
+                          'debris_proportion': 0.000,
+                          'loss_coefficient': 0.000,
+                          'reverse_flow_model': 'CALCULATED',
+                          'headloss_type': 'STATIC',
+                          'trash_screen_height': 0.000,
+                         }
             
     
     def readUnitData(self, unit_data, file_line): 
@@ -149,6 +167,14 @@ class CulvertOutletUnit(CulvertUnit):
         '''
         CulvertUnit.__init__(self)
         self.unit_type = CulvertOutletUnit.UNIT_TYPE
+        
+        self.head_data = {'comment': '',
+                          'us_label': '',
+                          'ds_label': '',
+                          'loss_coefficient': 0.000,
+                          'reverse_flow_model': 'CALCULATED',
+                          'headloss_type': 'STATIC',
+                         }
             
     
     def readUnitData(self, unit_data, file_line): 
