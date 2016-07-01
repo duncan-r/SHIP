@@ -41,7 +41,7 @@ def readme():
     
 
 setup(  name='ship',
-        version='0.2.2',
+        version='0.2.3',
         description='A Library of Python utilities for interacting with 1D and 2D hydraulic models',
         long_description=readme(),
         classifiers=[

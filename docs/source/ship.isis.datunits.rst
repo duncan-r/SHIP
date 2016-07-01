@@ -12,10 +12,26 @@ ship.isis.datunits.bridgeunit module
     :undoc-members:
     :show-inheritance:
 
+ship.isis.datunits.culvertunit module
+-------------------------------------
+
+.. automodule:: ship.isis.datunits.culvertunit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ship.isis.datunits.gisinfounit module
 -------------------------------------
 
 .. automodule:: ship.isis.datunits.gisinfounit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ship.isis.datunits.htbdyunit module
+-----------------------------------
+
+.. automodule:: ship.isis.datunits.htbdyunit
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,6 +56,14 @@ ship.isis.datunits.junctionunit module
 --------------------------------------
 
 .. automodule:: ship.isis.datunits.junctionunit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ship.isis.datunits.orificeunit module
+-------------------------------------
+
+.. automodule:: ship.isis.datunits.orificeunit
     :members:
     :undoc-members:
     :show-inheritance:
