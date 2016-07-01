@@ -511,17 +511,31 @@ class CommentUnit(AIsisUnit):
         self.unit_category = 'Meta'
         self.name = 'Comment_' + str(file_order)
         self.has_datarows = True
+        self.data = []
     
         
     def readUnitData(self, data, file_line):
         """
         """
-        no_of_rows = int(data[file_line+1].strip())
-        out_line = file_line + no_of_rows + 2
-#         d = [''.join(data[file_line:out_line]).strip()]
-        self.data = [''.join(data[file_line:out_line]).strip()]
+        self.no_of_rows = int(data[file_line+1].strip())
+        for i in range(2, 2 + self.no_of_rows):
+            self.data.append(data[file_line + i].strip())
+
+        return file_line + self.no_of_rows
+    
+    def getData(self):
+        """
+        """
+        output = []
+        output.append('{:<10}'.format('COMMENT'))
+        output.append('{:>10}'.format(self.no_of_rows))
+        for d in self.data:
+            output.append(d)
         
-        return out_line - 1
+        if len(output) > self.no_of_rows + 1:
+            output = output[:self.no_of_rows + 1]
+        
+        return output
 
 
 class HeaderUnit(AIsisUnit):
