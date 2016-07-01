@@ -37,6 +37,8 @@ from ship.isis.datunits import gisinfounit
 from ship.isis.datunits import bridgeunit
 from ship.isis.datunits import isisunit 
 from ship.isis.datunits import refhunit
+from ship.isis.datunits import orificeunit
+from ship.isis.datunits import culvertunit
 
 import logging
 logger = logging.getLogger(__name__)
@@ -75,7 +77,11 @@ class IsisUnitFactory(object):
                                 'bridge': bridgeunit.BridgeUnitArch,
                                 'spill': spillunit.SpillUnit,
                                 'junction': junctionunit.JunctionUnit,
-                                'refh': refhunit.RefhUnit
+                                'refh': refhunit.RefhUnit,
+                                'orifice': orificeunit.OrificeUnit,
+                                'outlet': orificeunit.OutfallUnit,
+                                'culvert': culvertunit.CulvertInletUnit,
+                                'culvert': culvertunit.CulvertOutletUnit
                                }
         try:
             self._getFileKeys()
@@ -127,6 +133,12 @@ class IsisUnitFactory(object):
                 unit = bridgeunit.BridgeUnitUsbpr(file_order)
             else:
                 unit = bridgeunit.BridgeUnitArch(file_order)
+        
+        elif key == 'culvert':
+            if contents[file_line + 1].strip().startswith('INLET'):
+                unit = culvertunit.CulvertInletUnit(file_order)
+            else:
+                unit = culvertunit.CulvertOutletUnit(file_order)
         
         # All other units only need a file_order for their constructor.
         else:
