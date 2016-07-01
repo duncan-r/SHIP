@@ -39,17 +39,10 @@ def trimRiverSections():
             elif b == 'RIGHT':
                 deactivation_data.setValue('RIGHT', i)
     
-    
-    # Update and get the filename of the isis_model
-    fname = isis_model.path_holder.file_name
+    # Update the filename and write contents to disk
     isis_model.path_holder.setFileName(fname + '_Updated')
-    dat_path = isis_model.path_holder.getAbsolutePath()
-
-    # Get the contents of the updated isis model
-    contents = isis_model.getPrintableContents()
-    
-    # Write the new isis model to file
-    filetools.writeFile(contents, dat_path)
+    dat_path = ief.path_holder.getAbsolutePath()
+    isis_model.write(dat_path)
     
 
 

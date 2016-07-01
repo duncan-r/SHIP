@@ -51,17 +51,11 @@ def iefExample():
     ief.setValue('Results', new_results)
     ief.setValue('2DFile', new_tcf)
     
-    # Update and get the filename of the ief
-    fname = ief.path_holder.file_name
+    # Update the filename and write contents to disk
     ief.path_holder.setFileName(fname + '_Updated')
     ief_path = ief.path_holder.getAbsolutePath()
+    ief.write(ief_path)
 
-    # Get the contents of the updated ief
-    contents = ief.getPrintableContents()
-    
-    # Write the new ief to file
-    filetools.writeFile(contents, ief_path)
-    
 
 if __name__ == '__main__':
     iefExample()
