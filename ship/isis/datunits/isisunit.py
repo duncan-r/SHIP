@@ -22,7 +22,9 @@
 
 """
 
-
+import hashlib
+import random
+import copy
 from abc import ABCMeta, abstractmethod
 
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
@@ -57,12 +59,8 @@ class AIsisUnit( object ):
     __metaclass__ = ABCMeta
         
     
-    def __init__( self, file_order ):
+    def __init__(self):
         """Constructor
-        
-        Args:
-            file_order (int): The location relative to other sections in the
-                .dat file.
         """
         # Set the defaults for all unit specific variables.
         # These should be set by each unit at some point in the setup process.
@@ -97,9 +95,6 @@ class AIsisUnit( object ):
                       
         self.head_data = None                   # Dictionary of unit header values.
         
-        self.file_order = file_order            # The location of the unit in 
-                                                # the dat file        
-    
     
     def getUnitVars(self): 
         """Getter for the unit variables needed for loading this Unit. 
@@ -158,6 +153,12 @@ class AIsisUnit( object ):
             str - The unit category
         """
         return self.unit_category
+    
+    
+    def getDeepCopy(self):
+        """Returns a copy of this unit with it's own memory allocation."""
+        object_copy = copy.deepcopy(self)
+        return object_copy
     
     
     def getRowDataObject(self, key, collection_key='main', copy=False):
@@ -256,20 +257,6 @@ class AIsisUnit( object ):
         return self.data
     
 
-    # TODO: Remove this function
-    def getFileOrder(self): 
-        """Getter for the units order in the file.
-        
-        Warning:
-            This is unecessary method and is deprecated. Please use the
-            variable directly.
-        
-        Returns:
-            The units order in the file.
-        """
-        return self.file_order
-    
-    
     def readUnitData(self, data, file_line=None):
         """Reads the unit data supplied to the object.
         
@@ -474,16 +461,13 @@ class UnknownSection(AIsisUnit):
     """
     FILE_KEY = 'UNKNOWN'
      
-    def __init__ (self, file_order): 
+    def __init__ (self): 
         """Constructor.
-
-        Args:
-            file_order (int): The order this unit appears in the .DAT file.
         """
-        AIsisUnit.__init__(self, file_order) 
+        AIsisUnit.__init__(self) 
         self.unit_type = 'Unknown'
         self.unit_category = 'Unknown'
-        self.name = 'Unknown_' + str(file_order)
+        self.name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
     
 
 
@@ -500,16 +484,13 @@ class CommentUnit(AIsisUnit):
     FILE_KEY = 'COMMENT'
        
 
-    def __init__(self, file_order):
+    def __init__(self):
         """Constructor.
-
-        Args:
-            file_order (int): The order this unit appears in the .DAT file.
         """
-        AIsisUnit.__init__(self, file_order) 
+        AIsisUnit.__init__(self) 
         self.unit_type = 'Comment'
         self.unit_category = 'Meta'
-        self.name = 'Comment_' + str(file_order)
+        self.name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
         self.has_datarows = True
         self.data = []
     
@@ -554,13 +535,10 @@ class HeaderUnit(AIsisUnit):
     FILE_KEY = 'HEADER'
     
 
-    def __init__(self, file_order):
+    def __init__(self):
         """Constructor.
-
-        Args:
-            file_order (int): The order this unit appears in the .DAT file.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
         self.unit_type = 'Header'
         self.unit_category = 'Meta'
         self.name = 'Header'

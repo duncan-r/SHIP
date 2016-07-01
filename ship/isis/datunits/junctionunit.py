@@ -35,13 +35,13 @@ class JunctionUnit(AIsisUnit):
     FILE_KEY = 'JUNCTION'
     
 
-    def __init__(self, file_order):
+    def __init__(self):
         '''Constructor.
         
         Args:
             file_order (int): the order of this unit in the .dat file.
         '''
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
         self.unit_type = JunctionUnit.UNIT_TYPE
         self.unit_category = JunctionUnit.CATEGORY
         self.name = 'Junction'

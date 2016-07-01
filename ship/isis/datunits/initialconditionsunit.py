@@ -43,7 +43,7 @@ class InitialConditionsUnit (AIsisUnit):
     FILE_KEY = 'INITIAL'
     
 
-    def __init__(self, file_order, node_count):
+    def __init__(self, node_count):
         """Constructor
 
         Args:
@@ -53,7 +53,7 @@ class InitialConditionsUnit (AIsisUnit):
                 .DAT file. This will always be at the end but before the 
                 GISINFO if there is any.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
         self.unit_type = "InitialConditions"
         self.unit_category = "InitialConditions"
         self.name = "Initial Conditions"

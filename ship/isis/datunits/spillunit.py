@@ -55,13 +55,13 @@ class SpillUnit (AIsisUnit):
     FILE_KEY = 'SPILL'
 
 
-    def __init__(self, file_order): 
+    def __init__(self): 
         """Constructor.
         
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
@@ -72,6 +72,16 @@ class SpillUnit (AIsisUnit):
         self.unit_category = SpillUnit.CATEGORY
         self.has_datarows = True
         self.unit_length = 0
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.row_collection = RowDataCollection()
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
+        self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
 
     
     def readUnitData(self, unit_data, file_line):
@@ -114,15 +124,15 @@ class SpillUnit (AIsisUnit):
         Args:
             unit_data: the data pertaining to this unit.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
-        self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.row_collection = RowDataCollection()
+#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
+#         self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
 
         out_line = file_line + self.unit_length
         try:

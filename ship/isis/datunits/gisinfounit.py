@@ -53,7 +53,7 @@ class GisInfoUnit (AIsisUnit):
     FILE_KEY = 'GISINFO'
     
 
-    def __init__(self, file_order, node_count):
+    def __init__(self, node_count):
         """Constructor
         
         Args:
@@ -64,7 +64,7 @@ class GisInfoUnit (AIsisUnit):
                 to pass it to the superclass.
         """
     
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
         self.unit_type = "GisInfo"
         self.unit_category = "GisInfo"
         self.name = "GisInfo"

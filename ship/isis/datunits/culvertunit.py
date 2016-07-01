@@ -35,13 +35,9 @@ class Culvert(AIsisUnit):
     UNIT_VARS = None
     
 
-    def __init__(self, file_order):
-        '''Constructor.
-        
-        Args:
-            file_order (int): the order of this unit in the .dat file.
-        '''
-        AIsisUnit.__init__(self, file_order)
+    def __init__(self):
+        '''Constructor.'''
+        AIsisUnit.__init__(self)
         self.unit_type = Culvert.UNIT_TYPE
         self.unit_category = Culvert.CATEGORY
         self.name = 'Outfall'
@@ -56,13 +52,10 @@ class CulvertUnit(AIsisUnit):
     FILE_KEY = 'CULVERT'
     
 
-    def __init__(self, file_order):
+    def __init__(self):
         '''Constructor.
-        
-        Args:
-            file_order (int): the order of this unit in the .dat file.
         '''
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
         self.unit_type = CulvertUnit.UNIT_TYPE
         self.unit_category = CulvertUnit.CATEGORY
         self.has_datarows = False
@@ -75,13 +68,10 @@ class CulvertInletUnit(CulvertUnit):
     CATEGORY = 'Culvert'
     FILE_KEY = 'CULVERT'
     
-    def __init__(self, file_order):
+    def __init__(self):
         '''Constructor.
-        
-        Args:
-            file_order (int): the order of this unit in the .dat file.
         '''
-        CulvertUnit.__init__(self, file_order)
+        CulvertUnit.__init__(self)
         self.unit_type = CulvertInletUnit.UNIT_TYPE
             
     
@@ -154,13 +144,10 @@ class CulvertOutletUnit(CulvertUnit):
     CATEGORY = 'Culvert'
     FILE_KEY = 'CULVERT'
     
-    def __init__(self, file_order):
+    def __init__(self):
         '''Constructor.
-        
-        Args:
-            file_order (int): the order of this unit in the .dat file.
         '''
-        CulvertUnit.__init__(self, file_order)
+        CulvertUnit.__init__(self)
         self.unit_type = CulvertOutletUnit.UNIT_TYPE
             
     

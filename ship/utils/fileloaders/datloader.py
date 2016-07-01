@@ -206,8 +206,8 @@ class DatLoader(ATool, ALoader):
         incorporated into this.
         Loads in chunks of the file 'as-is' and prints them out the same way.
         """
-        logger.debug('Creating UnknownSection - Unit No:  ' + str(self.cur_no_of_units))
-        self.temp_unit = UnknownSection(self.cur_no_of_units) 
+#         logger.debug('Creating UnknownSection - Unit No:  ' + str(self.cur_no_of_units))
+        self.temp_unit = UnknownSection() 
         self.temp_unit.readUnitData(self.unknown_data)
         
      

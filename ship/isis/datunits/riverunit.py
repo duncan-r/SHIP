@@ -51,14 +51,14 @@ class RiverUnit (AIsisUnit):
     FILE_KEY = 'RIVER'
 
 
-    def __init__(self, file_order, reach_number): 
+    def __init__(self, reach_number): 
         """Constructor.
         
         Args:
             fileOrder (int): The location of this unit in the file.
             reach_number (int): The reach ID for this unit.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
@@ -71,6 +71,23 @@ class RiverUnit (AIsisUnit):
         self.has_datarows = True
         self.reach_number = reach_number
         self.unit_length = 0
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.row_collection = RowDataCollection()
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+        self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+        self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+        self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+        self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+        # Default == '~' means to ignore formatting and apply '' when value is None
+        self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
     
         
     def readUnitData(self, unit_data, file_line):
@@ -118,22 +135,22 @@ class RiverUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
-        self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
-        self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
-        self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
-        self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
-        self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
-        self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
-        # Default == '~' means to ignore formatting and apply '' when value is None
-        self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.row_collection = RowDataCollection()
+#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+#         self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+#         self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+#         self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+#         self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+#         self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+#         self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+#         # Default == '~' means to ignore formatting and apply '' when value is None
+#         self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
 
         out_line = file_line + self.unit_length
         try:

@@ -50,14 +50,10 @@ class RefhUnit(AIsisUnit):
     FILE_KEY = 'REFHBDY'
 
 
-    def __init__(self, file_order): 
+    def __init__(self): 
         """Constructor.
-        
-        Args:
-            fileOrder (int): The location of this unit in the file.
-            reach_number (int): The reach ID for this unit.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.

@@ -57,13 +57,10 @@ class BridgeUnit (AIsisUnit):
     UNIT_VARS = None
 
 
-    def __init__(self, file_order): 
+    def __init__(self): 
         """Constructor.
-        
-        Args:
-            fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self, file_order)
+        AIsisUnit.__init__(self)
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
@@ -84,6 +81,16 @@ class BridgeUnit (AIsisUnit):
         self.no_of_opening_rows = 1
         self.no_of_culvert_rows = 0
         self.additional_row_collections = OrderedDict()
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.row_collection = RowDataCollection()
+        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
         
         
     def getNumberOfOpenings(self):
@@ -161,15 +168,15 @@ class BridgeUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.row_collection = RowDataCollection()
+#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
         
         self.unit_length = 6 
         out_line = file_line + self.no_of_chainage_rows
@@ -418,13 +425,13 @@ class BridgeUnitUsbpr (BridgeUnit):
                           }
                 } 
 
-    def __init__(self, file_order): 
+    def __init__(self): 
         """Constructor.
         
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self, file_order)
+        BridgeUnit.__init__(self)
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels. #dict(self.head_data, **
@@ -440,6 +447,28 @@ class BridgeUnitUsbpr (BridgeUnit):
         self.no_of_collections = 3
         self.additional_row_collections['Opening'] = None
         self.additional_row_collections['Orifice'] = None
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.additional_row_collections['Opening'] = RowDataCollection()
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.additional_row_collections['Orifice'] = RowDataCollection()
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
         
     
     def _getHeadData(self):
@@ -529,15 +558,15 @@ class BridgeUnitUsbpr (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.additional_row_collections['Opening'] = RowDataCollection()
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
         
         out_line = file_line + self.no_of_opening_rows
         try:
@@ -573,17 +602,17 @@ class BridgeUnitUsbpr (BridgeUnit):
             little more relevant by raising a different error. Or they could
             be dealt with better here.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Orifice'] = RowDataCollection()
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.additional_row_collections['Orifice'] = RowDataCollection()
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
 
         out_line = file_line + self.no_of_culvert_rows
         try:
@@ -630,13 +659,13 @@ class BridgeUnitArch (BridgeUnit):
                           }
                 } 
 
-    def __init__(self, file_order): 
+    def __init__(self): 
         """Constructor.
         
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self, file_order)
+        BridgeUnit.__init__(self)
 
         self.head_data['row_count_additional'] = {'Opening': 1}
 
@@ -645,6 +674,16 @@ class BridgeUnitArch (BridgeUnit):
         self.has_datarows = True
         self.no_of_collections = 2
         self.additional_row_collections['Opening'] = None
+        
+        # Add the new row data types to the object collection
+        # All of them must have type, output format, default value and position
+        # in the row as the first variables in vars.
+        # The others are DataType specific.
+        self.additional_row_collections['Opening'] = RowDataCollection()
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
         
     
     def _getHeadData(self):
@@ -719,15 +758,15 @@ class BridgeUnitArch (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         # Add the new row data types to the object collection
+#         # All of them must have type, output format, default value and position
+#         # in the row as the first variables in vars.
+#         # The others are DataType specific.
+#         self.additional_row_collections['Opening'] = RowDataCollection()
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+#         self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
         
         out_line = file_line + self.no_of_opening_rows
         try:

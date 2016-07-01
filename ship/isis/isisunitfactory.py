@@ -123,22 +123,22 @@ class IsisUnitFactory(object):
                 return file_line, False
             
             reach_no = self._getReachNumber(reach_number)
-            unit = riverunit.RiverUnit(file_order, reach_no)
+            unit = riverunit.RiverUnit(reach_no)
         
         elif key == 'initialconditions' or key == 'gisinfo':
-            unit = self.available_units[key](file_order, self.ic_rows)
+            unit = self.available_units[key](self.ic_rows)
         
         elif key == 'bridge':
             if contents[file_line + 1].strip().startswith('USBPR1978'):
-                unit = bridgeunit.BridgeUnitUsbpr(file_order)
+                unit = bridgeunit.BridgeUnitUsbpr()
             else:
-                unit = bridgeunit.BridgeUnitArch(file_order)
+                unit = bridgeunit.BridgeUnitArch()
         
         elif key == 'culvert':
             if contents[file_line + 1].strip().startswith('INLET'):
-                unit = culvertunit.CulvertInletUnit(file_order)
+                unit = culvertunit.CulvertInletUnit()
             else:
-                unit = culvertunit.CulvertOutletUnit(file_order)
+                unit = culvertunit.CulvertOutletUnit()
         
         # All other units only need a file_order for their constructor.
         else:
@@ -147,7 +147,7 @@ class IsisUnitFactory(object):
             UnknownUnit.
             '''
             if key in self.available_units.keys():
-                unit = self.available_units[key](file_order)
+                unit = self.available_units[key]()
             else:
                 return file_line, False
         
