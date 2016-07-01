@@ -2,11 +2,7 @@
 
  Summary:
      Container and main interface for accessing the Tuflow model and a class
-     for containing the main tuflow model files (Tcf, Tgc, etc). Also includes
-     the FilesFilter class. This is used to store standard function arguments
-     for the majority of the methods in the TuflowModel class. It makes it 
-     easier to set defaults for multiple method calls and improves the 
-     readability of the method parameter lists.
+     for containing the main tuflow model files (Tcf, Tgc, etc). 
      
      There are several other classes in here that are used to determine the
      order of the files in the model and key words for reading in the files.
@@ -56,10 +52,12 @@ class TuflowModel(object):
     
     To files dictionary contains sub dictionaries underneath keys for each of
     the type of file. These are:
-    # tcf
-    # tgc
-    # tbc
-    # ecf
+        # tcf
+        # tgc
+        # tbc
+        # ecf
+        # tef
+        # trd
     
     
     """

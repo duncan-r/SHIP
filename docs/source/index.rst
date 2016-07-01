@@ -9,7 +9,7 @@ Welcome to SHIP API documentation!
 Contents:
 
 .. toctree::
-	:maxdepth: 2
+	:maxdepth: 4
 	
 	install
 	ship
