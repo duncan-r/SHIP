@@ -81,6 +81,7 @@ class IsisUnitFactory(object):
                                 'refh': refhunit.RefhUnit,
                                 'orifice': orificeunit.OrificeUnit,
                                 'outlet': orificeunit.OutfallUnit,
+                                'frelief': orificeunit.FloodReliefArchUnit,
                                 'culvert': culvertunit.CulvertInletUnit,
                                 'culvert': culvertunit.CulvertOutletUnit,
                                 'htbdy': htbdyunit.HtbdyUnit

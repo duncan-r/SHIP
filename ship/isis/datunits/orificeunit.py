@@ -117,7 +117,7 @@ class OrificeUnit(AIsisUnit):
     
     
 class OutfallUnit(OrificeUnit):
-    '''Class for dealing with Orifice units in the .dat file.
+    '''Class for dealing with Outfall units in the .dat file.
     
     Subclasses the orifice unit because they are essentially the same as far
     as the .dat file setup goes.
@@ -139,6 +139,32 @@ class OutfallUnit(OrificeUnit):
         self.has_datarows = False
         self.head_data['section_label'] = 'OutfallUS' 
         self.head_data['ds_label'] = 'OutfallDS' 
+
+
+
+class FloodReliefArchUnit(OrificeUnit):
+    '''Class for dealing with flood relief arch units in the .dat file.
+    
+    Subclasses the orifice unit because they are essentially the same as far
+    as the .dat file setup goes.
+    '''
+
+    # Class constants
+    UNIT_TYPE = 'Relief Arch'
+    CATEGORY = 'Relief Arch'
+    FILE_KEY = 'FLOOD RELIEF'
+    
+
+    def __init__(self):
+        '''Constructor.
+        '''
+        OrificeUnit.__init__(self)
+        self.unit_type = OutfallUnit.UNIT_TYPE
+        self.unit_category = OutfallUnit.CATEGORY
+        self._name = 'FRelief'
+        self.has_datarows = False
+        self.head_data['section_label'] = 'ReliefUS' 
+        self.head_data['ds_label'] = 'ReliefDS' 
     
         
         
