@@ -99,7 +99,7 @@ class DatCollection(object):
         self.units[key] = value
 
 
-    def addUnit(self, isisUnit, index=None):
+    def addUnit(self, isisUnit, index=None, update_node_count=True):
         """Adds a new isisunit type to the collection.
         
         Be aware that you will almost always want to provide an index. At the
@@ -113,6 +113,8 @@ class DatCollection(object):
         Args:
             isisUnit (AIsisInit): The instance to add to the collection. 
             index=None(int): Index to insert the unit at.
+            update_node_count=True(bool): if True will update the node count
+                value at the top of the .dat file. You probably want to do this.
         
         Raises:
             AttributeError: When a non-isisunit type is given.
@@ -131,12 +133,18 @@ class DatCollection(object):
 
         self._max = len(self.units)
 
+        if update_node_count:
+            header = self.getUnit('Header')
+            header.head_data['node_count'] = int(header.head_data['node_count']) + 1
+
     
-    def removeUnit(self, name_key):
+    def removeUnit(self, name_key, update_node_count=True):
         """Remove one of the units previously added to the list.
         
         Args:
             name_key (str): The unique name of the unit to remove. 
+            update_node_count=True(bool): if True will update the node count
+                value at the top of the .dat file. You probably want to do this.
         
         Raises:
             KeyError: if the name doesn't exist. 
@@ -145,6 +153,9 @@ class DatCollection(object):
             if name_key == u.name:
                 self.units.remove(u)
                 self._max = len(self.units)
+                if update_node_count:
+                    header = self.getUnit('Header')
+                    header.head_data['node_count'] = int(header.head_data['node_count']) - 1
                 return True
             else:
                 return False

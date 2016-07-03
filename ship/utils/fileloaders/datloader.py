@@ -230,7 +230,8 @@ class DatLoader(ATool, ALoader):
         variables.
         """
         #logger.debug('In updateSubContents')
-        self.units.addUnit(self.temp_unit)
+        # Don't update node count here as we aren't adding any 'new' nodes
+        self.units.addUnit(self.temp_unit, update_node_count=False)
         self.cur_no_of_units += 1
         del self.temp_unit
         self.unknown_data = []   
