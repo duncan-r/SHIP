@@ -75,6 +75,8 @@ class BridgeUnit (AIsisUnit):
         self.unit_type = BridgeUnit.UNIT_TYPE
         self.unit_category = BridgeUnit.CATEGORY
         self.has_datarows = True
+        self.has_ics = True
+        self.ic_label_keys.append('ds_label')
         self.no_of_collections = 2
         self.unit_length = 0
         self.no_of_chainage_rows = 1

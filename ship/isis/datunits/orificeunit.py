@@ -46,6 +46,8 @@ class OrificeUnit(AIsisUnit):
         self.unit_category = OrificeUnit.CATEGORY
         self._name = 'Orifice'
         self.has_datarows = False
+        self.has_ics = True
+        self.ic_label_keys.append('ds_label')
         
         self.head_data = {'comment': '',
                           'type': 'OPEN',

@@ -69,6 +69,7 @@ class RiverUnit (AIsisUnit):
         self.unit_type = RiverUnit.UNIT_TYPE
         self.unit_category = RiverUnit.CATEGORY
         self.has_datarows = True
+        self.has_ics = True
         self.reach_number = reach_number
         self.unit_length = 0
         
@@ -135,23 +136,6 @@ class RiverUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.row_collection = RowDataCollection()
-#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
-#         self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
-#         self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
-#         self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
-#         self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
-#         self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
-#         self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
-#         # Default == '~' means to ignore formatting and apply '' when value is None
-#         self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
-
         out_line = file_line + self.unit_length
         try:
             # Load the geometry data

@@ -58,13 +58,15 @@ class SpillUnit (AIsisUnit):
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
-        self.head_data = {'section_label': 'Spill', 'spill_ds': 'SpillDS', 
+        self.head_data = {'section_label': 'Spill', 'ds_label': 'SpillDS', 
                           'coeff': 0.000, 'modular_limit': 0.000, 'comment': '', 
                           'rowcount': 0} 
 
         self.unit_type = SpillUnit.UNIT_TYPE
         self.unit_category = SpillUnit.CATEGORY
         self.has_datarows = True
+        self.has_ics = True
+        self.ic_label_keys.append('ds_label')
         self.unit_length = 0
         
         # Add the new row data types to the object collection

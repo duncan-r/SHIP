@@ -26,23 +26,6 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class Culvert(AIsisUnit):
-    '''Class for dealing with Inlet Culvert units in the .dat file.'''
-
-    # Class constants
-    UNIT_TYPE = 'Culvert'
-    CATEGORY = 'Culvert'
-    UNIT_VARS = None
-    
-
-    def __init__(self):
-        '''Constructor.'''
-        AIsisUnit.__init__(self)
-        self.unit_type = Culvert.UNIT_TYPE
-        self.unit_category = Culvert.CATEGORY
-        self._name = 'Outfall'
-        self.has_datarows = False
-
 class CulvertUnit(AIsisUnit):
     '''Class for dealing with Inlet Culvert units in the .dat file.'''
 
@@ -59,6 +42,9 @@ class CulvertUnit(AIsisUnit):
         self.unit_type = CulvertUnit.UNIT_TYPE
         self.unit_category = CulvertUnit.CATEGORY
         self.has_datarows = False
+        self.has_ics = True
+        self.ic_label_keys.append('ds_label')
+
 
 
 class CulvertInletUnit(CulvertUnit):

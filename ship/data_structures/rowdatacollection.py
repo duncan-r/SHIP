@@ -278,6 +278,36 @@ class RowDataCollection(object):
             for o in temp_list:
                 del o
             del temp_list
+    
+    
+    def deleteRow(self, index):
+        """Delete a row from the collection.
+        
+        Args:
+            index(int): the index to delete the values for.
+        
+        Raise:
+            IndexError: if index is out of the bounds of the collection.
+        """
+        if index < 0 or index > self.getNumberOfRows():
+            raise IndexError
+        
+        try:
+            # Need to make a deep copy of the data_object so we can reset them back
+            # to the same place if there's a problem. That way we don't get the lists
+            # in the different objects out of sync.
+            temp_list = self._deepCopyDataObjects(self._collection) 
+            
+            for obj in self._collection:
+                obj.deleteValue(index)
+            
+        except (IndexError, ValueError, Exception):
+            self._resetDataObject(temp_list)
+            raise 
+        finally:
+            for o in temp_list:
+                del o
+            del temp_list
         
         
     def getCollectionTypes(self): 

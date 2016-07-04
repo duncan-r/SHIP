@@ -28,6 +28,7 @@ import os
 
 from ship.isis.datunits.isisunit import AIsisUnit
 from ship.utils import filetools as ft
+from ship.isis.datunits import ROW_DATA_TYPES as rdt
 
 import logging
 logger = logging.getLogger(__name__)
@@ -99,7 +100,7 @@ class DatCollection(object):
         self.units[key] = value
 
 
-    def addUnit(self, isisUnit, index=None, update_node_count=True):
+    def addUnit(self, isisUnit, index=None, update_node_count=True, ics={}):
         """Adds a new isisunit type to the collection.
         
         Be aware that you will almost always want to provide an index. At the
@@ -115,6 +116,9 @@ class DatCollection(object):
             index=None(int): Index to insert the unit at.
             update_node_count=True(bool): if True will update the node count
                 value at the top of the .dat file. You probably want to do this.
+            ics={}(dict): inital conditions to add for the unit being put in the
+                collection. If none are given default values will be applied.
+                These will only be applied if the unit support initial conditions.
         
         Raises:
             AttributeError: When a non-isisunit type is given.
@@ -133,9 +137,16 @@ class DatCollection(object):
 
         self._max = len(self.units)
 
-        if update_node_count:
-            header = self.getUnit('Header')
-            header.head_data['node_count'] = int(header.head_data['node_count']) + 1
+        if update_node_count and isisUnit.has_ics:
+                header = self.getUnit('Header')
+                icunit = self.getUnit('Initial Conditions')
+                
+                # Add an initial conditions row for every node name required
+                for name in isisUnit.ic_label_keys:
+                    ics[rdt.LABEL] = isisUnit.head_data[name]
+                    icunit.addDataRow(ics)
+                    self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) + 1
+                    i=0 
 
     
     def removeUnit(self, name_key, update_node_count=True):

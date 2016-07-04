@@ -64,6 +64,7 @@ class HtbdyUnit (AIsisUnit):
         self.unit_type = HtbdyUnit.UNIT_TYPE
         self.unit_category = HtbdyUnit.CATEGORY
         self.has_datarows = True
+        self.has_ics = False
         self.unit_length = 0
         
         # Add the new row data types to the object collection

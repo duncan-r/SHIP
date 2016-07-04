@@ -93,6 +93,7 @@ class RefhUnit(AIsisUnit):
         self.unit_type = RefhUnit.UNIT_TYPE
         self.unit_category = RefhUnit.CATEGORY
         self.has_datarows = True
+        self.has_ics = False
         self.unit_length = 0
         self.has_urban = False
         self.storm = []

@@ -69,6 +69,7 @@ class GisInfoUnit (AIsisUnit):
         self.unit_category = "GisInfo"
         self._name = "GisInfo"
         self.has_datarows = True
+        self.has_ics = False
         self.node_count = node_count
     
     

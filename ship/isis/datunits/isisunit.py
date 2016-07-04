@@ -61,39 +61,87 @@ class AIsisUnit( object ):
     
     def __init__(self):
         """Constructor
+        
+        Set the defaults for all unit specific variables.
+        These should be set by each unit at some point in the setup process.
+        E.g. RiverUnit would set type and category at __init__() while name
+        and data_objects are set in the readUnitData() method.
+        Both of these are called at or immediately after initialisation.
         """
-        # Set the defaults for all unit specific variables.
-        # These should be set by each unit at some point in the setup process.
-        # E.g. RiverUnit would set type and category at __init__() while name
-        # and data_objects are set in the readUnitData() method.
-        # Both of these are called at or immediately after initialisation.
         
         self._name = 'Unknown'                   # Unit name
         
+        self._data = None                       # The unit geometry data
         # This is used for catch-all data storage, such as in the UnknownSection.
         # Classes that override the readUnitData() and getData() methods are
         # likely to ignore this variable and use row_collection and head_data instead.
         
-        self._data = None                       # The unit geometry data
-        self.unit_type = 'Unknown'              # The type of unit
-        self.unit_category = 'Unknown'          # The category of unit
+        self.unit_type = 'Unknown'
+        """The type of ISIS unit - e.g. 'River'"""
+
+        self.unit_category = 'Unknown'
+        """The ISIS unit category - e.g. for type 'Usbrp' it would be 'Bridge'"""
         
-        # Needed when loading file. Does it have rows like river geometry or 
-        # just a header?
         self.has_datarows = False      
+        """Flag stating whether the unit contains an unknown no. of data rows.
         
-        # Total number of row collections held by this file. If set to zero it
-        # means the same as has_datarows = False. Set to one as default because
-        # zero is dealt with by has_datarows and if that is set to True then
-        # there must be at least 1 row_collection.
+        This could be geometry in river or bridge units etc, or other data
+        rows like inital conditions or hydrograph values.
+        
+        If False then the unit only contains head_data. A dictionary containing
+        set values that are always present in the file - e.g. Orifice.
+        """
+        
         self.no_of_collections = 1                           
-        self.row_collection = None              # Collection containing all the 
-                                                # row data objects
-        # Other row data objects
-        # If this is used it should be instanciated as an OrderedDict
+        """Total number of row collections held by this file. 
+        
+        If set to zero it means the same as has_datarows = False. Set to one as 
+        default because zero is dealt with by has_datarows and if that is set 
+        to True then there must be at least 1 row_collection.
+        """
+
+        self.row_collection = None 
+        """Collection containing all of the ADataRow objects.
+        
+        This is the main collection for row data in any unit that contains it.
+        In a RiverUnit, for example, this will hold the RowDataObject's 
+        containing the CHAINAGE, ELEVATION, etc.
+        """
+        
         self.additional_row_collections = None  
-                      
-        self.head_data = None                   # Dictionary of unit header values.
+        """Flag stating whether the unit contains additional row data.
+        
+        This is used for units that contain more than one set of unknow length
+        data series - e.g. opening data in bridges.
+        
+        If this is used it should be instanciated as an OrderedDict
+        """
+
+        self.head_data = None
+        """Dictionary containing set values that are always present in the file.
+        
+        In a RiverUnit this includes values like slope and distance. I.e.
+        values that appear in set locations, usually at the top of the unit
+        data in the .dat file.
+        """
+        
+        self.has_ics = False
+        """Flag stating whether unit has initial conditions or not.
+        
+        If set to True the unit is expected to be included in the initial
+        conditions section of the .dat file. This has implications when 
+        adding/removing an object as these actions will lead to the 
+        InitialConditions unit being updated.
+        """
+        
+        self.ic_label_keys = ['section_label']
+        """Keys for head_data dict to use to assign ic's to.
+        
+        If has_ics is True this list should be appended with any additional
+        labels that must be assigned initial conditions. For example bridges,
+        orifices, etc, all have upstream and downstream nodes that muct be
+        included in the initial conditions table.
+        """
         
     
     @property
@@ -297,6 +345,15 @@ class AIsisUnit( object ):
         self.data = data
         
     
+    def deleteDataRow(self, index, collection_name=None):
+        """Removes a data row from the RowDataCollection.
+        """
+        if index < 0 or index >= self.row_collection.getNumberOfRows():
+            raise IndexError ('Given index is outside bounds of row_collection data')
+        
+        self.row_collection.deleteRow(index)
+        
+    
     def updateDataRow(self, row_vals, index=None, collection_name=None,
                                                 check_negative=True):
         """
@@ -353,21 +410,22 @@ class AIsisUnit( object ):
                 row collection. If it is a ValueError will be raised.
             
         """
-        if not rdt.CHAINAGE in row_vals.keys() or not rdt.ELEVATION in row_vals.keys():
-            logger.error('Required values of CHAINAGE and ELEVATION not given')
-            raise  AttributeError ('Required values of CHAINAGE and ELEVATION not given') 
-        
-        chainage = row_vals.get(rdt.CHAINAGE)
-
         # If index is >= record length it gets set to None and is appended
         if index >= self.row_collection.getNumberOfRows():
             index = None
+        
+        if check_negative:
+            if not rdt.CHAINAGE in row_vals.keys() or not rdt.ELEVATION in row_vals.keys():
+                logger.error('Required values of CHAINAGE and ELEVATION not given')
+                raise  AttributeError ('Required values of CHAINAGE and ELEVATION not given') 
             
-        # Check that there won't be a negative change in chainage across row.
-        if check_negative and not self.row_collection.getNumberOfRows() == 0:
-            if self._checkChainageIncreaseNotNegative(index, chainage) == False:
-                logger.error('Chainage increase is negative')
-                raise ValueError ('Chainage increase is negative')
+            chainage = row_vals.get(rdt.CHAINAGE) 
+
+            # Check that there won't be a negative change in chainage across row.
+            if check_negative and not self.row_collection.getNumberOfRows() == 0:
+                if self._checkChainageIncreaseNotNegative(index, chainage) == False:
+                    logger.error('Chainage increase is negative')
+                    raise ValueError ('Chainage increase is negative')
 
         # Call the row collection add row method to add the new row.
 #         try:

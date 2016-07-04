@@ -46,6 +46,10 @@ class JunctionUnit(AIsisUnit):
         self.unit_category = JunctionUnit.CATEGORY
         self._name = 'Junction'
         self.has_datarows = False
+        self.head_data = {'Comment': '', 
+                          'Type': 'OPEN',
+                          'Names': [] 
+                         }
             
     
     def readUnitData(self, unit_data, file_line): 
