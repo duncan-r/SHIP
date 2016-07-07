@@ -115,7 +115,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         col = DatCollection(self.path_holder)
         
         # Add a unit to the class
-        col.addUnit(self.river1)
+        col.addUnit(self.river1, update_node_count=False)
         
         # Check that it was successfully loaded into the collection
         self.assertTrue(col.units[0].name == '1.067', 'addUnit Test - cannot retrieve name fail')
@@ -133,13 +133,13 @@ class IsisUnitCollectionTest(unittest.TestCase):
         '''
         # Add a couple of units
         col = DatCollection(self.path_holder) 
-        col.addUnit(self.river1)
-        col.addUnit(self.river2)
+        col.addUnit(self.river1, update_node_count=False)
+        col.addUnit(self.river2, update_node_count=False)
         
         # Remove a unit
-        self.assertTrue(col.removeUnit(self.river1.name), 'Cannot remove river1 unit fail')
-        self.assertTrue(col.removeUnit(self.river2.name), 'Cannot remove river2 unit fail')
-        self.assertFalse(col.removeUnit(self.river1.name), 'Remove non existing unit fail')
+        self.assertTrue(col.removeUnit(self.river1.name, update_node_count=False), 'Cannot remove river1 unit fail')
+        self.assertTrue(col.removeUnit(self.river2.name, update_node_count=False), 'Cannot remove river2 unit fail')
+        self.assertFalse(col.removeUnit(self.river1.name, update_node_count=False), 'Remove non existing unit fail')
 
 
     def test_getPrintableContents(self):
@@ -197,8 +197,8 @@ class IsisUnitCollectionTest(unittest.TestCase):
         
         # Add a couple of units
         col = DatCollection(self.path_holder)
-        col.addUnit(self.river1)
-        col.addUnit(self.river2)
+        col.addUnit(self.river1, update_node_count=False)
+        col.addUnit(self.river2, update_node_count=False)
         
         # Get the printable units from the collection
         print_unit = col.getPrintableContents()
@@ -212,9 +212,9 @@ class IsisUnitCollectionTest(unittest.TestCase):
         '''
         # Add some units to the collection
         col = DatCollection(self.path_holder)
-        col.addUnit(self.river1)
-        col.addUnit(self.river2)
-        col.addUnit(self.header)
+        col.addUnit(self.river1, update_node_count=False)
+        col.addUnit(self.river2, update_node_count=False)
+        col.addUnit(self.header, update_node_count=False)
         
         # Get the river units.
         river_cat = col.getUnitsByCategory('River')
@@ -236,9 +236,9 @@ class IsisUnitCollectionTest(unittest.TestCase):
         '''
         # Add some units to the collection
         col = DatCollection(self.path_holder)
-        col.addUnit(self.river1)
-        col.addUnit(self.river2)
-        col.addUnit(self.header)
+        col.addUnit(self.river1, update_node_count=False)
+        col.addUnit(self.river2, update_node_count=False)
+        col.addUnit(self.header, update_node_count=False)
         
         # Get the unit we want
         river_unit = col.getUnit('1.067')
@@ -267,9 +267,9 @@ class IsisUnitCollectionTest(unittest.TestCase):
         '''
         # Add some units to the collection
         col = DatCollection(self.path_holder)
-        col.addUnit(self.river1)
-        col.addUnit(self.river2)
-        col.addUnit(self.header)
+        col.addUnit(self.river1, update_node_count=False)
+        col.addUnit(self.river2, update_node_count=False)
+        col.addUnit(self.header, update_node_count=False)
     
         # Get the number of units
         no_units = col.getNoOfUnits()

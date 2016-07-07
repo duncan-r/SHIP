@@ -104,7 +104,7 @@ class SpillUnit (AIsisUnit):
         """
         self.head_data['comment'] = unit_data[file_line][5:].strip()
         self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
-        self.head_data['spill_ds'] = unit_data[file_line + 1][12:24].strip()
+        self.head_data['ds_label'] = unit_data[file_line + 1][12:24].strip()
         self.head_data['coeff'] = unit_data[file_line + 2][:10].strip()
         self.head_data['modular_limit'] = unit_data[file_line + 2][10:20].strip()
         self.unit_length = int(unit_data[file_line + 3].strip())
@@ -190,7 +190,7 @@ class SpillUnit (AIsisUnit):
         
         # Get the row with the section name and spill info from the formatter
         out_data.append('{:<12}'.format(self.head_data['section_label']) + 
-                        '{:<12}'.format(self.head_data['spill_ds'])
+                        '{:<12}'.format(self.head_data['ds_label'])
                         )
         
         out_data.append('{:>10}'.format(self.head_data['coeff']) + 

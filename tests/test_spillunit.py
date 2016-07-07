@@ -22,7 +22,7 @@ class test_SpillUnit(unittest.TestCase):
                                  'modular_limit': '0.900',
                                  'rowcount': 3,
                                  'section_label': '1.056_SU',
-                                 'spill_ds': '1.056_SD'}
+                                 'ds_label': '1.056_SD'}
     
     
     def test_readSpillUnit(self):
