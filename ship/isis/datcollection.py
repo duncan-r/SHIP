@@ -146,7 +146,6 @@ class DatCollection(object):
                     ics[rdt.LABEL] = isisUnit.head_data[name]
                     icunit.addDataRow(ics)
                     self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) + 1
-                    i=0 
 
     
     def removeUnit(self, name_key, update_node_count=True):

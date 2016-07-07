@@ -180,6 +180,22 @@ class RowDataCollection(object):
                 
         return out_str
     
+    
+    def getRow(self, index):
+        """Get the data vals in a particular row by index.
+        
+        Args:
+            index(int): the index of the row to return.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        output = {}
+        for obj in self._collection:
+            output[obj.data_type] = obj.getValue(index)
+        
+        return output
+    
         
     def updateRow(self, values_dict, index):
         """Add a new row to the units data rows.

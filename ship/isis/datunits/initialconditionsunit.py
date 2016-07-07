@@ -37,8 +37,8 @@ class InitialConditionsUnit (AIsisUnit):
     """
     
     # Class constants
-    UNIT_TYPE = 'InitialConditions'
-    CATEGORY = 'InitialConditions'
+    UNIT_TYPE = 'Initial Conditions'
+    CATEGORY = 'Initial Conditions'
     FILE_KEY = 'INITIAL'
     
 
@@ -53,8 +53,8 @@ class InitialConditionsUnit (AIsisUnit):
                 GISINFO if there is any.
         """
         AIsisUnit.__init__(self)
-        self.unit_type = "InitialConditions"
-        self.unit_category = "InitialConditions"
+        self.unit_type = "Initial Conditions"
+        self.unit_category = "Initial Conditions"
         self._name = "Initial Conditions"
         self.has_datarows = True
         self.has_ics = False
@@ -234,4 +234,33 @@ class InitialConditionsUnit (AIsisUnit):
         
         self.deleteDataRow(index)
         self.node_count -= 1
+    
+    
+    def getRowByName(self, section_name):
+        """Get the data vals in a particular row by name.
+        
+        This is the same functionality as the AIsisUnit's getRow(int) method
+        which returns a row in the RowDataCollection by the index value given.
+        In this case it will find the index based on the section label and 
+        return the same dictionary of row values.
+        
+        Args:
+            section_name(str): the name of the AIsisUnit to be removed from
+                the initial conditions.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
+        index = labels.index(section_name)
+        
+        if index == -1:
+            raise AttributeError('Name does not exist in initial conditions: ' + str(section_name))
+        
+        return self.getRow(index)
+
+        
+        
+        
+        
     

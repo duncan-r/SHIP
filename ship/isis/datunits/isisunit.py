@@ -288,6 +288,18 @@ class AIsisUnit( object ):
             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
+    def getRow(self, index):
+        """Get the data vals in a particular row by index.
+        
+        Args:
+            index(int): the index of the row to return.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        return self.row_collection.getRow(index)
+    
+    
     def getHeadData(self):
         """Returns the header data from this unit.
 
