@@ -34,7 +34,7 @@ from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
 from ship.utils import utilfunctions as uf
 from ship.utils.atool import ATool
-from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder, EventSourceData
+from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, ModelRef, ModelOrder
 from ship.tuflow.tuflowmodelfile import TuflowModelFile, TuflowScenario, TuflowEvent
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfilepart as tfp
@@ -173,58 +173,72 @@ class TuflowLoader(ATool, ALoader):
         loader from trying to close a non-existent event if statement when it
         finds an End Define from an output zone.
         """
+        
+        self._cur_event_text = None
+        self._cur_event_name = None
+        self._cur_event_source = {}
 
         self._fetchTuflowModel(tcf_path)
         self.tuflow_model.model_order = self._model_order
         self.tuflow_model.scenario_vals = self.scenario_vals
         self.tuflow_model.event_vals = self.event_vals
         
-        if self.tuflow_model.missing_model_files:
-            self.tuflow_model.event_source_data = EventSourceData()
-        else:
+        if not self.tuflow_model.missing_model_files:
             self.buildSourceData()
         
         return self.tuflow_model
 
     
     def buildSourceData(self):
-        """Creates an EventSourceData object from loaded TuflowVariables.
+        """Creates a dict from loaded TuflowVariables.
         
-        Builds an EventSourceData object by searching through all of the 
-        ModelVariables loaded. It creates two sets:  
+        Creates two dict's to hold event source data by searching through all 
+        of the ModelVariables loaded. It creates two sets:  
             - Those that fall within the current scenario/event vals only.
             - All that are noted in the file.
+        
+        If no event source references can be found it falls back on using the
+        last read BC Event Text and BC Event Name for the cur_event_source and
+        all other references as well for all_event_source. This is because there
+        can be multiple calls to both (although doing this with text should be
+        avoided). When passing the values to the DATA type files the currently
+        set values are given, which will definitely correct. It is not possible 
+        to have both BC Event Source and BC Event Text/BC Event Name in the 
+        same model.
             
-        This method then adds a copy of the new EventSourceData class to the
-        loaded TuflowModel.
+        This method then adds a copy of the new dict's to the loaded TuflowModel.
         """
         variables = self.tuflow_model.getVariables(se_only=True, no_duplicates=True)
-        evt_src = EventSourceData()
+        cur_source = {}
+        all_source = {}
+        found_source = False
         for v in variables:
             if v.command.upper() == 'BC EVENT SOURCE':
-                if not v.key_var in evt_src.cur_source.keys():
-                    evt_src.cur_source[v.key_var] = v.value_var
+                found_source = True
+                if not v.key_var in cur_source.keys():
+                    cur_source[v.key_var] = v.value_var
                 
-            elif v.command.upper() == 'BC EVENT TEXT':
-                evt_src.cur_event_text = v.raw_var
-
-            elif v.command.upper() == 'BC EVENT NAME':
-                evt_src.cur_event_name = v.raw_var
-        
         variables = self.tuflow_model.getVariables(se_only=False)
         for v in variables:
             if v.command.upper() == 'BC EVENT SOURCE':
-                if not v.key_var in evt_src.all_source.keys():
-                    evt_src.all_source[v.key_var] = []
-                evt_src.all_source[v.key_var].append(v.value_var)
+                if not v.key_var in all_source.keys():
+                    all_source[v.key_var] = []
+                all_source[v.key_var].append(v.value_var)
 
-            elif v.command.upper() == 'BC EVENT TEXT':
-                evt_src.all_event_text.append(v.raw_var)
-
-            elif v.command.upper() == 'BC EVENT NAME':
-                evt_src.all_event_name.append(v.raw_var)
+        if not found_source:
+            if not self._cur_event_text is None and not self._cur_event_name is None:
+                cur_source[self._cur_event_text] = self._cur_event_name
+                all_source = self._cur_event_source
+        self.tuflow_model.cur_event_source = cur_source
+        self.tuflow_model.all_event_source = all_source
         
-        self.tuflow_model.event_source_data = evt_src
+        # Set the event source data for the data type files
+#         data = self.tuflow_model.getFiles(ft.DATA)
+#         for d in data:
+#             d.addEventSourceData(cur_source)
+        parts = self.tuflow_model.getTuflowFileParts()
+        for p in parts:
+            p.addEventSourceData(cur_source)
 
     
     def _fetchTuflowModel(self, tcf_path):
@@ -359,10 +373,6 @@ class TuflowLoader(ATool, ALoader):
                     # DEBUG - probably move all MODEL specific logic here, but
                     #         check doesn't need to be further down first
                     if line_type == ft.MODEL:
-#                         tmf_hash = file_d.generateModelfileHash(line_val.getAbsolutePath())
-#                         line_val.tmf_hash = tmf_hash
-#                         line_val, hex_hash, line_type, ext = line_contents[0]
-
                         rel_root = ''
                         if not line_val.relative_root is None:
                             rel_root = line_val.relative_root
@@ -384,17 +394,6 @@ class TuflowLoader(ATool, ALoader):
                     if not event_stack.isEmpty():
                         event_stack.peek().addPartRef(hex_hash)
                     
-#                     if line_type == ft.MODEL: 
-#                         # DEBUG - unnecessary repeated tuple extraction
-#                         line_val, hex_hash, line_type, ext = line_contents[0]
-# 
-#                         rel_root = ''
-#                         if not line_val.relative_root is None:
-#                             rel_root = line_val.relative_root
-#                         
-#                         self._file_queue.enqueue([line_val.getAbsolutePath(), hex_hash, 
-#                                                   file_d.head_hash, rel_root])
-
         # Make sure we clear up any leftovers
         if unknown_contents:
             unknown_contents = _clearUnknownContents(file_d, line, model, 
@@ -486,7 +485,7 @@ class TuflowLoader(ATool, ALoader):
                     # specified ones
                     if 'MODEL SCENARIOS' in command.upper():
                         self.addScenarioVars(instruction)
-                    
+                        
                     if command.strip().upper() == 'BC EVENT SOURCE':
                         line_val = tfp.ModelVariableKeyVal(self._global_order, 
                                                           instruction, hex_hash, 
@@ -497,7 +496,12 @@ class TuflowLoader(ATool, ALoader):
                                                       instruction, hex_hash, 
                                                       command_type, command,
                                                       file_d.extension)
+                        if command.strip().upper() == 'BC EVENT TEXT':
+                            self._cur_event_text = line_val.raw_var
+                        elif command.strip().upper() == 'BC EVENT NAME':
+                            self._cur_event_name = line_val.raw_var
                     self._global_order += 1
+
                 else:
                     # Do a check for MI Projection and SHP projection. These can
                     # be either a WKT str or a file.
@@ -557,6 +561,10 @@ class TuflowLoader(ATool, ALoader):
                                                                 file_d.relative_root,
                                                                 parent_hash=parent_hash,
                                                                 child_hash=child_hash)
+                                if command_type == ft.DATA:
+                                    line_val.evt_src_data = {self._cur_event_text: self._cur_event_name}
+                                    self._cur_event_source[self._cur_event_text] = self._cur_event_name
+
                                 multi_lines.append([line_val,
                                                    hex_hash,
                                                    command_type,

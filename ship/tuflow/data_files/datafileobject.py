@@ -57,6 +57,7 @@ class ADataFileObject(object):
         self.keys = None
         self.subfiles = []
         self.comment_lines = comment_lines
+        self.evt_src_data = file_part.evt_src_data
         
     
     def getDataEntry(self, key):
@@ -171,14 +172,18 @@ class ADataFileObject(object):
             s.path_holder.root = root
     
     
-    def getAllPaths(self, include_this=True, name_only=False):
+    def getAllPaths(self, include_this=True, name_only=False, resolve_paths=True):
         """Get all paths held by this object
         
         Args:
-        
+            include_this=True(bool): if True it includes the path of this 
+                DatafileObject.
+            name_only=False(bool): if True only the filename will be returned.
+            resolver_name=True(bool): if True any placeholders in the filename
+                will be replaced with the value set in the EventSourceData.
         
         Return:
-        
+            list - containing all the filepaths referenced by this object.
         """
         paths = []
         if include_this:
@@ -191,8 +196,31 @@ class ADataFileObject(object):
                 paths.append(s.path_holder.getAbsolutePath())
             else:
                 paths.append(s.path_holder.getFileNameAndExtension())
-            
+        
+        if resolve_paths:
+            paths = self.resolveEvtSrc(paths)
+        
         return paths
+    
+
+    def resolveEvtSrc(self, values):
+        """Replace placeholders with values in the given list.
+        
+        Placeholder values can be used in most of the data files to define
+        filenames, variables, etc. This method will replace the placeholder
+        with the corresponding value if found in the EventSourceData.
+        
+        Args:
+            value(list): str's to replace placeholders in.
+        """
+        out = []
+        placeholders = self.evt_src_data.keys()
+        for v in values:
+            for holder in placeholders:
+                v = v.replace(holder, self.evt_src_data[holder])
+            out.append(v)
+            
+        return out
     
 
     def _getPrintableContents(self):
@@ -298,7 +326,7 @@ class BcDataObject(ADataFileObject):
         self.keys = BcEnum()
     
     
-    def getAllPaths(self, include_this=True, name_only=False):
+    def getAllPaths(self, include_this=True, name_only=False, resolve_paths=True):
         """Get all paths held by this object
         
         Overrides superclass method.
@@ -324,7 +352,9 @@ class BcDataObject(ADataFileObject):
                                       self.path_holder.relative_root, s))
             else:
                 paths.append(s)
-            
+        
+        if resolve_paths:
+            paths = self.resolveEvtSrc(paths) 
             
         return paths
     

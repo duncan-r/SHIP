@@ -95,7 +95,9 @@ class TuflowModel(object):
         self.event_vals = {}
         """Key, value pairs for events handed in when loading the model."""
         
-        self.event_source_data = None
+#         self.event_source_data = None
+        self.cur_event_source = {}
+        self.all_event_source = {}
         """Stores all BC Event Source key values pairs for the particular scenario/event."""
         
     
@@ -142,6 +144,20 @@ class TuflowModel(object):
         
         return variables
 
+
+    def getTuflowFileParts(self):
+        """Get all of the TuflowFileParts in the model.
+        
+        Return:
+            list - of all TuflowFilePart's in the model.
+        """
+        file_parts = []
+        for model_file_type in self.files.values():
+            for model_file in model_file_type.values():
+                file_parts.extend(model_file.getTuflowFileParts())
+        
+        return file_parts
+    
     
     def getTuflowFilePartsBySE(self, scenario_vals):
         """Get all the TuflowFilePart's that are within the given scenario params.
@@ -472,40 +488,6 @@ class TuflowModel(object):
                     return model_file
     
     
-#     def getTuflowFileFromTMF(self, tuflowmodelfile):
-#         """Get the TuflowFile associated with the given TuflowModelFile.
-#         
-#         Tuflow control files (tcf, tgc, etc) are represented in two ways. They
-#         are TuflowFile's like any other file and they are TuflowModelFile's
-#         which are containers for the other data they hold.
-#         
-#         This is a convenience function to access the TuflowModelFile from a given
-#         TuflowFile. 
-#         
-#         Args:
-#             tuflowmodelfile(TuflowModelFile): 
-#             
-#         Return:
-#             TuflowFile.
-#         
-#         Raises:
-#             AttributeError - if tuflowmodelfile is not an instance of 
-#                 TuflowModelFile. 
-#         """
-#         if not isinstance(tuflowmodelfile, TuflowModelFile):
-#             raise AttributeError
-#         
-#         if tuflowmodelfile.parent_hash is None:
-#             return self.mainfile
-#         
-#         for key, val in self.files.iteritems():
-#             for h, tmf in val.iteritems():
-#                 if h == tuflowmodelfile.parent_hash:
-#                     return tmf.getEntryByHash(tuflowmodelfile.hex_hash)
-#         
-#         return False
-    
-    
     def orderByGlobal(self, in_list, reverse=False):
         """Order list by global_order attribute of TuflowFilePart.
         
@@ -628,46 +610,43 @@ class TuflowModel(object):
         
 
 
-class EventSourceData(object):
-    """Used to store the BC Data Source variables for the current scenario/event.
-    
-    These are the: BC Event Source == ~somekey~ | someval entries in either
-    control files or .tef files.
-    
-    Also stores any reference to other event key variable paires that can be
-    set in the control files such as: BC Event Name and BC Event Text.
-    
-    An object of this class is constructed when the tuflow model is loaded and
-    it is populated with all the of the event source data defined by the 
-    current scenario and/or event variables either passed in to the loader or
-    stated in the .tcf file.
-    
-    This class creates a convenience object that can be used for quickly 
-    accessing or identifying the varibles defined in the model. These may need
-    to be used when loading FILEPART_TYPES.DATA files or suchlike.
-    """
-    
-    def __init__(self):
-        """
-        """
-        self.cur_source = {}
-        self.all_source = {}
-        self.cur_event_name = ''
-        self.all_event_name = []
-        self.cur_event_text = ''
-        self.all_event_text = []
+# class EventSourceData(object):
+#     """Used to store the BC Data Source variables for the current scenario/event.
+#     
+#     These are the: BC Event Source == ~somekey~ | someval entries in either
+#     control files or .tef files.
+#     
+#     Also stores any reference to other event key variable paires that can be
+#     set in the control files such as: BC Event Name and BC Event Text.
+#     
+#     An object of this class is constructed when the tuflow model is loaded and
+#     it is populated with all the of the event source data defined by the 
+#     current scenario and/or event variables either passed in to the loader or
+#     stated in the .tcf file.
+#     
+#     This class creates a convenience object that can be used for quickly 
+#     accessing or identifying the varibles defined in the model. These may need
+#     to be used when loading FILEPART_TYPES.DATA files or suchlike.
+#     """
+#     
+#     def __init__(self):
+#         """
+#         """
+#         self.cur_source = {}
+#         self.all_source = {}
+        
     
     
-    def getSourceKeys(self):
-        """
-        """
-        return self.source_data.keys()
-    
-    
-    def getSourceDict(self):
-        """
-        """
-        return self.source_data
+#     def getSourceKeys(self):
+#         """
+#         """
+#         return self.source_data.keys()
+#     
+#     
+#     def getSourceDict(self):
+#         """
+#         """
+#         return self.source_data
         
 
 

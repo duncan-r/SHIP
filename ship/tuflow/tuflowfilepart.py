@@ -40,6 +40,7 @@ import os
 
 from ship.utils.filetools import PathHolder
 from ship.tuflow import FILEPART_TYPES as fpt
+# from ship.tuflow.tuflowmodel import EventSourceData
 
 import logging
 logger = logging.getLogger(__name__)
@@ -79,6 +80,7 @@ class TuflowFilePart(object):
         self.TYPE = type
         self.modelfile_type = modelfile_type
         self.category = ''
+        self.evt_src_data = None
         
     def getPrintableContents(self):
         """Return contents formatted for writing to file.
@@ -96,6 +98,20 @@ class TuflowFilePart(object):
             list of unknown_contents ready to print to file.
         """            
         return self.unknown_contents
+
+    
+    def addEventSourceData(self, evt_src_data):
+        """Set the EventSourceData object for this class.
+        
+        The EventSourceData is the data loaded by the TuflowLoader with values
+        for Event Source, Event Name, etc that define the values to use in the
+        Boundary condition files.
+        
+        Args:
+            evt_source_data(EventSourceData): the event data object to store.
+        """
+        self.evt_src_data = evt_src_data
+        
 
 
 class ModelVariables(TuflowFilePart):
@@ -593,7 +609,7 @@ class GisFile(TuflowFile):
         else:
             return PathHolder.getFileNameAndExtension(self)
                 
-                
+    
 
 data_types = {'TMF': ('tmf',), 'CSV': ('csv',)}
 """File type associations for the GisFile class"""
@@ -634,6 +650,7 @@ class DataFile(TuflowFile):
         See Also:
             TuflowFile
         """
+#         self.evt_src_data = None
         TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
                                 modelfile_type, root, parent_relative_root, 
                                 category, parent_hash, child_hash)
@@ -644,5 +661,32 @@ class DataFile(TuflowFile):
             if self.extension in data_types[m]:
                 self.all_types = data_types[m]
                 self.category = m
-        
- 
+    
+    
+#     def addEventSourceData(self, evt_src_data):
+#         """Set the EventSourceData object for this class.
+#         
+#         The EventSourceData is the data loaded by the TuflowLoader with values
+#         for Event Source, Event Name, etc that define the values to use in the
+#         Boundary condition files.
+#         
+#         Args:
+#             evt_source_data(EventSourceData): the event data object to store.
+#         """
+#         self.evt_src_data = evt_src_data
+    
+    
+#     def addSEVals(self, se_vals):
+#         """Set the scenario and event vals for this load.
+#         
+#         Any values for scenario and event data is provided as a dictionary to
+#         the TuflowLoader. These can be added here to use when reading the 
+#         DataFile contents using the ADataFileLoader types.
+#         
+#         Args:
+#             se_vals(dict): containing scenario and event placholders and values.
+#                 See TuflowModel or TuflowLoader for more details.
+#         """
+#         self.se_vals = se_vals
+    
+     

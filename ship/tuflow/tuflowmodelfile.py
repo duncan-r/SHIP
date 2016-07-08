@@ -328,7 +328,6 @@ class TuflowModelFile(object):
                 if entry[0] == fpt.SCENARIO:
                     s = scenarios.pop(0)
                     if not do_se:
-#                     scen_stack.add(scenarios.pop(0))
                         scen_stack.add(s)
                         output.append(indent + scen_stack.peek().getOpeningStatement())
                         indent_spacing += 4
@@ -347,14 +346,12 @@ class TuflowModelFile(object):
                         cs = scen_stack.peek().getClosingStatement()
                         if not cs == '':
                             output.append(indent + cs)
-    #                     output.append(indent + scen_stack.peek().getClosingStatement())
                         scen_stack.pop()
                     
                 
                 elif entry[0] == fpt.EVENT:
                     e = events.pop(0)
                     if not do_se:
-#                         evt_stack.add(events.pop(0))
                         evt_stack.add(e)
                         output.append(indent + evt_stack.peek().getOpeningStatement())
                         indent_spacing += 4
@@ -473,6 +470,20 @@ class TuflowModelFile(object):
                     
         return out_hashes
     
+    
+    def getTuflowFileParts(self):
+        """Return all of the TuflowFilePart's in this TuflowModelFile.
+        
+        Return:
+            list - containing all of the TuflowFilePart's.
+        """
+        file_parts = []
+        for c in self.contents:
+            if not isinstance(c[1], TuflowFilePart): continue
+            file_parts.append(c[1])
+        
+        return file_parts
+        
     
     def getContentsBySE(self, se_vals, filepart_type=None):
         """Returns a list of TuflowFilePart's based on the given scenario_vals.
