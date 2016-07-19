@@ -170,16 +170,6 @@ class BridgeUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.row_collection = RowDataCollection()
-#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-#         self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
-        
         self.unit_length = 6 
         out_line = file_line + self.no_of_chainage_rows
         try:
@@ -554,16 +544,6 @@ class BridgeUnitUsbpr (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.additional_row_collections['Opening'] = RowDataCollection()
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        
         out_line = file_line + self.no_of_opening_rows
         try:
             # Load the geometry data
@@ -583,7 +563,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         
         self.no_of_culvert_rows = int(unit_data[out_line].strip())
         self.unit_length += self.no_of_culvert_rows + 1
-        return out_line
+        return out_line + 1
         
     
     def _readOrificeRowData(self, unit_data, file_line):
@@ -598,18 +578,6 @@ class BridgeUnitUsbpr (BridgeUnit):
             little more relevant by raising a different error. Or they could
             be dealt with better here.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.additional_row_collections['Orifice'] = RowDataCollection()
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
-
         out_line = file_line + self.no_of_culvert_rows
         try:
             # Load the geometry data
@@ -618,12 +586,12 @@ class BridgeUnitUsbpr (BridgeUnit):
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
                 # for the river section.
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_INVERT, unit_data[i][0:10].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_SOFFIT, unit_data[i][10:20].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_AREA, unit_data[i][20:30].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_CD_PART, unit_data[i][30:40].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_CD_FULL, unit_data[i][40:50].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.CULVERT_DROWNING, unit_data[i][50:60].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_INVERT, unit_data[i][0:10].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_SOFFIT, unit_data[i][10:20].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_AREA, unit_data[i][20:30].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_CD_PART, unit_data[i][30:40].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_CD_FULL, unit_data[i][40:50].strip())
+                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_DROWNING, unit_data[i][50:60].strip())
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -754,16 +722,6 @@ class BridgeUnitArch (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-#         # Add the new row data types to the object collection
-#         # All of them must have type, output format, default value and position
-#         # in the row as the first variables in vars.
-#         # The others are DataType specific.
-#         self.additional_row_collections['Opening'] = RowDataCollection()
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-#         self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        
         out_line = file_line + self.no_of_opening_rows
         try:
             # Load the geometry data
