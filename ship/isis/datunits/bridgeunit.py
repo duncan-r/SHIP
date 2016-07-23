@@ -532,7 +532,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         """
         file_line = self._readArchRowData(unit_data, file_line)
         file_line = self._readOrificeRowData(unit_data, file_line)
-        return file_line
+        return file_line 
     
 
     def _readArchRowData(self, unit_data, file_line):
@@ -598,7 +598,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             raise
         
         self.unit_length += self.no_of_culvert_rows
-        return out_line
+        return out_line - 1
 
         
 
