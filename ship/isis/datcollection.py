@@ -255,8 +255,8 @@ class DatCollection(object):
         ft.writeFile(contents, filepath)
         
     
-    def getUnitsByCategory(self, category_key):
-        """Return all the units in the requested category.
+    def getUnitsByCategory(self, category_keys):
+        """Return all the units in the requested category(s).
         
         Iterate through the collection and get all of the different categories
         within the model.
@@ -266,22 +266,27 @@ class DatCollection(object):
         categorised as 'bridge'.
         
         Args:
-            category_key (str): The unit_category variable defined in the unit. 
+            category_keys (str | []): The unit_category variables defined in 
+                the unit. Can be either a string representing a single category 
+                of AIsisUnit or a list of strings for multiple types. 
         
         Returns:
             List containing all the specified category of unit in the model or
                 False if there are none of the category in the 
                 collection.
         """
+        if isinstance(category_keys, basestring):
+            category_keys = [category_keys]
+
         types = [] 
         for u in self.units:
-            if u.unit_category == category_key:
+            if u.unit_category in category_keys:
                 types.append(u)
         
         return types
     
     
-    def getUnitsByType(self, type_key):
+    def getUnitsByType(self, type_keys):
         """Return all of the units of the requested type.
         
         Iterate through the collection and get all of the different unit types 
@@ -297,13 +302,21 @@ class DatCollection(object):
         
         See Also:
             isisunit.
+
+        Args:
+            type_keys (str | []): The unit_type variables defined in 
+                the unit. Can be either a string representing a single type 
+                of AIsisUnit or a list of strings for multiple types. 
         
         Return:
             List of the specified unit type.
         """
+        if isinstance(type_keys, basestring):
+            type_keys = [type_keys]
+
         types = [] 
         for u in self.units:
-            if u.unit_type == type_key:
+            if u.unit_type in type_keys:
                 types.append(u)
         
         return types
