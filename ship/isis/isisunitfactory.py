@@ -40,6 +40,7 @@ from ship.isis.datunits import refhunit
 from ship.isis.datunits import orificeunit
 from ship.isis.datunits import culvertunit
 from ship.isis.datunits import htbdyunit 
+from ship.isis.datunits import interpolateunit 
 
 import logging
 logger = logging.getLogger(__name__)
@@ -84,7 +85,8 @@ class IsisUnitFactory(object):
                                 'frelief': orificeunit.FloodReliefArchUnit,
                                 'culvert': culvertunit.CulvertInletUnit,
                                 'culvert': culvertunit.CulvertOutletUnit,
-                                'htbdy': htbdyunit.HtbdyUnit
+                                'htbdy': htbdyunit.HtbdyUnit,
+                                'interolate': interpolateunit.InterpolateUnit,
                                }
         try:
             self._getFileKeys()
