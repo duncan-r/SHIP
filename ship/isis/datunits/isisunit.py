@@ -574,7 +574,7 @@ class CommentUnit(AIsisUnit):
     FILE_KEY = 'COMMENT'
        
 
-    def __init__(self):
+    def __init__(self, text=''):
         """Constructor.
         """
         AIsisUnit.__init__(self) 
@@ -583,16 +583,27 @@ class CommentUnit(AIsisUnit):
         self._name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
         self.has_datarows = True
         self.data = []
-    
+        if not text.strip() == '': self.addCommentText(text)
         
+    
+    def addCommentText(self, text):
+        text = text.split('\n')
+        self.no_of_rows = int(len(self.data) + len(text))
+        for t in text:
+            self.data.append(t.strip())
+     
     def readUnitData(self, data, file_line):
         """
         """
-        self.no_of_rows = int(data[file_line+1].strip())
-        for i in range(2, 2 + self.no_of_rows):
-            self.data.append(data[file_line + i].strip())
+        file_line += 1
+        line = data[file_line]
+        self.no_of_rows = int(data[file_line].strip())
+        file_line += 1
+        for i in range(file_line, file_line + self.no_of_rows):
+            self.data.append(data[file_line].strip())
+            file_line += 1
 
-        return file_line + self.no_of_rows
+        return file_line -1 
     
     def getData(self):
         """
@@ -603,8 +614,8 @@ class CommentUnit(AIsisUnit):
         for d in self.data:
             output.append(d)
         
-        if len(output) > self.no_of_rows + 1:
-            output = output[:self.no_of_rows + 1]
+        if len(output) > self.no_of_rows + 2:
+            output = output[:self.no_of_rows + 2]
         
         return output
 

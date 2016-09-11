@@ -115,8 +115,8 @@ class DatLoader(ATool, ALoader):
         # Composite for all dat units
         path_holder = ftools.PathHolder(file_path)
         self.units = DatCollection(path_holder) 
-        self.units.file_dir, self.units.filename = os.path.split(file_path)
-        self.units.filename = os.path.splitext(self.units.filename)[0]
+#         self.units.file_dir, self.units.filename = os.path.split(file_path)
+#         self.units.filename = os.path.splitext(self.units.filename)[0]
         
         if not uf.checkFileType(file_path, ext=['.dat', '.DAT']):
             if not uf.checkFileType(file_path, ext=['.ied', '.IED']):
@@ -125,8 +125,17 @@ class DatLoader(ATool, ALoader):
             else:
                 self.is_ied = True
         
-        if(self.__loadFile(file_path) == False):
+        contents = self.__loadFile(file_path)
+        if(contents == False):
             raise IOError ('Unable to load file at: ' + file_path)
+        
+        return self.buildDat(contents, arg_dict)
+    
+    
+    def buildDat(self, contents, arg_dict={}):
+        """
+        """
+        self.contents = contents
                 
         # Counter for the number of rows that have been read from the 
         # file contents list.
@@ -247,16 +256,17 @@ class DatLoader(ATool, ALoader):
             True if loaded ok, False otherwise.
         """
         logger.info('loading File: ' + filepath)
+        contents = []
         try: 
-            self.contents = ftools.getFile(filepath);
+            contents = ftools.getFile(filepath);
         except IOError: 
             logger.error('IOError - Unable to load file')
             return False
             
-        if(self.contents == None): 
+        if(contents == None): 
             logger.error('.DAT file is empty at: ' + filepath)
             return False
         
-        return True
+        return contents
     
     
