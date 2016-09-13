@@ -238,7 +238,7 @@ class ADataRowObject(object):
             things right up.
         """
         try:
-            self.data_collection.remove(index)
+            del self.data_collection[index]
         except IndexError:
             logger.error('DataObject deleteValue() index out of bounds')
             raise IndexError ('DataObject deleteValue() index out of bounds')

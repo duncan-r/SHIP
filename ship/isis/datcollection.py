@@ -106,13 +106,9 @@ class DatCollection(object):
     def addUnit(self, isisUnit, index=None, update_node_count=True, ics={}):
         """Adds a new isisunit type to the collection.
         
-        Be aware that you will almost always want to provide an index. At the
-        moment when no index is provided the unit will be appended to the end
-        of the units list. This works fine when loading a dat file, but once
-        the dat file is loaded any new units will be appended to the end (i.e.
-        after the initial conditions etc). This behaviour may be improved later,
-        but for now, unless you are building a dat file from scratch, always
-        provide an index.
+        If the index value provided is greater than the index of the 
+        InitialConditions unit the unit will be added before the IC unit. This
+        is the last slot in the ordering of the units in the dat file.
         
         Args:
             isisUnit (AIsisInit): The instance to add to the collection. 
@@ -125,10 +121,18 @@ class DatCollection(object):
         
         Raises:
             AttributeError: When a non-isisunit type is given.
-            IndexError: If the given index doesn't exist. 
         """
         if not isinstance(isisUnit, AIsisUnit):
             raise AttributeError ('Given isisunit is not of type AIsisUnit')
+        
+        # Make sure new units are put in front of the ic unit
+        icunit = self.getUnit('Initial Conditions')
+        ic_index = self.getIndex(icunit)
+        if ic_index != -1:
+            if index == None or index >= ic_index: 
+                index = ic_index
+        else:
+            if index > len(self.units): index = None
         
         if index == None:
             self.units.append(isisUnit)
@@ -143,7 +147,6 @@ class DatCollection(object):
 
         if update_node_count and isisUnit.has_ics:
             header = self.getUnit('Header')
-            icunit = self.getUnit('Initial Conditions')
             
             # Add an initial conditions row for every node name required
             for name in isisUnit.ic_label_keys:
@@ -152,11 +155,14 @@ class DatCollection(object):
                 self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) + 1
 
     
-    def removeUnit(self, name_key, update_node_count=True):
+    def removeUnit(self, name_key, unit_type, update_node_count=True):
         """Remove one of the units previously added to the list.
         
         Args:
             name_key (str): The unique name of the unit to remove. 
+            unit_type(str): This must be provided to ensure that the correct
+                unit is removed. E.g. a RiverUnit and an RefhUnit can both 
+                have the same AIsisUnit.name value, but different .UNIT_TYPE's.
             update_node_count=True(bool): if True will update the node count
                 value at the top of the .dat file. You probably want to do this.
         
@@ -164,15 +170,23 @@ class DatCollection(object):
             KeyError: if the name doesn't exist. 
         """
         for u in self.units:
-            if name_key == u.name:
-                self.units.remove(u)
-                self._max = len(self.units)
-                if update_node_count:
-                    header = self.getUnit('Header')
-                    header.head_data['node_count'] = int(header.head_data['node_count']) - 1
-                return True
-            else:
-                return False
+            if u.name == name_key:
+                if not u.UNIT_TYPE == unit_type:
+                    continue
+                else:
+                    self.units.remove(u)
+                    self._max = len(self.units)
+                    if update_node_count:
+                        ic = self.getUnit('Initial Conditions')
+                        try:
+                            ic.deleteDataRowByName(u.name)
+                        except KeyError:
+                            logger.warning('No initial conditions found for unit %' % u.name)
+                        header = self.getUnit('Header')
+                        self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) - 1
+                    return True
+        
+        return False
     
     
     def getIndex(self, unit, unit_type=None):
@@ -420,43 +434,46 @@ class DatCollection(object):
         return len(self.units)
     
 
-def createNew(dat_path):
-    """Create a new ISIS .dat file with basic header info and no units.
-    
-    Creates the equivelant of generating a new .dat unit in the software. The
-    DatCollection returned can then be manipulated in the same way that any
-    other one loaded from file would be.
-    
-    A single comment unit will be be added to the file stating that it was
-    created by the SHIP library at timestamp.
-    
-    Args:
-        dat_path(str): the path to set for the newly created .dat file.
+    @classmethod
+    def initialisedDat(cls, dat_path, units=[]):
+        """Create a new ISIS .dat file with basic header info and no units.
         
-    Return:
-        DatCollection - setup as an empty ISIS .dat file.
-    """
-    contents = [
-            '',
-            '#REVISION#1',
-            '         0     0.750     0.900     0.100     0.001        12SI',
-            '    10.000     0.010     0.010     0.700     0.100     0.700     0.000',
-            'RAD FILE',
-            '',
-            'END GENERAL'
-            'INITIAL CONDITIONS',
-            ' label   ?      flow     stage froude no  velocity     umode    ustate         z',
-    ]
+        Creates the equivelant of generating a new .dat unit in the software. The
+        DatCollection returned can then be manipulated in the same way that any
+        other one loaded from file would be.
+        
+        A single comment unit will be be added to the file stating that it was
+        created by the SHIP library at timestamp.
+        
+        Args:
+            dat_path(str): the path to set for the newly created .dat file.
+            
+        Return:
+            DatCollection - setup as an empty ISIS .dat file.
+        """
+        contents = [
+                '',
+                '#REVISION#1',
+                '         0     0.750     0.900     0.100     0.001        12SI',
+                '    10.000     0.010     0.010     0.700     0.100     0.700     0.000',
+                'RAD FILE',
+                '',
+                'END GENERAL'
+                'INITIAL CONDITIONS',
+                ' label   ?      flow     stage froude no  velocity     umode    ustate         z',
+        ]
 
-    path_holder = ft.PathHolder(dat_path)
-    dat = DatCollection(path_holder)
-    factory = iuf.IsisUnitFactory()
-    file_line, hunit = factory.createUnit(contents, 0, 'header', 0)
-    file_line, icunit = factory.createUnit(contents, file_line, 'initialconditions', 1)
-    cunit = CommentUnit('Created by SHIP library on %s' % datetime.now().strftime('%Y-%M-%d %H:%M'))
-    dat.addUnit(hunit, update_node_count=False)
-    dat.addUnit(cunit, update_node_count=False)
-    dat.addUnit(icunit, update_node_count=False)
-    return dat
+        path_holder = ft.PathHolder(dat_path)
+        dat = cls(path_holder)
+        factory = iuf.IsisUnitFactory()
+        file_line, hunit = factory.createUnit(contents, 0, 'header', 0)
+        file_line, icunit = factory.createUnit(contents, file_line, 'initialconditions', 1)
+        cunit = CommentUnit('Created by SHIP library on %s' % datetime.now().strftime('%Y-%M-%d %H:%M'))
+        dat.addUnit(hunit, update_node_count=False)
+        dat.addUnit(cunit, update_node_count=False)
+        dat.addUnit(icunit, update_node_count=False)
+        for u in units:
+            dat.addUnit(u)
+        return dat
    
     

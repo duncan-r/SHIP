@@ -90,9 +90,6 @@ class InitialConditionsUnit (AIsisUnit):
             self.row_collection.addValue(rdt.USTATE, unit_data[i][64:74].strip())
             self.row_collection.addValue(rdt.ELEVATION, unit_data[i][74:84].strip())
             
-#         out_line = file_line + self.node_count + 2
-#         self.data = [''.join(data[file_line:out_line]).strip()]
-#         out_line = file_line + i
         return out_line - 1
        
     
@@ -154,7 +151,7 @@ class InitialConditionsUnit (AIsisUnit):
             ADataObject and subclasses for information on the parameters.
         """
         index = 0
-        labels = self.row_collection.getDataObjectAsList(rdt.LABEL)
+        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
         index = labels.index(name)
         if index == -1:
             raise AttributeError
@@ -191,7 +188,7 @@ class InitialConditionsUnit (AIsisUnit):
             ADataObject and subclasses for information on the parameters.
         """
         if not rdt.LABEL in row_vals.keys(): 
-            logger.error('Required values of CHAINAGE and ELEVATION not given')
+            logger.error('Required values of LABEL not given')
             raise  AttributeError ("Required value 'LABEL' not given") 
         
         # Don't add the same ic's in twice
@@ -216,7 +213,7 @@ class InitialConditionsUnit (AIsisUnit):
         self.node_count += 1
     
 
-    def deleteDataRowByLabel(self, section_name):
+    def deleteDataRowByName(self, section_name):
         """Delete one of the RowDataCollection objects in the row_collection.
         
         This calls the AIsisUnit deleteDataRow method, but obtains the index
@@ -225,12 +222,15 @@ class InitialConditionsUnit (AIsisUnit):
         Args:
             section_name(str): the name of the AIsisUnit to be removed from
                 the initial conditions.
+        
+        Raises:
+            KeyError - if section_name does not exist.
         """
         labels = self.row_collection.getRowDataAsList(rdt.LABEL)
         index = labels.index(section_name)
         
         if index == -1:
-            raise AttributeError('Name does not exist in initial conditions: ' + str(section_name))
+            raise KeyError('Name does not exist in initial conditions: ' + str(section_name))
         
         self.deleteDataRow(index)
         self.node_count -= 1
