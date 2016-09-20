@@ -37,6 +37,28 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
+def formatFloat(value, no_of_dps, ignore_empty_str=True):
+    """Format a float as a string to given number of decimal places.
+    
+    Args:
+        value(float): the value to format.
+        no_of_dps(int): number of decimal places to format to.
+        ignore_empty_str(True): return a stripped blank string if set to True.
+    
+    Return:
+        str - the formatted float.
+        
+    Raises:
+        ValueError - if value param is not type float.
+    """
+    if ignore_empty_str and not isNumeric(value) and str(value).strip() == '': 
+        return str(value).strip()
+    if not isNumeric(value): raise ValueError
+    decimal_format = '%0.' + str(no_of_dps) + 'f'
+    value =  decimal_format % float(value)
+    return value
+    
+
 def checkFileType(file_path, ext):
     """Checks a file to see that it has the right extension.
     

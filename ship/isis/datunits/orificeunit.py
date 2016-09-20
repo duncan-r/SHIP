@@ -23,6 +23,7 @@
 
 
 from ship.isis.datunits.isisunit import AIsisUnit
+from ship.utils import utilfunctions as uf
 
 import logging
 logger = logging.getLogger(__name__)
@@ -106,14 +107,14 @@ class OrificeUnit(AIsisUnit):
         out_data.append(self.head_data['type'])
         out_data.append('{:<12}'.format(self.head_data['section_label']) +
                         '{:<12}'.format(self.head_data['ds_label']))
-        out_data.append('{:>10}'.format(self.head_data['invert_level']) +
-                        '{:>10}'.format(self.head_data['soffit_level']) +
-                        '{:>10}'.format(self.head_data['bore_area']) +
-                        '{:>10}'.format(self.head_data['us_sill_level']) +
-                        '{:>10}'.format(self.head_data['ds_sill_level']))
-        out_data.append('{:>10}'.format(self.head_data['weir_flow']) +
-                        '{:>10}'.format(self.head_data['surcharged_flow']) +
-                        '{:>10}'.format(self.head_data['modular_limit']))
+        out_data.append('{:>10}'.format(uf.formatFloat(self.head_data['invert_level'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['soffit_level'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['bore_area'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['us_sill_level'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['ds_sill_level'], 3)))
+        out_data.append('{:>10}'.format(uf.formatFloat(self.head_data['weir_flow'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['surcharged_flow'], 3)) +
+                        '{:>10}'.format(uf.formatFloat(self.head_data['modular_limit'], 3)))
         
         return out_data
     

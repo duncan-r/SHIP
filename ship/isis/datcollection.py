@@ -129,8 +129,11 @@ class DatCollection(object):
         icunit = self.getUnit('Initial Conditions')
         ic_index = self.getIndex(icunit)
         if ic_index != -1:
-            if index == None or index >= ic_index: 
-                index = ic_index
+            if index == None or index >= ic_index:
+                if isisUnit.UNIT_TYPE == 'GisInfo':
+                    index = None
+                else:
+                    index = ic_index
         else:
             if index > len(self.units): index = None
         
@@ -151,8 +154,8 @@ class DatCollection(object):
             # Add an initial conditions row for every node name required
             for name in isisUnit.ic_label_keys:
                 ics[rdt.LABEL] = isisUnit.head_data[name]
-                icunit.addDataRow(ics)
-                self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) + 1
+                self.node_count = icunit.addDataRow(ics)
+                header.head_data['node_count'] = self.node_count
 
     
     def removeUnit(self, name_key, unit_type, update_node_count=True):

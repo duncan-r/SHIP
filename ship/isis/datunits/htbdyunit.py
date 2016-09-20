@@ -59,12 +59,12 @@ class HtbdyUnit (AIsisUnit):
         # section, such as the unit name and labels.
         self.head_data = {'section_label': 'Htbdy', 'extending_method': 'EXTEND',
                           'interpolation': 'LINEAR', 'comment': '', 
-                          'time_units': 'SECONDS', 'rowcount': 0} 
+                          'time_units': 'HOURS', 'multiplier': '', 'rowcount': 0} 
 
         self.unit_type = HtbdyUnit.UNIT_TYPE
         self.unit_category = HtbdyUnit.CATEGORY
         self.has_datarows = True
-        self.has_ics = False
+        self.has_ics = True
         self.unit_length = 0
         
         # Add the new row data types to the object collection
@@ -101,6 +101,7 @@ class HtbdyUnit (AIsisUnit):
         self.head_data['comment'] = unit_data[file_line][5:].strip()
         self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
         self.unit_length = int(unit_data[file_line + 2][:10].strip())
+        self.head_data['multiplier'] = unit_data[file_line + 2][10:20].strip()
         self.head_data['time_units'] = unit_data[file_line + 2][20:30].strip()
         self.head_data['extending_method'] = unit_data[file_line + 2][30:40].strip()
         self.head_data['interpolation'] = unit_data[file_line + 2][40:50].strip()
@@ -179,6 +180,7 @@ class HtbdyUnit (AIsisUnit):
         out_data.append('{:<12}'.format(self.head_data['section_label']))
         
         out_data.append('{:>10}'.format(self.head_data['rowcount']) + 
+                        '{:>10}'.format(self.head_data['multiplier']) +
                         '{:>10}'.format(self.head_data['time_units']) +
                         '{:>10}'.format(self.head_data['extending_method']) +
                         '{:>10}'.format(self.head_data['interpolation'])
@@ -228,9 +230,10 @@ class HtbdyUnit (AIsisUnit):
         if orig_index is None:
             self.row_collection.addValue(rdt.TIME, time)
             self.row_collection.addValue(rdt.ELEVATION, elevation)
+            self.head_data['rowcount'] += 1
+            self.unit_length += 1
         else:
             self.row_collection.setValue(rdt.TIME, time, index)
             self.row_collection.setValue(rdt.ELEVATION, elevation, index)
-        self.unit_length += 1
     
         

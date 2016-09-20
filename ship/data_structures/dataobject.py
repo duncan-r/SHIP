@@ -487,7 +487,7 @@ class StringData(ADataRowObject):
         # Get rid of any whitespace
         value = value.strip()
         # Call the superclass to set the value
-        ADataRowObject.addValue(self, value, index)
+        ADataRowObject.setValue(self, value, index)
 
 
     def formatPrintString(self, value):

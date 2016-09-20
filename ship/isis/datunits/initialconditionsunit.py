@@ -194,7 +194,7 @@ class InitialConditionsUnit (AIsisUnit):
         # Don't add the same ic's in twice
         labels = self.row_collection.getRowDataAsList(rdt.LABEL)
         if row_vals[rdt.LABEL] in labels:
-            return
+            return self.node_count
 
         # Setup default values for arguments that aren't given
         kw={}
@@ -211,6 +211,7 @@ class InitialConditionsUnit (AIsisUnit):
         # Call superclass method to add the new row
         AIsisUnit.addDataRow(self, index=None, row_vals=kw, check_negative=False)
         self.node_count += 1
+        return self.node_count
     
 
     def deleteDataRowByName(self, section_name):

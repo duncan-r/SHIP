@@ -132,8 +132,9 @@ class SpillUnit (AIsisUnit):
                 self.row_collection.addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
                 
                 # In some edge cases there are no values set in the file for the
-                # easting and northing, so use defaults.
-                if not len(unit_data[i]) > 21:
+                # easting and northing, so use defaults. this actually checks 
+                # that they are both there, e starts at 21, n starts at 31
+                if not len(unit_data[i]) > 31:
                     self.row_collection.addValue(rdt.EASTING)
                     self.row_collection.addValue(rdt.NORTHING)
                 else:
