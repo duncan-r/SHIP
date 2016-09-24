@@ -128,14 +128,15 @@ class IefLoader(ATool, ALoader):
         return ief_file
     
     
-    def _addHeaderLine(self, event_header, index):
+    def _addHeaderLine(self, event_header, value):
         """Adds a line from the ief file to the event_header dictionary.
         
         Args:
             event_header (Dict): The header details.
-            index (int): The current index in the contents list. 
+            value(str): contents of the .ief file line
         """
-        event_header[index.split('=')[0]] = index.split('=')[1].rstrip('\n')
+        splitvals = value.split('=', 1)
+        event_header[splitvals[0]] = splitvals[1].rstrip('\n')
     
     
     def _addDetailsLine(self, event_details, contents, index):
@@ -146,7 +147,8 @@ class IefLoader(ATool, ALoader):
             contents (List): the lines from the ief file.
             index (int): The current index in the contents list. 
         """
-        event_details[contents[index].split('=')[0]] = contents[index].split('=')[1].rstrip('\n')
+        splitvals = contents[index].split('=', 1)
+        event_details[splitvals[0]] = splitvals[1].rstrip('\n')
         
     
     def _addSnapshotLine(self, snapshot, contents, index):
@@ -158,8 +160,8 @@ class IefLoader(ATool, ALoader):
             contents (List): The list containing the lines from the ief file.
             index (int): The current index in the contents list. 
         """
-        snaptime = contents[index].split('=')[1].rstrip()
-        snapfile = contents[index + 1].split('=')[1].rstrip('\n')
+        snaptime = contents[index].split('=', 1)[1].rstrip()
+        snapfile = contents[index + 1].split('=', 1)[1].rstrip('\n')
         snapshot.append({'time': snaptime, 'file': snapfile})
         index += 1
         return index
@@ -178,7 +180,7 @@ class IefLoader(ATool, ALoader):
             Int - updated index value.
         """
         event_name = contents[index][1:].strip('\n')
-        event_path = contents[index + 1].split('=')[1].rstrip('\n')
+        event_path = contents[index + 1].split('=', 1)[1].rstrip('\n')
         ied_data.append({'name': event_name, 'file': event_path})
         index += 1
         return index
