@@ -174,6 +174,12 @@ class TuflowLoader(ATool, ALoader):
         finds an End Define from an output zone.
         """
         
+        self._if_type = None
+        """Also hacky notes whether in a scenario or an event.
+        
+        Currently only ever set to None, 'EVT' or 'SCEN'
+        """
+        
         self._cur_event_text = None
         self._cur_event_name = None
         self._cur_event_source = {}
@@ -441,13 +447,18 @@ class TuflowLoader(ATool, ALoader):
             command_type = ft.COMMENT
         
         # If scenario statement
-        elif upline.startswith('IF SCENARIO') or upline.startswith('ELSE IF') \
-                    or upline.startswith('END IF') or upline.startswith('ELSE'):
+        elif self._if_type != 'EVT' and (upline.startswith('IF SCENARIO') or upline.startswith('ELSE IF') \
+                    or upline.startswith('END IF') or upline.startswith('ELSE')):
+            self._if_type = 'SCEN'
             command_type = ft.SCENARIO
             line_val = line
         
         # Define event statement
-        elif upline.startswith('DEFINE EVENT') or (upline.startswith('END DEFINE') and not self._in_output_define):
+        elif (self._if_type != 'SCEN' and upline.startswith('IF EVENT') or upline.startswith('END IF') or \
+                    upline.startswith('IF ELSE') or upline.startswith('ELSE')) or \
+                    upline.startswith('DEFINE EVENT') or (upline.startswith('END DEFINE') \
+                    and not self._in_output_define):
+            self._if_type = 'EVT'
             command_type = ft.EVENT
             line_val = line
         
@@ -689,19 +700,31 @@ class TuflowLoader(ATool, ALoader):
         """
         rettype, event = self.breakEvent(line, hex_hash, event_order)
 
-        if rettype == 'DEFINE':
+        if rettype == 'DEFINE' or rettype == 'IF':
             event_stack.add(event)
             event_order +=1
             model.addContent(line_type, hex_hash)
 
+        elif rettype == 'ELSE':
+            model.addContent(ft.EVENT_END, '')
+            e = event_stack.pop()
+            model.addEvent(e)
+            event_order += 1
+            if not event_stack.isEmpty():
+                event_stack.peek().addPartRef(hex_hash)
+            event_stack.add(event)
+            model.addContent(line_type, hex_hash)
         else:
             e = event_stack.pop()
-            e.has_endif = True
+            if rettype == 'END IF':
+                e.has_endif = True
+            else:
+                e.has_enddefine = True
             model.addContent(ft.EVENT_END, '')
             model.addEvent(e)
         
         return model, event_stack, event_order
-        
+    
     
     def breakEvent(self, instruction, hex_hash, order):
         """Breaks a scenario IF statement down into parts.
@@ -727,11 +750,33 @@ class TuflowLoader(ATool, ALoader):
             return_type = 'DEFINE'
             event = TuflowEvent(TuflowEvent.DEFINE, evt_vals, hex_hash,
                                        order, comment, comment_char)       
+        elif upinstruction.startswith('IF EVENT'):
+            evt_vals = instruction.split('==')[1].strip()
+            evt_vals = evt_vals.strip()
+            return_type = 'IF'
+            event = TuflowEvent(TuflowEvent.IF, evt_vals, hex_hash,
+                                       order, comment, comment_char)    
+        
+        elif 'ELSE IF EVENT' in upinstruction:
+            evt_vals = instruction.split('==')[1].strip()
+            evt_vals = evt_vals.strip()
+            return_type = 'ELSE'
+            event = TuflowEvent(TuflowEvent.ELSE, evt_vals, hex_hash,
+                                       order, comment, comment_char)
+        
+        elif 'ELSE' in upinstruction:
+            evt_vals = 'ELSE'
+            return_type = 'ELSE'
+            event = TuflowEvent(TuflowEvent.ELSE, evt_vals, hex_hash,
+                                       order, comment, comment_char)
+        
+        elif 'END IF' in upinstruction:
+            return_type = 'END IF'
         else:
-            return_type = 'END'
+            return_type = 'END DEFINE'
         
         return return_type, event
-                    
+        
     
     def checkForTildes(self, instruction):
         """Check the file for tildes so we can try and replace them.

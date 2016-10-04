@@ -142,9 +142,10 @@ class TuflowScenario(object):
 class TuflowEvent(object):
     """
     """
-    DEFINE, END = range(2)
+    DEFINE, END, IF, ELSE, END_IF, EVENT_PART, TUFLOW_PART = range(7)
     
     def __init__(self, if_type, value, hex_hash, order, comment, comment_char):
+#                  use_if=False):
         """Constructor.
         
         Args:
@@ -159,6 +160,9 @@ class TuflowEvent(object):
         self.comment = comment
         self.comment_char = comment_char
         self.current_part_index = 0
+        self.has_endif = False
+        self.has_enddefine = False
+#         self._use_if = use_if
 
     
     def addPartRef(self, hex_hash):
@@ -168,6 +172,18 @@ class TuflowEvent(object):
             hex_hash(str): hash code of a TuflowFilePart to include.
         """
         self.part_list.append(hex_hash)
+        
+#         """Add a reference to a command that's included in this scenario.
+#         
+#         Args:
+#             ref_type(int): indicating if the ref in a TuflowFilePart or another
+#                 TuflowScenario. Use the class constants TUFLOW_PART or SCENARIO_PART.
+#             hex_hash(str): hash code of a TuflowFilePart to include.
+#         """
+#         self.part_list.append([ref_type, hex_hash])
+#         if ref_type == TuflowScenario.TUFLOW_PART:
+#             if self._first_tfp is None:
+#                 self._first_tfp = hex_hash
                 
                 
     def getTuflowFilePartRefs(self):
@@ -184,7 +200,7 @@ class TuflowEvent(object):
     
     
     def getOpeningStatement(self):
-        """Get the opeing statement from this scenario block.
+        """Get the opening statement from this scenario block.
         
         All scenarios have an opening statement of some form. This could be
         either 'IF SCENARIO == X', 'ELSE IF SCENARIO == X', or 'ELSE'. This
@@ -194,8 +210,27 @@ class TuflowEvent(object):
         Return:
             str - containing the appropriate opening statement.
         """
-        output = 'Define Event == ' + self.values[0] + self.comment_char + self.comment# + '\n'
+        output = []
+        if self.values[0] == 'ELSE':
+            output.append('Else')
+        else:
+            if self.if_type == TuflowEvent.IF:
+                output.append('If Event == ' + self.values[0] + self.comment_char + self.comment)
+            
+            elif self.if_type == TuflowEvent.DEFINE:
+                output.append('Define Event == ' + self.values[0] + self.comment_char + self.comment)
+                
+            else:
+                output.append('Else If Event == ' + self.values[0] + self.comment_char + self.comment)
+            
+        output = ' '.join(output)
         return output
+        
+#         if self._use_if:
+#             output = 'If Event == ' + self.values[0] + self.comment_char + self.comment# + '\n'
+#         else:
+#             output = 'Define Event == ' + self.values[0] + self.comment_char + self.comment# + '\n'
+#         return output
     
     
     def getClosingStatement(self):
@@ -204,7 +239,12 @@ class TuflowEvent(object):
         Return:
             str - containing an 'END DEFINE'.
         """
-        return 'End Define'#\n'
+        if self.has_endif:
+            return 'End If'#\n'
+        elif self.has_enddefine:
+            return 'End Define'#\n'
+        else:
+            return ''
 
     
     
@@ -368,7 +408,10 @@ class TuflowModelFile(object):
                     if do_e_end.pop(-1):
                         indent_spacing -= 4
                         indent = ''.join([' '] * indent_spacing)
-                        output.append(indent + evt_stack.peek().getClosingStatement())
+                        ce = evt_stack.peek().getClosingStatement()
+#                         output.append(indent + evt_stack.peek().getClosingStatement())
+                        if not ce == '':
+                            output.append(indent + ce)
                         evt_stack.pop()
                 
                 else: 
