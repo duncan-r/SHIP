@@ -35,6 +35,8 @@
 
 """
 
+from __future__ import unicode_literals
+
 import os
 
 import logging
@@ -77,7 +79,7 @@ def getFile(file_path):
     try:
         with open(file_path, 'rU') as f:
             for line in f:
-                file_contents.append(line)
+                file_contents.append(unicode(line))
     except IOError:
         logger.error('Read file IOError')
         raise IOError ('Unable to read file at: ' + file_path) 
@@ -302,7 +304,7 @@ def setFinalFolder(path, folder_name):
         # If it's an absolute path then we need to deal with the usual drive
         # letter problems (doesn't join it back with a slash.
         plist = norm_path.split(os.sep)
-        if not drive_letter == '':
+        if drive_letter:
             all_but_final_folder = plist[1:-1]
             all_but_final_folder = os.path.join(*all_but_final_folder)
             all_but_final_folder = plist[0] + os.path.sep + all_but_final_folder
@@ -331,6 +333,7 @@ def getFileName(in_path, with_extension=False):
                  blank string if there is no file name in the path.
         """
         file_name = os.path.basename(in_path)
+        
         if os.path.sep in in_path[-2:] or (with_extension and not '.' in file_name):
             return ''
         
@@ -407,7 +410,7 @@ class PathHolder(object):
         self.file_name = None
         self.extension = None
         self.path_as_read = None
-        self.parent_relative_root = ''
+#         self.parent_relative_root = ''
         
         self._setupVars(path)
 
@@ -447,7 +450,7 @@ class PathHolder(object):
                 variable has not been set.
         """
         final_folder = False
-        if not self.relative_root == None and not self.relative_root == '':
+        if not self.relative_root == None and not self.relative_root == False:
             final_folder = getFinalFolder(self.relative_root)
         
         elif not self.root == None:
@@ -462,13 +465,13 @@ class PathHolder(object):
         Args:
             folder_name (str): the new name for the final folder in the path.
         """
-        if not self.relative_root == None and not self.relative_root == '':
+        if not self.relative_root == None and not self.relative_root == False:
             self.relative_root = setFinalFolder(self.relative_root, folder_name)
         elif not self.root == None:
             self.root = setFinalFolder(self.root, folder_name)
             
     
-    def getAbsolutePath(self, file_name=None):
+    def getAbsolutePath(self, file_name=None, relative_roots=[], normalize=True):
         """Get the absolute path of the file path stored in this object.
 
         If there is no root variables set it will return False because there
@@ -485,10 +488,18 @@ class PathHolder(object):
         if file_name is None: 
             file_name = self.getFileNameAndExtension()
         
-        if not self.root == None and not self.relative_root == None:
-            
-            return os.path.join(self.root, self.parent_relative_root, 
-                                        self.relative_root, file_name)
+        outpath = False
+        if relative_roots and not self.root is None:
+#         if not self.root == None and not self.relative_root == None:
+            paths = [self.root] + relative_roots + [file_name]
+            if normalize:
+                outpath = os.path.normpath(os.path.join(*paths))
+            else:
+                outpath = os.path.join(*paths)
+#             return os.path.join(self.root, self.parent_relative_root, 
+#                                         self.relative_root, file_name)
+
+
 #             if not file_name == None:
 #                 return os.path.join(self.root, self.parent_relative_root, 
 #                                         self.relative_root, file_name)
@@ -497,17 +508,21 @@ class PathHolder(object):
 #                 return os.path.join(self.root, self.parent_relative_root,
 #                             self.relative_root, self.getFileNameAndExtension())
         
-        elif not self.root == None and self.relative_root == None:
-            
-            return os.path.join(self.root, file_name)
+#         elif not self.root == None and self.relative_root == None:
+        elif not self.root is None:
+            if normalize:
+                outpath = os.path.normpath(os.path.join(self.root, file_name))
+            else:
+                outpath = os.path.join(self.root, file_name)
 #             if not file_name == None:
 #                 return os.path.join(self.root, file_name)
 #             
 #             else:
 #                 return os.path.join(self.root, self.getFileNameAndExtension())
         
-        else:
-            return False
+        return outpath
+#         else:
+#             return outpath
         
     
     def getDirectory(self):
@@ -571,7 +586,7 @@ class PathHolder(object):
             str - file name with the extension appended or a blank string if
                  the file name does not exist.
         """
-        if not self.file_name == '':
+        if self.file_name:
             return self.file_name + '.' + self.extension
         else:
             return ''

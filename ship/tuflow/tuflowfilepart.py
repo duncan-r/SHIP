@@ -1,24 +1,7 @@
 """
 
  Summary:
-    Contains all of the :class:'TuflowFilePart' type classes.
-    
-    TuflowFilePart is the interface that all parts of the Tuflow model files 
-    should inherit. i.e. TuflowFile and derivatives, ModelVariables and ,
-    derivatives etc.
-    
-    Contains the TuflowFile base class and other specific types for holding
-    the file path objects. These are used for accessing and updating file
-    paths read in from the Tuflow model files.
-    
-    Any TuflowFilePart that contains information about a path variables.
-    E.g. BC Database == ..\bc_database\bc.csv
-    
-    Will be stored in this class or a class derived from this.
-
-    This version of the module replaces the old TuflowFile ModelVariables and 
-    TuflowFilePart modules. It seemed unnecessary to keep them apart has they 
-    are so closely related to each other. The TuflowFile module no longer exists.
+     
 
  Author:  
      Duncan Runnacles
@@ -34,9 +17,10 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
-
-import os
+import copy
+import uuid
 
 from ship.utils.filetools import PathHolder
 from ship.tuflow import FILEPART_TYPES as fpt
@@ -47,646 +31,620 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class TuflowFilePart(object):
-    """Superclass for any part of a Tuflow file.
-    
-    This is a light weight superclass that MUST BE inherited by any class
-    that will hold data pertaining to the Tuflow model files.
-
-    It is affectively abstract, although it does contain a single functioning
-    method getPrintableContents() which should be overridden by any class that
-    inherits from it.
-
-    It's key task is maintaining a reference to the order in which sections of
-    the tuflow model file were read in. This allows the contents to be written
-    out in the correct order when producing a new version of the tuflow model
-    file.
-
-    It is also used to keep track of any "unkown contents" within the file.
-    I.e. anything that the file loader doesn't know about will be thrown into
-    a list to be written out the same as it came in.
+class AssociatedParts(object):
+    """
     """
     
+    def __init__(self, parent):
+        self.parent = parent
+        self.sibling_prev = None
+        self.sibling_next = None
+        self.logic = None
     
-    def __init__(self, global_order, hex_hash, type, modelfile_type):
-        """Constructor.
 
-        Initialises the file order to -1 and the unknown_contents to a list
-        """
-        self.file_order = -1
-        self.global_order = global_order
-        self.unknown_contents = []
-        self.hex_hash = hex_hash
-        self.TYPE = type
-        self.modelfile_type = modelfile_type
-        self.category = ''
-        self.evt_src_data = None
-        
-    def getPrintableContents(self):
-        """Return contents formatted for writing to file.
-        
-        Return the contents for the section that this TuflowFilePart is 
-        responsible for. By default it will return the unkown contents stored
-        in this object.
-    
-        Note:
-            This method should be overridden by any inheriting class in order 
-            to properly format the data that it holds for printing back to 
-            file.
-        
-        Returns:
-            list of unknown_contents ready to print to file.
-        """            
-        return self.unknown_contents
-
-    
-    def addEventSourceData(self, evt_src_data):
-        """Set the EventSourceData object for this class.
-        
-        The EventSourceData is the data loaded by the TuflowLoader with values
-        for Event Source, Event Name, etc that define the values to use in the
-        Boundary condition files.
-        
-        Args:
-            evt_source_data(EventSourceData): the event data object to store.
-        """
-        self.evt_src_data = evt_src_data
-        
-
-
-class ModelVariables(TuflowFilePart):
-    """Stores information on Tuflow model file variable(s).
-    
-    Holds information pertaining to a variable or a set of variables
-    defined in one of the Tuflow model files. This will be a single line
-    of the text file.
-    
-    E.g. MASS BALANCE OUTPUT == ON
-    
-    It contains methods for reading in the text into variables, providing
-    access to those variables for reading or updating and returning the
-    line formatted for writing to an updated tuflow model file.
-    
-    TODO:
-        Put in a way to update the variables. This should update the
-        individual variable list AND the raw_var variable.
+class TuflowPart(object):
+    """
     """
     
-    def __init__(self, global_order, var, hex_hash, type, command, modelfile_type):
-        """Constructor.
-
-        Takes the two parts of a variables command line in a tuflow model file.
+    def __init__(self, parent, obj_type, **kwargs):
+        self.hash = uuid.uuid4()
+        self.obj_type = obj_type
+        self.associates = AssociatedParts(parent)
+        self.active = kwargs.get('active', True)
+        self.tpart_type = kwargs.get('tpart_type', None)
+        if 'logic' in kwargs.keys() and kwargs['logic'] is not None: 
+            self.associates.logic = kwargs['logic']
         
-        All commands in the model files are written as:
-        command == some variables go here
+    def isInSeVals(self, se_vals):
+        """Check that this TuflowPart or it's parents are inside given logic terms.
         
-        The first part of the line, before the '==' sign is command and the 
-        second part is var. Var can contain either a single variable or many
-        seperated by spaces (as is the case in tuflow model files).
-        If there is any comment on the end of the line it will be removed and
-        saved seperately for writing back out later.
-        
-        Args:
-            var: variable part of the tuflow command (the bit after '==').
-            command: The command part of the tuflow command (the bit before
-               the '==')
-        """
-        TuflowFilePart.__init__(self, global_order, hex_hash, type, 
-                                modelfile_type)
-
-        # extract the variables and the comment (if it exists)
-        self.comment = None
-        if '!' in var:
-            self.raw_var, self.comment = var.split('!', 1)
-            self.comment = self.comment.strip()
-        elif '#' in var:
-            self.raw_var, self.comment = var.split('#', 1)
-            self.comment = self.comment.strip()
-        else:
-            self.raw_var = var
-            
-        self.raw_var = self.raw_var.strip()
-         
-        self.command = command.strip()
-        
-        # If var has spaces in it then it contains more than one values and
-        # we need to break them up into a list.
-        self.multi_var = None
-        if ' ' in var:
-            self.multi_var = self.raw_var.split()
-            
-            
-    def getPrintableContents(self):
-        """Return the contents formatted for printing.
-        
-        The returned value will be the complete line ready for writing to
-        file.
-        
-        E.g. MASS BALANCE OUTPUT == ON  ! Some comment here
-        back to the tuflow model file.
-        
-        Returns:
-            String - variables line formatted for writing to a file.
-        """
-        contents = self.command + ' == ' + self.raw_var
-        
-        # Add the comment back on if it exists.
-        if not self.comment == None or self.comment == '':
-            contents += ' ! ' + self.comment
-        
-        return contents
-
-
-class ModelVariableKeyVal(ModelVariables):
-    """Stores information on Tuflow model file variable(s).
-    
-    
-    """
-    
-    def __init__(self, global_order, var, hex_hash, type, command, modelfile_type):
-        """Constructor.
-
-        """
-        ModelVariables.__init__(self, global_order, var, hex_hash, type, command, 
-                                modelfile_type)
-        self.multi_var = None
-        piped_vars = self.raw_var.split('|')
-        self.key_var = piped_vars[0].strip()
-        self.value_var = piped_vars[1].strip()
-        
-        
-    def getPrintableContents(self):
-        """Return the contents formatted for printing.
-        
-        Returns:
-            String - variables line formatted for writing to a file.
-        """
-        contents = self.command + ' == ' + self.key_var + ' | ' + self.value_var
-        
-        # Add the comment back on if it exists.
-        if not self.comment == None and not self.comment == '':
-            contents += ' ! ' + self.comment
-        
-        return contents
-            
-
-            
-class TuflowFile(TuflowFilePart, PathHolder):
-    """Associated with files that are used in TuFLOW models.
-
-    It has specific variables and methods for it's use in that way. E.g. it
-    contains a command variable - a variable that defines what the command used
-    to call the path is.
-    
-    The majority of the actual path manupulation methods and storage is 
-    inherited from the PathHolder class that this inherits from.
-    
-    See Also:
-        TuflowFilePart and PathHolder    
-
-    TODO:
-        
-    """
-    
-    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type,
-                       root=None, parent_relative_root='', category=None,  
-                       parent_hash=None, child_hash=None ):
-        """Constructor.
-        
-
-        Most tuflow files are referenced relative to the file that they are
-        called from. This method takes a 'root' as an optional argument.
-        The root will allow for an absolute path to be created from the 
-        relative path. 
-        
-        This means that the file stored in this object will be
-        able to store it's absolute path as well the path relative to the
-        callng file.
-        
-        E.g.  
-            ..\bc_dbase\bc.csv  
-            c:\actual\path\runs\..\bc_dbase\bc.csv
-
-        Args:
-            global_order(int): order that the file object was read in.
-            path (str): the path to the file that this object holds the meta 
-                data for.
-            hex_hash(str): hexidecimal code for this object.
-            type(int): the tuflow.FILEPART_TYPES value for this object.
-            command (str): the command that was used to call this path in the 
-                model file.
-            root=None (str): the path to the directory that is the root of 
-                this file.
-            parent_relative_root=''(str): the path section relative to the main
-                file read in (the tcf or ecf).
-            category=None(str): Any category specification for the file. E.g.
-                This is used by the MODEL type to declare what type of file it 
-                is (tcf, tgc, etc).
-            parent=None(str): the hash code of any parent that this file may
-                have. This will be non-None if the file is read in after a 
-                pipe command (e.g. with: file_1.mif | file_2.mif | file_3.mif 
-                if this file is file_3 then the parent will be the hash code for 
-                file_2.
-            child=None(str): the hash code of any child that this file may
-                have. This will be non-None if the file is read in after a 
-                pipe command (e.g. with: file_1.mif | file_2.mif | file_3.mif 
-                if this file is file_1 then the child will be the hash code for 
-                file_2.
+        The parents must be checked when a part doesn't have a reference to any
+        logic because the part may exists inside a control file that does have
+        a logic clause. In this situation the part would not have any logic
+        directly assigned to it, but would be within the logical clause by
+        virtue of it's parent being inside it...
                 
-        See Also:
-            :class:'TuflowTypes'  
-            :class:'TuflowFilePart'
+        Example::
+        :
+            a_tcf_file.tcf...
+            
+            If Scenario == somescenario
+                tgc1.tgc
+            Else
+                tgc2.tgc
+            End If
+
+            
+            tgc1.tgc...
+            
+            ! This file's logic == None, but if scenario == 'somescenario' it
+            ! should not be returned.
+            Read GIS Z Line == afile.shp 
+        
+        Args:
+            part(TuflowPart): the part to check logic terms for.
+            user_vars(UserVariables): containing the current scenario and
+                event values.
+        
+        Return:
+            bool - True if it's in the logic terms, or False otherwise.
         """
-        if not isinstance(path, basestring):
-            raise TypeError
+        logic = None
+        p = self
+        # If the part doesn't have any logic check the parents.
+        while True: 
+            if p.associates.logic is not None:
+                logic = p.associates.logic
+                break
+            if p.associates.parent is None: 
+                break
+            p = p.associates.parent
+        if logic is None:
+            return True
         
-        TuflowFilePart.__init__(self, global_order, hex_hash, type, modelfile_type)
+        output = logic.isInTerms(p, se_vals)
+        return output
+    
+
+    def getPrintableContents(self):
+        """
+        """
+        raise NotImplementedError
+    
+    def buildPrintline(self, command, instruction, comment=''):
+        output = [command, '==', instruction]
+        if comment:
+            output += ['!', comment]
+        return ' '.join(output)
+    
+    
+    @classmethod
+    def deepCopy(cls):
+        return copy.deepcopy(self)
+    
+    
+class UnknownPart(TuflowPart):
+    
+    def __init__(self, parent, **kwargs):
+        TuflowPart.__init__(self, parent, 'unknown', **kwargs)
+        self.data = kwargs['data'] # raises keyerror
+    
+    
+    def getPrintableContents(self):
+        return self.data, False
+    
+
+class ATuflowVariable(TuflowPart):
+    def __init__(self, parent, obj_type='variable', **kwargs):
+        TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        self.command = kwargs['command'] # raise valuerror
+        self._variable = kwargs['variable'].strip()
+        self.comment = kwargs.get('comment', '')
+    
+    @property
+    def variable(self):
+        return self._variable
+    
+    @variable.setter
+    def variable(self, value):
+        self._variable = value
+
+
+class TuflowVariable(ATuflowVariable):
+    """
+    """
+    
+    def __init__(self, parent, **kwargs):
+        """
+        kwargs(dict): the component of this parts command line::  
+            - 'variable': 'one or more variable'  
+            - 'command': 'command string'  
+            - 'comment': 'comment at end of command'
+        """
+        ATuflowVariable.__init__(self, parent, 'variable', **kwargs)
+        self.split_char = kwargs.get('split_char', ' ')
+        self.split_char = self.split_char.replace('\s', ' ')
+        self._createSplitVariable(self.variable)
         
-        self.command = command
-        self.category = category
-        self.comment = None
+    @property
+    def variable(self):
+        return self._variable
+    
+    @variable.setter
+    def variable(self, value):
+        self._variable = value   
+        self._createSplitVariable(value)
+
+    @property
+    def split_variable(self):
+        return self._split_variable
+    
+    @split_variable.setter
+    def split_variable(self, value):
+        if len(value) > 1:
+            s = self.split_char if self.split_char == ' ' else ' ' + self.split_char + ' '
+            s = s.join(value)
+        else:
+            s = value[0]
+        self._variable = s   
+        self._split_variable = value
+    
+    def _createSplitVariable(self, variable):
+        s = ' '.join(self._variable.split())
+        s = s.split(self.split_char)
+        self._split_variable = [i.strip() for i in s]
+
+    def getPrintableContents(self):
+        return self.buildPrintline(self.command, self._variable, self.comment), False
+
+
+class TuflowUserVariable(ATuflowVariable):
+
+    def __init__(self, parent, **kwargs):
+        ATuflowVariable.__init__(self, parent, 'uservariable', **kwargs)
+        self._variable_name = self.command.split('Set Variable ')[1].strip()
+    
+    @classmethod
+    def noParent(cls, key, variable):
+        vars = {'command': '', 'variable': variable}
+        uv = cls(None, vars)
+        uv._variable_name = key
+        return uv
+    
+    @property
+    def variable_name(self):
+        return self._variable_name
+    
+    @variable_name.setter
+    def variable_name(self, value):
+        self._variable_name = value   
+        self.command = 'Set Variable ' + value
+    
+    def getPrintableContents(self):
+        return self.buildPrintline(self.command, unicode(self._variable), self.comment), False
+
+
+class TuflowModelVariable(ATuflowVariable):
+
+    def __init__(self, parent, **kwargs):
+        ATuflowVariable.__init__(self, parent, 'modelvariable', **kwargs)
+        self._variable_name = kwargs['name']
+        if self._variable_name.upper().startswith('S'):
+            self._variable_type = 'scenario'
+        else:
+            self._variable_type = 'event'
+
+    @classmethod
+    def noParent(cls, key, variable):
+        vars = {'command': key, 'variable': variable, 'name': key}
+        mv = cls(None, **vars)
+        return mv
+    
+    @property
+    def variable_name(self):
+        return self._variable_name
+    
+    @variable_name.setter
+    def variable_name(self, value):
+        self._variable_name = value
+    
+    def getPrintableContents(self):
+        has_next = False; has_prev = False
+        if self.associates.sibling_prev is not None: has_prev = True
+        if self.associates.sibling_next is not None: has_next = True
+        
+        line = []
+        if not has_prev:
+            line.append(self.command + ' == ' + self._variable)
+            
+        else:
+            line.append(' | ' + self._variable)
+        
+        if not has_next and self.comment:
+            line.append('! ' + self.comment)
+            
+        return ' '.join(line), has_prev
+
+
+class TuflowKeyValue(ATuflowVariable):
+    """
+    """
+    def __init__(self, parent, **kwargs):
+        ATuflowVariable.__init__(self, parent, 'keyvalue', **kwargs)
+        keyval = self._variable.split('|')
+        self.key = keyval[0].strip()
+        self.value = keyval[1].strip()
+    
+    def getPrintableContents(self):
+        instruction = ' | '.join([self.key, self.value])
+        return self.buildPrintline(self.command, instruction, self.comment), False
+
+    
+class TuflowFile(TuflowPart, PathHolder):
+    """
+    """
+    
+    def __init__(self, parent, obj_type='file', **kwargs):
+        """
+        hash(str): unique code for this object.
+        parent(str): unique hash code for this object.
+        kwargs(dict): the components of this parts command line:: 
+            - 'path': 'relative\path\to\file.ext'   
+            - 'command': 'command string'  
+            - 'comment': 'comment at the end of the command'
+        """
+        root = kwargs['root'] # raises keyerror
+        self.command = kwargs['command'] 
+        path = kwargs['path']
+        self.comment = kwargs.get('comment', '') 
+
         self.all_types = None
-        self.parent_hash = parent_hash
-        self.child_hash = child_hash
-        self.actual_name = None  # Name with placeholders e.g. ~s1~
+        self.has_own_root = False
+        self.actual_name = None
         
-        # If it's an absolute path then we will set the root to be that rather
-        # than the normal root used for absolute paths so this will be True.
-        self.has_own_root = False 
-        self.file_name_is_prefix = False
-        
-        # Tuflow commands are allowed comments after them denoted by '!' so we
-        # split on this to make sure it's removed from the path name.
-        if '!' in path:
-            path, self.comment = path.split('!', 1)
-            self.comment = self.comment.strip()
-        elif '#' in path:
-            path, self.comment = path.split('#', 1)
-            self.comment = self.comment.strip()
-        
-        # Call superclass constructor
+        TuflowPart.__init__(self, parent, obj_type, **kwargs)
         PathHolder.__init__(self, path, root)
-        
-        self.parent_relative_root = parent_relative_root
-
     
-    def getPrintableContents(self):
-        """Return the formatted contents of this file command.
-
-        Args:
-            String formatted for writing to a tuflow model file.
+    
+    def getAbsolutePath(self):
+        """Get the absolute path of this object.
         """
-        # Deal with piped commands
-        if not self.parent_hash == None:
-            start = ''
-        else:
-            start = self.command + ' == '
-        
-        # Need to do a quick switch with the origin name here so that it's set
-        # the same as it was when read in
-        resolved_name = self.file_name
-        actual_name = self.actual_name
-        if not actual_name is None:
-            self.file_name = actual_name
-        
-        if not self.relative_root == None and not self.has_own_root:
-            contents = start + self.getRelativePath()
-        
-        elif not self.root == None:
-            contents = start + os.path.join(self.root, self.getFileNameAndExtension())
-        
-        else:
-            contents = start + self.getFilenameAndExtension()
-
-        if not self.comment == None or self.comment == '':
-            contents += ' ! ' + self.comment 
-        
-        if not actual_name is None:
-            self.file_name = resolved_name
-            
-        return contents
+        rel_roots = self.getRelativeRoots([])
+        abs_path = PathHolder.getAbsolutePath(self, relative_roots=rel_roots)
+        return abs_path
     
     
-    def getFileNameAndExtension(self):
-        """Get the filename with extension.
+    def getRelativeRoots(self, roots):
+        """Get the relative paths of this and all parent objects.
         
-        Performs a quick check to see if the filename is a prefix or an actual
-        full filename. It can be a prefix if the file is a tuflow check file.
-        In that case it should have the extension added becuase it will lead to
-        a '.' followed by an empty string.
-        
-        Overriddes the superclass method if PathHolder.
-        
-        See Also:
-            :class:'<ship.utils.filetools.PathHolder>'
-        
-        Return:
-            str - filepath and extension.
+        Recursively calls all of it's parents to obtain the relative paths
+        before calling getAbsolutePath of the PathHolder superclass.
         """
-        if self.file_name_is_prefix:
-            return self.file_name
-        else:
-            return PathHolder.getFileNameAndExtension(self)
-        
+        if not self.associates.parent is None:
+            roots.extend(self.associates.parent.getRelativeRoots(roots))
+        if self.relative_root: 
+            roots.extend([self.relative_root])
+        return roots
     
-    def getFileNameAndExtensionAllTypes(self):
-        """Get the filename with extension for all types.
-        
-        Some types of file can have implied associated file. Tuflow knows that
-        Shape file may have .prj, .dbf, etc files associated with them as well
-        even though they aren't declared in the files.
-        
-        This function will return a list of all of the filename with all
-        possible fie extensions associated with the file type.
-        
-        Return:
-            list containing filename.extension for every type associated
-                with this file name.
+    def checkPipedStatus(self, path):
+        has_next = False; has_prev = False
+        if self.associates.sibling_prev is not None: has_prev = True
+        if self.associates.sibling_next is not None: has_next = True
 
-        Note:
-            The other types are taken from a list of known types, not checked in
-            the file. This should be done by the calling code.
-        
-        """
-        all_names = []
-        if self.all_types == None:
-            return [self.getFileNameAndExtension()]
-        
-        for t in self.all_types:
-            all_names.append(self.file_name + '.' + t)
-    
-        return all_names
-    
-    
-    def getAbsolutePath(self, all_types=False):
-        """Get the absolute path of the file path stored in this object.
-
-        Note:
-            If there is no root variables set it will return False because there
-            is no way of knowing what the absolute path will be.
-        
-        Args:
-            all_types=False (Bool): if set to True the absolute path of this object
-                and any files associated with this file name will be returned.
-        
-        Returns:
-            Absolute path of this object or a list containing the
-                 absolute paths of all files associated with this file name.
-        """
-        if all_types and not self.all_types is None:
-            all_names = self.getFileNameAndExtensionAllTypes()
-            for i, n in enumerate(all_names):
-                all_names[i] = PathHolder.getAbsolutePath(self, n)
-            return all_names
-        elif all_types and self.all_types is None:
-            return [PathHolder.getAbsolutePath(self)] 
-        else:
-            return PathHolder.getAbsolutePath(self)
-        
-    
-    def getRelativePath(self, all_types=False):
-        """Returns the full relative path for this object.
-
-        Most paths stated in tuflow model files are done with relative paths.
-        If this is the case with the paths given to the constructor or set
-        later this will return it, otherwise it will return False.
-        
-        Args:
-            all_types=False (Bool): if set to True the relative path of this 
-                object and any files associated with this file name will be 
-                returned.
-        
-        Returns:
-            Relative path of this object or a list containing the relative 
-                paths of all files associated with this file name
+        if has_next or has_prev:
+            line = []
+            if not has_prev:
+                line.append(self.command + ' == ' + path)
                 
-        TODO:
-            Is it a bit of a burden sending back either a single relative path
-            OR a list if there's multiple files?
+            else:
+                line.append(' | ' + path)
             
-            I think this should be changed so that it always returns a list.
-            that would be a lot easier for the calling code to deal with.
-        """
-        if all_types and not self.all_types is None:
-            all_names = []
-            for n in self.all_types:
-                all_names.append(PathHolder.getRelativePath(self, False) + '.' + n)
-            
-            return all_names
-        
-        elif all_types and self.all_types is None:
-            return [PathHolder.getRelativePath(self)]
+            if not has_next and self.comment:
+                line.append('! ' + self.comment)
+                
+            return ' '.join(line), has_prev
         else:
-            return PathHolder.getRelativePath(self)
-        
-        
-    def getPathExistsAllTypes(self):
-        """Checks that all the types associated with this path exist.
+            return [], False
 
-        Types are the associated file extensions. e.g. .shp, .dbf, etc.
-        
-        If paths don't exist list of the path types that cannot be found will
-        be returned.
-        
-        Returns:
-            True if the main path exists and either all the extensions 
-                associated with this file exist or there are no other file
-                extensions associated with it.
-                False if the main file doesn't exist.
-                list of missing name.extension values if some of the associated
-                file extensions do not exist.
-        
-        TODO:
-            This method returns too many different types. Perhaps it could 
-            just always return a list with element[0] always set to be the
-            main file or False if it doesn't exist?
-        """
-        # Check that the main path exists first. If not then there's not point
-        # carrying on.
-        if not self.getPathExists():
-            return False
-        
-        # We know the path to this file exists already so it there are no other
-        # file types to check we can return True.
-        if self.all_types == None: 
-            return True
-        
-        not_found = []
-        for t in self.all_types:
-            p = self.file_name + '.' + t
-            if not self.getPathExists(p):
-                not_found.append(self.file_name + '.' + t)
 
-        if len(not_found) < 1:
-            return True
-        
-        return not_found
+    def getPrintableContents(self):
+        if not self.relative_root == None and not self.has_own_root:
+            path = self.getRelativePath()
+        elif not self.root == None:
+            path = os.path.join(self.root, self.getFileNameAndExtension())
+        else:
+            path = self.getFilenameAndExtension()
+
+        out, has_prev = self.checkPipedStatus(path)
+        if out:
+            return out, has_prev
+        else: 
+            return self.buildPrintline(self.command, path, self.comment), False
 
 
 class ModelFile(TuflowFile):
-    """Extends the TuflowFile class with MODEL file specific behaviour.
     
-    The main difference is the inclusion of a reference to the hashcode held
-    by the TuflowModelFile that is associated with this TuflowFilePart.
-    """
-    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
-                       root=None, parent_relative_root='', category=None,
-                       tmf_hash=''):
-        """Constructor.
-
-        Provides the all_types variable to TuflowFile according to the file
-        extension of the path. This will include the other files associated
-        with the type of GIS file found.
-        
-        See Also:
-            :class:'<ship.tuflowfilepart.TuflowFile>' for full args description.
-        
-        Args:
-            tmf_hash(str): the hexhash value of the TuflowModelFile associated
-                with this MODEL file.
-        """
-        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
-                                modelfile_type, root, parent_relative_root, 
-                                category)
-        self.tmf_hash = tmf_hash
-
-
-
-gis_types = {'MI':('mif', 'mid'), 'Shape': ('shp', 'shx', 'dbf', 'prj')}
-"""File type associations for the GisFile class"""
-
-class GisFile(TuflowFile): 
-    """Extends the TuflowFile class with GIS file specific behaviour.
     
-    This behaviour includes: 
-    defining the different file types (extensions) that should be associated
-    with the file path for it to work and any command specific behaviour
-    that is associated with GIS file types.
-    """
-    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
-                       root=None, parent_relative_root='', category=None,  
-                       parent_hash=None, child_hash=None):
-        """Constructor.
+    def __init__(self, parent, **kwargs):
+        TuflowFile.__init__(self, parent, 'model', **kwargs)
+        self.model_type = kwargs['model_type']
+        self.has_auto = kwargs.get('has_auto', False)
+    
+    
+    def getPrintableContents(self):
+        if self.model_type == 'ECF' and self.has_auto:
+            line = 'Estry Control File Auto '
+            if self.comment: line += '! ' + self.comment
+            line = (line, False)
+        else:
+            line = TuflowFile.getPrintableContents(self)
+        return line
 
-        Provides the all_types variable to TuflowFile according to the file
-        extension of the path. This will include the other files associated
-        with the type of GIS file found.
-        
-        Args:
-            path (str): the path to set for this object
-            command (str): the command that was used to call this path in 
-                the model file.
-            root=None (str): the directory root to use to set the absolute path
-               of this object.
-        
-        See Also:
-            TuflowFile
-        """
-        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
-                                modelfile_type, root, parent_relative_root, 
-                                category,  parent_hash, child_hash)
+
+class ResultFile(TuflowFile): 
+
+    RESULT_TYPE = {'OUTPUT': 'OUTPUT FOLDER', 'CHECK': 'WRITE CHECK FILE',
+                   'LOG': 'LOG'}
+
+    def __init__(self, parent, **kwargs):
+        TuflowFile.__init__(self, parent, 'result', **kwargs)
+        self.filename_is_prefix = False
+        self.result_type = 'UNKNOWN'
+        for key, val in ResultFile.RESULT_TYPE.items():
+            if self.command.upper().startswith(val):
+                self.result_type = key
+
+
+class GisFile(TuflowFile):
+    
+    GIS_TYPES = {'MI': ('mif', 'mid'), 'Shape': ('shp', 'shx', 'dbf')}
+    
+    def __init__(self, parent, **kwargs):
+        TuflowFile.__init__(self, parent, 'gis', **kwargs)
         
         # Needed to catch GIS files without an extension
         if self.file_name == '': 
             self.file_name = os.path.basename(path)
+            
+        self.gis_type = None
+        for key in GisFile.GIS_TYPES:
+            if self.extension in GisFile.GIS_TYPES[key]:
+                self.all_types = GisFile.GIS_TYPES[key]
+                self.gis_type = key
         
-        # Make sure that we know what all the other associated file types should
-        # be for the type of GIS file we are creating. Sets the file category to
-        # that defined by the key of the gis_types dictionary.
-        for key in gis_types.keys():
-            if self.extension in gis_types[key]:
-                self.all_types = gis_types[key]
-                self.category = key
-    
-    
-    def getFileNameAndExtension(self):
-        """Overrides superclass method.
         
-        GIS type files can be provided with no extension. 
-        """
-        if self.extension == '':
-            return self.file_name
-        else:
-            return PathHolder.getFileNameAndExtension(self)
-                
-    
-
-data_types = {'TMF': ('tmf',), 'CSV': ('csv',)}
-"""File type associations for the GisFile class"""
-
+        
 class DataFile(TuflowFile):
-    """Extends the TuflowFile class with functionality needed for data files.
-
-    Data files are considered to have data or links to other files in text
-    format. 
-
-    Class provides the all_types variable to TuflowFile according to the
-    file extensions of the path.
     
-    The main use for this file type is for things like materials.tmf/.csv,
-    Boundary conditions .csv files, etc.
-
-    These files can be given as input to the ADataFileObject type classes for
-    loading, updating and writing file specific data. This must be done 
-    seperate to the main model load.
+    DATA_TYPES = {'TMF': ('tmf',), 'CSV': ('csv',)}
     
-    See Also:
-        DataFileComponent
-        DataFileObject
-    """
-    
-    def __init__(self, global_order, path, hex_hash, type, command, modelfile_type, 
-                       root=None, parent_relative_root='', category=None,  
-                       parent_hash=None, child_hash=None):
-        """Constructor.
-                
-        Args:
-            path (str): the path as string to set for this object
-            command (str): the command that was used to call this path in 
-                the model file.
-            root=None (str): the directory root to use to set the absolute 
-                path of this object.
+    def __init__(self, parent, **kwargs):
+        TuflowFile.__init__(self, parent, 'data', **kwargs) 
         
-        See Also:
-            TuflowFile
+        
+        for d in DataFile.DATA_TYPES:
+            if self.extension in DataFile.DATA_TYPES[d]:
+                self.all_types = DataFile.DATA_TYPES[d]
+                self.data_type = d
+            
+    
+
+class TuflowLogic(TuflowPart): 
+    
+    def __init__(self, parent, obj_type='logic', **kwargs):
+        TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        self.parts = []
+        self.group_parts = [[]]
+        self.terms = [[]]
+        self.commands = []
+        self.comments = []
+        self.remove_callback = None
+        self.check_sevals = False
+        self._top_written = False
+        
+        self.END_CLAUSE = 'End'
+        """Override with with whatever the end statement is (e.g. 'End If')"""
+    
+    def addPart(self, part, group=-1):
+        self.parts.append(part)
+        self.group_parts[group].append(part.hash)
+    
+    def insertPart(self, new_part, adjacent_part):
+        if not adjacent_part in self.parts:
+            raise ValueError('adjacent_part could not be found')
+        g = self.getGroup(adjacent_part.hash)
+        index = self.group_parts[g].index(adjacent_part.hash)
+        self.parts.append(new_part)
+        self.group_parts[g].insert(index, new_part.hash)
+    
+    def removePart(self, part):
+        hash = part.hash if self.isTuflowPart(part) else part
+
+        for p in self.parts:
+            if p.hash == hash:
+                self.parts.remove(p)
+                break
+        for i, group in enumerate(self.group_parts):
+            for j, val in enumerate(group):
+                if val == hash:
+                    del self.group_parts[i][j]
+                    break
+ 
+        last_hash = self.group_parts[-1][-1]
+        self.remove_callback(hash, last_hash)        
+        
+    def getAllParts(self, hash_only):
+        """"""
+        if not hash_only:
+            return self.parts
+        else:
+            return [p.hash for p in self.parts]
+    
+    def getGroup(self, part_hash):
+        for i, g in enumerate(self.group_parts):
+            if part_hash in g: return i
+        else:
+            return -1
+    
+    def getLogic(self, hash_only):
+        if self.associates.logic is None:
+            return None
+        else:
+            if hash_only:
+                return self.associates.logic.hash
+            else:
+                return self.associates.logic
+    
+    def isInClause(self, filepart, term):
+        raise NotImplemetedError
+    
+    def isTuflowPart(self, part):
+        if isinstance(part, uuid.UUID):
+            return False
+        elif isinstance(filepart, TuflowPart):
+            return True
+        else:
+            raise TypeError('filepart must be either TuflowPart or TuflowPart.hash')
+        
+    def isInClause(self, filepart, term):
+        hash = part.hash if self.isTuflowPart(filepart) else filepart
+        for i, term in enumerate(self.terms):
+            for t in term:
+                if t == term:
+                    success = True if hash in self.group_parts[i] else False
+                    return success
+        return False
+    
+    def isInTerms(self, part, se_vals): 
+        """Checks to see if the clause terms associated with part match se_vals.
+        
+        Args:
+            part(TuflowPart): to find the terms for. If now reference of the
+                part can be found False will be returned.
+            se_Vals(dict): in format {'scenario': [list, of]. 'event': [terms]}.
+        
+        Return:
+            bool - True if the part is within the given se_vals, otherwise False.
         """
-#         self.evt_src_data = None
-        TuflowFile.__init__(self, global_order, path, hex_hash, type, command,
-                                modelfile_type, root, parent_relative_root, 
-                                category, parent_hash, child_hash)
-        # Make sure that we know what all the other associated file types should
-        # be for the type of GIS file we are creating. Sets the file category to
-        # that defined by the key of the gis_types dictionary.
-        for m in data_types:
-            if self.extension in data_types[m]:
-                self.all_types = data_types[m]
-                self.category = m
+        retval = False
+        group = self.getGroup(part.hash)
+        if group == -1: return False
+        terms = self.terms[self.getGroup(part.hash)]
+        for t in terms:
+            if t in se_vals['scenario'] or t in se_vals['event']: 
+                retval = True
+#                 if check_parents and part.associates.parent is not None:
+#                     parent = part.associates.parent
+#                     if parent.associates.logic is not None:
+#                         retval = parent.associates.logic.isInTerms(parent, se_vals, True, retval)
+                break
+        return retval
+    
+    def getPrintableContents(self, part, group=0):
+        """
+        """
+        out = self.getTopClause(part, [], False)
+        return out
+    
+    def getTopClause(self, part, out, force):
+        """
+        """
+        if not force and not self.group_parts[0]: return out
+        if force or self.group_parts[0][0] == part.hash:
+            self._top_written = True
+            out.insert(0, self._getContentsLine(0))
+            if not self.associates.logic is None:
+                out = self.associates.logic.getTopClause(self, out, False)
+        return out
+
+    def getEndClause(self, part):
+        if self.group_parts[-1][-1] == part.hash:
+            self._top_written = False
+            return self.END_CLAUSE
+        return ''
+        
+    def _getContentsLine(self, group=0):
+        """
+        """
+        if group > self.group_parts: raise IndexError('Group %s does not exist' % group)
+        if self.terms[group]:# is not None:
+            t = ' | '.join(self.terms[group])
+            line = self.commands[group] + ' == ' + t
+        else:
+            line = self.commands[group]
+        if self.comments[group]: line += ' ! ' + self.comments[group]
+        return line
+
+
+class IfLogic(TuflowLogic): 
+    
+    def __init__(self, parent, **kwargs):
+        TuflowLogic.__init__(self, parent, 'iflogic', **kwargs)
+        self.commands = [kwargs['command'].strip()]
+        self.all_terms = []
+        if kwargs['terms'] is not None:
+            self.terms = [[i.strip() for i in kwargs['terms']]]
+            self.all_terms.extend(kwargs['terms'])
+        else:
+            kwargs['terms'] = [None]
+        self.comments = [kwargs.get('comment', '').strip()]
+        self.check_sevals = True
+        self.END_CLAUSE = 'End If'
+    
+    def getPrintableContents(self, part, out):
+
+        out = TuflowLogic.getPrintableContents(self, part, out) 
+        out = self.checkMiddleClause(part, out)
+        return out
+
+    def checkMiddleClause(self, part, out):
+        for i, val in enumerate(self.group_parts):
+            if i > 0:
+                if val[0] == part.hash:
+                    
+                    if not self.group_parts[0] and not self._top_written:
+                        out = self.getTopClause(None, out, True)
+                    
+                    out.append(self._getContentsLine(i))
+        return out
+
+    def addClause(self, command, terms, comment=''):
+        self.commands.append(command.strip())
+        if terms is not None: 
+            self.terms.append([i.strip() for i in terms])
+        else:
+            self.terms.append([])
+        self.comments.append(comment)
+        self.group_parts.append([])
+    
+        
+class BlockLogic(TuflowLogic): 
+    
+    def __init__(self, parent, **kwargs):
+        TuflowLogic.__init__(self, parent, 'blocklogic', **kwargs)
+        self.commands = [kwargs['command'].strip()]
+        if kwargs['terms'] is not None:
+            self.terms = [[i.strip() for i in kwargs['terms']]]
+        else:
+            self.terms = [[]]
+        self.comments = [kwargs.get('comment', '').strip()]
+        self.check_sevals = True
+        self.END_CLAUSE = 'End Define'
     
     
-#     def addEventSourceData(self, evt_src_data):
-#         """Set the EventSourceData object for this class.
-#         
-#         The EventSourceData is the data loaded by the TuflowLoader with values
-#         for Event Source, Event Name, etc that define the values to use in the
-#         Boundary condition files.
-#         
-#         Args:
-#             evt_source_data(EventSourceData): the event data object to store.
-#         """
-#         self.evt_src_data = evt_src_data
+class SectionLogic(BlockLogic): 
+    
+    def __init__(self, parent, **kwargs):
+        TuflowLogic.__init__(self, parent, 'sectionlogic', **kwargs)
+        self.commands = [kwargs['command'].strip()]
+        if kwargs['terms'] is not None:
+            self.terms = [[i.strip() for i in kwargs['terms']]]
+        else:
+            self.terms = [[]]
+        self.comments = [kwargs.get('comment', '').strip()]
+        self.check_sevals = False 
+        self.END_CLAUSE = 'End Define'
     
     
-#     def addSEVals(self, se_vals):
-#         """Set the scenario and event vals for this load.
-#         
-#         Any values for scenario and event data is provided as a dictionary to
-#         the TuflowLoader. These can be added here to use when reading the 
-#         DataFile contents using the ADataFileLoader types.
-#         
-#         Args:
-#             se_vals(dict): containing scenario and event placholders and values.
-#                 See TuflowModel or TuflowLoader for more details.
-#         """
-#         self.se_vals = se_vals
     
-     
+    

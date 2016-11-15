@@ -27,6 +27,7 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 import re
 import os
@@ -35,6 +36,36 @@ import operator
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
+
+
+# def resolveSeDecorator(se_vals, path):
+#     """Decorator function for replacing Scen/Evt placholders.
+#     
+#     Checks fro scenario and event placeholders in the return value of a 
+#     function and replaces them with corresponding values if found.
+#     
+#     Args:
+#         se_vals(dict): standard scenario/event dictionary in the format:  
+#             {'scenario': {
+#     """
+#     def seDecorator(func):
+#         def seWrapper(*args, **kwargs):
+#             result = func(*args, **kwargs)
+# 
+#             if '~' in result:
+#                 # Check for scenarion stuff
+#                 for key, val in self.se_vals['scenario'].items():
+#                     temp = '~' + key + '~'
+#                     if temp in result:
+#                         result = result.replace(temp, val)
+#                 # Check for event stuff
+#                 for key, val in self.se_vals['event'].items():
+#                     temp = '~' + key + '~'
+#                     if temp in result:
+#                         result = result.replace(temp, val)
+#             return result
+#         return seWrapper
+#     return seDecorator
 
 
 def formatFloat(value, no_of_dps, ignore_empty_str=True):
@@ -258,7 +289,7 @@ def convertRunOptionsToSEDict(options):
 
 
 def getSEResolvedFilename(filename, se_vals):
-    """"Replace a tuflow placeholder filename with the scenario/event values.
+    """Replace a tuflow placeholder filename with the scenario/event values.
         
     Replaces all of the placholder values (e.g. ~s1~_~e1~) in a tuflow 
     filename with the corresponding values provided in the run options string.
@@ -305,6 +336,12 @@ def getSEResolvedFilename(filename, se_vals):
             outname = outname.replace('~e~', v[1])
         elif v[0] == '-s1' and '~s~' in filename and not '-s' in se_vals:
             outname = outname.replace('~s~', v[1])
+        #DEBUG - CHECK THIS IS TRUE!
+        elif v[0] == '-e' and '~e1~' in filename:
+            outname = outname.replace('~e1~', v[1])
+        elif v[0] == '-s' and '~s1~' in filename:
+            outname = outname.replace('~s1~', v[1])
+        
         else:
             if v[0].startswith('-e'):
                 if not in_e: 
@@ -346,7 +383,7 @@ def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
     reverse = dict((value, key) for key, value in enums.iteritems())
     enums['reverse_mapping'] = reverse
-    return type('Enum', (), enums)
+    return type(str('Enum'), (), enums)
 
     
 class FileQueue(object):
