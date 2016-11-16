@@ -21,10 +21,14 @@
 
 """
 
+from __future__ import unicode_literals
+
 from ship.isis.datunits.isisunit import AIsisUnit
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
+from ship.isis.headdata import HeadData
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.isis.headdata import HeadData, HeadDataItem
 
 import logging
 logger = logging.getLogger(__name__)
@@ -46,9 +50,10 @@ class RiverUnit (AIsisUnit):
         AIsisUnit
     """
     
-    UNIT_TYPE = 'River'
-    CATEGORY = 'River'
+    UNIT_TYPE = 'river'
+    CATEGORY = 'river'
     FILE_KEY = 'RIVER'
+    FILE_KEY2 = 'SECTION'
 
 
     def __init__(self, reach_number): 
@@ -60,35 +65,66 @@ class RiverUnit (AIsisUnit):
         """
         AIsisUnit.__init__(self)
 
+        self.unit_type = RiverUnit.UNIT_TYPE
+        self.unit_category = RiverUnit.CATEGORY
+#         self.has_datarows = True
+#         self.has_ics = True
+        self.reach_number = reach_number
+
+
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
         self.head_data = {'section_label': 'RivUS', 'spill1': '', 'spill2': '', 'lateral1': '',
                        'lateral2': '', 'lateral3': '', 'lateral4': '', 'distance': 0,
                        'slope': 0.0000, 'density': 1000, 'comment': '', 'rowcount': 0} 
+        
+        hdi = [
+            HeadDataItem('comment', '', '', 0, 1, rdt.STRING),
+            HeadDataItem('spill1', '', '{:<12}', 2, 3, rdt.STRING),
+            HeadDataItem('spill2', '', '{:<12}', 2, 4, rdt.STRING),
+            HeadDataItem('spill2', '', '{:<12}', 2, 5, rdt.STRING),
+            HeadDataItem('lateral1', '', '{:<12}', 2, 6, rdt.STRING),
+            HeadDataItem('lateral2', '', '{:<12}', 2, 7, rdt.STRING),
+            HeadDataItem('lateral3', '', '{:<12}', 2, 8, rdt.STRING),
+            HeadDataItem('lateral4', '', '{:<12}', 2, 9, rdt.STRING),
+            HeadDataItem('distance', 0, '{:<12}', 3, 0, rdt.FLOAT),
+            HeadDataItem('slope', 0.0000, '{:<12}', 3, 1, rdt.FLOAT),
+            HeadDataItem('density', 1000, '{:<12}', 3, 2, rdt.INT),
+        ]
+        self.head_data = HeadData.setup('RivUS', hdi)
 
-        self.unit_type = RiverUnit.UNIT_TYPE
-        self.unit_category = RiverUnit.CATEGORY
-        self.has_datarows = True
-        self.has_ics = True
-        self.reach_number = reach_number
-        self.unit_length = 0
+#         self.unit_length = 0
         
         # Add the new row data types to the object collection
         # All of them must have type, output format, default value and position
         # in the row as the first variables in vars.
         # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
-        self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
-        self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
-        self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
-        self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
-        self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
-        self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
-        # Default == '~' means to ignore formatting and apply '' when value is None
-        self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
+        dobjs = [
+            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3),
+            do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False),
+            do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3),
+            do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''),
+            do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2),
+            do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2),
+            do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''),
+            # Default == '~' means to ignore formatting and apply '' when value is None
+            do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'),
+        ]
+        self.row_collection = RowDataCollection.bulkInitCollection(dobjs)
+        
+#         self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+#         self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+#         self.row_collection.initCollection(do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False))
+#         self.row_collection.initCollection(do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3))
+#         self.row_collection.initCollection(do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''))
+#         self.row_collection.initCollection(do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2))
+#         self.row_collection.initCollection(do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2))
+#         self.row_collection.initCollection(do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''))
+#         # Default == '~' means to ignore formatting and apply '' when value is None
+#         self.row_collection.initCollection(do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'))
     
         
     def readUnitData(self, unit_data, file_line):
@@ -101,9 +137,9 @@ class RiverUnit (AIsisUnit):
             unit_data (list): The section of the isis dat file pertaining 
                 to this section 
         """
-        file_line = self._readHeadData(unit_data, file_line)
-        file_line = self._readRowData(unit_data, file_line)
-        self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
+        file_line, unit_length = self._readHeadData(unit_data, file_line)
+        file_line = self._readRowData(unit_data, file_line, (file_line + unit_length))
+#         self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
         return file_line - 1
         
 
@@ -113,21 +149,34 @@ class RiverUnit (AIsisUnit):
         Args:
             unit_data (list): containing the data to read.
         """
-        self.head_data['comment'] = unit_data[file_line + 0][5:].strip()
-        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
-        self.head_data['spill1'] = unit_data[file_line + 2][12:24].strip()
-        self.head_data['spill2'] = unit_data[file_line + 2][24:36].strip()
-        self.head_data['lateral1'] = unit_data[file_line + 2][36:48].strip()
-        self.head_data['lateral2'] = unit_data[file_line + 2][48:60].strip()
-        self.head_data['lateral3'] = unit_data[file_line + 2][60:72].strip()
-        self.head_data['lateral4'] = unit_data[file_line + 2][72:84].strip()
-        self.head_data['distance'] = unit_data[file_line + 3][0:10].strip()
-        self.head_data['slope'] = unit_data[file_line + 3][10:30].strip()
-        self.head_data['density'] = unit_data[file_line + 3][30:40].strip()
-        self.unit_length = int(unit_data[file_line + 4].strip())
-        return file_line + 5
+        self.head_data['comment'].value = unit_data[file_line + 0][5:].strip()
+        self._name = unit_data[file_line + 2][:12].strip()
+        self.head_data['spill1'].value = unit_data[file_line + 2][12:24].strip()
+        self.head_data['spill2'].value = unit_data[file_line + 2][24:36].strip()
+        self.head_data['lateral1'].value = unit_data[file_line + 2][36:48].strip()
+        self.head_data['lateral2'].value = unit_data[file_line + 2][48:60].strip()
+        self.head_data['lateral3'].value = unit_data[file_line + 2][60:72].strip()
+        self.head_data['lateral4'].value = unit_data[file_line + 2][72:84].strip()
+        self.head_data['distance'].value = unit_data[file_line + 3][0:10].strip()
+        self.head_data['slope'].value = unit_data[file_line + 3][10:30].strip()
+        self.head_data['density'].value = unit_data[file_line + 3][30:40].strip()
+        unit_length = int(unit_data[file_line + 4].value.strip())
 
-    def _readRowData(self, unit_data, file_line):
+#         self.head_data['comment'] = unit_data[file_line + 0][5:].strip()
+#         self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
+#         self.head_data['spill1'] = unit_data[file_line + 2][12:24].strip()
+#         self.head_data['spill2'] = unit_data[file_line + 2][24:36].strip()
+#         self.head_data['lateral1'] = unit_data[file_line + 2][36:48].strip()
+#         self.head_data['lateral2'] = unit_data[file_line + 2][48:60].strip()
+#         self.head_data['lateral3'] = unit_data[file_line + 2][60:72].strip()
+#         self.head_data['lateral4'] = unit_data[file_line + 2][72:84].strip()
+#         self.head_data['distance'] = unit_data[file_line + 3][0:10].strip()
+#         self.head_data['slope'] = unit_data[file_line + 3][10:30].strip()
+#         self.head_data['density'] = unit_data[file_line + 3][30:40].strip()
+#         self.unit_length = int(unit_data[file_line + 4].strip())
+        return file_line + 5, unit_length
+
+    def _readRowData(self, unit_data, file_line, end_line):
         """Reads the units rows into the row collection.
 
         This is all the geometry data that occurs after the no of rows variable in
@@ -136,10 +185,10 @@ class RiverUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-        out_line = file_line + self.unit_length
+#         out_line = file_line + self.unit_length
         try:
             # Load the geometry data
-            for i in range(file_line, out_line):
+            for i in range(file_line, end_line):
                 
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
@@ -151,7 +200,7 @@ class RiverUnit (AIsisUnit):
                 self.row_collection.addValue(rdt.RPL, unit_data[i][35:40].strip())
                 self.row_collection.addValue(rdt.BANKMARKER, unit_data[i][40:50].strip())
                 
-                # It seems that ISIS will allow models to load that have no
+                # It seems that FMP will allow models to load that have no
                 # value in the easting and northing parts. This checks if they
                 # do and if not replaces with None so a default will be used.
                 east = unit_data[i][50:60].strip()
@@ -168,7 +217,7 @@ class RiverUnit (AIsisUnit):
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
             
-        return out_line
+        return end_line
 
     def getData(self): 
         """Retrieve the data in this unit.

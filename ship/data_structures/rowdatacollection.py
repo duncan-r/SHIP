@@ -20,6 +20,7 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 import copy
 
@@ -68,6 +69,14 @@ class RowDataCollection(object):
         self._current = 0
     
     
+    @classmethod
+    def bulkInitCollection(cls, dataobjects):
+        rc = cls()
+        for d in dataobjects:
+            self._collection.append(dataobject)
+            self._max = len(self._collection)
+    
+    
     def __iter__(self):
         """Return an iterator for the units list"""
         return iter(self._collection)
@@ -106,7 +115,7 @@ class RowDataCollection(object):
         """  
         self._collection.append(dataobject)
         self._max = len(self._collection)
-        
+    
         
     def addValue(self, key, value=None):
         """Add a new value to the data object in the collection as referenced by

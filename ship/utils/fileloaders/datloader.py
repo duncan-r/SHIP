@@ -25,7 +25,7 @@
  Updates:
 
 """
-
+from __future__ import unicode_literals
 
 import os
 
@@ -148,7 +148,7 @@ class DatLoader(ATool, ALoader):
 
         # Create a unit from the header data in the first few lines of the dat file.
         if not self.is_ied:
-            i, self.temp_unit = unit_factory.createUnit(self.contents, 0, 'header', 0)
+            i, self.temp_unit = unit_factory.createUnit(self.contents, 0, 'HEADER', 0)
             in_unknown_section = False
 
             # Now we can update the HeaderUnit subContents 
@@ -168,7 +168,7 @@ class DatLoader(ATool, ALoader):
 
             if first_word in unit_vars:               
                 
-                # If building an UnknownSection then create an reset
+                # If building an UnknownSection then create and reset
                 if(in_unknown_section == True):
                     self.createUnknownSection()
                     self.updateSubContents()
@@ -181,8 +181,11 @@ class DatLoader(ATool, ALoader):
                 Most of these variables are self explanatory, but 
                 unit_vars[first_word] is the key for the unit type to make.
                 '''
+#                 i, self.temp_unit = unit_factory.createUnit(self.contents, i, 
+#                         unit_vars[first_word], self.cur_no_of_units)
                 i, self.temp_unit = unit_factory.createUnit(self.contents, i, 
-                        unit_vars[first_word], self.cur_no_of_units)
+                                                            first_word, 
+                                                            self.cur_no_of_units)
                 
                 '''In case we got in but found something wasn't supported.
                 it's i-1 because we can't return onto the same line that was

@@ -18,6 +18,7 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 from ship.utils import utilfunctions as uuf
 from ship.utils.fileloaders import tuflowloader

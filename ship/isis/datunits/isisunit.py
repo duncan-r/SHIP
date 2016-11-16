@@ -21,11 +21,13 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 import hashlib
+import uuid
 import random
 import copy
-from abc import ABCMeta, abstractmethod
+# from abc import ABCMeta, abstractmethod
 
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
 
@@ -34,11 +36,11 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class AIsisUnit( object ): 
+class AIsisUnit(object ): 
     """Abstract base class for all Dat file units.
     
     This class must be inherited by all classes representing an isis
-    data file unit (such as River, Juntion, Culvert, etc).
+    data file unit (such as River, Junction, Culvert, etc).
     
     Every subclass should override the readUnitData() and getData() methods to 
     ensure they are specific to the setup of the individual units variables.
@@ -56,7 +58,7 @@ class AIsisUnit( object ):
     See Also:
         UnknownSection
     """
-    __metaclass__ = ABCMeta
+#     __metaclass__ = ABCMeta
         
     
     def __init__(self):
@@ -69,20 +71,24 @@ class AIsisUnit( object ):
         Both of these are called at or immediately after initialisation.
         """
         
-        self._name = 'Unknown'                   # Unit name
+        self._name = 'unknown'                   # Unit name
+        self._name_ds = 'unknown'                # Unit downstream label
         
         self._data = None                       # The unit geometry data
-        # This is used for catch-all data storage, such as in the UnknownSection.
-        # Classes that override the readUnitData() and getData() methods are
-        # likely to ignore this variable and use row_collection and head_data instead.
+        """This is used for catch-all data storage.
+        
+        Used in units such as UnknownSection.
+        Classes that override the readUnitData() and getData() methods are
+        likely to ignore this variable and use row_collection and head_data instead.
+        """
         
         self.unit_type = 'Unknown'
         """The type of ISIS unit - e.g. 'River'"""
 
         self.unit_category = 'Unknown'
-        """The ISIS unit category - e.g. for type 'Usbrp' it would be 'Bridge'"""
+        """The ISIS unit category - e.g. for type 'Usbpr' it would be 'Bridge'"""
         
-        self.has_datarows = False      
+#         self.has_datarows = False      
         """Flag stating whether the unit contains an unknown no. of data rows.
         
         This could be geometry in river or bridge units etc, or other data
@@ -92,7 +98,7 @@ class AIsisUnit( object ):
         set values that are always present in the file - e.g. Orifice.
         """
         
-        self.no_of_collections = 1                           
+#         self.no_of_collections = 1                           
         """Total number of row collections held by this file. 
         
         If set to zero it means the same as has_datarows = False. Set to one as 
@@ -100,7 +106,8 @@ class AIsisUnit( object ):
         to True then there must be at least 1 row_collection.
         """
 
-        self.row_collection = None 
+#         self.row_collection = None 
+        self.row_data = None 
         """Collection containing all of the ADataRow objects.
         
         This is the main collection for row data in any unit that contains it.
@@ -108,7 +115,7 @@ class AIsisUnit( object ):
         containing the CHAINAGE, ELEVATION, etc.
         """
         
-        self.additional_row_collections = None  
+#         self.additional_row_collections = None  
         """Flag stating whether the unit contains additional row data.
         
         This is used for units that contain more than one set of unknow length
@@ -125,7 +132,7 @@ class AIsisUnit( object ):
         data in the .dat file.
         """
         
-        self.has_ics = False
+#         self.has_ics = False
         """Flag stating whether unit has initial conditions or not.
         
         If set to True the unit is expected to be included in the initial
@@ -134,7 +141,7 @@ class AIsisUnit( object ):
         InitialConditions unit being updated.
         """
         
-        self.ic_label_keys = ['section_label']
+        self.ic_label_keys = []
         """Keys for head_data dict to use to assign ic's to.
         
         If has_ics is True this list should be appended with any additional
@@ -151,12 +158,21 @@ class AIsisUnit( object ):
     @name.setter
     def name(self, value):
         self._name = value
-        try:
-            self.head_data['section_label'] = value
-        except KeyError:
-            return
     
+    @property
+    def name_ds(self):
+        return self._name_ds
     
+    @name_ds.setter
+    def name_ds(self, value):
+        self._name_ds = value
+        
+    @property
+    def has_ics(self):
+        if self.ic_labels: return True 
+        else: return False 
+        
+        
     def getUnitVars(self): 
         """Getter for the unit variables needed for loading this Unit. 
 
@@ -170,24 +186,24 @@ class AIsisUnit( object ):
             ValueError: if the self.unit_vars variables has not been set
                 by the concrete implementation of this class.
         """
-        if self.unit_vars == None:
+        if self.unit_vars is None:
             logger.warning('No unit load variables set for %s' % (self.unit_type))
             raise ValueError ('No unit load variables set for %s' % (self.unit_type))
         return self.unit_vars
         
 
-    # TODO: These are superflous methods. Need removing.
-    def getName( self ): 
-        """Getter for the name of the unit
-        
-        Warning:
-            This is unecessary method and is deprecated. Please use the
-            variable directly.
-        
-        Returns:
-            str - The name of the unit
-        """
-        return self._name
+#     # TODO: These are superflous methods. Need removing.
+#     def getName( self ): 
+#         """Getter for the name of the unit
+#         
+#         Warning:
+#             This is unecessary method and is deprecated. Please use the
+#             variable directly.
+#         
+#         Returns:
+#             str - The name of the unit
+#         """
+#         return self._name
         
 
     def getUnitType( self ):
@@ -222,7 +238,7 @@ class AIsisUnit( object ):
         return object_copy
     
     
-    def getRowDataObject(self, key, collection_key='main', copy=False):
+    def getRowDataType(self, key, collection_key='main', copy=False):
         """Getter for the data series in the data_object dictionary.
 
         Depending on the data that the subclass contains this could be 
@@ -252,7 +268,7 @@ class AIsisUnit( object ):
             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
-    def getRowDataAsList(self, key, collection_key='main'):
+    def getRowDataTypeAsList(self, key, collection_key='main'):
         """Returns the row data object as a list.
 
         This will return the row_collection data object referenced by the key
@@ -299,35 +315,35 @@ class AIsisUnit( object ):
         """
         return self.row_collection.getRow(index)
     
-    
-    def getHeadData(self):
-        """Returns the header data from this unit.
+#     
+#     def getHeadData(self):
+#         """Returns the header data from this unit.
+# 
+#         This includes the details outlined at the top of the unit such as the
+#         unit name, labels, global variables, etc.
+#         for some units, such as HeaderUnit or Junctions this is all of the 
+#         data. Other units, such as the RiverUnit also have RowDataObjects.
+#         
+#         Returns:
+#             The header data for this unit or None if it hasn't been initialised.
+#         """
+#         return self.head_data
 
-        This includes the details outlined at the top of the unit such as the
-        unit name, labels, global variables, etc.
-        for some units, such as HeaderUnit or Junctions this is all of the 
-        data. Other units, such as the RiverUnit also have RowDataObjects.
-        
-        Returns:
-            The header data for this unit or None if it hasn't been initialised.
-        """
-        return self.head_data
 
-
-    def getData(self): 
-        """Getter for the unit data.
-
-        Return the file geometry data formatted ready for saving in the style
-        of an ISIS .dat file
-        
-        Note:
-            This method should be overriden by the sub class to restore the 
-            data to the format required by the dat file.
-        
-        Returns:
-            List of strings - formatted for writing to .dat file.
-        """
-        return self.data
+#     def getData(self): 
+#         """Getter for the unit data.
+# 
+#         Return the file geometry data formatted ready for saving in the style
+#         of an ISIS .dat file
+#         
+#         Note:
+#             This method should be overriden by the sub class to restore the 
+#             data to the format required by the dat file.
+#         
+#         Returns:
+#             List of strings - formatted for writing to .dat file.
+#         """
+#         return self.data
     
 
     def readUnitData(self, data, file_line=None):
@@ -557,7 +573,7 @@ class UnknownSection(AIsisUnit):
         AIsisUnit.__init__(self) 
         self.unit_type = 'Unknown'
         self.unit_category = 'Unknown'
-        self._name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
+        self._name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
     
 
 
@@ -580,7 +596,7 @@ class CommentUnit(AIsisUnit):
         AIsisUnit.__init__(self) 
         self.unit_type = 'Comment'
         self.unit_category = 'Meta'
-        self._name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())
+        self._name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
         self.has_datarows = True
         self.data = []
         if not text.strip() == '': self.addCommentText(text)
@@ -634,6 +650,7 @@ class HeaderUnit(AIsisUnit):
     UNIT_TYPE = 'Header'
     CATEGORY = 'Meta'
     FILE_KEY = 'HEADER'
+    FILE_KEY2 = None
     
 
     def __init__(self):

@@ -131,7 +131,9 @@ def isNumeric(s):
 def isString(value):
     """Tests a given value to see if it is an instance of basestring or not.
 
-    It will return True for any value that contains unicode characters.
+    Note:
+        This function should be used whenever testing this as it accounts for
+        both Python 2.7+ and 3.2+ variations of string.
     
     Args:
         value: the variable to test.
@@ -139,10 +141,14 @@ def isString(value):
     Returns:
         Bool - True if value is a unicode str (basestring type) 
     """
-    if not isinstance(value, basestring):
-        return False
-    
-    return True
+    try:
+        return isinstance(value, basestring)
+    except NameError:
+        return isinstance(value, str)
+#     if not isinstance(value, basestring):
+#         return False
+#     
+#     return True
 
 
 def isList(value):
