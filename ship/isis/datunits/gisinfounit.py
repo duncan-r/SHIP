@@ -21,6 +21,7 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 
 from ship.isis.datunits.isisunit import AIsisUnit
@@ -48,12 +49,13 @@ class GisInfoUnit (AIsisUnit):
         be an UnknownSection.
     """
     # Class constants
-    UNIT_TYPE = 'GisInfo'
-    CATEGORY = 'GisInfo'
+    UNIT_TYPE = 'gis_info'
+    UNIT_CATEGORY = 'gis_info'
     FILE_KEY = 'GISINFO'
+    FILE_KEY2 = None
     
 
-    def __init__(self, node_count):
+    def __init__(self, **kwargs):
         """Constructor
         
         Args:
@@ -65,20 +67,21 @@ class GisInfoUnit (AIsisUnit):
         """
     
         AIsisUnit.__init__(self)
-        self.unit_type = "GisInfo"
-        self.unit_category = "GisInfo"
+        self._unit_type = GisInfoUnit.UNIT_TYPE
+        self._unit_category = GisInfoUnit.UNIT_CATEGORY
         self._name = "GisInfo"
-        self.has_datarows = True
-        self.has_ics = False
-        self.node_count = node_count
+#         self.has_datarows = True
+#         self.has_ics = False
     
     
     def readUnitData(self, unit_data, file_line):
         """
         """
-        self.data = [''.join(unit_data[file_line:]).strip()]
+        self.head_data['all'] = [''.join(unit_data[file_line:]).strip()]
         return len(unit_data)
 
-        
+
+    def getData(self): 
+        return self.head_data['all']
         
         

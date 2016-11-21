@@ -127,7 +127,7 @@ class RiverUnitTests(unittest.TestCase):
         self.assertListEqual(river.getRowDataObject(rdt.DEACTIVATION).data_collection, self.deactivation, 'River deactivation load fail')
         self.assertListEqual(river.getRowDataObject(rdt.SPECIAL).data_collection, self.special, 'River special load fail')
         
-        self.assertTrue(river.getUnitCategory() == 'River', 'River.unit_category fail:  River.unit_category = ' + river.unit_category)
+        self.assertTrue(river.getUnitUNIT_CATEGORY() == 'River', 'River.unit_UNIT_CATEGORY fail:  River.unit_UNIT_CATEGORY = ' + river.unit_UNIT_CATEGORY)
         self.assertTrue(river.getName() == '1.069', 'River.name fail:  River.name = ' + river.name)
 #         self.assertTrue(river.getFileOrder() == 1, 'River.file_order fail:  River.file_order = ' + str(river.file_order))
          

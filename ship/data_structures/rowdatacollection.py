@@ -59,45 +59,48 @@ class RowDataCollection(object):
     """
     
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Create a reference to the collection list."""
         self._collection = []
         self._min_collection = 0
         self._current_collection = 0
-        self._max = len(self._collection)
-        self._min = 0
-        self._current = 0
+#         self._max = len(self._collection)
+#         self._min = 0
+#         self._current = 0
+        self._updateCallback = kwargs.get('update_callback', None)
     
     
     @classmethod
-    def bulkInitCollection(cls, dataobjects):
-        rc = cls()
+    def bulkInitCollection(cls, dataobjects, **kwargs):
+        rc = cls(**kwargs)
         for d in dataobjects:
-            self._collection.append(dataobject)
-            self._max = len(self._collection)
+            rc._collection.append(d)
+            rc._max = len(rc._collection)
+        return rc
     
     
-    def __iter__(self):
-        """Return an iterator for the units list"""
-        return iter(self._collection)
-    
-    
-    def __next__(self):
-        """Iterate to the next unit"""
-        if self._current > self._max or self._current < self._min:
-            raise StopIteration
-        else:
-            self._current += 1
-            return self._collection[self._current] 
-    
-    
-    def __getitem__(self, key):
-        """Gets a value from _collection using index notation.
-        
-        Returns:
-            contents of the _collection element at index.
-        """
-        return self._collection[key]
+#     def __iter__(self):
+#         """Return an iterator for the units list"""
+# #         return iter(self._collection)
+#         return self._
+#     
+#     
+#     def __next__(self):
+#         """Iterate to the next unit"""
+#         if self._current > self._max or self._current < self._min:
+#             raise StopIteration
+#         else:
+#             self._current += 1
+#             return self._collection[self._current] 
+#     
+#     
+#     def __getitem__(self, key):
+#         """Gets a value from _collection using index notation.
+#         
+#         Returns:
+#             contents of the _collection element at index.
+#         """
+#         return self._collection[key]
     
 
     def initCollection(self, dataobject):
@@ -190,7 +193,7 @@ class RowDataCollection(object):
         return out_str
     
     
-    def getRow(self, index):
+    def rowAsDict(self, index):
         """Get the data vals in a particular row by index.
         
         Args:
@@ -204,9 +207,25 @@ class RowDataCollection(object):
             output[obj.data_type] = obj.getValue(index)
         
         return output
+
+
+    def rowAsList(self, index):
+        """Get the data vals in a particular row by index.
+        
+        Args:
+            index(int): the index of the row to return.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        output = []
+        for obj in self._collection:
+            output.append(obj.getValue(index))
+        
+        return output
     
         
-    def updateRow(self, values_dict, index):
+    def updateRow(self, row_vals, index):
         """Add a new row to the units data rows.
         
         Creates a new row from the values in the supplied value dict at the location
@@ -222,7 +241,7 @@ class RowDataCollection(object):
             done by creating a deep copy of the object prior to updating.
 
         Args:
-            values_dict (dict): Contains the names of the data objects of
+            row_vals (dict): Contains the names of the data objects of
                 collection as keys and the new row values as values.
             index (int): The index at which to insert the row.
         
@@ -230,11 +249,7 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
-#         new_keys = sorted(list(values_dict))
-#         cur_keys = sorted(self.getCollectionTypes())
-#         if not new_keys == cur_keys:
-#             raise KeyError
-        if index > self.getNumberOfRows():
+        if index > self.numberOfRows():
             raise IndexError
         
         try:
@@ -244,7 +259,6 @@ class RowDataCollection(object):
             temp_list = self._deepCopyDataObjects(self._collection) 
             
             for key, val in values_dict.items():
-                
                 self.setValue(key, val, index)
             
         except (IndexError, ValueError, Exception), err:
@@ -256,7 +270,8 @@ class RowDataCollection(object):
             del temp_list
      
         
-    def addNewRow(self, values_dict, index):
+#     def addNewRow(self, row_vals, index):
+    def addRow(self, row_vals, index):
         """Add a new row to the units data rows.
         
         Creates a new row from the values in the supplied value dict at the location
@@ -272,7 +287,7 @@ class RowDataCollection(object):
             creating a deep copy of the object prior to updating.
 
         Args:
-            values_dict (dict): Contains the names of the data objects of
+            row_vals (dict): Contains the names of the data objects of
                 collection as keys and the new row values as values.
             index (int): The index at which to insert the row.
         
@@ -280,29 +295,43 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
-        new_keys = sorted(list(values_dict))
-        cur_keys = sorted(self.getCollectionTypes())
-        if not new_keys == cur_keys:
-            raise KeyError
-        if index > self.getNumberOfRows():
+        if index > self.numberOfRows():
             raise IndexError
         
+        temp_list = None
         try:
             # Need to make a deep copy of the data_object so we can reset them back
             # to the same place if there's a problem. That way we don't get the lists
             # in the different objects out of sync.
             temp_list = self._deepCopyDataObjects(self._collection) 
             
+            vkeys = row_vals.keys()
             for obj in self._collection:
-                obj.addValue(values_dict[obj.data_type], index)
+                if not obj.data_type in vkeys:
+                    if obj.default is not None:
+                        obj.addValue(obj.default, index)
+                    else:
+                        raise ValueError
+                else:
+                    obj.addValue(row_vals[obj.data_type], index)
+            
+            if not self.checkRowsInSync():
+                raise RunTimeError
             
         except (IndexError, ValueError, Exception):
             self._resetDataObject(temp_list)
             raise 
+        except RuntimeError as err:
+            logger.error('Collection not in sync!')
+            logger.exception(err)
+            self._resetDataObject(temp_list)
+            logger.error('Collection reset to previous state')
+            raise
         finally:
-            for o in temp_list:
-                del o
-            del temp_list
+            if temp_list is not None:
+                for o in temp_list:
+                    del o
+                del temp_list
     
     
     def deleteRow(self, index):
@@ -314,7 +343,7 @@ class RowDataCollection(object):
         Raise:
             IndexError: if index is out of the bounds of the collection.
         """
-        if index < 0 or index > self.getNumberOfRows():
+        if index < 0 or index > self.numberOfRows():
             raise IndexError
         
         try:
@@ -335,7 +364,7 @@ class RowDataCollection(object):
             del temp_list
         
         
-    def getCollectionTypes(self): 
+    def collectionTypes(self): 
         """Get a list of the types (names) of all the objects in the collection.
         
         The list returned will contain all of the names used in this 
@@ -351,7 +380,7 @@ class RowDataCollection(object):
         return keys
     
     
-    def getDataObject(self, name_key):
+    def dataObject(self, name_key):
         """Return the ADataRowObject instance requested.
         
         Args:
@@ -377,7 +406,9 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
     
     
-    def getRowDataAsList(self, key=None):
+#     def rowDataAsList(self, key=None):
+    # TODO: this should be dataObjAsList
+    def dataObjAsList(self, key=None):
         """Returns the row data object as a list.
 
         This will return the row_collection data object referenced by the key
@@ -411,7 +442,7 @@ class RowDataCollection(object):
             return outlist
                 
         try:
-            data_col = self.getDataObject(key)
+            data_col = self.dataObject(key)
             if data_col == False: raise KeyError ('Key %s does not exist in collection' % (key))
             
             vals = []
@@ -420,9 +451,32 @@ class RowDataCollection(object):
             return vals
         except KeyError:
             raise 
-        
     
-    def getDataObjectCopy(self, name_key):
+    
+    def toDict(self):
+        """Returns the row data object as a dict.
+
+        provides a dict where keys are the datunits.ROW_DATA_TYPES and the
+        values are lists of the values for that type in sequence.
+
+        If you intend to update the values you should use getRowDataObject
+        instead as the data provided will be mutable and therefore reflected in
+        the values held by the collection. If you just want to read the data 
+        then use this.
+        
+        Returns:
+            dict - containing the list of values by ROW_DATA_TYPE.
+        """
+        vals = {}
+        for c in self._collection:
+            inner = []
+            for i in range(0, c.record_length):
+                inner.append(c.getValue(i))
+            vals[c.data_type] = inner
+        return vals
+                
+    
+    def dataObjectCopy(self, name_key):
         """Return the ADataRowObject instance requested.
 
         Same as the getDataObject() method except it makes a deep copy of the
@@ -446,7 +500,7 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
             
     
-    def getDataValue(self, name_key, index):
+    def dataValue(self, name_key, index):
         """Get the value of a data object in the collection.
         
         Args:
@@ -457,7 +511,7 @@ class RowDataCollection(object):
         Returns:
             The requested value or False if the key or index do not exist.
         """
-        if index > self.getNumberOfRows():
+        if index > self.numberOfRows():
             raise IndexError ('Index %s is greater than number of values in collection' % (index))
 
         for obj in self._collection:
@@ -486,12 +540,15 @@ class RowDataCollection(object):
             return False
               
     
-    def getNumberOfRows(self):
+    def numberOfRows(self):
         """Return the number of rows held in the collection
         
         Returns:
             int - number of rows in this collection.
         """
+        if not self.checkRowsInSync():
+            raise RuntimeError('RowCollection objects are not in sync')
+
         return self._collection[0].record_length
     
     

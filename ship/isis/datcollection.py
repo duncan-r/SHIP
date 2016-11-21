@@ -23,6 +23,7 @@
 
 """
 
+from __future__ import unicode_literals
 
 import os
 from datetime import datetime
@@ -63,6 +64,8 @@ class DatCollection(object):
         """
         self.units = []
         self.path_holder = path_holder
+        self._ic_index  = -999 # DON'T MESS WITH THIS!
+        self._gis_index = -999 # DON'T MESS WITH THIS!
         self._min = 0
         self._max = len(self.units)
         self._current = 0
@@ -103,96 +106,175 @@ class DatCollection(object):
         self.units[key] = value
 
 
-    def addUnit(self, isisUnit, index=None, update_node_count=True, ics={}):
+    def addUnit(self, unit, index=None, **kwargs):#update_node_count=True, ics={}):
         """Adds a new isisunit type to the collection.
         
         If the index value provided is greater than the index of the 
         InitialConditions unit the unit will be added before the IC unit. This
         is the last slot in the ordering of the units in the dat file.
+
+        Accepts ``**kwargs``:
+
+            update_node_count(bool): if True will update the node count
+                value at the top of the .dat file. You probably want to do this.
+                if missing it will default to True
+            ics(dict): inital conditions to add for the unit being put in the
+                collection. If missing the default values will be applied.
+                These will only be applied if the unit supports initial conditions.
         
         Args:
-            isisUnit (AIsisInit): The instance to add to the collection. 
+            unit (AIsisInit): The instance to add to the collection. 
             index=None(int): Index to insert the unit at.
-            update_node_count=True(bool): if True will update the node count
-                value at the top of the .dat file. You probably want to do this.
-            ics={}(dict): inital conditions to add for the unit being put in the
-                collection. If none are given default values will be applied.
-                These will only be applied if the unit support initial conditions.
         
         Raises:
             AttributeError: When a non-isisunit type is given.
         """
-        if not isinstance(isisUnit, AIsisUnit):
-            raise AttributeError ('Given isisunit is not of type AIsisUnit')
+        if not isinstance(unit, AIsisUnit):
+            raise AttributeError ('Given unit is not of type AIsisUnit')
         
-        # Make sure new units are put in front of the ic unit
-        icunit = self.getUnit('Initial Conditions')
-        ic_index = self.getIndex(icunit)
-        if ic_index != -1:
-            if index == None or index >= ic_index:
-                if isisUnit.UNIT_TYPE == 'GisInfo':
-                    index = None
+        update_node_count = kwargs.get('update_node_count', True)
+        ics = kwargs.get('ics', {})
+        
+        '''
+            Treat initial_conditions, gis_info and header a little differently.
+            They are always at the top and bottom af the file.
+        '''
+        if unit._unit_type == 'header' or unit._unit_type == 'gis_info' or \
+                                          unit._unit_type == 'initial_conditions':
+            if unit._unit_type == 'header':
+                if self.units and self.units[0]._unit_type == 'header':
+                    self.units[0] = unit
                 else:
-                    index = ic_index
-        else:
-            if index > len(self.units): index = None
-        
-        if index == None:
-            self.units.append(isisUnit)
-        else:
-            if index < len(self.units):
-                if index == 0: index = 1  # Make sure it goes below the header data
-                self.units.insert(index, isisUnit)
-            else:
-                raise IndexError
-
-        self._max = len(self.units)
-
-        if update_node_count and isisUnit.has_ics:
-            header = self.getUnit('Header')
+                    self.units.insert(0, unit)
             
-            # Add an initial conditions row for every node name required
-            for name in isisUnit.ic_label_keys:
-                ics[rdt.LABEL] = isisUnit.head_data[name]
-                self.node_count = icunit.addDataRow(ics)
-                header.head_data['node_count'] = self.node_count
+            elif unit._unit_type == 'gis_info':
+                if self._gis_index == -999:
+                    self.units.append(unit)
+                    self._gis_index = len(self.units) -1
+                else:
+                    self.units[self._gis_index] = unit
 
+            else:
+                # If it already exists in the collection
+                if self._ic_index != -999:
+                    self.units[self._ic_index] = unit
+                else:
+                    # If gis_info unit exists put it before that, otherwise it
+                    # goes on the end
+                    if self._gis_index == -999:
+                        self.units.append(unit)
+                        self._ic_index = len(self.units) -1
+                    else:
+                        self.units.insert(self._gis_index, unit)
+                        self._ic_index = self._gis_index - 1
+
+            self._max = len(self.units)
+            return
     
-    def removeUnit(self, name_key, unit_type, update_node_count=True):
+        '''
+            All the others.
+        '''
+        if index is None: index = len(self.units)
+
+        # Check if we need to go in front of ic and gis end of file units
+        if self._ic_index != -999 and index > self._ic_index:
+            index = self._ic_index
+        elif self._gis_index != -999 and index > self._gis_index:
+            index = self._gis_index
+        elif index > len(self.units):
+            self.units.append(unit)
+            index = None
+        
+        if index is not None:
+            self.units.insert(index, unit)
+            if self._ic_index != -999: self._ic_index += 1
+            if self._gis_index != -999: self._gis_index += 1
+        
+        self._max = len(self.units)
+        
+        if not self._ic_index == -999 and update_node_count and unit.has_ics:
+            header = self.units[0]
+            temp = unit.icLabels()
+            for name in unit.icLabels():
+                ics[rdt.LABEL] = unit._name
+                node_count = self.units[self._ic_index].addRow(ics, unit._unit_type)
+                header.head_data['node_count'].value = node_count
+            
+    
+#     def removeUnit(self, name_key, unit_type, update_node_count=True):
+    def removeUnit(self, unit, unit_type=None, **kwargs):
         """Remove one of the units previously added to the list.
+
+        Accepts ``**kwargs``:
+
+            update_node_count(bool): if True will update the node count
+                value at the top of the .dat file. You probably want to do this.
+                if missing it will default to True
         
         Args:
-            name_key (str): The unique name of the unit to remove. 
-            unit_type(str): This must be provided to ensure that the correct
-                unit is removed. E.g. a RiverUnit and an RefhUnit can both 
-                have the same AIsisUnit.name value, but different .UNIT_TYPE's.
-            update_node_count=True(bool): if True will update the node count
-                value at the top of the .dat file. You probably want to do this.
-        
+            unit(str | AIsisUnit): Can either be the AIsisUnit.name or the
+                AIsisUnit.
+            unit_type=None(str): If unit is a name str this must be provided to 
+                ensure that the correct unit is removed. E.g. a RiverUnit and 
+                an RefhUnit can both have the same AIsisUnit.name value, but 
+                different .unit_type's.
+                If unit is an AIsisUnit this will be ignored.
+
         Raises:
             KeyError: if the name doesn't exist. 
         """
-        for u in self.units:
-            if u.name == name_key:
-                if not u.UNIT_TYPE == unit_type:
-                    continue
-                else:
-                    self.units.remove(u)
-                    self._max = len(self.units)
-                    if update_node_count:
-                        ic = self.getUnit('Initial Conditions')
-                        try:
-                            ic.deleteDataRowByName(u.name)
-                        except KeyError:
-                            logger.warning('No initial conditions found for unit %' % u.name)
-                        header = self.getUnit('Header')
-                        self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) - 1
-                    return True
-        
-        return False
+        update_node_count = kwargs.get('update_node_count', True)
+        if isinstance(unit, AIsisUnit):
+            index = self.index(unit, unit_type)
+        else:
+            index = self.index(unit)
+            
+        if index != -1:
+            name = self.units[index]._name
+            name_ds = self.units[index]._name_ds
+            utype = self.units[index]._unit_type
+            
+            if update_node_count:
+                ic = self.unit('initial_conditions')
+                header = self.unit('header')
+                for l in self.units[index].icLabels():
+                    try:
+                        ic.deleteRowByName(l, utype)
+                    except KeyError:
+                        logger.warning('No intitial conditions found for initial conditions label: ' + name)
+
+            header.head_data['node_count'].value = ic.node_count
+            del self.units[index]
+            self._max = len(self.units)
+            return True
+
+        else:
+            return False
+                
+                
+#         
+#         for u in self.units:
+#             if u.name == name_key:
+#                 if not u.UNIT_TYPE == unit_type:
+#                     continue
+#                 else:
+#                     self.units.remove(u)
+#                     self._max = len(self.units)
+#                     if update_node_count:
+#                         ic = self.getUnit('Initial Conditions')
+#                         try:
+#                             ic.deleteRowByName(u.name)
+#                         except KeyError:
+#                             logger.warning('No initial conditions found for unit %' % u.name)
+#                         header = self.getUnit('Header')
+#                         self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) - 1
+#                     return True
+#         
+#         return False
     
     
-    def getIndex(self, unit, unit_type=None):
+#     def getIndex(self, unit, unit_type=None):
+    def index(self, unit, unit_type=None):
         """Get the index a particular AIsisUnit in the collection.
         
         Either the unit itself or its name can be provided as the argument.
@@ -206,7 +288,7 @@ class DatCollection(object):
             unit(AIsisUnit or str): the AIsisUnit or the name of the AIsisUnit
                 to find the index for.
             unit_type=None(str): the unit_type member of the AIsisUnit (e.g. 
-                for a USBPR bridge the category == Bridge and unit_type == 'Usbpr').
+                for a USBPR bridge the unit_category == Bridge and unit_type == 'Usbpr').
         
         Return:
             int - the index of the given unit, or -1 if it could not be found.
@@ -245,7 +327,7 @@ class DatCollection(object):
         # For each unit call the isisunit object and ask it
         # for its .DAT file formatted text to save to file
         for u in self.units:
-            logger.debug('Section Type: ' + u.getUnitType())
+            logger.debug('Section Type: ' + u._unit_type)
             out_data.extend(u.getData())
         
         return out_data
@@ -276,8 +358,9 @@ class DatCollection(object):
         ft.writeFile(contents, filepath)
         
     
-    def getUnitsByCategory(self, category_keys):
-        """Return all the units in the requested category(s).
+#     def getUnitsByCategory(self, unit_keys):
+    def unitsByCategory(self, unit_keys):
+        """Return all the units in the requested unit(s).
         
         Iterate through the collection and get all of the different categories
         within the model.
@@ -287,27 +370,28 @@ class DatCollection(object):
         categorised as 'bridge'.
         
         Args:
-            category_keys (str | []): The unit_category variables defined in 
-                the unit. Can be either a string representing a single category 
+            unit_keys (str | []): The unit variables defined in 
+                the unit. Can be either a string representing a single CATEGORY 
                 of AIsisUnit or a list of strings for multiple types. 
         
         Returns:
-            List containing all the specified category of unit in the model or
-                False if there are none of the category in the 
+            List containing all the specified CATEGORY of unit in the model or
+                False if there are none of the CATEGORY in the 
                 collection.
         """
-        if isinstance(category_keys, basestring):
-            category_keys = [category_keys]
+        if isinstance(unit_keys, basestring):
+            unit_keys = [unit_keys]
 
         types = [] 
         for u in self.units:
-            if u.unit_category in category_keys:
+            if u.unit_category in unit_keys:
                 types.append(u)
         
         return types
     
     
-    def getUnitsByType(self, type_keys):
+#     def getUnitsByType(self, type_keys):
+    def unitsByType(self, type_keys):
         """Return all of the units of the requested type.
         
         Iterate through the collection and get all of the different unit types 
@@ -315,7 +399,7 @@ class DatCollection(object):
         
         Types are set by the isisunit subclasses. They differentiate the
         from categories by providing further definition. For example:
-        USBPR and ARCH bridges would both be returned in the same category,
+        USBPR and ARCH bridges would both be returned in the same UNIT_CATEGORY,
         but on ARCH bridges would be return using the ArchBridgeUnit.TYPE.
         
         Note:
@@ -343,7 +427,8 @@ class DatCollection(object):
         return types
     
     
-    def getAllUnits(self): 
+#     def getAllUnits(self):
+    def allUnits(self): 
         """Get all of the isisunit in the collection
         
         Warning:
@@ -360,7 +445,8 @@ class DatCollection(object):
         return self.units
     
     
-    def getUnit(self, key, unit_type=None):
+#     def getUnit(self, key, unit_type=None):
+    def unit(self, key, unit_type=None):
         """Fetch a unit from the collection by name.
         
         Each isisunit in the collection is guaranteed to have a unique id.
@@ -380,11 +466,25 @@ class DatCollection(object):
             isisunit object corresponding to the given name, or False
                 if the name doesn't exist.
         """
+        # Do a quick lookup on these as we know roughly where they are
+        if key == 'initial_conditions':
+            if self.units and self.units[-1]._unit_type == 'initial_conditions':
+                return self.units[-1]
+            elif len(self.units) > 1 and self.units[-2]._unit_type == 'initial_conditions':
+                return self.units[-2]
+            else:
+                return False
+        if key == 'header':
+            if self.units and self.units[0]._unit_type == 'header':
+                return self.units[0]
+            else:
+                return False
+            
         for u in self.units:
             if u.name == key:
                 if unit_type == None:
                     return u
-                elif not u.UNIT_TYPE == unit_type:
+                elif not u.unit_type == unit_type:
                     continue
                 else:
                     return u
@@ -392,7 +492,8 @@ class DatCollection(object):
             return False
         
     
-    def setUnit(self, unit, unit_type=None):
+#     def setUnit(self, unit, unit_type=None):
+    def setUnit(self, unit, unit_type):
         """Replace the contents of a certain unit with the given one.
         
         Each isisunit has a .name variable. The name of the unit will be 
@@ -407,7 +508,7 @@ class DatCollection(object):
 
         Args:
             name_key (str): name of the unit.
-            unit_type=None(str): the AIsisUnit.TYPE to find.
+            unit_type(str): the AIsisUnit.TYPE to find.
         
         Returns:
             True if the unit was successfully updated. False if the unit does 
@@ -415,10 +516,15 @@ class DatCollection(object):
             any in the collection.
         """
         try:
-            name = unit.name
-        except NameError:
-            logger.error('Provided AIsisUnit does not have a name variable - Data Corruption!')
+            name = unit._name
+            utype = unit._unit_type
+        except (NameError, AttributeError) as err:
+            logger.error('Provided AIsisUnit does not have a name and/or unit_type variable - Data Corruption!')
+            logger.exception(err)
             raise
+        
+        index = self.index(unit._name, unit._unit_type)
+        self.units[index] = unit
         
         for i, u in enumerate(self.units, 0):
             if u.name == unit.name:
@@ -428,7 +534,8 @@ class DatCollection(object):
         return False
         
         
-    def getNoOfUnits(self): 
+#     def getNoOfUnits(self): 
+    def noOfUnits(self): 
         """The number of units currently held in the collection.
         
         Returns:

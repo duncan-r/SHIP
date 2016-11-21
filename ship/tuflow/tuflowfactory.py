@@ -16,17 +16,18 @@ from ship.tuflow import tuflowfilepart as tuflowpart
 class TuflowFactory(object):
     
     def __init__(self):
-        self.tuflow_types = TuflowTypes()
-        
+        pass
 
-    def getTuflowPart(self, line, control_part, part_type=None, logic=None):
-        
+    @classmethod
+    def getTuflowPart(line, parent, part_type=None, logic=None):
+
+        tuflow_types = TuflowTypes()
         line = line.strip()
         upline = line.upper()
         if part_type is None:
-            found, key = self.tuflow_types.find(upline)
+            found, key = tuflow_types.find(upline)
         else:
-            found, key = self.tuflow_types.find(upline, part_type)
+            found, key = tuflow_types.find(upline, part_type)
             if not found:
                 raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
 
@@ -38,33 +39,33 @@ class TuflowFactory(object):
         if not found:
             vars['tpart_type'] = fpt.UNKNOWN
             vars['data'] = line
-            return [tuflowpart.UnknownPart(control_part, **vars)]
+            return [tuflowpart.UnknownPart(parent, **vars)]
 
         key = checkMultiTypes(line, key)
 
         if key == fpt.MODEL:
-            parts = self.createModelType(line, control_part, **vars)
+            parts = TuflowFactory.createModelType(line, parent, **vars)
         
         elif key == fpt.GIS:
-            parts = self.createGisType(line, control_part, **vars)
+            parts = TuflowFactory.createGisType(line, parent, **vars)
         
         elif key == fpt.RESULT:
-            parts = self.createResultType(line, control_part, **vars)
+            parts = TuflowFactory.createResultType(line, parent, **vars)
         
         elif key == fpt.DATA:
-            parts = self.createDataType(line, control_part, **vars)
+            parts = TuflowFactory.createDataType(line, parent, **vars)
         
         elif key == fpt.VARIABLE:
-            parts = self.createVariableType(line, control_part, **vars)
+            parts = TuflowFactory.createVariableType(line, parent, **vars)
         
         elif key == fpt.MODEL_VARIABLE:
-            parts = self.createModelVariableType(line, control_part, **vars)
+            parts = TuflowFactory.createModelVariableType(line, parent, **vars)
         
         elif key == fpt.EVENT_VARIABLE:
-            parts = self.createBcEventVariable(line, control_part, **vars)
+            parts = TuflowFactory.createBcEventVariable(line, parent, **vars)
         
         elif key == fpt.USER_VARIABLE:
-            parts = self.createUserVariableType(line, control_part, **vars)
+            parts = TuflowFactory.createUserVariableType(line, parent, **vars)
         
         return parts
 

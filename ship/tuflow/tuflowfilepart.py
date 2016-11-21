@@ -117,10 +117,25 @@ class TuflowPart(object):
             output += ['!', comment]
         return ' '.join(output)
     
+    def __eq__(self, other):
+        return isinstance(other, TuflowPart) and other.hash == self.hash
+    
     
     @classmethod
-    def deepCopy(cls):
-        return copy.deepcopy(self)
+    def copy(self, **kwargs):
+        new_version = copy.deepcopy(self)
+        
+        new_version.hash = uuid.uuid4()
+        strip_unique = kwargs('strip_unique', True)
+        keep_logic = kwargs('keep_logic', False)
+        if strip_unique:
+            new_version.sibling_next = None
+            new_version.sibling_prev = None
+            new_version.comment = ''
+            if not keep_logic:
+                new_version.logic = None
+
+        return new_version
     
     
 class UnknownPart(TuflowPart):
@@ -300,7 +315,7 @@ class TuflowFile(TuflowPart, PathHolder):
 
         self.all_types = None
         self.has_own_root = False
-        self.actual_name = None
+#         self.actual_name = None
         
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
         PathHolder.__init__(self, path, root)
@@ -383,8 +398,8 @@ class ModelFile(TuflowFile):
 
 class ResultFile(TuflowFile): 
 
-    RESULT_TYPE = {'OUTPUT': 'OUTPUT FOLDER', 'CHECK': 'WRITE CHECK FILE',
-                   'LOG': 'LOG'}
+    RESULT_TYPE = {'output': 'OUTPUT FOLDER', 'check': 'WRITE CHECK FILE',
+                   'log': 'LOG'}
 
     def __init__(self, parent, **kwargs):
         TuflowFile.__init__(self, parent, 'result', **kwargs)
@@ -397,7 +412,7 @@ class ResultFile(TuflowFile):
 
 class GisFile(TuflowFile):
     
-    GIS_TYPES = {'MI': ('mif', 'mid'), 'Shape': ('shp', 'shx', 'dbf')}
+    GIS_TYPES = {'mi': ('mif', 'mid'), 'shape': ('shp', 'shx', 'dbf')}
     
     def __init__(self, parent, **kwargs):
         TuflowFile.__init__(self, parent, 'gis', **kwargs)
@@ -494,9 +509,6 @@ class TuflowLogic(TuflowPart):
                 return self.associates.logic.hash
             else:
                 return self.associates.logic
-    
-    def isInClause(self, filepart, term):
-        raise NotImplemetedError
     
     def isTuflowPart(self, part):
         if isinstance(part, uuid.UUID):
@@ -618,6 +630,7 @@ class IfLogic(TuflowLogic):
         self.group_parts.append([])
     
         
+# class BlockLogic(TuflowLogic): 
 class BlockLogic(TuflowLogic): 
     
     def __init__(self, parent, **kwargs):

@@ -34,7 +34,7 @@ from __future__ import unicode_literals
 from ship.isis.datunits import spillunit
 from ship.isis.datunits import riverunit
 from ship.isis.datunits import junctionunit
-from ship.isis.datunits import initialconditionsunit
+from ship.isis.datunits import initialconditionsunit as icu
 from ship.isis.datunits import gisinfounit
 from ship.isis.datunits import bridgeunit
 from ship.isis.datunits import isisunit 
@@ -61,20 +61,36 @@ class IsisUnitFactory(object):
         Sets up the unit_ids. This is fetched by the DatLoader class to
         identify lines where the unit starts. It should be the first word on the 
         line where the unit data begins.
-
-        Also contains all the unit specific read data for each unit in unit_vars.
-        this dict should be updated each time a new unit is added so that the
-        factory knows how to process it.
-        
-        Args:
-            node_count (int): The number of unit nodes in the model. 
         """
         self.node_count = 0
         self.reach_number = 0
         self.same_reach = False
-        self.available_units = {isisunit.HeaderUnit.FILE_KEY: (isisunit.HeaderUnit.FILE_KEY2, isisunit.HeaderUnit),
-                                riverunit.RiverUnit.FILE_KEY: (riverunit.RiverUnit.FILE_KEY2, riverunit.RiverUnit), 
-#                                 'initialconditions': initialconditionsunit.InitialConditionsUnit, 
+        self._ic_name_types = {}
+        
+        self.available_units = (
+            isisunit.HeaderUnit,
+            riverunit.RiverUnit, 
+            refhunit.RefhUnit,
+            icu.InitialConditionsUnit,
+            gisinfounit.GisInfoUnit,
+            bridgeunit.BridgeUnitArch,
+            bridgeunit.BridgeUnitUsbpr,
+            spillunit.SpillUnit,
+            htbdyunit.HtbdyUnit,
+        )
+#         self.available_units = {
+#             isisunit.HeaderUnit.FILE_KEY: (
+#                 isisunit.HeaderUnit.FILE_KEY2, isisunit.HeaderUnit),
+#             riverunit.RiverUnit.FILE_KEY: (
+#                 riverunit.RiverUnit.FILE_KEY2, riverunit.RiverUnit), 
+#             refhunit.RefhUnit.FILE_KEY: (
+#                 refhunit.RefhUnit.FILE_KEY2, refhunit.RefhUnit),
+#             icu.InitialConditionsUnit.FILE_KEY: (
+#                 icu.InitialConditionsUnit.FILE_KEY2, icu.InitialConditionsUnit),
+#             gisinfounit.GisInfoUnit.FILE_KEY: (
+#                 gisinfounit.GisInfoUnit.FILE_KEY2, gisinfounit.GisInfoUnit),
+#             bridgeunit.BridgeUnitArch.FILE_KEY: (
+#                 bridgeunit.BridgeUnitArch.FILE_KEY2, bridgeunit.BridgeUnitArch)
 #                                 'gisinfo': gisinfounit.GisInfoUnit,
 #                                 'header': isisunit.HeaderUnit, 
 #                                 'comment': isisunit.CommentUnit,
@@ -90,12 +106,14 @@ class IsisUnitFactory(object):
 #                                 'culvert': culvertunit.CulvertOutletUnit,
 #                                 'htbdy': htbdyunit.HtbdyUnit,
 #                                 'interolate': interpolateunit.InterpolateUnit,
-                               }
+#         }
+        
         try:
             self._getFileKeys()
-        except:
+        except Exception as err:
+            logger.exception(err)
             logger.error('UNIT_VARS incorrectly set in some classes')
-            raise Exception ('UNIT_VARS incorrectly set in some classes')
+            raise Exception ('UNIT_KEYS incorrectly set in some classes')
         
     
     def _getFileKeys(self):
@@ -105,18 +123,13 @@ class IsisUnitFactory(object):
         defines the key word used in the .dat file. This is then used to
         recognise when a unit of that type has been found.
         """
-        self.unit_keys = self.available_units.keys()
+        self.unit_keys = [k.FILE_KEY for k in self.available_units if k.FILE_KEY is not None]
         self.units = {}
-        for key, val in self.available_units.items():
-            if not key in self.units.keys():
-                self.units[key] = []
-            self.units[key].append(val)
-#         return self.unit_keys
-
-#         self.unit_id1 = {}
-#         self.unit_ids = {}
-#         for key, item in self.available_units.items():
-#             self.unit_id1[item.FILE_KEY] = key
+        for u in self.available_units:
+            if u.FILE_KEY is None: continue
+            if not u.FILE_KEY in self.units.keys():
+                self.units[u.FILE_KEY] = []
+            self.units[u.FILE_KEY].append((u.FILE_KEY2, u))
             
     
     def createUnit(self, contents, file_line, file_key, file_order, reach_number = None):
@@ -139,21 +152,53 @@ class IsisUnitFactory(object):
         # Check if we know what the unit is. If we do, instantiate it, if not
         # return the current line number and False to let the loader know
         found = False
+        
+        # Make sure the given FILE_KEY is found (it should be if we're here)
         if file_key in self.units.keys():
             u = self.units[file_key]
+            
+            # If FILE_KEY2 is none there's only a single type of this unit so
+            # grab it
             if u[0][0] is None:
-                unit = u[0][1]
+                unit_type = u[0][1]
                 found = True
             else:
+                
+                # If not then find which one it is and  grab that
                 key2 = contents[file_line + 1].split()[0].strip()
                 for s in u:
                     if s[0] == key2:
-                        unit = s[1]
+                        unit_type = s[1]
                         found = True
         
+        # If something went wrong send back as part of UnknownUnit instead
         if not found:
             return file_line, False
+
+        read_kwargs = {}
+        constructor_kwargs = {}
+        if file_key == 'INITIAL':
+            read_kwargs['node_count'] = self.unit_count
+        elif file_key == 'RIVER':
+            constructor_kwargs['reach_number'] = self.reach_number
+
+        unit = unit_type(**constructor_kwargs)
+        file_line = unit.readUnitData(contents, file_line, **read_kwargs)
         
+        '''Need to grab the number of units in the initial conditions from the
+        header unit because there's no way to know how long it is otherwise.
+        '''
+        if file_key == 'HEADER':
+            self.unit_count = unit.head_data['node_count'].value
+#         if key == 'header':
+#             self.ic_rows = unit.node_count
+        
+        if file_key == 'INITIAL':
+            unit._name_types = self._ic_name_types
+        else:
+            self.findIcLabels(unit)
+
+        return file_line, unit
         
         
 #         if file_key == 'RIVER':
@@ -191,15 +236,19 @@ class IsisUnitFactory(object):
 #                 return file_line, False
         
         # Send contents to unit for construction.
-        file_line = unit.readUnitData(contents, file_line)
-        
-        '''Need to grab the number of units in the initial conditions from the
-        header unit because there's no way to know how long it is otherwise.
-        '''
-#         if key == 'header':
-#             self.ic_rows = unit.node_count
-        
-        return file_line, unit
+
+
+    def findIcLabels(self, unit):
+        """
+        """
+        if not unit.has_ics: return
+
+        ic_labels = unit.icLabels()
+        for l in ic_labels:
+            if not l in self._ic_name_types.keys():
+                self._ic_name_types[l] = [unit._unit_type]
+            elif not unit._unit_type in self._ic_name_types[l]:
+                self._ic_name_types[l].append(unit._unit_type) 
     
      
     def _getReachNumber(self, reach_number):

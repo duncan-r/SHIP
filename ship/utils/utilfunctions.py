@@ -124,7 +124,7 @@ def isNumeric(s):
     try:
         float(s)
         return True
-    except ValueError:
+    except (ValueError, TypeError):
         return False
 
 

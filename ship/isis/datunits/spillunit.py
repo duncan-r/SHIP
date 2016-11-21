@@ -20,11 +20,14 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 from ship.isis.datunits.isisunit import AIsisUnit
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
+from ship.isis.headdata import HeadDataItem
+from ship.data_structures import DATA_TYPES as dt
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,9 +46,10 @@ class SpillUnit (AIsisUnit):
     See Also:
         AIsisUnit
     """
-    UNIT_TYPE = 'Spill'
-    CATEGORY = 'Spill'
+    UNIT_TYPE = 'spill'
+    UNIT_CATEGORY = 'spill'
     FILE_KEY = 'SPILL'
+    FILE_KEY2 = None
 
 
     def __init__(self): 
@@ -56,28 +60,28 @@ class SpillUnit (AIsisUnit):
         """
         AIsisUnit.__init__(self)
 
-        # Fill in the header values these contain the data at the top of the
-        # section, such as the unit name and labels.
-        self.head_data = {'section_label': 'Spill', 'ds_label': 'SpillDS', 
-                          'coeff': 0.000, 'modular_limit': 0.000, 'comment': '', 
-                          'rowcount': 0} 
+        self._name = 'Spl'
+        self._name_ds = 'SplDS'
+        self.head_data = {
+            'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
+            'weir_coef': HeadDataItem(1.700, '{:>10}', 1, 0, dtype=dt.FLOAT, dps=3),
+            'modular_limit': HeadDataItem(0.700, '{:>10}', 1, 2, dtype=dt.FLOAT, dps=3),
+        }
 
-        self.unit_type = SpillUnit.UNIT_TYPE
-        self.unit_category = SpillUnit.CATEGORY
-        self.has_datarows = True
-        self.has_ics = True
-        self.ic_label_keys.append('ds_label')
-        self.unit_length = 0
+        self._unit_type = SpillUnit.UNIT_TYPE
+        self._unit_category = SpillUnit.UNIT_CATEGORY
         
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.0))
-        self.row_collection.initCollection(do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.0))
+        dobjs = [
+            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.00),
+            do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.00),
+        ]
+        self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+
+
+    def icLabels(self):
+        return [self._name, self._name_ds]
 
     
     def readUnitData(self, unit_data, file_line):
@@ -91,9 +95,7 @@ class SpillUnit (AIsisUnit):
             AIsisUnit - readUnitData()
         """
         file_line = self._readHeadData(unit_data, file_line)
-        self._name = self.head_data['section_label']
         file_line = self._readRowData(unit_data, file_line)
-        self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
         return file_line - 1
 
     def _readHeadData(self, unit_data, file_line):            
@@ -102,13 +104,12 @@ class SpillUnit (AIsisUnit):
         Args:
             unit_data (list): contains data for this unit.
         """
-        self.head_data['comment'] = unit_data[file_line][5:].strip()
-        self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
-        self.head_data['ds_label'] = unit_data[file_line + 1][12:24].strip()
-        self.head_data['coeff'] = unit_data[file_line + 2][:10].strip()
-        self.head_data['modular_limit'] = unit_data[file_line + 2][10:20].strip()
-        self.unit_length = int(unit_data[file_line + 3].strip())
-        return file_line + 4
+        self.head_data['comment'].value = unit_data[file_line][5:].strip()
+        self._name = unit_data[file_line + 1][:12].strip()
+        self._name_ds = unit_data[file_line + 1][12:24].strip()
+        self.head_data['weir_coef'].value = unit_data[file_line + 2][:10].strip()
+        self.head_data['modular_limit'].value = unit_data[file_line + 2][10:20].strip()
+        return file_line + 3
 
 
     def _readRowData(self, unit_data, file_line):
@@ -120,6 +121,8 @@ class SpillUnit (AIsisUnit):
         Args:
             unit_data: the data pertaining to this unit.
         """ 
+        self.unit_length = int(unit_data[file_line].strip())
+        file_line += 1
         out_line = file_line + self.unit_length
         try:
             # Load the geometry data
@@ -128,18 +131,18 @@ class SpillUnit (AIsisUnit):
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
                 # for the spill section.
-                self.row_collection.addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
-                self.row_collection.addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
+                self.row_data['main'].addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
+                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
                 
                 # In some edge cases there are no values set in the file for the
                 # easting and northing, so use defaults. this actually checks 
                 # that they are both there, e starts at 21, n starts at 31
                 if not len(unit_data[i]) > 31:
-                    self.row_collection.addValue(rdt.EASTING)
-                    self.row_collection.addValue(rdt.NORTHING)
+                    self.row_data['main'].addValue(rdt.EASTING)
+                    self.row_data['main'].addValue(rdt.NORTHING)
                 else:
-                    self.row_collection.addValue(rdt.EASTING, unit_data[i][20:30].strip())
-                    self.row_collection.addValue(rdt.NORTHING, unit_data[i][30:40].strip())
+                    self.row_data['main'].addValue(rdt.EASTING, unit_data[i][20:30].strip())
+                    self.row_data['main'].addValue(rdt.NORTHING, unit_data[i][30:40].strip())
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -157,13 +160,14 @@ class SpillUnit (AIsisUnit):
         Returns:
             list of output data formated the same as in the .DAT file.
         """
-        out_data = self._getHeadData()
-        out_data.extend(self._getRowData()) 
+        num_rows = self.row_data['main'].numberOfRows()
+        out_data = self._getHeadData(num_rows)
+        out_data.extend(self._getRowData(num_rows)) 
         
         return out_data
   
   
-    def _getRowData(self):
+    def _getRowData(self, num_rows):
         """Get the data in the row collection.
         
         For all the rows in the spill geometry section get the data from
@@ -173,37 +177,27 @@ class SpillUnit (AIsisUnit):
             list containing the formatted unit rows.
         """
         out_data = []
-        for i in range(0, self.row_collection.getNumberOfRows()): 
-            out_data.append(self.row_collection.getPrintableRow(i))
+        for i in range(0, num_rows): 
+            out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
    
   
-    def _getHeadData(self):
+    def _getHeadData(self, num_rows):
         """Get the header data formatted for printing out.
         
         Returns:
             list - contining the formatted head data.
         """
-        out_data = []
-        self.head_data['rowcount'] = self.unit_length
-        out_data.append('SPILL ' + self.head_data['comment'])
+        out = []
+        out.append('SPILL ' + self.head_data['comment'].value)
+        out.append('{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
+        out.append(self.head_data['weir_coef'].format() + self.head_data['modular_limit'].format())
+        out.append('{:>10}'.format(num_rows))
+        return out
         
-        # Get the row with the section name and spill info from the formatter
-        out_data.append('{:<12}'.format(self.head_data['section_label']) + 
-                        '{:<12}'.format(self.head_data['ds_label'])
-                        )
-        
-        out_data.append('{:>10}'.format(self.head_data['coeff']) + 
-                        '{:>10}'.format(self.head_data['modular_limit'])
-                        )
-        out_data.append('{:>10}'.format(self.head_data['rowcount']))
-        
-        return out_data
-   
-        
-    def addDataRow(self, chainage, elevation, index=None, easting = 0.00, 
-                                                        northing = 0.00): 
+#     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): 
+    def addDataRow(self, row_vals, rowdata_key='main', index=None):
         """Adds a new row to the spill unit.
 
         Ensures that certain requirements of the data rows, such as the 
@@ -211,15 +205,11 @@ class SpillUnit (AIsisUnit):
         addNewRow() method in the row_collection.
         
         Args:
-            chainage (float): chainage value. Must not be less than the
-                previous chaninage in the collection.
-            elevation (float): elevation in datum.
-            index (int): stating the position to insert the new row - Optional. 
-                If no value is given it will be appended to the end of the 
-                data_object
-            
-            The other values are all optional and will be set to defaults if
-            not given.
+            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
+                value assigned for the DataType. Chainage and Elevation MUST
+                be included.
+            index=None(int): the row to insert into. The existing row at the
+                given index will be moved up by one.
 
         Returns:
             False if the addNewRow() method is unsuccessful.
@@ -231,49 +221,12 @@ class SpillUnit (AIsisUnit):
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
+        keys = row_vals.keys()
+        if not rdt.CHAINAGE in keys or not rdt.ELEVATION in keys:
+            raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
-        # If it greater than the record length then raise an index error
-        if index > self.row_collection.getNumberOfRows():
-            raise IndexError ('Given index out of bounds of row_collection')
-        # If it's the same as the record length then we can set index to None
-        # type and it will be appended instead of inserted.
-        if index == self.row_collection.getNumberOfRows():
-            index = None
-        # Check that there won't be a negative change in chainage across row.
-        if self._checkChainageIncreaseNotNegative(index, chainage) == False:
-            raise ValueError ('Chainage increase cannot be negative')
-
-        # Call the row collection add row method to add the new row.
-        self.row_collection.addNewRow(values_dict={'chainage': chainage, 
-                'elevation': elevation, 'easting': easting, 
-                'northing': northing}, index=index)
+        # Call superclass method to add the new row
+        AIsisUnit.addRow(self, row_vals, index=index)
+        
     
-    
-    def _checkChainageIncreaseNotNegative(self, index, chainageValue):
-        """Checks that new chainage value is not not higher than the next one.
-
-        If the given chainage value for the given index is higher than the
-        value in the following row ISIS will give a negative chainage error.
-
-        It will return true if the value is the last in the row.
-        
-        Args:
-            index (int): The index that the value is to be added at.
-            chainageValue (float): The chainage value to be added.
-        
-        Returns:
-           False if greater or True if less.
-        """
-        if index == None:
-            return True
-        
-        if not index == 0:
-            if self.row_collection.getDataValue('chainage', index - 1) >= chainageValue:
-                return False
-        
-        if self.row_collection.getDataValue('chainage', index) <= chainageValue:
-            return False
-            
-        return True
-        
         

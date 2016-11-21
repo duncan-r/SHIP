@@ -30,13 +30,15 @@ import copy
 # from abc import ABCMeta, abstractmethod
 
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.data_structures import DATA_TYPES as dt
+from ship.isis.headdata import HeadDataItem
 
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-
-class AIsisUnit(object ): 
+    
+class AIsisUnit(object): 
     """Abstract base class for all Dat file units.
     
     This class must be inherited by all classes representing an isis
@@ -61,20 +63,20 @@ class AIsisUnit(object ):
 #     __metaclass__ = ABCMeta
         
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Constructor
         
         Set the defaults for all unit specific variables.
         These should be set by each unit at some point in the setup process.
-        E.g. RiverUnit would set type and category at __init__() while name
+        E.g. RiverUnit would set type and UNIT_CATEGORY at __init__() while name
         and data_objects are set in the readUnitData() method.
         Both of these are called at or immediately after initialisation.
         """
         
-        self._name = 'unknown'                   # Unit name
+        self._name = 'unknown'                   # Unit label
         self._name_ds = 'unknown'                # Unit downstream label
         
-        self._data = None                       # The unit geometry data
+        self._data = None                       
         """This is used for catch-all data storage.
         
         Used in units such as UnknownSection.
@@ -82,10 +84,10 @@ class AIsisUnit(object ):
         likely to ignore this variable and use row_collection and head_data instead.
         """
         
-        self.unit_type = 'Unknown'
+        self._unit_type = 'Unknown'
         """The type of ISIS unit - e.g. 'River'"""
 
-        self.unit_category = 'Unknown'
+        self._unit_category = 'Unknown'
         """The ISIS unit category - e.g. for type 'Usbpr' it would be 'Bridge'"""
         
 #         self.has_datarows = False      
@@ -107,7 +109,7 @@ class AIsisUnit(object ):
         """
 
 #         self.row_collection = None 
-        self.row_data = None 
+        self.row_data = {} 
         """Collection containing all of the ADataRow objects.
         
         This is the main collection for row data in any unit that contains it.
@@ -124,31 +126,16 @@ class AIsisUnit(object ):
         If this is used it should be instanciated as an OrderedDict
         """
 
-        self.head_data = None
+        self.head_data = {}
         """Dictionary containing set values that are always present in the file.
         
         In a RiverUnit this includes values like slope and distance. I.e.
         values that appear in set locations, usually at the top of the unit
         data in the .dat file.
         """
+
         
-#         self.has_ics = False
-        """Flag stating whether unit has initial conditions or not.
-        
-        If set to True the unit is expected to be included in the initial
-        conditions section of the .dat file. This has implications when 
-        adding/removing an object as these actions will lead to the 
-        InitialConditions unit being updated.
-        """
-        
-        self.ic_label_keys = []
-        """Keys for head_data dict to use to assign ic's to.
-        
-        If has_ics is True this list should be appended with any additional
-        labels that must be assigned initial conditions. For example bridges,
-        orifices, etc, all have upstream and downstream nodes that muct be
-        included in the initial conditions table.
-        """
+#         self.ic_labels = []
         
     
     @property
@@ -169,76 +156,69 @@ class AIsisUnit(object ):
         
     @property
     def has_ics(self):
-        if self.ic_labels: return True 
-        else: return False 
-        
-        
-    def getUnitVars(self): 
-        """Getter for the unit variables needed for loading this Unit. 
+        if not self.icLabels():
+            return False
+        else:
+            return True
+    
+    @property
+#     def has_row_data(self):
+    def hasRowData(self):
+        if not self.row_data:
+            return False
+        else:
+            return True
+    
+    @property
+    def unit_type(self):
+        return self._unit_type
 
-        The IsisUnitFactory will call this to work out how to load the data
-        from the .dat file.
+    @property
+    def unit_category(self):
+        return self._unit_category
+
+    
+    def icLabels(self):
+        """Returns the initial_conditions values for this object.
         
-        Returns:
-            Dict - containing the data needed to read the Unit.
+        This method should be overriden by all classes that contain intial
+        conditions.
         
-        Raises:
-            ValueError: if the self.unit_vars variables has not been set
-                by the concrete implementation of this class.
+        For example a BridgeUnit type will have two initial conditions labels;
+        the upstream and downstream label names.
+        
+        By default this will return an empty list.
+        
+        Return:
+            list - of intial condition label names.
         """
-        if self.unit_vars is None:
-            logger.warning('No unit load variables set for %s' % (self.unit_type))
-            raise ValueError ('No unit load variables set for %s' % (self.unit_type))
-        return self.unit_vars
+        return [] 
         
+        
+#     def getUnitVars(self): 
 
+        
 #     # TODO: These are superflous methods. Need removing.
 #     def getName( self ): 
-#         """Getter for the name of the unit
-#         
-#         Warning:
-#             This is unecessary method and is deprecated. Please use the
-#             variable directly.
-#         
-#         Returns:
-#             str - The name of the unit
-#         """
-#         return self._name
-        
 
-    def getUnitType( self ):
-        """Getter for the type of the unit.
         
-        Warning:
-            This is unecessary method and is deprecated. Please use the
-            variable directly.
-        
-        Returns:
-            str - The type of the unit
-        """
-        return self.unit_type
-    
+#     def getUnitType( self ):
+#     def unitType(self):
 
-    def getUnitCategory(self):
-        """Getter for the category of unit
-        
-        Warning:
-            This is unecessary method and is deprecated. Please use the
-            variable directly.
-        
-        Returns:
-            str - The unit category
-        """
-        return self.unit_category
+
+#     def getUnitUNIT_CATEGORY(self):
+
     
     
-    def getDeepCopy(self):
+#     def getDeepCopy(self):
+    def copy(self):
         """Returns a copy of this unit with it's own memory allocation."""
         object_copy = copy.deepcopy(self)
         return object_copy
     
     
-    def getRowDataType(self, key, collection_key='main', copy=False):
+#     def getRowDataType(self, key, collection_key='main', copy=False):
+    def rowDataType(self, key, rowdata_key='main'):
         """Getter for the data series in the data_object dictionary.
 
         Depending on the data that the subclass contains this could be 
@@ -262,13 +242,14 @@ class AIsisUnit(object ):
         if not self.has_datarows:
             return False
         try:
-            return self.row_collection.getDataObject(key)
+            return self.row_data[rowdata_key].getDataObject(key)
         except KeyError:
             logger.warning('Key %s does not exist in collection' % (key))
             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
-    def getRowDataTypeAsList(self, key, collection_key='main'):
+#     def getRowDataTypeAsList(self, key, collection_key='main'):
+    def rowDataTypeAsList(self, key, rowdata_key='main'):
         """Returns the row data object as a list.
 
         This will return the row_collection data object referenced by the key
@@ -294,7 +275,7 @@ class AIsisUnit(object ):
         if not self.has_datarows:
             return False
         try:
-            data_col = self.row_collection.getDataObject(key)
+            data_col = self.row_data[rowdata_key].getDataObject(key)
             vals = []
             for i in range(0, data_col.record_length):
                 vals.append(data_col.getValue(i))
@@ -304,7 +285,8 @@ class AIsisUnit(object ):
             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
-    def getRow(self, index):
+#     def getRow(self, index):
+    def row(self, index, rowdata_key='main'):
         """Get the data vals in a particular row by index.
         
         Args:
@@ -313,40 +295,43 @@ class AIsisUnit(object ):
         Return:
             dict - containing the values for the requested row.
         """
-        return self.row_collection.getRow(index)
+        return self.row_data[rowdata_key].row(index)
     
-#     
+     
 #     def getHeadData(self):
 #         """Returns the header data from this unit.
-# 
+#  
 #         This includes the details outlined at the top of the unit such as the
 #         unit name, labels, global variables, etc.
 #         for some units, such as HeaderUnit or Junctions this is all of the 
 #         data. Other units, such as the RiverUnit also have RowDataObjects.
 #         
+#         Note:
+#             Must be overriden by all concrete classes.
+#          
 #         Returns:
 #             The header data for this unit or None if it hasn't been initialised.
 #         """
-#         return self.head_data
+#         raise NotImplementedError
 
 
-#     def getData(self): 
-#         """Getter for the unit data.
-# 
-#         Return the file geometry data formatted ready for saving in the style
-#         of an ISIS .dat file
-#         
-#         Note:
-#             This method should be overriden by the sub class to restore the 
-#             data to the format required by the dat file.
-#         
-#         Returns:
-#             List of strings - formatted for writing to .dat file.
-#         """
-#         return self.data
+    def getData(self): 
+        """Getter for the unit data.
+  
+        Return the file geometry data formatted ready for saving in the style
+        of an ISIS .dat file
+          
+        Note:
+            This method should be overriden by the sub class to restore the 
+            data to the format required by the dat file.
+          
+        Returns:
+            List of strings - formatted for writing to .dat file.
+        """
+        raise NotImplementedError
     
 
-    def readUnitData(self, data, file_line=None):
+    def readUnitData(self, data, file_line, **kwargs):
         """Reads the unit data supplied to the object.
         
         This method is called by the IsisUnitFactory class when constructing the
@@ -370,32 +355,35 @@ class AIsisUnit(object ):
                 concrete class. 
               
         """ 
-        self.data = data
+        self.head_data['all'] = data
         
     
-    def deleteDataRow(self, index, collection_name=None):
+#     def deleteDataRow(self, index, rowdata_key=None):
+    def deleteRow(self, index, rowdata_key='main'):
         """Removes a data row from the RowDataCollection.
         """
-        if index < 0 or index >= self.row_collection.getNumberOfRows():
-            raise IndexError ('Given index is outside bounds of row_collection data')
+        if index < 0 or index >= self.row_data[rowdata_key].numberOfRows():
+            raise IndexError ('Given index is outside bounds of row_data[rowdata_key] data')
         
-        self.row_collection.deleteRow(index)
+        self.row_data[rowdata_key].deleteRow(index)
         
     
-    def updateDataRow(self, row_vals, index=None, collection_name=None,
-                                                check_negative=True):
+    # DEBUG
+    # TODO
+#     def updateDataRow(self, row_vals, index=None, rowdata_key='main'):
+    def updateRow(self, row_vals, index=None, rowdata_key='main'):
         """
         """
-        if index >= self.row_collection.getNumberOfRows():
+        if index >= self.row_data[rowdata_key].numberOfRows():
             raise IndexError ('Given index is outside bounds of row_collection data')
         
-        # Check that there won't be a negative change in chainage across row.
-        c = row_vals.get(rdt.CHAINAGE)
-        if check_negative and not c is None:
-            if self._checkChainageIncreaseNotNegative(index, 
-                                        row_vals.get(rdt.CHAINAGE)) == False:
-                logger.error('Chainage increase is negative')
-                raise ValueError ('Chainage increase is negative')
+#         # Check that there won't be a negative change in chainage across row.
+#         c = row_vals.get(rdt.CHAINAGE)
+#         if check_negative and not c is None:
+#             if self._checkChainageIncreaseNotNegative(index, 
+#                                         row_vals.get(rdt.CHAINAGE)) == False:
+#                 logger.error('Chainage increase is negative')
+#                 raise ValueError ('Chainage increase is negative')
         
         # Call the row collection add row method to add the new row.
         if collection_name is None:
@@ -406,18 +394,20 @@ class AIsisUnit(object ):
                                         values_dict=row_vals, index=index)
             
     
-    def addDataRow(self, row_vals, collection_name=None, index=None, 
-                                                check_negative=True):
+#     def addDataRow(self, row_vals, collection_name=None, index=None, 
+#                                                 check_negative=True):
+    
+    def addRow(self, row_vals, rowdata_key='main', index=None):
         """Add a new data row to one of the row data collections.
         
         Provides the basics of a function for adding additional row dat to one
-        of the RowDataObjectCollection's held by an AIsisUnit type.
+        of the RowDataCollection's held by an AIsisUnit type.
         
         Checks that key required variables: ROW_DATA_TYPES.CHAINAGE amd 
         ROW_DATA_TYPES.ELEVATION are in the kwargs and that inserting chainge in
         the specified location is not negative, unless check_negatie == False.
         
-        It then passes the kwargs directly to the RowDataObjectCollection's
+        It then passes the kwargs directly to the RowDataCollection's
         addNewRow function. It is the concrete class implementations 
         respnsobility to ensure that these are the expected values for it's
         row collection and to set any defaults. If they are not as expected by
@@ -427,123 +417,100 @@ class AIsisUnit(object ):
             row_vals(dict): Named arguments required for adding a row to the 
                 collection. These will be as stipulated by the way that a 
                 concrete implementation of this class setup the collection.
-            collection_name=None(str): the name of the RowDataObjectCollection
+            rowdata_key='main'(str): the name of the RowDataCollection
                 held by this to add the new row to. If None it is the
                 self.row_collection. Otherwise it is the name of one of the
                 entries in the self.additional_row_collections dictionary.
             index=None(int): the index in the RowDataObjectCollection to insert
                 the row into. If None it will be appended to the end.
-            check_negative=True(Bool): If True the value of CHAINAGE will be
-                checked to see if it is less than the previous entry in the
-                row collection. If it is a ValueError will be raised.
-            
         """
         # If index is >= record length it gets set to None and is appended
-        if index >= self.row_collection.getNumberOfRows():
+        if index >= self.row_data[rowdata_key].numberOfRows():
             index = None
         
-        if check_negative:
-            if not rdt.CHAINAGE in row_vals.keys() or not rdt.ELEVATION in row_vals.keys():
-                logger.error('Required values of CHAINAGE and ELEVATION not given')
-                raise  AttributeError ('Required values of CHAINAGE and ELEVATION not given') 
-            
-            chainage = row_vals.get(rdt.CHAINAGE) 
-
-            # Check that there won't be a negative change in chainage across row.
-            if check_negative and not self.row_collection.getNumberOfRows() == 0:
-                if self._checkChainageIncreaseNotNegative(index, chainage) == False:
-                    logger.error('Chainage increase is negative')
-                    raise ValueError ('Chainage increase is negative')
-
-        # Call the row collection add row method to add the new row.
-#         try:
-        if collection_name is None:
-            self.row_collection.addNewRow(values_dict=row_vals, index=index)
+        self.row_data[rowdata_key].addRow(row_vals, index)
         
-        else:
-            self.additional_row_collections[collection_name].addNewRow(
-                                        values_dict=row_vals, index=index)
     
-    
-    def _checkChainageIncreaseNotNegative(self, index, chainageValue, 
-                                                    collection_name=None):
-        """Checks that new chainage value is not not higher than the next one.
-
-        If the given chainage value for the given index is higher than the
-        value in the following row ISIS will give a negative chainage error.
-
-        It will return true if the value is the last in the row.
+#     def _checkChainageIncreaseNotNegative(self, index, chainageValue, 
+#                                                     collection_name=None):
+    def checkIncreases(self, data_obj, value, index):
+        """Checks that: prev_value < value < next_value.
         
+        If the given value is not greater than the previous value and less 
+        than the next value it will return False.
+        
+        If an index greater than the number of rows in the row_data it will
+        check that it's greater than previous value and return True if it is.
+        
+        Note:
+            the ARowDataObject class accepts a callback function called
+            update_callback which is called whenever an item is added or
+            updated. That is how this method is generally used.
+
         Args:
-            index (int): The index that the value is to be added at.
-            chainageValue (float): The chainage value to be added.
+            data_obj(RowDataObject): containing the values to check against.
+            value(float | int): the value to check.
+            index=None(int): index to check ajacent values against. If None
+                it will assume the index is the last on in the list.
         
         Returns:
-           False if greater or True if less.
+            False if not prev_value < value < next_value. Otherwise True.
         """
-        # If it's being added on the end only check the greater than bit
-        if index == None:
-            if collection_name is None:
-                length = self.row_collection.getNumberOfRows()
-                if length > 0:
-                    if self.row_collection.getDataValue(rdt.CHAINAGE, length - 1) >= chainageValue:
-                        return False
-            else:
-                length = self.additional_row_collections[collection_name].getNumberOfRows()
-                if length > 0:
-                    if self.additional_row_collections[collection_name].getDataValue(
-                                        rdt.CHAINAGE, length - 1) >= chainageValue:
-                        return False
-            return True
+        details = self._getAdjacentDataObjDetails(data_obj, value, index)
+        if details['prev_value']:
+            if not value > details['prev_value']:
+                raise ValueError('CHAINAGE must be > prev index and < next index.')
+        if details['next_value']:
+            if not value < details['next_value']:
+                raise ValueError('CHAINAGE must be > prev index and < next index.')
+    
+    
+    def _getAdjacentDataObjDetails(self, data_obj, value, index):
+        """Safely check the status of adjacent values in an ADataRowObject.
         
-        # Otherwise need to check that it's less than the next one too
-        elif not index == 0:
-            if collection_name is None:
-                logger.debug('Previous index chainage:\t' + 
-                    str(self.row_collection.getDataValue(rdt.CHAINAGE, index-1)))
-                length = self.row_collection.getNumberOfRows()
-                if length > 0:
-                    temp = self.row_collection.getDataValue(rdt.CHAINAGE, index-1)
-                    if self.row_collection.getDataValue(
-                                    rdt.CHAINAGE, index - 1) >= chainageValue:
-                        return False
-                
-                temp2 = self.row_collection.getDataValue(rdt.CHAINAGE, index)
-                if self.row_collection.getDataValue(
-                                rdt.CHAINAGE, index) <= chainageValue:
-                    return False
-                return True
-            else:
-                logger.debug('Previous index chainage:\t' + 
-                    self.additional_row_collections[collection_name].getDataValue(
-                                                        rdt.CHAINAGE, index-1))
-                length = self.row_collection.getNumberOfRows()
-                if length > 0:
-                    if self.additional_row_collections[collection_name].getDataValue(
-                                        rdt.CHAINAGE, index - 1) >= chainageValue:
-                        return False
-                if self.additional_row_collections[collection_name].getDataValue(
-                                rdt.CHAINAGE, index) <= chainageValue:
-                    return False
-                return True
+        Fetches values for previous and next indexes in the data_obj if they
+        exist.
         
-        # Only check if it's greater than the next value
-        else:
-            if collection_name is None:
-                if self.row_collection.getDataValue(
-                                rdt.CHAINAGE, index) <= chainageValue:
-                    return False
-            else:
-                if self.additional_row_collections[collection_name].getDataValue(
-                                rdt.CHAINAGE, index) <= chainageValue:
-                    return False
-            return True
-            
-        return True
+        Note value in return 'index' key will be the given index unless it was
+        None, in which case it will be the maximum index.
+        
+        All other values will be set to None if they do not exist.
+        
+        Args:
+            data_obj(RowDataObject): containing the values to check against.
+            value(float | int): the value to check.
+            index=None(int): index to check ajacent values against. If None
+                it will assume the index is the last on in the list.
+        
+        Return:
+            dict - containing previous and next values and indexes, as well as
+                the given index checked for None.
+        
+        """
+        prev_value = None
+        next_value = None
+        prev_index = None
+        next_index = None
+        if index is None:
+            index = data_obj._max
+
+        if index < 0:
+            raise ValueError('Index must be > 0')
+        if index > 0: 
+            prev_index = index - 1
+            prev_value = data_obj[prev_index]
+        if index < data_obj._max: 
+            next_index = index + 1
+            next_value = data_obj[next_index]
+
+        retvals = {'index': index,
+                   'prev_value': prev_value, 'prev_index': prev_index, 
+                   'next_value': next_value, 'next_index': next_index}
+        return retvals
 
 
     
-class UnknownSection(AIsisUnit):
+class UnknownUnit(AIsisUnit):
     """ Catch all section for unknown parts of the .dat file.
     
     This can be used for all sections of the isis dat file that have not had
@@ -566,15 +533,23 @@ class UnknownSection(AIsisUnit):
     until it reaches a part of the file that it does recognise.
     """
     FILE_KEY = 'UNKNOWN'
+    FILE_KEY2 = None
      
     def __init__ (self): 
         """Constructor.
         """
         AIsisUnit.__init__(self) 
-        self.unit_type = 'Unknown'
-        self.unit_category = 'Unknown'
-        self._name = 'Unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
+        self._unit_type = 'unknown'
+        self._unit_category = 'unknown'
+        self._name = 'unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
     
+
+    def getData(self):
+        return self.head_data['all']
+    
+
+    def readUnitData(self, data):
+        self.head_data['all'] = data
 
 
 class CommentUnit(AIsisUnit):
@@ -585,18 +560,19 @@ class CommentUnit(AIsisUnit):
     in the same format with the COMMENT tags around it.
     """
     # Class constants
-    UNIT_TYPE = 'Comment'
-    CATEGORY = 'Meta'
+    UNIT_TYPE = 'comment'
+    UNIT_CATEGORY = 'meta'
     FILE_KEY = 'COMMENT'
+    FILE_KEY2 = None
        
 
     def __init__(self, text=''):
         """Constructor.
         """
         AIsisUnit.__init__(self) 
-        self.unit_type = 'Comment'
-        self.unit_category = 'Meta'
-        self._name = 'Comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
+        self._unit_type = CommentUnit.UNIT_TYPE
+        self._unit_category = CommentUnit.UNIT_CATEGORY
+        self._name = 'comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
         self.has_datarows = True
         self.data = []
         if not text.strip() == '': self.addCommentText(text)
@@ -647,8 +623,8 @@ class HeaderUnit(AIsisUnit):
     so it seems convenient to put it in this module.
     """
     # Class constants
-    UNIT_TYPE = 'Header'
-    CATEGORY = 'Meta'
+    UNIT_TYPE = 'header'
+    UNIT_CATEGORY = 'meta'
     FILE_KEY = 'HEADER'
     FILE_KEY2 = None
     
@@ -657,9 +633,11 @@ class HeaderUnit(AIsisUnit):
         """Constructor.
         """
         AIsisUnit.__init__(self)
-        self.unit_type = 'Header'
-        self.unit_category = 'Meta'
-        self._name = 'Header'
+#         self._unit_type = 'header' 
+#         self._unit_category = 'meta'
+        self._unit_type = HeaderUnit.UNIT_TYPE
+        self._unit_category = HeaderUnit.UNIT_CATEGORY
+        self._name = 'header'
         self.has_datarows = False
             
     
@@ -669,24 +647,24 @@ class HeaderUnit(AIsisUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         """
-        self.head_data = {'Name': unit_data[0].strip(), 
-                             'Revision': unit_data[1].strip(), 
-                             'node_count': unit_data[2][:10].strip(), 
-                             'Fr_lower': unit_data[2][10:20].strip(), 
-                             'Fr_Upper': unit_data[2][20:30].strip(),
-                             'Min_depth': unit_data[2][30:40].strip(), 
-                             'Direct_method': unit_data[2][40:50].strip(),
-                             'Unknown': unit_data[2][50:60].strip(), 
-                             'Water_temp': unit_data[3][:10].strip(),
-                             'Flow': unit_data[3][10:20].strip(), 
-                             'Head': unit_data[3][20:30].strip(), 
-                             'Math_damp': unit_data[3][30:40].strip(),
-                             'Pivot': unit_data[3][40:50].strip(),
-                             'Relax': unit_data[3][50:60].strip(), 
-                             'Dummy': unit_data[3][60:70].strip(),
-                             'Roughness': unit_data[5].strip()
-                             }
-        self.node_count = int(self.head_data['node_count'])
+        self.head_data = {
+            'name': HeadDataItem(unit_data[0].strip(), '', 0, 0, dtype=dt.STRING),
+            'revision': HeadDataItem(unit_data[1].strip(), '{:>10}', 1, 0, dtype=dt.STRING),
+            'node_count': HeadDataItem(unit_data[2][:10].strip(), '{:>10}', 2, 0, dtype=dt.INT),
+            'fr_lower': HeadDataItem(unit_data[2][10:20].strip(), '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3),
+            'fr_upper': HeadDataItem(unit_data[2][20:30].strip(), '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
+            'min_depth': HeadDataItem(unit_data[2][30:40].strip(), '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
+            'direct_method': HeadDataItem(unit_data[2][40:50].strip(), '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
+            'unknown': HeadDataItem(unit_data[2][50:60].strip(), '{:>10}', 2, 5, dtype=dt.STRING), 
+            'water_temp': HeadDataItem(unit_data[3][:10].strip(), '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
+            'flow': HeadDataItem(unit_data[3][10:20].strip(), '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
+            'head': HeadDataItem(unit_data[3][20:30].strip(), '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
+            'math_damp': HeadDataItem(unit_data[3][30:40].strip(), '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
+            'pivot': HeadDataItem(unit_data[3][40:50].strip(), '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
+            'relax': HeadDataItem(unit_data[3][50:60].strip(), '{:>10}', 3, 5, dtype=dt.FLOAT, dps=3),
+            'dummy': HeadDataItem(unit_data[3][60:70].strip(), '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3), 
+            'roughness': HeadDataItem(unit_data[5].strip(), '{:>10}', 5, 0, dtype=dt.STRING), 
+        }
         
         return file_line + 7
         
@@ -698,28 +676,19 @@ class HeaderUnit(AIsisUnit):
             List - data formatted for writing to the new dat file.
         """
         out_data = []
+        out = []
+        key_order = ['name', 'revision', 'node_count', 'fr_lower', 'fr_upper', 'min_depth',
+                     'direct_method', 'unknown', 'water_temp', 'flow', 'head',
+                     'math_damp', 'pivot', 'relax', 'dummy']
+#         print ('REFH getData')
+        for k in key_order:
+#             print(k)
+            out.append(self.head_data[k].format(True))
+        out = ''.join(out).split('\n')
         
-        out_data.append(self.head_data['Name'])
-        out_data.append(self.head_data['Revision'])
-        out_data.append('{:>10}'.format(self.head_data['node_count']) +
-                        '{:>10}'.format(self.head_data['Fr_lower']) +
-                        '{:>10}'.format(self.head_data['Fr_Upper']) +
-                        '{:>10}'.format(self.head_data['Min_depth']) +
-                        '{:>10}'.format(self.head_data['Direct_method']) +
-                        '{:>10}'.format(self.head_data['Unknown'])
-                        )
-        out_data.append('{:>10}'.format(self.head_data['Water_temp']) +
-                        '{:>10}'.format(self.head_data['Flow']) +
-                        '{:>10}'.format(self.head_data['Head']) +
-                        '{:>10}'.format(self.head_data['Math_damp']) +
-                        '{:>10}'.format(self.head_data['Pivot']) +
-                        '{:>10}'.format(self.head_data['Relax']) +
-                        '{:>10}'.format(self.head_data['Dummy'])
-                        )
-        out_data.append('RAD FILE')
-        out_data.append(self.head_data['Roughness'])
-        out_data.append('END GENERAL')
+        out.append('RAD FILE')
+        out.append(self.head_data['roughness'].format())
+        out.append('END GENERAL')
                         
-        return out_data
-        
+        return out
         

@@ -22,19 +22,23 @@
  Updates:
 
 """
+from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
+"""logging references with a __name__ set to this module."""
+
 import math
+from collections import OrderedDict
 
 from ship.isis.datunits.isisunit import AIsisUnit
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.isis.headdata import HeadDataItem
 from ship.utils.tools import geometry
+from ship.data_structures import DATA_TYPES as dt
 
-from collections import OrderedDict
-
-import logging
-logger = logging.getLogger(__name__)
-"""logging references with a __name__ set to this module."""
 
 
 class BridgeUnit (AIsisUnit): 
@@ -51,101 +55,73 @@ class BridgeUnit (AIsisUnit):
     are available.
     """
     
-    UNIT_TYPE = 'Bridge'
-    CATEGORY = 'Bridge'
+    UNIT_TYPE = 'bridge'
+    UNIT_CATEGORY = 'bridge'
+    FILE_KEY = None
+    FILE_KEY2 = None
     
-    UNIT_VARS = None
-
 
     def __init__(self): 
         """Constructor.
         """
         AIsisUnit.__init__(self)
 
-        # Fill in the header values these contain the data at the top of the
-        # section, such as the unit name and labels.
-        self.head_data = {'section_label': '', 'ds_label': '', 'remote_us': '',
-                          'remote_ds': '', 'roughness_type': 'MANNING',
-                          'calibration_coef': 1, 'skew_angle': 1, 'width': 0,
-                          'dual_distance': 0, 'no_of_orifices': 0, 
-                          'orifice_flag': '', 'op_lower': 0, 'op_upper': 0, 
-                          'op_cd': 0, 'comment': '', 'rowcount': 0, 
-                          'row_count_additional': {'Opening': 1}} 
+        self._unit_type = BridgeUnit.UNIT_TYPE
+        self._unit_category = BridgeUnit.UNIT_CATEGORY
+        self._name = 'BrgUS'
+        self._name_ds = 'BrgDS'
 
-        self.unit_type = BridgeUnit.UNIT_TYPE
-        self.unit_category = BridgeUnit.CATEGORY
-        self.has_datarows = True
-        self.has_ics = True
-        self.ic_label_keys.append('ds_label')
-        self.no_of_collections = 2
-        self.unit_length = 0
-        self.no_of_chainage_rows = 1
-        self.no_of_opening_rows = 1
-        self.no_of_culvert_rows = 0
-        self.additional_row_collections = OrderedDict()
-        
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.row_collection.initCollection(do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''))
+        self.setupRowData()
         
         
-    def getNumberOfOpenings(self):
+
+    def setupRowData(self):
+        """Setup the main geometry and opening RowCollection's. 
+        
+        These are used by all BridgeUnits, but they're added to a method called
+        by the constructor in cases anyone need to override them.
+        """
+        main_dobjs = [
+            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.039),
+            do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''),
+        ]
+        self.row_data['main'] = RowDataCollection.bulkInitCollection(main_dobjs) 
+        
+        open_dobjs = [
+            do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
+            do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
+            do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
+            do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
+        ]
+        self.row_data['opening'] = RowDataCollection.bulkInitCollection(open_dobjs) 
+        
+    
+    def icLabels(self):
+        return [self._name, self._name_ds]
+
+        
+    def numberOfOpenings(self):
         """
         """
-        return self.no_of_opening_rows
+        return self.row_data['opening'].numberOfRows()
     
     
-    def getArea(self):
-        """Returns the cross sectional area of the bridge openings.    
-        
-        Return:
-            Dict - containing the area of the opening(s). keys = 'total', then
-                '1', '2', 'n' for all openings found.
-        """
-        return 0
-#         areas = []
-#         opening_data = self.additional_row_collections['Opening']
-#         x_vals = self.row_collection.getRowDataAsList(rdt.CHAINAGE)
-#         y_vals = self.row_collection.getRowDataAsList(rdt.ELEVATION)
-#         
-#         start_vals = opening_data.getRowDataAsList(rdt.OPEN_START)
-#         end_vals = opening_data.getRowDataAsList(rdt.OPEN_END)
-#         soffit_vals = opening_data.getRowDataAsList(rdt.SOFFIT_LEVEL)
-#         springing_vals = opening_data.getRowDataAsList(rdt.SPRINGING_LEVEL)
-#         openings = zip(start_vals, end_vals, soffit_vals, springing_vals)
-#         
-#         for i, x in enumerate(x_vals):
-#             
-#             if math.fabs(x - ) 
-#         
-#         
-#         i=0
-
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
-        
+         
         See Also:
             AIsisUnit
-            
+             
         Args: 
             unit_data (list): The section of the isis dat file pertaining to 
                 this section. 
         """
         file_line = self._readHeadData(unit_data, file_line)
-        self._name = self.head_data['section_label']
         file_line = self._readMainRowData(unit_data, file_line)
         file_line = self._readAdditionalRowData(unit_data, file_line)
-        self.head_data['rowcount'] = self.row_collection.getNumberOfRows()
-        
-        for key, data in self.additional_row_collections.iteritems():
-            self.head_data['row_count_additional'][key] = data.getNumberOfRows()
-        
+        file_line -= 1
         return file_line
         
 
@@ -170,32 +146,28 @@ class BridgeUnit (AIsisUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
-        self.unit_length = 6 
-        out_line = file_line + self.no_of_chainage_rows
+        no_of_chainage_rows = int(unit_data[file_line].strip())
+        file_line += 1
+        out_line = file_line + no_of_chainage_rows
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the river section.
-                self.row_collection.addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
-                self.row_collection.addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
-                self.row_collection.addValue(rdt.ROUGHNESS, unit_data[i][20:30].strip())
+                self.row_data['main'].addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
+                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
+                self.row_data['main'].addValue(rdt.ROUGHNESS, unit_data[i][20:30].strip())
                 # Might not exist
                 try:
                     bank = unit_data[i][40:51].strip()
                 except:
                     bank = ''
-                self.row_collection.addValue(rdt.EMBANKMENT, bank)
+                self.row_data['main'].addValue(rdt.EMBANKMENT, bank)
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
 
-        self.no_of_opening_rows = int(unit_data[out_line].strip())
-        self.unit_length += self.no_of_chainage_rows + 1
-        return out_line + 1
+        return out_line
     
 
     def getData(self): 
@@ -210,7 +182,6 @@ class BridgeUnit (AIsisUnit):
         out_data = self._getHeadData()
         out_data.extend(self._getRowData()) 
         out_data.extend(self._getAdditionalRowData())
-        
         return out_data
     
     
@@ -240,29 +211,21 @@ class BridgeUnit (AIsisUnit):
             list - containing the formatted unit rows.
         """
         out_data = []
-        no_of_rows = self.row_collection.getNumberOfRows()
+        no_of_rows = self.row_data['main'].numberOfRows()
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
         for i in range(0, no_of_rows): 
-            out_data.append(self.row_collection.getPrintableRow(i))
+            out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
     
     
     def _getAdditionalRowData(self):
         """Get the formatted row data for any additional row data objects.
-        
+         
         Returns:
             list - containing additional row data.
         """
-        out_data = []
-        for data in self.additional_row_collections.itervalues():
-            no_of_rows = data.getNumberOfRows()
-            out_data.append(self._formatDataItem(no_of_rows, 10,
-                                                 is_head_item=False))
-            for i in range(0, no_of_rows):
-                out_data.append(data.getPrintableRow(i))
-        
-        return out_data
+        raise NotImplementedError
    
   
     def _getHeadData(self):
@@ -277,7 +240,7 @@ class BridgeUnit (AIsisUnit):
         raise NotImplementedError
     
    
-    def updateDataRow(self, row_vals, index, collection_name=None):
+    def updateRow(self, row_vals, index, collection_name=None):
         """Updates the row at the given index in the river units row_collection.
         
         The row will be updated at the given index. 
@@ -308,7 +271,7 @@ class BridgeUnit (AIsisUnit):
         AIsisUnit.updateDataRow(self, index=index, row_vals=row_vals)
     
    
-    def addDataRow(self, row_vals, index=None, collection_name=None): 
+    def addRow(self, row_vals, rowdata_key='main', index=None): 
         """Adds a new row to one of this bridge units row_collection's.
         
         The new row will be added at the given index. If no index is given it
@@ -320,7 +283,7 @@ class BridgeUnit (AIsisUnit):
         
         Examples:
             >>> import ship.isis.datunits.rdt as rdt
-            >>> unit.addDataRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)
+            >>> unit.addRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)
 
         Args:
             row_vals(Dict): keys must be datunits.rdt with a legal
@@ -334,61 +297,121 @@ class BridgeUnit (AIsisUnit):
                 dictionary or raise an AttributeError if it doesn't exist.
 
         Raises:
-            AttributeError: If CHAINAGE or ELEVATION are not given.
+            AttributeError: If required values are not given for the rowdata_key
+                collection. See _checkRowKeys().
             KeyError: if the collection_name does not exist.
-            IndexError: If the index does not exist.
             ValueError: If the given value is not accepted by the DataObject's. 
             
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
-        if not rdt.CHAINAGE in row_vals.keys() or not rdt.ELEVATION in row_vals.keys():
-            logger.error('Required values of CHAINAGE and ELEVATION not given')
-            raise  AttributeError ('Required values of CHAINAGE and ELEVATION not given')
-        
-        if not collection_name is None:
-            if not collection_name in self.additional_row_collections.keys():
-                raise KeyError ('collection_name %s does not exist in row collection' % (collection_name))
-        
-        # Setup default values for arguments that aren't given
-        kw={}
-        kw[rdt.CHAINAGE] = row_vals.get(rdt.CHAINAGE)
-        kw[rdt.ELEVATION] = row_vals.get(rdt.ELEVATION)
-        kw[rdt.ROUGHNESS] = row_vals.get(rdt.ROUGHNESS, 0.039)
-        kw[rdt.EMBANKMENT] = row_vals.get(rdt.EMBANKMENT, False)
-
-        # Call superclass method to add the new row
-        AIsisUnit.addDataRow(self, index=index, row_vals=kw, 
-                                            collection_name=collection_name)
+        self._checkRowKeys(row_vals, rowdata_key)
+        AIsisUnit.addRow(self, row_vals=row_vals, rowdata_key=rowdata_key, index=index)
     
     
-    def _checkChainageIncreaseNotNegative(self, index, chainageValue):
-        """Checks that new chainage value is not not higher than the next one.
-
-        If the given chainage value for the given index is higher than the
-        value in the following row ISIS will give a negative chainage error.
-
-        It will return true if the value is the last in the row.
+    def _checkRowKeys(self, row_vals, rowdata_key):
+        """Ensure certain values exist and are sane when updating a row.
+        
+        if rowdata_key == opening checks on the values will be made.
+        SOFFIT_LEVEL must be >= SPRINGING_LEVEL.
+        OPEN_END must be > OPEN_START.
+        
+        if rowdata_type == 'main' rdt.CHAINAGE and rdt.ELEVATION must be 
+        given. if rowdata_type == 'opening' rdt.OPEN_START and rdt.OPEN_END
+        must be given.
         
         Args:
-            index (int): The index that the value is to be added at.
-            chainageValue (float): The chainage value to be added.
+            row_vals(dict): {ROW_DATA_TYPE: value} to update with.
+            rowdata_key(str): the self.row_data dict key to update.
         
-        Returns:
-           False if greater or True if less.
+        Raises:
+            AttributeError: if the required row_vals are not provided.
         """
-        if index == None:
-            return True
+        keys = row_vals.keys()
+        if rowdata_key == 'main':
+            if not rdt.CHAINAGE in keys or not rdt.ELEVATION in keys:
+                logger.error('Bridge: Required values of CHAINAGE and ELEVATION not given')
+                raise AttributeError('Bridge: row_vals must include CHAINAGE and ELEVATION.')
+
+        elif rowdata_key == 'opening':
+            if not rdt.OPEN_START in keys or not rdt.OPEN_END in keys:
+                logger.error('Bridge: Required values of OPEN_START and OPEN_END not given')
+                raise AttributeError('Bridge: row_vals must include OPEN_START and OPEN_END.')
+            if not row_vals[rdt.OPEN_END] > row_vals[rdt.OPEN_START]:
+                logger.error('Bridge: OPEN_END must be > than OPEN_START')
+                raise AttributeError('Bridge: OPEN_END must be > than OPEN_START')
+            if rdt.SOFFIT_LEVEL in keys and rdt.SPRINGING_LEVEL in keys:
+                if not row_vals[rdt.SOFFIT_LEVEL] >= row_vals[rdt.SPRINGING_LEVEL]:
+                    logger.error('Bridge: SOFFIT_LEVEL must be >= SPRINGING_LEVEL')
+                    raise AttributeError('Bridge: SOFFIT_LEVEL must be >= SPRINGING_LEVEL')
+                
+ 
+    
+    def checkOpening(self, data_obj, value, index):
+        """Ensures that the bridge opening values are ok.
         
-        if not index == 0:
-            if self.row_collection.getDataValue(rdt.CHAINAGE, index - 1) >= chainageValue:
-                return False
+        OPEN_END must be > OPEN_START on the same row.
+        OPEN_START must be > than OPEN_END on a previous row.
+        OPEN_END must be > OPEN_START on a previous row.
         
-        if self.row_collection.getDataValue(rdt.CHAINAGE, index) <= chainageValue:
-            return False
+        Args:
+            data_obj(RowDataObj): to check the values for.
+            value(float): the new value to check.
+            index(int): the index the value will be inserted or updated at.
+        
+        Raises:
+            ValueError - if value failes tests at index.
+        """
+        details = self._getAdjacentDataObjDetails(data_obj, value, index)
+
+        if data_obj.data_type == rdt.OPEN_START:
+            if details['prev_value']:
+                if not value > details['prev_value']:
+                    raise ValueError('Bridge: OPEN_START must be > than previous value')
+                if not value > self.row_data['opening'].dataObject(rdt.OPEN_END)[details['prev_index']]:#.getValue(details['prev_index']):
+                    raise ValueError('Bridge: OPEN_START must be > than previous OPEN_END value')
+            if details['next_value']:
+                if not value < details['next_value']:
+                    raise ValueError('Bridge: OPEN_START must be < than next OPEN_START value')
+
+        elif data_obj.data_type == rdt.OPEN_END:
+            if details['prev_value']:
+                if not value > details['prev_value']:
+                    raise ValueError('Bridge: OPEN_END must be > than previous OPEN_END value')
+                if not value > self.row_data['opening'].dataObject(rdt.OPEN_START)[details['index']]:#.getValue(details['index']):
+                    raise ValueError('Bridge: OPEN_END must be > than OPEN_START value')
+            if details['next_value']:
+                if not value < details['next_value']:
+                    raise ValueError('OBridge: PEN_END must be < than next OPEN_END value')
+                if not value > self.row_data['opening'].dataObject(rdt.OPEN_START)[details['next_index']]:#.getValue(details['next_index']):
+                    raise ValueError('Bridge: OPEN_END must be < than next OPEN_START value')
             
-        return True
         
+    def area(self):
+        """Returns the cross sectional area of the bridge openings.    
+        
+        Return:
+            Dict - containing the area of the opening(s). keys = 'total', then
+                '1', '2', 'n' for all openings found.
+        """
+        return 0
+#         areas = []
+#         opening_data = self.additional_row_collections['Opening']
+#         x_vals = self.row_collection.getRowDataAsList(rdt.CHAINAGE)
+#         y_vals = self.row_collection.getRowDataAsList(rdt.ELEVATION)
+#         
+#         start_vals = opening_data.getRowDataAsList(rdt.OPEN_START)
+#         end_vals = opening_data.getRowDataAsList(rdt.OPEN_END)
+#         soffit_vals = opening_data.getRowDataAsList(rdt.SOFFIT_LEVEL)
+#         springing_vals = opening_data.getRowDataAsList(rdt.SPRINGING_LEVEL)
+#         openings = zip(start_vals, end_vals, soffit_vals, springing_vals)
+#         
+#         for i, x in enumerate(x_vals):
+#             
+#             if math.fabs(x - ) 
+#         
+#         
+#         i=0
 
 
 class BridgeUnitUsbpr (BridgeUnit): 
@@ -398,18 +421,11 @@ class BridgeUnitUsbpr (BridgeUnit):
     and file read/write behaviour.
     """
     
-    UNIT_TYPE = 'Usbpr'
-    CATEGORY = 'Bridge'
+    UNIT_TYPE = 'usbpr'
+    UNIT_CATEGORY = 'bridge'
     FILE_KEY = 'BRIDGE'
+    FILE_KEY2 = 'USBPR1978'
 
-    UNIT_VARS = {'File_id': 'USBPR1978', 
-                 'Vars': {'headlength': 9, 
-                          'rowlengthpos': 8, 
-                          'index_shift': -1,
-                          'additional_row_data': 2,
-                          'Subfile_id': 'USBPR1978'
-                          }
-                } 
 
     def __init__(self): 
         """Constructor.
@@ -418,79 +434,45 @@ class BridgeUnitUsbpr (BridgeUnit):
             BridgeUnit
         """
         BridgeUnit.__init__(self)
+        
+        self._unit_type = BridgeUnitUsbpr.UNIT_TYPE
+        self._unit_category = BridgeUnit.UNIT_CATEGORY
 
         # Fill in the header values these contain the data at the top of the
-        # section, such as the unit name and labels. #dict(self.head_data, **
-        self.head_data = dict(self.head_data, **{'pier_width': 0, 'abutment_type': 1, 
-                          'no_of_piers': 0, 'pier_shape': '', 'pier_faces': '', 
-                          'pier_calibration_coeff': 0, 'abutment_align': '', 
-                          'no_arches': 0, 'no_culverts': 0})
-        self.head_data['row_count_additional'] = {'Opening': 1, 'Orifice': 0}
+        # section
+        self.head_data = {
+            'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
+            'remote_us': HeadDataItem('', '{:<12}', 2, 2, dtype=dt.STRING),
+            'remote_ds': HeadDataItem('', '{:<12}', 2, 3, dtype=dt.STRING),
+            'roughness_type': HeadDataItem('MANNING', '{:<8}', 3, 0, dtype=dt.CONSTANT, choices=('MANNING',)),
+            'calibration_coef': HeadDataItem(1.000, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=3),
+            'skew_angle': HeadDataItem(0.000, '{:>10}', 4, 1, dtype=dt.FLOAT, dps=3),
+            'width': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
+            'dual_distance': HeadDataItem(0.000, '{:>10}', 4, 3, dtype=dt.FLOAT, dps=3),
+            'num_of_orifices': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.INT),
+            'orifice_flag': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'ORIFICE')),
+            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3),
+            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3),
+            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3),
+            'abutment_type': HeadDataItem('3', '{:>10}', 5, 0, dtype=dt.CONSTANT, choices=('1', '2', '3')),
+            'num_of_piers': HeadDataItem(0, '{:>10}', 6, 0, dtype=dt.INT),
+            'pier_shape': HeadDataItem('FLAT', '{:<10}', 6, 1, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH')),
+            'pier_shape_2': HeadDataItem('', '{:<10}', 6, 2, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH'), allow_blank=True),
+            'pier_calibration_coef': HeadDataItem('', '{:>10}', 6, 3, dtype=dt.FLOAT, dps=3, allow_blank=True),
+            'abutment_align': HeadDataItem('ALIGNED', '{:>10}', 7, 0, dtype=dt.CONSTANT, choices=('ALIGNED', 'SKEW')),
+        }
 
-        self.unit_type = 'Usbpr'
-        self.unit_category = BridgeUnit.CATEGORY
-        self.has_datarows = True
-        self.no_of_collections = 3
-        self.additional_row_collections['Opening'] = None
-        self.additional_row_collections['Orifice'] = None
-        
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Orifice'] = RowDataCollection()
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(0, rdt.CULVERT_INVERT, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(1, rdt.CULVERT_SOFFIT, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(2, rdt.CULVERT_AREA, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(3, rdt.CULVERT_CD_PART, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(4, rdt.CULVERT_CD_FULL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Orifice'].initCollection(do.FloatData(5, rdt.CULVERT_DROWNING, format_str='{:>10}', no_of_dps=3, default=0.0))
-        
-    
-    def _getHeadData(self):
-        """Return the extracted header data.
-        
-        See Also:
-            BridgeUnit
-        """
-        out_data = []
-        out_data.append('BRIDGE ' + self.head_data['comment'])
-        out_data.append('USBPR1978')
-        out_data.append(self._formatDataItem('section_label', 12, align_right=False) + 
-                        self._formatDataItem('ds_label', 12, align_right=False) +
-                        self._formatDataItem('remote_us', 12, align_right=False) +
-                        self._formatDataItem('remote_ds', 12, align_right=False)
-                        )
-        out_data.append('MANNING')
-        out_data.append(self._formatDataItem('calibration_coef', 10, 3) +
-                        self._formatDataItem('skew_angle', 10, 3) +
-                        self._formatDataItem('width', 10, 3) +
-                        self._formatDataItem('dual_distance', 10, 3) +
-                        self._formatDataItem('no_of_orifices', 10) +
-                        self._formatDataItem('orifice_flag', 10) +
-                        self._formatDataItem('op_lower', 10, 3) +
-                        self._formatDataItem('op_upper', 10, 3) +
-                        self._formatDataItem('op_cd', 10, 3)
-                        )
-        out_data.append(self._formatDataItem('abutment_type', 10))
-        out_data.append(self._formatDataItem('no_of_piers', 10) +
-                        self._formatDataItem('pier_shape', 10, align_right=False) +
-                        self._formatDataItem('pier_shape_2', 10) +
-                        self._formatDataItem('pier_calibration_coeff', 10)
-                        )
-        out_data.append(self._formatDataItem('abutment_align', 10))
-        
-        return out_data 
+        # Add an culvert RowCollection to self.row_data dict
+        dobjs = [
+            do.FloatData(0, rdt.INVERT, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(1, rdt.SOFFIT, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(2, rdt.AREA, format_str='{:>10}', no_of_dps=3, default=0.0),
+            do.FloatData(3, rdt.CD_PART, format_str='{:>10}', no_of_dps=3, default=1.0),
+            do.FloatData(4, rdt.CD_FULL, format_str='{:>10}', no_of_dps=3, default=1.0),
+            do.FloatData(5, rdt.DROWNING, format_str='{:>10}', no_of_dps=3, default=1.0),
+        ]
+        self.row_data['culvert'] = RowDataCollection.bulkInitCollection(dobjs) 
+
     
     
     def _readHeadData(self, unit_data, file_line):            
@@ -499,29 +481,28 @@ class BridgeUnitUsbpr (BridgeUnit):
         See Also:
             BridgeUnit
         """
-        self.head_data['comment'] = unit_data[file_line][6:].strip()
-        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
-        self.head_data['ds_label'] = unit_data[file_line + 2][12:24].strip()
-        self.head_data['remote_us'] = unit_data[file_line + 2][24:36].strip()
-        self.head_data['remote_ds'] = unit_data[file_line + 2][36:48].strip()
-        self.head_data['calibration_coef'] = unit_data[file_line + 4][:10].strip()
-        self.head_data['skew_angle'] = unit_data[file_line + 4][10:20].strip()
-        self.head_data['width'] = unit_data[file_line + 4][20:30].strip()
-        self.head_data['dual_distance'] = unit_data[file_line + 4][30:40].strip()
-        self.head_data['no_of_orifices'] = unit_data[file_line + 4][40:50].strip()
-        self.head_data['orifice_flag'] = unit_data[file_line + 4][50:60].strip()
-        self.head_data['op_lower'] = unit_data[file_line + 4][60:70].strip()
-        self.head_data['op_upper'] = unit_data[file_line + 4][70:80].strip()
-        self.head_data['op_cd'] = unit_data[file_line + 4][80:90].strip()
-        self.head_data['abutment_type'] = unit_data[file_line + 5][0:10].strip()
-        self.head_data['no_of_piers'] = unit_data[file_line + 6][:10].strip()
-        self.head_data['pier_shape'] = unit_data[file_line + 6][10:20].strip()
-        self.head_data['pier_shape_2'] = unit_data[file_line + 6][20:30].strip()
-        self.head_data['pier_calibration_coeff'] = unit_data[file_line + 6][30:40].strip()
-        self.head_data['abutment_align'] = unit_data[file_line + 7][:10].strip()
+        self.head_data['comment'].value = unit_data[file_line][6:].strip()
+        self._name = unit_data[file_line + 2][:12].strip()
+        self._name_ds = unit_data[file_line + 2][12:24].strip()
+        self.head_data['remote_us'].value = unit_data[file_line + 2][24:36].strip()
+        self.head_data['remote_ds'].value = unit_data[file_line + 2][36:48].strip()
+        self.head_data['calibration_coef'].value = unit_data[file_line + 4][:10].strip()
+        self.head_data['skew_angle'].value = unit_data[file_line + 4][10:20].strip()
+        self.head_data['width'].value = unit_data[file_line + 4][20:30].strip()
+        self.head_data['dual_distance'].value = unit_data[file_line + 4][30:40].strip()
+        self.head_data['num_of_orifices'].value = unit_data[file_line + 4][40:50].strip()
+        self.head_data['orifice_flag'].value = unit_data[file_line + 4][50:60].strip()
+        self.head_data['op_lower'].value = unit_data[file_line + 4][60:70].strip()
+        self.head_data['op_upper'].value = unit_data[file_line + 4][70:80].strip()
+        self.head_data['op_cd'].value = unit_data[file_line + 4][80:90].strip()
+        self.head_data['abutment_type'].value = unit_data[file_line + 5][0:10].strip()
+        self.head_data['num_of_piers'].value = unit_data[file_line + 6][:10].strip()
+        self.head_data['pier_shape'].value = unit_data[file_line + 6][10:20].strip()
+        self.head_data['pier_shape_2'].value = unit_data[file_line + 6][20:30].strip()
+        self.head_data['pier_calibration_coef'].value = unit_data[file_line + 6][30:40].strip()
+        self.head_data['abutment_align'].value = unit_data[file_line + 7][:10].strip()
        
-        self.no_of_chainage_rows = int(unit_data[file_line + 8].strip())
-        return file_line + 9
+        return file_line + 8
 
 
     def _readAdditionalRowData(self, unit_data, file_line):
@@ -531,7 +512,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             BridgeUnit
         """
         file_line = self._readArchRowData(unit_data, file_line)
-        file_line = self._readOrificeRowData(unit_data, file_line)
+        file_line = self._readCulvertRowData(unit_data, file_line)
         return file_line 
     
 
@@ -544,7 +525,9 @@ class BridgeUnitUsbpr (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-        out_line = file_line + self.no_of_opening_rows
+        no_of_opening_rows = int(unit_data[file_line].strip())
+        file_line += 1
+        out_line = file_line + no_of_opening_rows
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
@@ -552,22 +535,20 @@ class BridgeUnitUsbpr (BridgeUnit):
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
                 # for the river section.
-                self.additional_row_collections['Opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
+                self.row_data['opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
+                self.row_data['opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
+                self.row_data['opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
+                self.row_data['opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
         
-        self.no_of_culvert_rows = int(unit_data[out_line].strip())
-        self.unit_length += self.no_of_culvert_rows + 1
-        return out_line + 1
+        return out_line
         
     
-    def _readOrificeRowData(self, unit_data, file_line):
-        """Load the data defining the orifice openings in the bridge.
+    def _readCulvertRowData(self, unit_data, file_line):
+        """Load the data defining the culvert openings in the bridge.
         
         Args:
             unit_data (list): the data pertaining to this unit.
@@ -578,7 +559,9 @@ class BridgeUnitUsbpr (BridgeUnit):
             little more relevant by raising a different error. Or they could
             be dealt with better here.
         """ 
-        out_line = file_line + self.no_of_culvert_rows
+        no_of_culvert_rows = int(unit_data[file_line].strip())
+        file_line += 1
+        out_line = file_line + no_of_culvert_rows
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
@@ -586,19 +569,86 @@ class BridgeUnitUsbpr (BridgeUnit):
                 # Put the values into the respective data objects            
                 # This is done based on the column widths set in the Dat file
                 # for the river section.
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_INVERT, unit_data[i][0:10].strip())
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_SOFFIT, unit_data[i][10:20].strip())
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_AREA, unit_data[i][20:30].strip())
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_CD_PART, unit_data[i][30:40].strip())
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_CD_FULL, unit_data[i][40:50].strip())
-                self.additional_row_collections['Orifice'].addValue(rdt.CULVERT_DROWNING, unit_data[i][50:60].strip())
+                self.row_data['culvert'].addValue(rdt.INVERT, unit_data[i][0:10].strip())
+                self.row_data['culvert'].addValue(rdt.SOFFIT, unit_data[i][10:20].strip())
+                self.row_data['culvert'].addValue(rdt.AREA, unit_data[i][20:30].strip())
+                self.row_data['culvert'].addValue(rdt.CD_PART, unit_data[i][30:40].strip())
+                self.row_data['culvert'].addValue(rdt.CD_FULL, unit_data[i][40:50].strip())
+                self.row_data['culvert'].addValue(rdt.DROWNING, unit_data[i][50:60].strip())
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
         
-        self.unit_length += self.no_of_culvert_rows
-        return out_line - 1
+        return out_line
+    
+        
+    def _getHeadData(self):
+        """Return the extracted header data.
+        
+        See Also:
+            BridgeUnit
+        """
+        out = []
+        out.append('BRIDGE ' + self.head_data['comment'].value)
+        out.append('\nUSBPR1978')
+        out.append('\n' + '{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds) +
+                        self.head_data['remote_us'].format() + self.head_data['remote_ds'].format())
+        key_order = [
+            'roughness_type', 'calibration_coef', 'skew_angle', 'width', 'dual_distance', 'num_of_orifices',
+            'orifice_flag', 'op_lower', 'op_upper', 'op_cd', 'abutment_type',
+            'num_of_piers', 'pier_shape', 'pier_shape_2', 'pier_calibration_coef',
+            'abutment_align',
+        ]
+        for k in key_order:
+            out.append(self.head_data[k].format(True))
+        final_out = ''.join(out).split('\n')
+        
+        return final_out
+    
+    
+    def _getAdditionalRowData(self):
+        """Get the formatted row data for any additional row data objects.
+        
+        Returns:
+            list - containing additional row data.
+        """
+        out_data = []
+
+        no_of_rows = self.row_data['opening'].numberOfRows()
+        out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
+        for i in range(0, no_of_rows):
+            out_data.append(self.row_data['opening'].getPrintableRow(i))
+        
+        no_of_rows = self.row_data['culvert'].numberOfRows()
+        out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
+        for i in range(0, no_of_rows):
+            out_data.append(self.row_data['culvert'].getPrintableRow(i))
+        
+        return out_data
+    
+    
+    def _checkRowKeys(self, row_vals, rowdata_key):
+        """Overriddes superclass method.
+        
+        Checks culvert keys as well.
+        """
+        BridgeUnit._checkRowKeys(self, row_vals, rowdata_key)
+
+        keys = row_vals.keys()
+        if rowdata_key == 'culvert':
+            if not rdt.INVERT in keys or not rdt.SOFFIT in keys:
+                logger.error('Required values of INVERT, SOFFIT and AREA not given')
+                raise AttributeError('Required values of INVERT, SOFFIT and AREA not given')
+            
+            if not row_vals[rdt.SOFFIT] > row_vals[rdt.INVERT]:
+                raise ValueError('Bridge culvert: SOFFIT must be > INVERT')
+        
+        
+    def checkOrifice(self, data_obj, value, index):
+        """
+        """
+        pass
 
         
 
@@ -610,18 +660,11 @@ class BridgeUnitArch (BridgeUnit):
     """
     
     # Additional values to add to the constants list
-    UNIT_TYPE = 'Arch'
-    CATEGORY = 'Bridge'
+    UNIT_TYPE = 'arch'
+    UNIT_CATEGORY = BridgeUnit.UNIT_CATEGORY
     FILE_KEY = 'BRIDGE'
+    FILE_KEY2 = 'ARCH'
 
-    UNIT_VARS = {'File_id': 'ARCH', 
-                 'Vars': {'headlength': 6, 
-                          'rowlengthpos': 5, 
-                          'index_shift': -1,
-                          'additional_row_data': 1,
-                          'Subfile_id': 'ARCH'
-                          }
-                } 
 
     def __init__(self): 
         """Constructor.
@@ -631,23 +674,24 @@ class BridgeUnitArch (BridgeUnit):
         """
         BridgeUnit.__init__(self)
 
-        self.head_data['row_count_additional'] = {'Opening': 1}
+        self._unit_type = BridgeUnitArch.UNIT_TYPE
+        self._unit_category = BridgeUnit.UNIT_CATEGORY
 
-        self.unit_type = 'Arch'
-        self.unit_category = BridgeUnit.CATEGORY
-        self.has_datarows = True
-        self.no_of_collections = 2
-        self.additional_row_collections['Opening'] = None
-        
-        # Add the new row data types to the object collection
-        # All of them must have type, output format, default value and position
-        # in the row as the first variables in vars.
-        # The others are DataType specific.
-        self.additional_row_collections['Opening'] = RowDataCollection()
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
-        self.additional_row_collections['Opening'].initCollection(do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0))
+        self.head_data = {
+            'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
+            'remote_us': HeadDataItem('', '{:<12}', 2, 2, dtype=dt.STRING),
+            'remote_ds': HeadDataItem('', '{:<12}', 2, 3, dtype=dt.STRING),
+            'roughness_type': HeadDataItem('MANNING', '{:<8}', 3, 0, dtype=dt.CONSTANT, choices=('MANNING',)),
+            'calibration_coef': HeadDataItem(1.000, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=3),
+            'skew_angle': HeadDataItem(0.000, '{:>10}', 4, 1, dtype=dt.FLOAT, dps=3),
+            'width': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
+            'dual_distance': HeadDataItem(0.000, '{:>10}', 4, 3, dtype=dt.FLOAT, dps=3),
+            'num_of_orifices': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.INT),
+            'orifice_flag': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'ORIFICE')),
+            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3),
+            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3),
+            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3),
+        }
         
     
     def _getHeadData(self):
@@ -656,28 +700,23 @@ class BridgeUnitArch (BridgeUnit):
         See Also:
             BridgeUnit
         """
-        out_data = []
-        out_data.append('BRIDGE ' + self.head_data['comment'])
-        out_data.append('ARCH')
-        out_data.append(self._formatDataItem('section_label', 12, align_right=False) + 
-                        self._formatDataItem('ds_label', 12, align_right=False) +
-                        self._formatDataItem('remote_us', 12, align_right=False) +
-                        self._formatDataItem('remote_ds', 12, align_right=False)
-                        )
-        out_data.append('MANNING')
-        out_data.append(self._formatDataItem('calibration_coef', 10, 3) +
-                        self._formatDataItem('skew_angle', 10, 3) +
-                        self._formatDataItem('width', 10, 3) +
-                        self._formatDataItem('dual_distance', 10, 3) +
-                        self._formatDataItem('no_of_orifices', 10) +
-                        self._formatDataItem('orifice_flag', 10) +
-                        self._formatDataItem('op_lower', 10, 3) +
-                        self._formatDataItem('op_upper', 10, 3) +
-                        self._formatDataItem('op_cd', 10, 3)
-                        )
+        out = []
+        out.append('BRIDGE ' + self.head_data['comment'].value)
+        out.append('ARCH')
+        out.append('{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds) +
+                        self.head_data['remote_us'].format() + self.head_data['remote_ds'].format())
+        out.append(self.head_data['roughness_type'].value)
+        key_order = [
+            'calibration_coef', 'skew_angle', 'width', 'dual_distance', 'num_of_orifices',
+            'orifice_flag', 'op_lower', 'op_upper', 'op_cd'
+        ]
+        temp = []
+        for k in key_order:
+            temp.append(self.head_data[k].format())
+        out += ''.join(temp).split('\n')
         
-        return out_data 
-    
+        return out
+        
     
     def _readHeadData(self, unit_data, file_line):            
         """Format the header data for writing to file.
@@ -685,35 +724,33 @@ class BridgeUnitArch (BridgeUnit):
         See Also:
             BridgeUnit
         """
-        self.head_data['comment'] = unit_data[file_line][6:].strip()
-        self._name = self.head_data['section_label'] = unit_data[file_line + 2][:12].strip()
-        self.head_data['ds_label'] = unit_data[file_line + 2][12:24].strip()
-        self.head_data['remote_us'] = unit_data[file_line + 2][24:36].strip()
-        self.head_data['remote_ds'] = unit_data[file_line + 2][36:48].strip()
-        self.head_data['calibration_coef'] = unit_data[file_line + 4][:10].strip()
-        self.head_data['skew_angle'] = unit_data[file_line + 4][10:20].strip()
-        self.head_data['width'] = unit_data[file_line + 4][20:30].strip()
-        self.head_data['dual_distance'] = unit_data[file_line + 4][30:40].strip()
-        self.head_data['no_of_orifices'] = unit_data[file_line + 4][40:50].strip()
-        self.head_data['orifice_flag'] = unit_data[file_line + 4][50:60].strip()
-        self.head_data['op_lower'] = unit_data[file_line + 4][60:70].strip()
-        self.head_data['op_upper'] = unit_data[file_line + 4][70:80].strip()
-        self.head_data['op_cd'] = unit_data[file_line + 4][80:90].strip()
+        self.head_data['comment'].value = unit_data[file_line][6:].strip()
+        self._name = unit_data[file_line + 2][:12].strip()
+        self._name_ds = unit_data[file_line + 2][12:24].strip()
+        self.head_data['remote_us'].value = unit_data[file_line + 2][24:36].strip()
+        self.head_data['remote_ds'].value = unit_data[file_line + 2][36:48].strip()
+        self.head_data['calibration_coef'].value = unit_data[file_line + 4][:10].strip()
+        self.head_data['skew_angle'].value = unit_data[file_line + 4][10:20].strip()
+        self.head_data['width'].value = unit_data[file_line + 4][20:30].strip()
+        self.head_data['dual_distance'].value = unit_data[file_line + 4][30:40].strip()
+        
+        # This doesn't get set by default in fmp so turn a blank str into 0
+        orif = unit_data[file_line + 4][40:50].strip()
+        try:
+            orif = int(orif)
+        except (ValueError, AttributeError):
+            orif = 0
+
+        self.head_data['num_of_orifices'].value = orif
+        self.head_data['orifice_flag'].value = unit_data[file_line + 4][50:60].strip()
+        self.head_data['op_lower'].value = unit_data[file_line + 4][60:70].strip()
+        self.head_data['op_upper'].value = unit_data[file_line + 4][70:80].strip()
+        self.head_data['op_cd'].value = unit_data[file_line + 4][80:90].strip()
        
-        self.no_of_chainage_rows = int(unit_data[file_line + 5].strip())
-        return file_line + 6
+        return file_line + 5
+
 
     def _readAdditionalRowData(self, unit_data, file_line):
-        """Get any additional data rows.
-        
-        See Also:
-            BridgeUnit
-        """
-        file_line = self._readArchRowData(unit_data, file_line)
-        return file_line - 1
-    
-
-    def _readArchRowData(self, unit_data, file_line):
         """Load the data defining the openings in the bridge.
         
         Args:
@@ -722,23 +759,37 @@ class BridgeUnitArch (BridgeUnit):
         TODO:
             Change the name of this function to _readOpeningRowData.
         """ 
-        out_line = file_line + self.no_of_opening_rows
+        no_of_opening_rows = int(unit_data[file_line].strip())
+        file_line += 1
+        out_line = file_line + no_of_opening_rows
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the river section.
-                self.additional_row_collections['Opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
-                self.additional_row_collections['Opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
+                self.row_data['opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
+                self.row_data['opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
+                self.row_data['opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
+                self.row_data['opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
         
-        self.unit_length += self.no_of_culvert_rows + 1
         return out_line
         
+
+    def _getAdditionalRowData(self):
+        """Get the formatted row data for any additional row data objects.
+        
+        Returns:
+            list - containing additional row data.
+        """
+        out_data = []
+        no_of_rows = self.row_data['opening'].numberOfRows()
+        out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
+        for i in range(0, no_of_rows):
+            out_data.append(self.row_data['opening'].getPrintableRow(i))
+        
+        return out_data
+    
+    

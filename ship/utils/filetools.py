@@ -184,7 +184,7 @@ def getOpenFileDialog(path='', types='All (*.*)', multi_file=True):
     """Launch an open  file dialog and return the user selected path.
 
     The file types should follow the format:
-        "DAT (*.DAT);;TXT (*.txt);;IEF (*.IEF)"
+        'DAT (*.DAT);;TXT (*.txt);;IEF (*.IEF)'
     
     If PyQt libraries are not available (HAS_QT == False) this function will
     raise an ImportError.

@@ -27,10 +27,10 @@ ship.tuflow.tuflowmodel module
     :undoc-members:
     :show-inheritance:
 
-ship.tuflow.tuflowmodelfile module
+ship.tuflow.controlfile module
 ----------------------------------
 
-.. automodule:: ship.tuflow.tuflowmodelfile
+.. automodule:: ship.tuflow.controlfile
     :members:
     :undoc-members:
     :show-inheritance:

@@ -59,7 +59,7 @@ class HeaderUnitTests(unittest.TestCase):
         header.readUnitData(self.input_contents, 0) 
          
         self.assertTrue(header.getUnitType() == 'Header', 'Header.unit_type fail:  Header.unit_type = ' + header.unit_type)
-        self.assertTrue(header.getUnitCategory() == 'Meta', 'Header.unit_category fail:  Header.unit_category = ' + header.unit_category)
+        self.assertTrue(header.getUnitUNIT_CATEGORY() == 'Meta', 'Header.unit_UNIT_CATEGORY fail:  Header.unit_UNIT_CATEGORY = ' + header.unit_UNIT_CATEGORY)
         self.assertTrue(header.getName() == 'Header', 'Header.name fail:  Header.name = ' + header.name)
 #         self.assertTrue(header.getFileOrder() == 0, 'Header.file_order fail:  Header.file_order = ' + str(header.file_order))
          

@@ -30,94 +30,119 @@ from ship.data_structures import DATA_TYPES as dt
 from ship.utils import utilfunctions as uf
 
 
-class HeadData(object):
-    
-    
-    __slots__ = () # no __dict__ - that would be redundant
-    
-    def __init__(self, name, name_ds=None):
-        self.name = name
-        self.name_ds = name_ds
-        self.data = {}
-    
-    @classmethod
-    def setup(cls, name, data_items, name_ds=None):
-        d = HeadData(name, name_ds)
-        for d in data_items:
-            hd.add(d)
-        return d
-        
-    def add(self, data_item):
-        self.data[data_item.key] = data_item   
-
-    def get(self, key):
-        return self.data[key]
-    
-
-    '''
-        dict interface methods
-    '''
-#     @staticmethod # because this doesn't make sense as a global function.
-#     def _process_args(mapping=(), **kwargs):
-#         if hasattr(mapping, items):
-#             mapping = getattr(mapping, items)()
-#         return ((k, v) for k, v in chain(mapping, getattr(kwargs, items)()))
-# 
-#     def __init__(self, mapping=(), **kwargs):
-#         super(HeadData, self).__init__(self._process_args(mapping, **kwargs))
-# 
-#     def __getitem__(self, k):
-#         return super(HeadData, self).__getitem__(k).value
-# 
-#     def __setitem__(self, k, v):
-#         self.
-#         return super(HeadData, self).__setitem__(k.value, v)
-# 
-#     def __delitem__(self, k):
-#         return super(HeadData, self).__delitem__(k)
-# 
-#     def get(self, k, default=None):
-#         return super(HeadData, self).get(k.value, default)
-# 
-#     def setdefault(self, k, default=None):
-#         return super(HeadData, self).setdefault(k, default)
-# 
-#     def pop(self, k):
-#         return super(HeadData, self).pop(k)
-# 
-#     def update(self, mapping=(), **kwargs):
-#         super(HeadData, self).update(self._process_args(mapping, **kwargs))
-# 
-#     def __contains__(self, k):
-#         return super(HeadData, self).__contains__(k)
-# 
-#     @classmethod
-#     def fromkeys(cls, keys):
-#         return super(HeadData, cls).fromkeys(k for k in keys)
-    
 
 class HeadDataItem(object):
+    """Objects stored in the head_data dict in AIsisUnit's.
     
-    def __init__(self, key, value, format_str, line_no, col_no, dtype=dt.STRING, 
-                 choices=()):
-        if not HeadDataItem.checkValue(value, dtype): 
-            raise ValueError('value %s is not compatible with given dtype' % value)
-        self.key = key
-        self.value = value
+    Allow for formatting variables and value checks to be encapsulated in one
+    place rather than littered around all subclasses of AIsisUnit.
+    """
+    
+    def __init__(self, value, format_str, line_no, col_no, **kwargs):
+        
+        kkeys = kwargs.keys()
+        dtype = kwargs.get('dtype', dt.STRING)
+        default = kwargs.get('default', None)
+        self.allow_blank = kwargs.get('allow_blank', False)
+        if dtype == dt.CONSTANT:
+            if not 'choices' in kkeys:
+                raise AttributeError("Keyword args must contain 'choices=(str1, str2, strN)' when dtype == CONSTANT")
+            elif not isinstance(kwargs['choices'], tuple):
+                raise ValueError('choices must be a tuple')
+        
         self.dtype = dtype
         self.format_str = format_str
-        self.dtype = dtype
-        self.choices = choices
-        self.width = width
         self.line_no = line_no
         self.col_no = col_no
+        self.kwargs = kwargs
+
+        value = self._checkValue(value)
+        self._value = value
+        self._update_callback = kwargs.get('update_callback', None)
+
     
-    @staticmethod
-    def checkValue(self, dtype, value): 
-        if dtype == dt.STRING: return uf.isString(value)
-        if dtype == dt.INT: return uf.isNumeric(value)
-        if dtype == dt.FLOAT: return uf.isNumeric(value)
-        if dtype == dt.CONSTANT: return isinstance(value, tuple)
+    @property
+    def value(self):
+        return self._value
+    
+    @value.setter
+    def value(self, val):
+        val = self._checkValue(val)
+        self._value = val
+    
+    def format(self, auto_newline=False):
+        """Return the value converted to unicode str and formatted.
+        
+        Formatting uses the self.format_str variable.
+        
+        A newline char '\n' will be appended to the start of the returned 
+        string if it's col_no == 0 and auto_newline == True.
+        """
+        out = ''
+        if self.allow_blank and self._value == '':
+            if auto_newline and self.col_no == 0:
+                return '\n' + out
+            else:
+                return out
+
+        if self.dtype == dt.FLOAT:
+            dps = self.kwargs.get('dps', 1)
+            decimal_format = '%0.' + str(dps) + 'f'
+            value =  decimal_format % float(self._value)
+            out = self.format_str.format(value)
+        else:
+            out = self.format_str.format(self._value)
+        
+        if auto_newline and self.col_no == 0:
+            out = '\n' + out
+        
+        return self.format_str.format(out)
+    
+    
+    def compare(self, compare_val):
+        """Check equality of given value against self.value.
+        
+        Args:
+            compare_val: value to compare with self.value.
+        
+        Return:
+            bool - true if equal, false if not.
+        """
+        if compare_val == self._value:
+            return True
+        else:
+            return False
+        
+    
+    def _checkValue(self, value, **kwargs): 
+        if self.allow_blank and value == '': return value
+        dtype = self.kwargs.get('dtype', dt.STRING)
+        default = self.kwargs.get('default', None)
+
+        if dtype == dt.STRING: 
+            if not uf.isString(value):
+                if default is not None: return default
+                raise ValueError('value %s is not compatible with dtype STRING' % value)
+            else:
+                return value
+        if dtype == dt.INT:
+            if not uf.isNumeric(value): 
+                if default is not None: return default
+                raise ValueError('value %s is not compatible with dtype INT' % value)
+            else:
+                return int(value)
+        if dtype == dt.FLOAT:
+            if not uf.isNumeric(value): 
+                if default is not None: return default
+                raise ValueError('value %s is not compatible with dtype FLOAT' % value)
+            else:
+                return float(value)
+        if dtype == dt.CONSTANT:
+            choices = self.kwargs['choices']
+            if not value in choices:
+                raise ValueError("value %s is not in CONSTANT 'choices' tuple %s" % (value, choices))
+            else:
+                return  value
 
         
         

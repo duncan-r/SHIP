@@ -1,373 +1,551 @@
+.. _overview-top:
+
+********
 Overview
-========
-
-Main Structure
-##############
-
-The API currently has two core components:
-	1. ISIS tools.
-	2. TUFLOW tools.
-
-These are used to perform various common tasks:
-	1. Read files into memory.
-	2. Update, copy or amend those files.
-		a. Provides functions to update or change parts of those files.
-	3. Write file back to disc in a format required by the models.
-	4. A growing number of util classes to undertake:
-		a. Common analysis on the data.
-		b. Extract subsets of the data and data structures.
-		
-Testing
-#######
-
-The API has a suite of unit tests for all of its components. These use the 
-Python UnitTest Framework. Unit tests allow for the software to be fully 
-checked to make sure that it operates as intended by ensuring all function 
-behaviour is reviewed for a range of circumstances.
-
-If you want to better understand the API the tests are a good place to start. 
-The tests show how the functions should be working. They should also help 
-to better understand some of the data structures, which can seem a bit 
-complicated on the surface.
-
-There is a folder within the library called “unittests” that contains the 
-UnitTestSuite.py file. This file calls all of the individual test modules stored 
-in the “maintests” package. All new functionality should have unit tests written 
-and stored in this package. The UnitTestSuite.py file should then be updated to 
-call the new tests.
-
-Whenever any changes are made to the code base in the API the full suite of unit 
-tests should be run to check that the changes have not broken any other part of 
-the code base.
-
-When running the tests some errors may be raised by the logger from attempts to 
-add illegal values to certain data objects. As long as all the tests pass it’s fine.
-
-Logging
-########
-
-All logging is done through the use of the Python built in logging API. “print” 
-statements should not be used for debugging.
-
-Where output is needed use: ``logger.mychosenlogginglevel(‘mydebugmessage’)``
-
-Where mychosenlogginglevel (in order from top down) is:
-	* error
-	* warning
-	* info
-	* debug
-	
-Normal outputs will probably be set to info, so anything for developer only purposes 
-should be set to debug. Anything the user might find helpful should be set to info 
-and any problems should be set to warning or error.
-
-.. highlight:: python
-	:linenos:
-
-The logger should be requested at the top of every module using:
-::
-    from utils Import log
-    logger = log.setup_custom_logger(__name__)
-
-Using logging in this way means that there won’t be print statements littered 
-throughout the code and it’s easy to change the output formatting, logging level 
-etc in the master log file in utils.log, which will have a global effect.
-
-API Architecture
-################
-
-This section provides further detail on the design of the API for specific components. 
-
-Utils package
-*************
-
-There is a utils package that contains several modules with utility functions that 
-are likely to be needed by most of the components of the API:
-	* fileloaders subpackage. I’m still not sure if these should go here or in 
-		the packages respective to the different API components (e.g. isis). It 
-		does seem sensible to me to have all the loaders in the same place for 
-		convenience, but maybe not:
-			* DatLoader
-			* IefLoader
-			* TuflowLoader  
-		The fileloaders package also contains two other modules:  
-			* Loader
-			* FileLoader  
-		The loader module is a base class that should be inherited by all file loaders
-		in the package. It contains some convenience methods, but also defines the 
-		API to be used. The FileLoader module is the only module that you actually
-		need to call to load a file. It is a factory that will call the correct type
-		of file loader to use based on the file extension provided.
-	* FileTools.py. Contains tools for reading and writing to files. Also contains 
-		the PathHolder class that should be used by all objects that contain a file 
-		path. This provides methods for storing and updating different components of 
-		a file path. There are several functions in the module that make it easier to 
-		update paths and catch edge cases.
-	* Log.py. The logging configuration file for the API.
-	* UniversalUtilityFunctions.py a collection of commonly used functions that 
-		are useful to have in one place for convenience. E.g. converting a list to 
-		a string. Checking that a value is a number or a string, checking that a file 
-		is of a certain type based on extension, etc. 
-	
-Dat File
 ********
 
-	A .dat file can be loaded by creating an instance of FileLoader class and 
-	calling loadFile(filepath). It will:
-		* Create an IsisUnitFactory object for creating the isis unit objects 
-			(AIsisUnit derived classes). 
-		* When DatLoader identifies a line in the file associated to a class using 
-			the dictionary in the IsisUnitFactory it passes the file reading over to 
-			the IsisUnitFactory to load the file according to the unit specific variables 
-			(see IsisUnitFactory and RiverUnit for a better explanation).
-		* When the unit has been read in it will be returned to the DatLoader class 
-			and stored in the UnitCollection class. This contains convenience methods 
-			for accessing the data in the different AIsisUnit derived classes.
-		* Create a PathHolder object under the self.path_holder variable to store the 
-			file path to the .dat file in.
-		* Once the file has been read the DatLoader will return the UnitCollection 
-			object to the calling class (or raise an exception).
+The SHIP library can be used to read, write and amend the majority of Flood
+Modeller Pro and Tuflow model configuration files. If you find that there is a
+particular file type that you need which isn't supported, please make a feature
+request (or even consider :ref:`contributing-top`).
 
-	The UnitCollection contains a list of all the units that inherit from AIsisUnit 
-	and were built by the IsisUnitFactory during the .dat file load.
-	The AIsisUnit derived classes fall into two types signified by the variable 
-	“self.has_rows”. If the unit has data rows, such as the RiverUnit’s channel 
-	geometry this is set to True. If not then it’s set to False. This is because 
-	the data for the units is split into “head_data” and “row_data”.
-		
-	When unit classes are created they must override two methods:
-	::
-		readUnitData(unit_data)
-		getUnitData() # returns out_data (a list of the units data formatted for 
-				# printing the .dat file with each line in a different element.
-		
-	These methods must implement unit specific behaviour for loading and printing 
-	the unit data.
 
-	The head_data is a dictionary containing each of the unit global variables, 
-	such as comments, labels, etc.
-	
-	The row_data is a RowDataObjectCollection which contains a list of all the 
-	ADataObject derived classes. It also contains convenience methods for 
-	accessing and updating the ADataObject’s, such as adding values, adding rows, 
-	getting rows formatted for printing and getting individual ADataObjects. 
-	
-	The ADataObjects are, currently, of 5 types:
-	1.	FloatDataObject.
-			For floating point values in unit data rows
-	2.	IntDataObject
-			For Integer values in unit data rows
-	3.	StringDataObject.
-			For text values in unit data rows.
-	4.	ConstantDataObject.
-			For unit data row values that can be one of several constants.
-			This includes things such as bankmarkers which can only be “Left”, “Right” or “Bed”.
-	5.	SymbolDataObject.
-			For unit data row values that are either off or on  and are represented 
-			in the .dat file with a symbol; like panel markers.
-		
-	These all contain methods for adding, removing and updating values. 
-	When they are instantiated they must be given formatting details so that the 
-	“getPrintableValue()” method can return the value ready to be printed to the 
-	.dat file. This is done with a factory method in the ADataObject module 
-	called RowDataFactory().
-	
-	Creating a different object collection for each of the values allows simple 
-	access to modifying, loading and printing them. The best initial approach to 
-	looking into the AIsisUnit, UnitCollection, RowDataObjectCollection and 
-	ADataRowObject and the associated factories mentioned above is to review how 
-	they are implemented in the RiverUnit.
-	
-	Data within the ADataRowObject should be accessed using the ROW_DATA_TYPES enum
-	defined in the __init__module of the datunits package.
-	
+The API currently has three core packages:
 
-IEF File
-********
+   - **fmp**: containing all Flood Modeller interfaces.
+   - **tuflow**: containing all of the Tuflow interfaces.
+   - **utils**: containing a range of utilities that are shared throughout the rest
+     of the library.
 
-	An ISIS .ief file can loaded by creating an instance of FileLoader class and 
-	calling loadFile(filepath). It will:
-		* Load the ief file at the given path into a list.
-		* Search through the list line-by-line.
-		* When it reads a line corresponding to the key sections of the file, such as 
-			“[ISIS Event Header]”, it will add the data to the section specific list 
-			or dictionary.
-		* Continue in this fashion until all parts of the file have been read.
-		* Create an object of the Ief class from the loaded data.
-		* Create a PathHolder object called self.path_holder to store the file path.
-		* Return the Ief object.
-	
-	The Ief object contains methods to:
-		* Obtain file paths.
-		* Get and set variables.
-		* Get the printable version of the ief file for writing to file (getPrintableContents())
- 
-TUFLOW Files
+******
+Topics
+******
+
+The :ref:`overview-intro` on this page covers the basics of loading and 
+accesssing the data in both Flood Modeller and Tuflow models. You'll want to 
+start here and when you've got your head around this look at the Flood Modeller 
+and Tuflow specific sections below for more details.
+
+
+Flood Modeller
+==============
+
+   - :ref:`ief-top`: class that contains all of the .ief file data.  
+   - :ref:`DatCollection-top`: class that contains all of the .dat and .ief file data.  
+   - :ref:`unit-top`: class representing all of the different components of a
+     Flood Modeller .dat or .ied file.  
+   - :ref:`rowdatacollection-top`: class containing all of the variable length 
+     data in AUnit types.
+
+Tuflow
+======
+
+   - :ref:`tuflowmodel-top`: container class for a loaded tuflow model.
+   - :ref:`controlfile-top`: container class for all parts from a type of control
+     file.
+   - :ref:`tuflowpart-top`: main data store for sections of tuflow control files.
+   - :ref:`addingtuflowparts-top`: overview of how to add new TuflowPart's to a
+     loaded TuflowModel.
+
+Other
+=====
+
+   - :ref:`pathholder-top`: class for storing data pertaining to filepaths.
+
+
+.. _overview-intro:
+
+************
+Introduction
 ************
 
-	A Tuflow .tcf file can be loaded by creating an instance of FileLoader class and 
-	calling loadFile(filepath). This will:
-		* Load the contents of the tuflow model starting from the given tuflow
-			model file.
-		* Create a TuflowModel object and populate it will a ATuflowModelFile and 
-			ATuflowFilePart objects and reference to unique identifying hashcodes
-			created during the load process.
-		* The TuflowModel will then be returned by the FileLoader.
-		
-	The TuflowModel class provides methods for accessing all of the data in the
-	model. These include convenience functions, such as:  
-		* Fetching file names or checking they exist.
-		* Getting list of all of the model files (tcf, tgc, etc)
-		* Getting TuflowFilePart by type (GIS, DATA, MODEL, RESULT, VARIABLE)
-		* Getting TuflowModelFiles, i.e. particular control files in the model.
 
-	When greater control is required you can obtain the TuflowModelFile's from the
-	TuflowModel. Particular categories can be specified (tcf, tgc, etc). These objects
-	contain the TuflowFilePart's loaded from the specific file. More detail on these
-	are given below. The TuflowModel allows you to:	
-		* Get TuflowModelFile's by category (tcf, tgc, etc)
-		* Get the TuflowFilePart corresponding to a particular TuflowModelFile.
-		* Get the TuflowModelFile corresponding to a particular TuflowFilePart (MODEL type).
-		
-	Accessing data of certain types is done using the FILEPART_TYPES enum in the tuflow package.
-	These include the following:
-		* MODEL - files that contain other model data (tcf, tgc, etc)
-		* DATA - files that contain links to other files.
-		* GIS - gis file references.
-		* VARIABLE - model variables.
-		* RESULT - result, check, or log file references.
-		
-	The TuflowModel is made up of several key components. Which are covered in
-	more depth below.
-	
-	
-TuflowModelFile
-----------------
+##############
+Loading models
+##############
 
-	This is the object that stores all of the data loaded from a Tuflow control
-	file. You can obtain either an individual TuflowModelFile, types of
-	TuflowModelFile (tcf, tgc, etc), or all TuflowModelFile's from the TuflowModel.
-	
-	The TuflowModelFile's contain a list, called contents, with all of the 
-	TuflowFileParts in the order that they were loaded (as well as any unknown
-	contents (comments etc) but these aren't much use in general).
-	
-	The contents list and it's components can be accessed using the class methods
-	including:  
-		* Getting file names
-		* Getting absolute or relative paths
-		* Getting TuflowFile's
-		* Getting ModelVariables
-		* and more.
-	
-	
-TuflowFilePart
---------------
-
-	TuflowFilePart objects are used to store the contents of the Tuflow input
-	files. These are the commands within the file e.g.:
-	::
-		! (1) Variable declaration
-		GIS Format == SHP
-		
-		! (2) File command
-		SHP Projection == ..\model\gis\Projection.prj
-		
-		! (3) Reference another model file command
-		Geometry Control File == ..\model\mymodel_2m_geometry_v1-2.tgc
-		
-		! (4) Reference a file containing additional data
-		BC Database == ..\bc_dbase\mymodel_v1-1.csv
-    
-		! (5) Call to a gis file (also uses a piped command
-		Read GIS Z Line THICK == gis\mymodel_2d_zln_channel_v1-0_L.shp | gis\mymodel_2d_zln_channel_v1-0_P.shp
-		
-		! (6) Output folder 
-		Output Folder == ..\results\2d\
-
-	When the files are read in by the TuflowLoader they are initially assessed
-	by the command that it used in order to determine which type of data they
-	contain (DATA, GIS, etc) and then possibly further defined by the file extension.
-	
-	For example: 
-		* Line (1) above will be stored under the VARIABLE type and the contents
-			of the line will be stored in a ModelVariable object.
-		* Line (2) will be stored under the GIS type and the contents of the 
-			line will be stored in a GisFile object.
-		* Line (3) will be stored under the MODEL type and will cause a 
-			TuflowModelFile to be created to store data when it is read.
-		* Line (4) will be stored under the DATA type and the contents of the
-			line will be stored in a DataFile object.
-		* Line (5) will be split into two seperate entries, one for each file path,
-			and two GIS types and GisFile objects will be created. They will
-			however contain references to each other for association.
-		* Line (6) will be stored under the RESULT type and the line contents
-			will be stored in a SomeFile object.
-			
-	Any sections of the model files that cannot be interpretted by the TuflowLoader
-	class will be added to a list of unknown sections. These hold parts of the 
-	file that are read in and stored to be written out in exactly the same way.  
-	This might include comments, blank lines or commands that are not yet understood
-	by the file loader.
+All the file loader modules can be found in the ship.utils.fileloaders package. 
+The only interface you need to use for loading all model files is the FileLoader class::
+   
+   # Import the FileLoader class
+   from ship.utils.fileloader.fileloader import FileLoader
+   
+   dat_path = "c:/path/to/an/fmp/datafile.dat"     # Fmp .dat model file
+   tcf_path = "c:/path/to/an/fmp/tuflowfile.tcf"   # Tuflow .tcf file
+   ief_path = "c:/path/to/an/fmp/ieffile.ief"      # Fmp .ief run file
+   ied_path = "c:/path/to/an/fmp/iedfile.ied"      # Fmp .ied boundary file
+   
+   # Get the loader and use it to load the .dat file.
+   # This returns a loaded FMP model as a DatCollection object.
+   loader = FileLoader()
+   fmp_model = loader.loadFile(dat_path)
+   
+   # This same loader can be used for any type of file.
+   
+   # Get the loaded tuflow model as a TuflowModel object
+   tuflow_model = loader.loadFile(tcf_path)
+   
+   # Get the loaded tuflow model as a TuflowModel object
+   ief = loader.loadFile(ief_path)
+   
+   # ... etc
 
 
-DataFileObject
---------------
+####################
+Accessing model data
+####################
 
-	Files that are loaded into the DATA type (and by exception a couple of GIS
-	type files) are expected to contain additional data that might need to be 
-	read. For example, line (4) above references a boundary condition database 
-	file. Others include materials.tmf/.csv files. 
-	
-	This type of file can contain additional data that may need to be read or
-	updated. E.g. manning's values in materials files or additional file 
-	references in the boundary condition files.
-	
-	To avoid an unecessarily complicated TuflowModel structure and long load times
-	when access to this data is not required the contents are not read during the
-	normal model load. To read them the datafileloader module is used. While it is
-	possible to call the specific file loader directly it is easier to use the 
-	factory method. This will also make some checks to ensure files are supported.
-	
-	::
-		from tuflow.data_files import datafileloader
-		mydatafileobject = datafileloader.loadDataFile(DataFile object)
-		
-	This will return an instance of DataFileObject containing contents loaded
-	from the file. It is then possible to interrogate the RowDataObjectCollection
-	that contains the data read in.
-	
-	Currently the following subclasses exist:
-		* BcDataObject - for boundary condition files.
-		* TmfDataObject - for materials .tmf files.
-		* MatCsvDataObject - for materials .csv files.
-		* XsDataObject - for 1d_xs estry cross section gis files.
-		
-	Some of these can also contain references to other data that may be loaded,
-	e.g. the MatCsvDataObject will contain references to the DatafileSubfileMat
-	class containing any depth-mannings files reference in the materials file.
-	
-	Additional class can be constructed, but should inherit from ADataObject for
-	the main data file or ADatafileSubfile for sub files. 
-	
-	All of these classes have associated enums as well to referencing the contained
-	RowDataObjectCollection data:
-		* BcEnum
-		* TmfEnum
-		* MatCsvEnum
-		* XsEnum
-		* SubfileMatEnum
+Now that you have a loaded model you can access the data that it contains. The
+approach to this varies slightly depending on which kind of model or file type
+was loaded.
 
 
-Others
-------
+Flood Modeller
+==============
 
-	As well as the main components there are come other classes:
-		* TuflowTypes - used to store the different commands (i.e. Read GIS) 
-			that are used and associate them to different types (i.e. GIS).
-		* ModelOrder - A graph used to store the tuflow files as they are read
-			and maintain the order that they are read in.
-			
-	Unless you are dealing with low level reading in or writing out of the model 
-	files these are not used.
-	
+The main class used for interacting with Flood Modeller models is the 
+DatCollection class. This is an iterator based class that contains all of the
+data in the either .dat or .ied files (depending on which was loaded).
+
+This class contains several interfaces for accessing and updating data within
+the model. The model data is contianed within the 'Unit' classes 
+(e.g. RiverUnit, BridgeUnit, RefhUnit). These can be accessed by iterating 
+through the DatCollection or can be grouped::
+
+   # ... We already have a DatCollection, loaded as above
+   dat = loader.loadModel(datfile)
+   
+   # You can loop through all of the Units in the model
+   for unit in DatCollection:
+      print (unit.name)       # The main label for the unit.
+      print (unit.unit_type)  # Would be 'Arch' for an BridgeUnitArch
+      
+   # Or you can retrieve a subset of units in a variety of ways
+   # By category. Returns a list
+   bridges = dat.unitsByCategory('bridge')
+   
+   # By type. Returns a list
+   bridges = dat.unitsByType('arch')
+   
+   # By name. Returns a single instance
+   bridge = dat.unit('SECT3_BU')
+
+Once you've accessed a unit or a set of units you can read and interact with
+the data they contain. The setup of the unit classes tries to remain relatively
+true to that in the FMP software to ease the learning curve. There are two main 
+types of data in FMP units: 'head_data' and 'row_data'. 
+
+In keeping with the bridge example above:
+
+   - head_data (dict): single variables used by a unit type (e.g. comment, remote_us,
+      calibration_coef, etc). The naming scheme tries to remain close to those
+      used in the software and the help manual, although these two vary at times!
+   - row_data (dict): variable number of data entries, like geometry data in 
+      a lot of units, and bridge opening data in bridges. All row_data have a
+      'main' key, the main row data - usually geometry. The dict values are
+      RowDataCollection objects.
+
+Accessing head_data is simple::
+
+   # You could loop through a list of return type/category as you would with
+   # any list, but for this example we'll use a single unit.
+   
+   # As above
+   bridge = dat.unit('SECT3_BU')
+   
+   # Print upstream label, downstream label, category and type
+   print (bridge.name, bridge.name_ds, bridge.unit_category, bridge.unit_type)
+   
+   # Access items in the head_data
+   remote_us = bridge.head_data['remote_us'].value
+   coef = bridge.head_data['calibration_coef'].value
+   
+   # updating it is the same
+   bridge.head_data['remote_us'].value = 'diff_sect'
+   
+Accessing the row_data is a little more involved, but not too complex either.
+There's two main things you need to know:
+   - All the data is held in a RowDataCollection object. This stores the entries
+     for a particular data row (e.g. for a BridgeUnit 'main' row_data entry 
+     this would contain values for chainage, elevation, manning's, embankments).
+   - RowDataCollection's store this data in DataObject classes. These group the
+     same types of data into a single object (e.g. all the chainage, or elevation).
+       
+If you want to access rows of data there are two functions that you will probably
+want to use. The first is simply called row()::
+
+   # Loop the row_data
+   # TODO: check this and write more
+   for i, r in enumerate(bridge.row_data['main']):
+      row = r.row
+
+Most of the time you will probably want to access the different ROW_DATA_TYPES
+held by the collection. If you only need to read the data the best approach is
+to use either rowAsList() or toDict()::
+
+   # Import the ROW_DATA_TYPES enum
+   from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+
+   # Get a list of a specific type
+   elevations = bridge.row_data['main'].rowAsList(rdt.ELEVATION)
+   
+   # Get a dict of all types. Returns a dict where keys are the ROW_DATA_TYPES
+   # and the values are lists of all values in that type
+   row_stuff = bridge.row_data['main'].toDict()
+   
+   # First elevation entry and first roughness entry:
+   elev1 = row_stuff[rdt.ELEVATION][0]
+   rgh1 = row_stuff[rdt.ROUGHNESS][0]
+  
+If you want to update the values in a DataObject or you need more control you 
+might want to get the object itself::
+
+   rgh_obj = bridge.row_data['main'].dataObj(rdt.ROUGHNESS)
+   
+   # You can now loop through data_obj and read or update each entry
+   for r in rgh_obj:
+      print (r.getValue)
+      
+      # Note that rgh_obj returned above is a shallow copy so changes you make
+      # here will also be made in the DatCollection.
+      r.setValue(r.getValue * 1.2)
+
+Just a couple of notes about row_data. You can check to see if a unit has any 
+row_data with::
+
+   # prints True for bridge units (False for, say, an OrificeUnit)
+   print (bridge.has_row_data)
+   
+The primary RowDataCollection (row_data) is always called 'main'. Although this
+may seema little confusing it's fairly easy to tell what the main collection is
+and it helps not having to remember lots of different key names for a common
+task.
+Other row_data key's are specific to what they do. For example with a
+UsbprBridge::
+   
+   orifice_rows = usbpr.row_data['culvert'] # bridge culvert data
+   opening_rows = usbpr.row_data['opening'] # bridge opening data
+   
+That's the end of this short introduction on the fmp package. There's obviously
+a lot more you can do; we havn't covered reading .ief files yet and we haven't
+really looked at updating or adding new content. For the .ief files you will
+want to have a look at :ref:`Ief-top` and for more on dealing with .dat files and
+.ied files :ref:`DatCollection-top`.
+
+   
+Tuflow
+======
+
+Similar to the DatCollection in the fmp package, the tuflow package has a class
+called TuflowModel. This is the main interface for all data in a tuflow model::
+
+   tuflow = loader.loadFile(tcf_path)  # returns TuflowModel instance 
+   
+   # A couple of convenience methods:
+   # Get file paths
+   fpaths = tuflow.filePaths()
+   
+   # update the model root
+   tuflow.root = 'c:\new\model\directory
+
+The TuflowModel object itself doesn't actually do a lot. It has a few
+convenience functions, but it's mainly just a container for the ControlFile
+objects. Most of your interactions with a tuflow model will be through the
+ControlFile interface. 
+
+There is one ControlFile for each of the different tuflow control file types.
+They are held in a dict in TuflowModel.control_files and can be referenced 
+using the following keys: 'TCF', 'ECF', 'TGC', 'TBC', 'TEF'::
+
+   # Get the 'TGC' control file. Contains all of the .tgc type files and their 
+   # contents.
+   tgc = tuflow.control_files['TGC']
+
+ControlFile objects contain two main collections, a collection of 'parts' in a 
+PartHolder class and a collection of 'logic' in a LogicHolder class. Almost all
+of the content in a TuflowModel is held in these iterators.
+
+The core component of all section of a tuflow model is the TuflowPart - the
+objects held in the PartHolder collection. TuflowPart is abstract, but it is 
+inherited by all other components of a Tuflow model: including logic. Similar
+to the way that all units are subclasses of AUnit in the fmp package. Generally
+they are further subclasses from three different interfaces:
+
+   - **ATuflowVariable** - all of the variables in a tuflow model, commands like
+     'Set IWL == 12' for example.
+   - **TuflowFile** - all of the files in a tuflow model, command like
+     'Read GIS Z Line == ..\gis\somefile.shp'
+   - **TuflowLogic** - all logic contructs in a tuflow model. If-else and define
+     logic is stored in these.
+     
+Of the three interfaces above the TuflowLogic is a little bit different as it is
+more of a container for other items. The other two store data related to a 
+specific line in the file.
+
+The most common type of variable class you'll see are:
+
+   - **TuflowVariable**: standard variable class used for most variables in the
+     tuflow model files.
+   - **TuflowKeyVal**: used where a placholder and variable are supplied at the 
+     same time, for example 'BC Event Source == Q100 | SHIP'.
+   - **TuflowUserVariable**: user defined variables. for example 
+     'Set Variable MyTcfVariable == 1'
+     
+The most common types of file class you'll see are:
+
+   - **TuflowFile**: this is the standard file class. Usually things will be further
+     refined than this, but it does get used sometimes.
+   - **GisFile**: stores all GIS type files.
+   - **ModelFile**: stores all tuflow control file commands, for example the command
+     'Read Geometry File == '..\model\mygeomfile.tgc'
+   - **DataFile**: stores all commands that contain files with additional information
+     such as 'BC Database' or 'Read Materials File' commands.
+   - **ResultsFile**: any command the deals with output, like 'Output Folder =='
+     or 'Write Check Files ==' or 'Log Folder =='.
+
+
+Now we have an idea of the basic structure of the tuflow package we can try and
+access some data::
+
+   tuflow = loader.loadFile(tcf_path)  # returns TuflowModel instance 
+   
+   # You can loop through the control_files dict and do everything if you need
+   # Here we'll just use the TGC ControlFile
+   tgc = tuflow.control_files['TGC']
+   
+   # You can then loop through all of the TuflowParts if you need
+   for part in tcg.parts:
+      # Prints out type like 'variable', 'model', 'gis', 'result', etcx
+      print (part.obj_type)
+
+   # Or you could access subsets of the collection
+   
+   # This will give you all ATuflowVariable parts in the TGC file.
+   variables = tgc.variables()   # Returns a list
+   
+   # This will give you only the gis files in the TGC file.
+   # To do this you'll need to import the FILEPART_TYPES enum from tuflow.__init__.py
+   from ship.tuflow import FILEPART_TYPES as ft
+   gis = tgc.files(part_type=ft.GIS)   # Returns a list
+   
+   # You can loop through the returned lists to access the data in the TuflowPart
+   for v in variables:
+      print (v.value, v.command)
+   
+   for g in gis:
+      print (g.filename, g.command)
+
+You can also access the ModelFile objects for the control files you are looking
+at from the ControlFile class. That's a slightly confusing way of saying that
+a ControlFile is not the contents of one .tgc, but the contents of all the
+.tgc files. The command 'Read Geometry File ==' is actually in a TCF ControlFile
+and you can access it from there, but can also access it from the TGC
+ControlFile through the control_files list::
+
+   # Loop through all of the ModelFile parts that were used to load the 
+   # TGC ControlFile contents
+   for c in tgc.control_files:
+      print(c.filename)
+   
+TuflowParts also contain reference to other objects that they have an 
+association with. This is done through the 'associates' object. Currently these
+include:
+
+   - parent: the ModelFile that contained the TuflowPart.
+   - logic: TuflowLogic associated with this TUflowPart. This can == None.
+   - sibling_next: Another TuflowPart on the same command line as this.
+   - sibling_prev: Same as sibling_next except it is the TuflowPart to the
+     left rather than the right.
+     
+Continuing with the TGC ControlFile gis list from above; these are accessed like so::
+
+   for g in gis:
+   
+      # Get the parent. The parent will be a ModelFile object and will also be 
+      # in the control_files list discussed above
+      parent = g.associates.parent
+      print (parent.filename, parent.obj_type)
+      
+      # Some file commands can be 'piped' together with '|' symbol. This is
+      # quite common with gis commands like:
+      # Read GIS BC == gis\2d_bc_hx_L.shp | gis\2d_bc_cn_L.shp
+      # if g.filename is 2d_bc_hx_L we will have the following...
+      
+      # Prints 'No previous sibling'
+      associate = g.associates.sibling_prev
+      if associate is not None:
+         print (associate.filename)
+      else:
+         print ('No previous sibling')
+
+      # Prints '2d_bc_cn_L'
+      associate = g.associates.sibling_next
+      if associate is not None:
+         print (associate.filename)
+      else:
+         print ('No next sibling')
+
+All TuflowParts have these associates. So they are accessible whether it is a
+TuflowFile type or ModelVariable type or TuflowLogic type.
+
+**IMPORTANT**
+*It's important to know that all of the TuflowPart's are mutable objects. This*
+*has a lot of advantages when it comes to propogating updates through the*
+*model heirachy, but with great power comes great responsibility. For example*
+*if you do this*::
+   
+   # ...taking from the above example
+   parent = g.associates.parent
+   
+   # change the filename of the parent
+   parent.filename = 'something_else'
+   
+It will update the filename for the *actual* ModelFile object that the parent
+references. I.e. if you were to access the parent associate of a different
+TuflowPart, or any other reference, the filename will equal 'something_else'.
+If you want to get a copy of the TuflowPart and change things about without 
+affecting the other instances you will need to do::
+
+   parent = g.associates.parent
+   
+   # Return a whole new object that's not associated with the original
+   new_parent = parent.copy()
+   
+   # If you want to compare two TuflowParts to see if they're the same just use
+   # the standard '==' operator
+   if parent == new_parent:
+      print ("They're equal")
+   else:
+      print ("They're different")   # Will print this one
+
+Also note that you don't want to just reassign self.associates.parent = new_parent
+as the new_parent will be a 'hanging object' if you like. Meaning that it 
+isn't associated with a, in this case TGC, ControlFile and it isn't referenced
+by a TCF or another TGC file. For more information on this have a look at the
+:ref:`addingtuflowparts-top` section.
+
+It's worth remembering that there are a few convenience methods available for
+easily accessing certain types of data that are commonly needed. For example
+both the TuflowModel and ControlFile classes contain a method for checking that
+all of the file paths in the model exist::
+
+   # From the TuflowModel class.
+   failed = tuflow.checkPathsExist()
+   
+   # From the ControlFile class. Note the one above is just a loop that calls
+   # this method in all of the ControlFile's
+   failed = tgc.checkPathsExist()
+   
+   # failed is a list of TuflowFile's that couldn't be found on disk.
+   # To check what the paths are you could do
+   for f in failed:
+      print (f.getAbsolutePath())
+
+And the control files contain a method for efficiently getting all file path
+details based on certain conditions::
+
+   # Returns all absolute paths from GIS FILEPART_TYPES
+   # If absolute == False only the file name will be returned
+   paths = tgc.filepaths(filepart_type=ft.GIS, absolute=True)
+   
+   # By default the filepaths method won't return duplicates. If you want to
+   # know when there are duplicates just set the flag to False.
+   # Also note here that no filepart_type is stated. This means that the paths
+   # of all TuflowFile type objects will be returned (i.e. all paths in the model).
+   paths = tgc.filepaths(no_duplicates=False)
+
+For more information on how to use :ref:`controlfile-top`'s follow the link.
+
+
+Finally for this intro, here's a few notes on logic structures. Tuflow models
+can contain if-else and define-something logical clauses in the control files.
+These are evaluated using the scenario and event variables which can be either
+set in the control files (these will be a TuflowModelVariable type) or added
+to the command line call.
+
+When loading a .tcf file with FileLoader you can pass an additional argument
+that contains the scenario and event values that would normally be put at the
+command line. This argument is a dict setup like so::
+
+   se_vals = {
+                'scenario': {
+                   's1': 'scen1', 's2': 'scen2', 's3': 'scen3'
+                 },
+                'event': {
+                   'e1': 'evt1', 'e2': 'evt2'
+                }
+             }   
+
+You do not have to include both (or either) but the main keys must be
+'scenario' and/or 'event'. Anything else will be ignored. There is a 
+function in utilities for converting a string version (such as that entered
+into the FMP runform (.ief). That saves you from having to convert it into a dict
+yourself::
+
+   # import the utilfunctions
+   from ship.utils import utilfunctions as uf
+   
+   # Returns a dict formatted exactly as descibed above
+   se_vals = uf.convertRunOptionsToSEDict("s1 scen1 s2 scen2 e1 evt1 e2 evt2")
+   
+   # You can now do this if you want
+   loader = FileLoader()
+   tuflow = loader.loadFile(tcf_path, se_vals)
+   
+If your model contains logic you may want to be able to interogate the contents
+using this logic. TuflowModel objects contain a variable 'user_variables' which
+is a UserVariables object. This object stores both scenario and event values and
+any user defined variables (TuflowUserVariable - see above). If you call the
+following method in the UserVariable class you will get the same dict discussed
+above::
+
+   se_vals = tuflow.user_variables.scenarioEventValuesToDict()
+   
+Almost all of the ControlFile class methods accept this dict as an argument. 
+When given it will only return the TuflowPart/filepaths/whatever that are
+compatible with those scenario and event variables (i.e. anything outside the
+logic clauses, and everything within the logic clauses that match the 
+scenario and event logic). Say we have the following .tgc file::
+
+   Set Code == 0 
+   Read GIS Code == gis\2d_code_shiptest_tgc_v1_R.shp 
+   Read GIS Code BC == gis\2d_bc_hx_shiptest_tgc_v1_R.shp 
+
+   ! Call another tgc file
+   IF SCENARIO == scen1 | scen1more 
+      if scenario == scen1more 
+         Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v1_P.shp 
+      else if scenario == scen1
+         Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v2_P.shp 
+      end if
+      Read File == test_trd1.trd
+   ELSE ! comment for else
+      Read File == test_trd3.trd ! trd3
+   END IF
+   
+And we loaded our model (or updated them later, but we'll stick to loaded 
+for the time being) with the following scenario and event vals::
+
+   se_vals = {
+                'scenario': {'s1': 'scen1'},
+             }
+   tuflow = loader.loadFile(tcf_path, se_vals)
+
+And we wanted to get only the file paths that fell within our current setup for
+scenario (and event) variables, i.e. where the scenario == scen1::
+
+   tgc = tuflow.control_files['TGC']
+   se_vals = tuflow.user_variables.scenarioEventValuesToDict()
+   
+   paths = tgc.filepaths(se_vals=se_vals)
+   print (paths)
+   
+   # Would print the following
+   ['2d_code_shiptest_tgc_v1_R.shp',
+    '2d_bc_hx_shiptest_tgc_v1_R.shp',
+    '2d_whatevs_shiptest_tgc_v2_P.shp',
+    'test_trd1.trd']
+   
+   
+   
+   

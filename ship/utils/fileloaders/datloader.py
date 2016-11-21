@@ -34,7 +34,7 @@ from ship.utils.fileloaders.loader import ALoader
 from ship.utils import filetools as ftools
 from ship.isis.isisunitfactory import IsisUnitFactory
 from ship.utils import utilfunctions as uf
-from ship.isis.datunits.isisunit import UnknownSection
+from ship.isis.datunits.isisunit import UnknownUnit
 from ship.isis.datcollection import DatCollection
 
 import logging
@@ -67,13 +67,14 @@ class DatLoader(ATool, ALoader):
         self.contents = []          # Contents of dat file
         self.temp_unit = None       # AIsisUnit
         self.is_ied = False         # If used to load an .ied file
+        self._ic_name_types = {}
         
         # reach_info dictionary. Keeps track of the information needed to identify
         # reach status. Contains:
         # [0] = counter - iterated every time a new reach is started.
         # [1] = same reach status - keeps track of whether it's in an existing
         #       reach or starting a new one.
-        self.reach_info = { 'Reach_number': 0, 'Same_reach': False }      
+        self.reach_info = { 'reach_number': 0, 'same_reach': False }      
     
 
     def loadFile(self, file_path, arg_dict={}): 
@@ -87,7 +88,7 @@ class DatLoader(ATool, ALoader):
         Needs cleaning up and writing with a bit more style.
 
         Easy to add another unit type, if it's not currently covered then it 
-        will just be collected in the universal 'UnknownSection' and printed 
+        will just be collected in the universal 'UnknownUnit' and printed 
         back out the same as it came in.
         
         Args:
@@ -110,7 +111,7 @@ class DatLoader(ATool, ALoader):
                 cluttering up the file.
         """
         line = ''  
-        # Used to populate the data for the UnknownSection
+        # Used to populate the data for the UnknownUnit
         self.unknown_data = []        
         # Composite for all dat units
         path_holder = ftools.PathHolder(file_path)
@@ -168,12 +169,12 @@ class DatLoader(ATool, ALoader):
 
             if first_word in unit_vars:               
                 
-                # If building an UnknownSection then create and reset
+                # If building an UnknownUnit then create and reset
                 if(in_unknown_section == True):
                     self.createUnknownSection()
                     self.updateSubContents()
                     
-                    # Reset the reach for the UnknownSection
+                    # Reset the reach for the UnknownUnit
                     unit_factory.same_reach = False
                 
                 '''Call the unit creator function and get back the unit and the
@@ -210,6 +211,9 @@ class DatLoader(ATool, ALoader):
         del self.unknown_data
         return self.units 
     
+    
+    
+
 
     def createUnknownSection(self): 
         """Builds unidentified sections from the .DAT file.
@@ -218,8 +222,8 @@ class DatLoader(ATool, ALoader):
         incorporated into this.
         Loads in chunks of the file 'as-is' and prints them out the same way.
         """
-#         logger.debug('Creating UnknownSection - Unit No:  ' + str(self.cur_no_of_units))
-        self.temp_unit = UnknownSection() 
+#         logger.debug('Creating UnknownUnit - Unit No:  ' + str(self.cur_no_of_units))
+        self.temp_unit = UnknownUnit() 
         self.temp_unit.readUnitData(self.unknown_data)
         
      
@@ -244,9 +248,23 @@ class DatLoader(ATool, ALoader):
         #logger.debug('In updateSubContents')
         # Don't update node count here as we aren't adding any 'new' nodes
         self.units.addUnit(self.temp_unit, update_node_count=False)
+#         self.findIcLabels(self.temp_unit)
         self.cur_no_of_units += 1
         del self.temp_unit
-        self.unknown_data = []   
+        self.unknown_data = []
+        
+    
+#     def findIcLabels(self, unit):
+#         """
+#         """
+#         if not unit.has_ics: return
+# 
+#         ic_labels = unit.ic_labels
+#         for l in ic_labels:
+#             if not l in self._ic_name_types.keys():
+#                 self._ic_name_types[l] = [unit._unit_type]
+#             elif not unit._unit_type in self._ic_name_types[l]:
+#                 self._ic_name_types[l].append(unit._unit_type) 
     
 
     def __loadFile(self, filepath): 

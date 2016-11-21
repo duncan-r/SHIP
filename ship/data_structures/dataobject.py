@@ -26,6 +26,7 @@
  Updates:
 
 """
+from __future__ import unicode_literals
 
 
 from abc import ABCMeta, abstractmethod
@@ -47,7 +48,8 @@ class ADataRowObject(object):
     __metaclass__ = ABCMeta
     
     
-    def __init__(self, row_pos, datatype, format_str, default):
+#     def __init__(self, row_pos, datatype, format_str, default):
+    def __init__(self, row_pos, datatype, format_str, **kwargs):
         """Constructor
         
         Args:
@@ -59,15 +61,22 @@ class ADataRowObject(object):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
+            **kwargs:
+                default: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
+                update_callback: a callback function that should be run everytime
+                    a value is updated (added or set). For example to check
+                    that chainage is increasing.
+                    When called it will provide the following arguments:
+                    (self, value, index).
         """
         self.data_type = datatype
         self.record_length = 0
         self.format_str = format_str 
         self.row_pos = row_pos
-        self.default = default
+        self.default = kwargs.get('default', None)
+        self.update_callback = kwargs.get('update_callback', None)
         self.has_changed = False
         
         self.data_collection = []
@@ -100,16 +109,16 @@ class ADataRowObject(object):
         return self.data_collection[key]
     
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, index, value):
         """Sets a value using index notation
         
         Calls the setValue() function to do the hard work.
         
         Args:
-            key (int): index to update.
+            index (int): index to update.
             value: the value to add to the data_collection.
         """
-        self.setValue(value, key)
+        self.setValue(value, index)
     
  
     def getValue(self, index):
@@ -180,6 +189,9 @@ class ADataRowObject(object):
             IndexError: If index does not exist. 
         """
         if value == None: value = self.default
+
+        if self.update_callback is not None:
+            self.update_callback(self, value, index)
         
         length = len(self.data_collection)
         if index == None or index == length:
@@ -208,6 +220,9 @@ class ADataRowObject(object):
         Raises:
             IndexError: If index does not exist. 
         """
+        if self.update_callback is not None:
+            self.update_callback(self, value, index)
+
         length = len(self.data_collection)
         if index == None or index == length:
             self.data_collection.append(value)
@@ -251,6 +266,13 @@ class ADataRowObject(object):
     def getDataCollection(self):
         return self.data_collection
     
+    
+    def checkDefault(self, value):
+        if self.default == '~' and value == self.default:
+            return True
+        else:
+            return False
+
 
     @abstractmethod
     def formatPrintString(self, value):
@@ -281,7 +303,8 @@ class IntData(ADataRowObject):
         ADataRowObject
     """
     
-    def __init__(self, row_pos, datatype, format_str='{}', default=None):
+#     def __init__(self, row_pos, datatype, format_str='{}', default=None):
+    def __init__(self, row_pos, datatype, format_str='{}', **kwargs):
         """Constructor.
         
         Args:
@@ -293,11 +316,12 @@ class IntData(ADataRowObject):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default=None: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
+            **kwargs:
+                default=None: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -343,9 +367,12 @@ class IntData(ADataRowObject):
         Returns:
             String formatted value.
         """
-        integer_format = '%0d'
-        value =  integer_format % int(value)
-        value = self.format_str.format(value) 
+        if self.checkDefault(value):
+            value = ''
+        else:
+            integer_format = '%0d'
+            value =  integer_format % int(value)
+            value = self.format_str.format(value) 
         return value
 
 
@@ -355,7 +382,8 @@ class FloatData(ADataRowObject):
     float value instead of a string.
     """
     
-    def __init__(self, row_pos, datatype, format_str='{}', default=None, no_of_dps=0):
+#     def __init__(self, row_pos, datatype, format_str='{}', default=None, no_of_dps=0):
+    def __init__(self, row_pos, datatype, format_str='{}', **kwargs): #default=None, no_of_dps=0):
         """Constructor.
         
         Args:
@@ -367,14 +395,15 @@ class FloatData(ADataRowObject):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default=None: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
-            no_of_dps: int of the number of decimal places that this value
-                   should be represented with when printed to file. 
+            **kwargs:
+                default=None: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
+                no_of_dps: int of the number of decimal places that this value
+                       should be represented with when printed to file. 
         """
-        self.no_of_dps = no_of_dps
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, default)
+        self.no_of_dps = kwargs.get('no_of_dps', 0)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -420,9 +449,12 @@ class FloatData(ADataRowObject):
         Returns:
             String formatted value.
         """
-        decimal_format = '%0.' + str(self.no_of_dps) + 'f'
-        value =  decimal_format % float(value)
-        value = self.format_str.format(value) 
+        if self.checkDefault(value):
+            value = ''
+        else:
+            decimal_format = '%0.' + str(self.no_of_dps) + 'f'
+            value =  decimal_format % float(value)
+            value = self.format_str.format(value) 
         return value
 
 
@@ -432,7 +464,7 @@ class StringData(ADataRowObject):
     str value. 
     """
     
-    def __init__(self, row_pos, datatype, format_str='{}', default=None):
+    def __init__(self, row_pos, datatype, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
@@ -444,12 +476,12 @@ class StringData(ADataRowObject):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default=None: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
+            **kwargs:
+                default=None: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
-                                default)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
 
         
     def addValue(self, value=None, index = None):
@@ -502,7 +534,10 @@ class StringData(ADataRowObject):
         Returns:
             String formatted value.
         """
-        value = self.format_str.format(value) 
+        if self.checkDefault(value):
+            value = ''
+        else:
+            value = self.format_str.format(value) 
         return value
 
 
@@ -512,7 +547,7 @@ class ConstantData(ADataRowObject):
     str value from a list of predefined constants.
     """
     
-    def __init__(self, row_pos, datatype, legal_values, format_str='{}', default=None):
+    def __init__(self, row_pos, datatype, legal_values, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
@@ -526,9 +561,10 @@ class ConstantData(ADataRowObject):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default=None: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
+            **kwargs:
+                default=None: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
         
         Raises:
             AttributeError: if legal_values in not a valid tuple.
@@ -536,8 +572,7 @@ class ConstantData(ADataRowObject):
         if not isinstance(legal_values, tuple):
             raise AttributeError ('legal_values is not a tuple')
         self.legal_values = legal_values
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
-                                default)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -581,7 +616,11 @@ class ConstantData(ADataRowObject):
         """
         if value == False:
             value = ''
-        value = self.format_str.format(value) 
+
+        if self.checkDefault(value):
+            value = ''
+        else:
+            value = self.format_str.format(value) 
         return value
 
 
@@ -591,7 +630,7 @@ class SymbolData(ADataRowObject):
     float value instead of a string.
     """
     
-    def __init__(self, row_pos, datatype, symbol, format_str='{}', default=None):
+    def __init__(self, row_pos, datatype, symbol, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
@@ -607,17 +646,17 @@ class SymbolData(ADataRowObject):
                 should be in the form '{:<10}' = 10 spaces formatted left. 
                 With the required spaces need to correctly format the value 
                 in the file.
-            default=None: The default value that the collection should use -
-                Can be None if defaults are not allowed or '~' if the default 
-                should remove the formatting and apply an empty string.
+            **kwargs:
+                default=None: The default value that the collection should use -
+                    Can be None if defaults are not allowed or '~' if the default 
+                    should remove the formatting and apply an empty string.
         
         Raises:
             AttributeError: if legal_values in not a valid tuple.
         """
         self.symbol = symbol
         self.bool_type = bool # Used to test if a value is of type bool or not
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, 
-                                default)
+        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -677,7 +716,11 @@ class SymbolData(ADataRowObject):
             value = self.symbol
         else:
             value = ''
-        value = self.format_str.format(value) 
+
+        if self.checkDefault(value):
+            value = ''
+        else:
+            value = self.format_str.format(value) 
         return value
         
 

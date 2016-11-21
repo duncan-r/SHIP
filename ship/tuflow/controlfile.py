@@ -72,7 +72,8 @@ class ControlFile(object):
         return vars
 
     
-    def fetchPartType(self, instance_type, filepart_type, no_duplicates, user_vars):
+    def fetchPartType(self, instance_type, filepart_type=None, no_duplicates=True, 
+                      user_vars=None):
         """
         """
         found_commands = []
@@ -270,11 +271,16 @@ class PartHolder(object):
         self.part_hashes[key] = value.hash
     
     
-    def addPart(self, filepart, after=None, before=None):
+#     def addPart(self, filepart, **kwargs):#after=None, before=None):
+    def add(self, filepart, **kwargs):#after=None, before=None):
         """
         
         If both after and before are supplied, after will take precedence.
         """
+        after = kwargs('after', None)
+        before = kwargs('before', None)
+        take_logic = kwargs('take_logic', True)
+
         if filepart.hash in self.part_hashes:
             raise (ValueError, 'filepart %s already exists.' % filepart.hash)
 
@@ -295,7 +301,14 @@ class PartHolder(object):
             self.part_hashes.append(filepart.hash)
             
 
-    def movePart(self, part, after):
+#     def movePart(self, part, after):
+    def move(self, part, **kwargs): #after):
+        after = kwargs('after', None)
+        before = kwargs('before', None)
+        if after is None and before is None:
+            raise AttributeError('Either before or after part must be given')
+        take_logic = kwargs('take_logic', True)
+
         pindex = self.findPartIndex(part)
         aindex = self.findPartIndex(after)
         self.parts.insert(aindex, self.parts.pop(pindex))
@@ -315,7 +328,8 @@ class PartHolder(object):
             raise ValueError('Reference part does not exist (%s)' % hash)
     
     
-    def getPart(self, filepart, filepart_type=None):
+#     def getPart(self, filepart, filepart_type=None):
+    def get(self, filepart, filepart_type=None):
         """
         """
         part_hash, type_hash = self._checkPartKeys(filepart_hash, filepart_type)
@@ -326,8 +340,10 @@ class PartHolder(object):
         """
         """
         index = self.findPartIndex(filepart)
+        fpart = self.parts[index]
         del self.parts[index]
         del self.part_hashes[index]
+        return fpart
         
        
 class LogicHolder(object):

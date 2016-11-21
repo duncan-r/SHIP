@@ -253,8 +253,8 @@ class IsisUnitCollectionTest(unittest.TestCase):
         self.assertListEqual(self.out_contents, print_unit, 'GetPrintable units fail')
         
 
-    def test_getUnitsByCategory(self):
-        '''Checks that we can safely return units by category.
+    def test_getUnitsByUNIT_CATEGORY(self):
+        '''Checks that we can safely return units by UNIT_CATEGORY.
         '''
         # Add some units to the collection
         col = DatCollection(self.path_holder)
@@ -263,17 +263,17 @@ class IsisUnitCollectionTest(unittest.TestCase):
         col.addUnit(self.header, update_node_count=False)
         
         # Get the river units.
-        river_cat = col.getUnitsByCategory('River')
+        river_cat = col.getUnitsByUNIT_CATEGORY('River')
         # Make sure we have the number that we think we should have
         self.assertTrue(len(river_cat) == 2, 'Number of river units fail')
 
         # Get the head unit
-        header_cat = col.getUnitsByCategory('Meta')
+        header_cat = col.getUnitsByUNIT_CATEGORY('Meta')
         # Check that we only have one
         self.assertTrue(len(header_cat) == 1, 'Number of header units fail')
         
-        # Try a non existent category
-        non_cat = col.getUnitsByCategory('redherring')
+        # Try a non existent UNIT_CATEGORY
+        non_cat = col.getUnitsByUNIT_CATEGORY('redherring')
         self.assertFalse(non_cat, 'Number of red herring units fail')
         
         

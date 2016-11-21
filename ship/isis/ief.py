@@ -109,9 +109,9 @@ class Ief(object):
         
         if not self.ied_data is None and not self.ied_data == []:
             ied_paths = [ied['file'] for ied in self.ied_data]
-            paths_dict['ied'] = ied_paths
+            paths_dict['ieds'] = ied_paths
         else:
-            paths_dict['ied'] = []
+            paths_dict['ieds'] = []
         
         if not self.snapshots is None and not self.snapshots == []:
             snapshot_paths = [snap['file'] for snap in self.snapshots]

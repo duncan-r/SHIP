@@ -188,7 +188,7 @@ class TuflowTypes(object):
     else. It is kept here as that seems to be most sensible.
     
     Contains methods for identifying whether a command given to it is known
-    to the library and what type it is. i.e. what category it falls into.
+    to the library and what type it is. i.e. what UNIT_CATEGORY it falls into.
     """
     
     def __init__(self):

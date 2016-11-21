@@ -21,6 +21,7 @@
 
 """
 
+from __future__ import unicode_literals
 
 from ship.isis.datunits.isisunit import AIsisUnit
 from ship.data_structures.rowdatacollection import RowDataCollection
@@ -37,12 +38,13 @@ class InitialConditionsUnit (AIsisUnit):
     """
     
     # Class constants
-    UNIT_TYPE = 'Initial Conditions'
-    CATEGORY = 'Initial Conditions'
+    UNIT_TYPE = 'initial_conditions'
+    UNIT_CATEGORY = 'initial_conditions'
     FILE_KEY = 'INITIAL'
+    FILE_KEY2 = None
     
 
-    def __init__(self, node_count):
+    def __init__(self, **kwargs):
         """Constructor
 
         Args:
@@ -52,43 +54,53 @@ class InitialConditionsUnit (AIsisUnit):
                 .DAT file. This will always be at the end but before the 
                 GISINFO if there is any.
         """
-        AIsisUnit.__init__(self)
-        self.unit_type = "Initial Conditions"
-        self.unit_category = "Initial Conditions"
-        self._name = "Initial Conditions"
-        self.has_datarows = True
-        self.has_ics = False
-        self.node_count = node_count
+        AIsisUnit.__init__(self, **kwargs)
+        self._unit_type = InitialConditionsUnit.UNIT_TYPE
+        self._unit_category = InitialConditionsUnit.UNIT_CATEGORY
+        self._name = "initial_conditions"
+        self._name_types = {}
+#         self.has_datarows = True
+#         self.has_ics = False
         
-        self.row_collection = RowDataCollection()
-        self.row_collection.initCollection(do.StringData(0, rdt.LABEL, format_str='{:<12}'))
-        self.row_collection.initCollection(do.StringData(1, rdt.QMARK, format_str='{:>2}', default='y'))
-        self.row_collection.initCollection(do.FloatData(2, rdt.FLOW, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(3, rdt.STAGE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(4, rdt.FROUDE_NO, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(5, rdt.VELOCITY, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(6, rdt.UMODE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(7, rdt.USTATE, format_str='{:>10}', no_of_dps=3))
-        self.row_collection.initCollection(do.FloatData(8, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3))
+        dobjs = [
+            do.StringData(0, rdt.LABEL, format_str='{:<12}'),
+            do.StringData(1, rdt.QMARK, format_str='{:>2}', default='y'),
+            do.FloatData(2, rdt.FLOW, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(3, rdt.STAGE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(4, rdt.FROUDE_NO, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(5, rdt.VELOCITY, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(6, rdt.UMODE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(7, rdt.USTATE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(8, rdt.ELEVATION, format_str='{:>10}', default=0.000, no_of_dps=3),
+        ]
+        self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+     
     
+    @property
+    def node_count(self):
+        return self._node_count
+#         return self.row_data['main'].getNumberOfRows()
+
     
-    def readUnitData(self, unit_data, file_line):
+    def readUnitData(self, unit_data, file_line, **kwargs):
         """
         """
+        self._node_count = kwargs['node_count']
+
         i = file_line
-        out_line = file_line + self.node_count + 2
+        out_line = file_line + self._node_count + 2
         for i in range(file_line, out_line):
             if i < file_line + 2: continue  # Skip the first couple of header lines
             
-            self.row_collection.addValue(rdt.LABEL, unit_data[i][0:12].strip())
-            self.row_collection.addValue(rdt.QMARK, unit_data[i][12:14].strip())
-            self.row_collection.addValue(rdt.FLOW, unit_data[i][14:24].strip())
-            self.row_collection.addValue(rdt.STAGE, unit_data[i][24:34].strip())
-            self.row_collection.addValue(rdt.FROUDE_NO, unit_data[i][34:44].strip())
-            self.row_collection.addValue(rdt.VELOCITY, unit_data[i][44:54].strip())
-            self.row_collection.addValue(rdt.UMODE, unit_data[i][54:64].strip())
-            self.row_collection.addValue(rdt.USTATE, unit_data[i][64:74].strip())
-            self.row_collection.addValue(rdt.ELEVATION, unit_data[i][74:84].strip())
+            self.row_data['main'].addValue(rdt.LABEL, unit_data[i][0:12].strip())
+            self.row_data['main'].addValue(rdt.QMARK, unit_data[i][12:14].strip())
+            self.row_data['main'].addValue(rdt.FLOW, unit_data[i][14:24].strip())
+            self.row_data['main'].addValue(rdt.STAGE, unit_data[i][24:34].strip())
+            self.row_data['main'].addValue(rdt.FROUDE_NO, unit_data[i][34:44].strip())
+            self.row_data['main'].addValue(rdt.VELOCITY, unit_data[i][44:54].strip())
+            self.row_data['main'].addValue(rdt.UMODE, unit_data[i][54:64].strip())
+            self.row_data['main'].addValue(rdt.USTATE, unit_data[i][64:74].strip())
+            self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][74:84].strip())
             
         return out_line - 1
        
@@ -99,14 +111,14 @@ class InitialConditionsUnit (AIsisUnit):
         out_data = []
         out_data.append('INITIAL CONDITIONS')
         out_data.append(' label   ?      flow     stage froude no  velocity     umode    ustate         z')
-        for i in range(0, self.row_collection.getNumberOfRows()): 
-            out_data.append(self.row_collection.getPrintableRow(i))
+        for i in range(0, self._node_count):
+            out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
     
     
-    
-    def updateDataRow(self, row_vals, index):
+#     def updateDataRow(self, row_vals, index):
+    def updateRow(self, row_vals, index):
         """Updates the row at the given index in the row_collection.
         
         Changes the state of the values in the initial conditions list of 
@@ -127,10 +139,11 @@ class InitialConditionsUnit (AIsisUnit):
         """
         
         # Call superclass method to add the new row
-        AIsisUnit.updateDataRow(self, row_vals=row_vals, index=index)
+        AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
         
 
-    def updateDataRowByName(self, row_vals, name):
+#     def updateDataRowByName(self, row_vals, name):
+    def updateRowByName(self, row_vals, name):
         """Updates the row for the entry with the give name.
         
         Changes the state of the values in the initial conditions list for the
@@ -151,16 +164,17 @@ class InitialConditionsUnit (AIsisUnit):
             ADataObject and subclasses for information on the parameters.
         """
         index = 0
-        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
+        labels = self.row_data['main'].rowAsList(rdt.LABEL)
         index = labels.index(name)
         if index == -1:
             raise AttributeError
         
         # Call superclass method to add the new row
-        AIsisUnit.updateDataRow(self, row_vals=row_vals, index=index)
+        AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
     
 
-    def addDataRow(self, row_vals): 
+#     def addDataRow(self, row_vals): 
+    def addRow(self, row_vals, unit_type): 
         """Adds a new row to the InitialCondition units row_collection.
         
         The new row will be added at the given index. If no index is given it
@@ -172,7 +186,7 @@ class InitialConditionsUnit (AIsisUnit):
         
         Examples:
             >>> import ship.isis.datunits.ROW_DATA_TYPES as rdt
-            >>> ics.addDataRow({rdt.LABEL:UNITNAME, rdt.STAGE:10.2}, index=4)
+            >>> ics.addRow({rdt.LABEL:UNITNAME, rdt.STAGE:10.2}, index=4)
 
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
@@ -191,33 +205,29 @@ class InitialConditionsUnit (AIsisUnit):
             logger.error('Required values of LABEL not given')
             raise  AttributeError ("Required value 'LABEL' not given") 
         
-        # Don't add the same ic's in twice
-        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
-        if row_vals[rdt.LABEL] in labels:
-            return self.node_count
+        # Keep a record of multiple unit types under the same name
+        if row_vals[rdt.LABEL] in self._name_types.keys():
+            if not unit_type in self._name_types[row_vals[rdt.LABEL]]:
+                self._name_types[row_vals[rdt.LABEL]].append(unit_type)
+        else:
+            self._name_types[row_vals[rdt.LABEL]] = [unit_type]
 
-        # Setup default values for arguments that aren't given
-        kw={}
-        kw[rdt.LABEL] = row_vals.get(rdt.LABEL)
-        kw[rdt.QMARK] = row_vals.get(rdt.QMARK, 'y')
-        kw[rdt.FLOW] = row_vals.get(rdt.FLOW, 0.000)
-        kw[rdt.STAGE] = row_vals.get(rdt.STAGE, 0.000)
-        kw[rdt.FROUDE_NO] = row_vals.get(rdt.FROUDE_NO, 0.000)
-        kw[rdt.VELOCITY] = row_vals.get(rdt.VELOCITY, 0.000)
-        kw[rdt.UMODE] = row_vals.get(rdt.UMODE, 0.000)
-        kw[rdt.USTATE] = row_vals.get(rdt.USTATE, 0.000)
-        kw[rdt.ELEVATION] = row_vals.get(rdt.ELEVATION, 0.000)
+        # Don't add the same ic's in twice
+        labels = self.row_data['main'].rowAsList(rdt.LABEL)
+        if row_vals[rdt.LABEL] in labels:
+            return self._node_count
 
         # Call superclass method to add the new row
-        AIsisUnit.addDataRow(self, index=None, row_vals=kw, check_negative=False)
-        self.node_count += 1
-        return self.node_count
+        AIsisUnit.addRow(self, row_vals=row_vals, index=None)
+        self._node_count += 1
+        return self._node_count
     
 
-    def deleteDataRowByName(self, section_name):
+#     def deleteDataRowByName(self, section_name):
+    def deleteRowByName(self, unit_name, unit_type):
         """Delete one of the RowDataCollection objects in the row_collection.
         
-        This calls the AIsisUnit deleteDataRow method, but obtains the index
+        This calls the AIsisUnit deleteRow method, but obtains the index
         of the row to be deleted from the name first.
         
         Args:
@@ -227,17 +237,26 @@ class InitialConditionsUnit (AIsisUnit):
         Raises:
             KeyError - if section_name does not exist.
         """
-        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
-        index = labels.index(section_name)
+        labels = self.row_data['main'].rowAsList(rdt.LABEL)
+        index = labels.index(unit_name)
         
         if index == -1:
-            raise KeyError('Name does not exist in initial conditions: ' + str(section_name))
+            raise KeyError('Name does not exist in initial conditions: ' + str(unit_name))
         
-        self.deleteDataRow(index)
-        self.node_count -= 1
+        # Delete the ic if the unit_name is the only one using it
+        # Otherwise remove the type and keep the ic's as they are
+#         if unit_name in self._name_types.keys():
+#         if unit_type in self._name_types[unit_name]:
+        if len(self._name_types[unit_name]) > 1:
+            self._name_types[unit_name].remove(unit_type)
+        else:
+            self.deleteRow(index)
+            self._node_count -= 1
+            del self._name_types[unit_name]
     
     
-    def getRowByName(self, section_name):
+#     def getRowByName(self, section_name):
+    def rowByName(self, section_name):
         """Get the data vals in a particular row by name.
         
         This is the same functionality as the AIsisUnit's getRow(int) method
@@ -252,13 +271,13 @@ class InitialConditionsUnit (AIsisUnit):
         Return:
             dict - containing the values for the requested row.
         """
-        labels = self.row_collection.getRowDataAsList(rdt.LABEL)
+        labels = self.row_data['main'].rowAsList(rdt.LABEL)
         index = labels.index(section_name)
         
         if index == -1:
             raise AttributeError('Name does not exist in initial conditions: ' + str(section_name))
         
-        return self.getRow(index)
+        return self.row(index)
 
         
         
