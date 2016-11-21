@@ -19,7 +19,7 @@ class TuflowFactory(object):
         pass
 
     @classmethod
-    def getTuflowPart(line, parent, part_type=None, logic=None):
+    def getTuflowPart(cls, line, parent, part_type=None, logic=None):
 
         tuflow_types = TuflowTypes()
         line = line.strip()

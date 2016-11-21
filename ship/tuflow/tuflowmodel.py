@@ -72,6 +72,15 @@ class TuflowModel(object):
         self.user_variables = None
         """Class containing the scenario/event/variable keys and values."""
         
+            
+    @property
+    def root(self):
+        return self._root
+    
+    @root.setter
+    def root(self, value):
+        self._root = value
+        self.updateRoot(value)
 
 
     def checkPathsExist(self):
@@ -97,19 +106,69 @@ class TuflowModel(object):
         """
         for c in self.control_files:
             c.updateRoot(root)
-            
-    @property
-    def root(self):
-        return self._root
+        
     
-    @root.setter
-    def root(self, value):
-        self._root = value
-        self.updateRoot(value)
+    def replaceTcfModelFile(self, model_file, control_file, replace_file):
+        """Replace an existing ModelFile in 'TCF' and update ControlFile.
+        
+        
+        Args:
+            model_file(ModelFile): the replacement TuflowPart.
+            control_file(ControlFile): containing the contents to replace the
+                existing ControlFile.
+            replace_file(ModelFile): the TuflowPart to be replaced.
+        """
+        if model_file in self.control_files[model_file.model_type].control_files:
+            raise AttributeError('model_file already exists in this ControlFile') 
+
+        self.control_files[replace_file.model_type].replaceControlFile(
+                                    model_file, control_file, replace_file)
+        self.control_files['TCF'].parts.replace(model_file, replace_file)
+        
+    
+    def addTcfModelFile(self, model_file, control_file, **kwargs):
+        """Add a new ModelFile instance to a TCF type ControlFile.
+        
+        **kwargs:
+            after(TuflowPart): the part to add the new ModelFile after.
+            before(TuflowPart): the part to add the new ModelFile before.
+        
+        Either after or before kwargs must be given. If both are provided after
+        will take precedence.
+
+         Args:
+            model_file(ModelFile): the replacement TuflowPart.
+            control_file(ControlFile): containing the contents to replace the
+                existing ControlFile.
+        """
+        after = kwargs.get('after', None)
+        before = kwargs.get('before', None)
+        if after is not None:
+            replace_file = after
+        elif before is not None:
+            replace_file = before
+        else:
+            raise AttributeError("Either 'before' or 'after' TuflowPart kwarg must be given")
+        
+        if model_file in self.control_files[model_file.model_type].control_files:
+            raise AttributeError('model_file already exists in this ControlFile') 
+
+        indices = self.control_files[model_file.model_type].lastIndexOfControlFile(
+                                                                replace_file)
+        self.control_files[model_file.model_type].addControlFile(
+                                        model_file, control_file, indices)
+    
 
 
 class UserVariables(object):
-    """
+    """Container for all user defined variables.
+    
+    Includes variable set in the control files with 'Set somevar ==' and the
+    scenario and event variables.
+    
+    Note:
+        Only the currently active scenario and event variables will be stored
+        in this class.
     """
     
     def __init__(self):
@@ -119,6 +178,14 @@ class UserVariables(object):
         self.has_cmd_args = False
     
     def add(self, filepart, vtype=None):
+        """Add a new variables to the class.
+        
+        Args:
+            filepart(TuflowModelVariables or TuflowUserVariable):  
+        
+        Raises:
+            TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.
+        """
         if isinstance(filepart, TuflowUserVariable):
             self.variable[filepart.variable_name] = filepart
         elif isinstance(filepart, TuflowModelVariable):

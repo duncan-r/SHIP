@@ -54,6 +54,20 @@ class TuflowPart(object):
         self.tpart_type = kwargs.get('tpart_type', None)
         if 'logic' in kwargs.keys() and kwargs['logic'] is not None: 
             self.associates.logic = kwargs['logic']
+    
+    def allParents(self, parent_list):
+        """
+        """
+        if self.associates.parent is not None:
+            parent_list.append(self.associates.parent.hash)
+            parent_list = self.associates.parent.allParents(parent_list)
+        
+        return parent_list
+#         if self.associates.parent is not None:
+#             parent_list.append(self.associates.parent.hash)
+#             parent_list.extend(self.associates.parent.allParents(parent_list))
+#         else:
+#             return parent_list
         
     def isInSeVals(self, se_vals):
         """Check that this TuflowPart or it's parents are inside given logic terms.

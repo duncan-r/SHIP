@@ -50,17 +50,43 @@ class ControlFile(object):
         self.control_files = []
         
    
-    def files(self, filepart_type=None, no_duplicates=True, user_vars=None):
+    def files(self, filepart_type=None, no_duplicates=True, se_vals=None):
+        """Get all the TuflowFile types that match the criteria.
+        
+        TuflowPart's will be returned in order.
+        
+        Args:
+            filepart_type=None: the FILEPART_TYPES value to check. If None all
+                TuflowFile types will be checked.
+            no_duplicates=True(bool): If True any duplicate paths will be 
+                ignored.
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
+            
+        Return:
+            list - of TuflowFile's that matched.
         """
-        """
-        return self.fetchPartType(TuflowFile, filepart_type, no_duplicates, user_vars)
+        return self.fetchPartType(TuflowFile, filepart_type, no_duplicates, se_vals)
     
-    def variables(self, filepart_type=None, no_duplicates=True, user_vars=None):
+    def variables(self, filepart_type=None, no_duplicates=True, se_vals=None):
+        """Get all the ATuflowVariable types that match the criteria.
+        
+        TuflowPart's will be returned in order.
+        
+        Args:
+            filepart_type=None: the FILEPART_TYPES value to check. If None all
+                TuflowFile types will be checked.
+            no_duplicates=True(bool): If True any duplicate paths will be 
+                ignored.
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
+            
+        Return:
+            list - of ATuflowVariable types that matched.
         """
-        """
-        return self.fetchPartType(TuflowVariable, filepart_type, no_duplicates, user_vars)
+        return self.fetchPartType(TuflowVariable, filepart_type, no_duplicates, se_vals)
     
-    def logics(self, filepart_type=None, user_vars=None):
+    def logics(self, filepart_type=None, se_vals=None):
         """
         """
         vars = []
@@ -73,8 +99,23 @@ class ControlFile(object):
 
     
     def fetchPartType(self, instance_type, filepart_type=None, no_duplicates=True, 
-                      user_vars=None):
-        """
+                      se_vals=None):
+        """Get all the TuflowPart's that match the criteria.
+        
+        TuflowPart's will be returned in order.
+        
+        Args:
+            instance_type(TuflowPart): class derived from TuflowPart to restrict
+                the search to.
+            filepart_type=None: the FILEPART_TYPES value to check. If None all
+                TuflowFile types will be checked.
+            no_duplicates=True(bool): If True any duplicate paths will be 
+                ignored.
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
+            
+        Return:
+            list - of filepaths that matched.
         """
         found_commands = []
         vars = []
@@ -82,8 +123,8 @@ class ControlFile(object):
             if not isinstance(part, instance_type): continue
             if filepart_type is not None and part.tpart_type != filepart_type:
                 continue
-            if user_vars is not None:
-                if not self.checkPartLogic(part, user_vars): continue
+            if se_vals is not None:
+                if not self.checkPartLogic(part, se_vals): continue
             if no_duplicates:
                 if part.command in found_commands:
                     continue
@@ -94,8 +135,24 @@ class ControlFile(object):
         return vars
     
     def filepaths(self, filepart_type=None, absolute=False, no_duplicates=True,
-                  no_blanks=True, user_vars=None):
-        """
+                  no_blanks=True, se_vals=None):
+        """Get all the TuflowFile filepaths that match the criteria.
+        
+        Filepaths will be returned in order.
+        
+        Args:
+            filepart_type=None: the FILEPART_TYPES value to check. If None all
+                TuflowFile types will be checked.
+            absolute=False(bool): If True absolute paths will be returned. If
+                False only filenames will be returned.
+            no_duplicates=True(bool): If True any duplicate paths will be 
+                ignored.
+            no_blanks=True(bool): if True any blank filenames will be ignored.
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
+            
+        Return:
+            list - of filepaths that matched.
         """
         paths = []
         for part in self.parts:
@@ -103,8 +160,8 @@ class ControlFile(object):
             if not isinstance(part, TuflowFile): continue
             if filepart_type is not None and part.tpart_type != filepart_type:
                 continue
-            if user_vars is not None:
-                if not self.checkPartLogic(part, user_vars): continue
+            if se_vals is not None:
+                if not self.checkPartLogic(part, se_vals): continue
             if absolute:
                 p = part.getAbsolutePath()
             else:
@@ -115,26 +172,31 @@ class ControlFile(object):
 
         return paths
     
-    def checkPartLogic(self, part, user_vars):
+    def checkPartLogic(self, part, se_vals):
         """Check that the part or it's parents are inside the current logic terms.
         
         See TuflowPart isInSeVals method for further information.
         
         Args:
             part(TuflowPart): the part to check logic terms for.
-            user_vars(UserVariables): containing the current scenario and
-                event values.
+            se_vals(dict): containing the current scenario and event values.
         
         Return:
             bool - True if it's in the logic terms, or False otherwise.
         """
-        se = user_vars.scenarioEventValuesToDict()
-        output = part.isInSeVals(se)
+        output = part.isInSeVals(se_vals)
         return output
 
     
-    def checkPathsExist(self, user_vars=None):
-        """
+    def checkPathsExist(self, se_vals=None):
+        """Check that all of the TuflowFile type's absolute paths exist.
+        
+        Args:
+            se_vals=None(dict): to select only those TuflowFile's that are 
+                within certain scenario and event clauses.
+        
+        Return:
+            list - containing all TuflowFile's that failed the check.
         """
         failed = []
         for part in self.parts:
@@ -144,7 +206,12 @@ class ControlFile(object):
         return failed
     
     def updateRoot(self, root, must_exist=True):
-        """
+        """Update the root variable of all TuflowPart's.
+        
+        Args:
+            root(str): the new directory path.
+            must_exist=True(bool): if True and the given root directory doesn't
+                exist it will raise a ValueError.
         """
         if must_exist and not os.path.isdir(root):
             raise ValueError('root must be a directory and must exist when must_exist=True')
@@ -219,12 +286,183 @@ class ControlFile(object):
                     part.associates.logic = next_part.associates.logic
                     part.associates.logic.insertPart(part, next_part)
                 break
+            
+    def contains(self, **kwargs):
+        """Find TuflowPart variables that contain a particular string or value.
+        
+        All searches are case insensitive.
+        
+        **kwargs:
+            command(str): text to search for in a TuflowPart.command.
+            variable(str): characters to search for in a TuflowPart.variable.
+            filename(str): text to search for in a TuflowPart.filename.
+        
+        Return:
+            list - of TuflowParts that match the search term.
+        """
+        command = kwargs.get('command', '').upper()
+        variable = kwargs.get('variable', '').upper()
+        filename = kwargs.get('filename', '').upper()
+        out = []
+        for part in self.parts:
+            if command:
+                try:
+                    if command in part.command.upper():
+                        out.append(part)
+                except AttributeError:
+                    continue
+            if variable:
+                try:
+                    if variable in part.variable.upper():
+                        out.append(part)
+                except AttributeError:
+                    continue
+            if filename:
+                try:
+                    if filename in part.filename.upper():
+                        out.append(part)
+                except AttributeError:
+                    continue
+        
+        return out
+    
+    def allWithParent(self, parent_hash, iterator):
+        """Get all of the TuflowParts with a specific parent in their heirachy.
+        
+        Calls the allParents() method in TuflowPart. To get all of the parent
+        TuflowPart.hash values. allParents() is a recursive method that will
+        walk all the way up the tree and return the hash of every parent item.
+        
+        This method checks to see if a certain hash is in the returned list.
+        
+        Args:
+            parent_hash(uuid4): hash to check against.
+            iterator(list or Iterator): containing TuflowPart's to fetch the
+                parents from.
+                
+        Return:
+            tuple - list(Tuflowpart's), first index of found paren, last index
+                of found parent.
+        """
+        parts = []
+        found = False
+        first_index = -1
+        last_index = -1
+        for i, part in enumerate(iterator):
+            allp = part.allParents([])
+            if parent_hash in allp:
+                parts.append(part)
+                if not found:
+                    found = True
+                    first_index = i
+                else:
+                    last_index = i
+                continue
+            
+            if not found: 
+                continue
+            else: 
+                break
+        
+        return parts, first_index, last_index
+    
+    
+    def lastIndexOfControlFile(self, parent_file):
+        """Get the last index of TuflowParts with particular parent.
+        
+        Args:
+            parent_file(ModelFile): to check for last occurence of in self.parts.
+        
+        Return:
+            dict - with last index of 'parts', 'logic' and 'control_files'
+        """
+        _, _, part_index = self.allWithParent(model_file.hash, self.parts)
+        _, _, logic_index = self.allWithParent(model_file.hash, self.logic)
+        _, _, control_index = self.allWithParent(model_file.hash, self.control_files)
+        return {'parts': part_index, 'logic': logic_index, 'control_files': control_index}
+    
+    
+    def removeControlFile(self, model_file):
+        """Remove the contents of an existing ControlFile.
+        
+        Will return a dict with the starting indices of removed sections::
+        
+            indices = {
+                'parts': int, 'logic': int, 'control_files': int
+            }
+        
+        Args:
+            model_file(ModelFile): the ModelFile that will be used to find the
+                sections of this ControlFile to delete.
+        
+        Returns:
+            dict - containging the starting indices of 'parts', 'logic', 
+                and 'control_files' that were deleted.
+        """
+        # First find all of the old controlfile parts to remove
+        to_delete, part_index, _ = self.allWithParent(model_file.hash, self.parts)
+
+        # Then remove them
+        to_delete.reverse()
+        for part in to_delete:
+            self.parts.remove(part)
+
+        # Next the logic
+        to_delete, logic_index, _ = self.allWithParent(model_file.hash, self.logic)
+            
+        # Then remove them
+        to_delete.reverse()
+        for logic in to_delete:
+            self.logic.parts.remove(logic)
+
+        # Finally the control_files
+        to_delete, control_index, _ = self.allWithParent(model_file.hash, self.control_files)
+        to_delete.append(model_file)
+        to_delete.reverse()
+        for c in to_delete:
+            self.control_files.remove(c)
+        
+        return {'parts': part_index, 'logic': logic_index, 'control_files': control_index}
+
+    
+    def addControlFile(self, model_file, control_file, start_indices):
+        """Add the contents of a new ControlFile to this ControlFile.
+        
+        Args:
+            model_file(ModelFile): the ModelFile that is being added.
+            control_file(ControlFile): the Control to combine with this one.
+            start_index(dict): the locations to perform the replacements at.
+                this should contain indices for 'parts', 'logic', and 'control_files'.
+        """
+        if model_file in self.control_files:
+            raise AttributeError('model_file already exists in this ControlFile') 
+        self.parts.parts[start_indices['parts'] : start_indices['parts']] = control_file.parts
+        self.logic.parts[start_indices['logic'] : start_indices['logic']] = control_file.logic
+        self.control_files[start_indices['control_files'] : start_indices['control_files']] = control_file.control_files
+
+    
+    def replaceControlFile(self, model_file, control_file, replace_modelfile):
+        """Replace contents of an existing ModelFile with a new one.
+        
+        Args:
+            model_file(ModelFile): the ModelFile that will be replacing an 
+                existing ModelFile.
+            control_file(ControlFile): containing the contents to update this
+                ControlFile with.
+            replace_modelfile(ModelFile): the ModelFile in this ControlFile to
+                replace with the new ControlFile.
+        """
+        if model_file in self.control_files:
+            raise AttributeError('model_file already exists in this ControlFile') 
+        start_index = self.removeControlFile(replace_modelfile)
+        self.addControlFile(control_file, start_index)
+
+    
         
         
 class PartHolder(object):
     
     def __init__(self):
-        self.part_hashes = []
         self.parts = []
         self._min = 0
         self._max = len(self.parts)
@@ -234,6 +472,11 @@ class PartHolder(object):
     def __iter__(self):
         """Return an iterator for the units list"""
         return iter(self.parts)
+    
+    
+    def __delitem__(self, key):
+        del self.parts[key]
+        self._max -= 1
     
     
     def __next__(self):
@@ -268,7 +511,6 @@ class PartHolder(object):
         if not isinstance(value, TuflowPart):
             raise ValueError('Item must be of type TuflowPart')
         self.parts[key] = value
-        self.part_hashes[key] = value.hash
     
     
 #     def addPart(self, filepart, **kwargs):#after=None, before=None):
@@ -277,28 +519,35 @@ class PartHolder(object):
         
         If both after and before are supplied, after will take precedence.
         """
-        after = kwargs('after', None)
-        before = kwargs('before', None)
-        take_logic = kwargs('take_logic', True)
+        after = kwargs.get('after', None)
+        before = kwargs.get('before', None)
+        take_logic = kwargs.get('take_logic', True)
 
-        if filepart.hash in self.part_hashes:
+        if filepart in self.parts:
             raise (ValueError, 'filepart %s already exists.' % filepart.hash)
 
         if not after is None:
             index = self.findPartIndex(after)
             if index == len(self.part_order):
                 self.parts.append(filepart)
-                self.part_hashes.append(filepart.hash)
             else:
                 self.parts.insert(index+1, filepart)
-                self.part_hashes.insert(index+1, filepart.hash)
         elif not before is None:
             index = self.findPartIndex(before.hash)
             self.parts.insert(index, filepart)
-            self.part_hashes.insert(index, filepart.hash)
         else:
             self.parts.append(filepart)
-            self.part_hashes.append(filepart.hash)
+    
+    
+    def replace(self, part, replace_part):
+        """
+        """
+        index = self.parts.index(replace_part)
+        if index == -1:
+            raise IndexError('part does not exist in collection')
+        
+        self.parts.pop(index)
+        self.parts.insert(index, part)
             
 
 #     def movePart(self, part, after):
@@ -323,7 +572,7 @@ class PartHolder(object):
             raise ValueError ('Reference part is not of type TuflowPart or a hashcode.')
         
         try:
-            return self.part_hashes.index(hash)
+            return self.parts.index(part)
         except ValueError:
             raise ValueError('Reference part does not exist (%s)' % hash)
     
@@ -342,7 +591,6 @@ class PartHolder(object):
         index = self.findPartIndex(filepart)
         fpart = self.parts[index]
         del self.parts[index]
-        del self.part_hashes[index]
         return fpart
         
        
@@ -350,8 +598,6 @@ class LogicHolder(object):
     
     def __init__(self):
         self.parts = []
-        self.part_hashes = []
-        
         self._min = 0
         self._max = len(self.parts)
         self._current = 0
@@ -393,7 +639,6 @@ class LogicHolder(object):
         if not isinstance(value, TuflowPart):
             raise ValueError('Item must be of type TuflowPart')
         self.parts[key] = value
-        self.part_hashes[key] = value.hash
     
     
     def getAllParts(self, hash_only):
@@ -411,21 +656,20 @@ class LogicHolder(object):
         return None
     
     
-    def addLogic(self, logic):
+    def add(self, logic):
         for l in logic:
-            self.part_hashes.append(l.hash)
             self.parts.append(l)
     
     
     
 class TcfControlFile(ControlFile):
     
-    def __init__(self, mainfile_hash):
+    def __init__(self, mainfile):
         self.model_type = 'TCF'
         self.parts = PartHolder()
         self.logic = LogicHolder()
         self.control_files = []
-        self.mainfile_hash = mainfile_hash
+        self.mainfile = mainfile
         
         
         

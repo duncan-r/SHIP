@@ -113,9 +113,31 @@ class TuflowLoader(ALoader):
         return self.tuflow_model
 
 
-#     def loadControlFile(self, tuflow_model, control_path, relative_path, parent_hash):
-#         """
-#         """
+    def loadControlFile(self, model_file): #control_path, relative_path, parent_hash):
+        """
+        """
+        path = model_file.getAbsolutePath()
+        if not os.path.exists(path):
+            raise IOError('model_file path does not exists at: ' + path)
+    
+        self._resetLoader()
+        root = model_file.root
+        self._file_queue.enqueue(model_file)
+        self._fetchTuflowModel(root)
+#         self._orderModel(path)
+        _load_list = self._load_list[path] 
+        model = self._file_list[path]
+        mtype = model_file.model_type
+
+        self.current_control = [mtype]
+        self._control_files = {mtype: control.ControlFile(mtype)}
+        self._control_files[mtype].logic.add(self._logic_list[path])
+        self._control_files[mtype].control_files.append(model_file)
+        self.buildControlFiles(_load_list, model)
+        return self._control_files[mtype]
+        i=0
+
+        
 #         if tuflow_model.root is None or not os.path.isdir(tuflow_model.root):
 #             raise ValueError('TuflowModel root value must exist and be findable')
 #         if not os.path.exists(control_path):
@@ -137,8 +159,8 @@ class TuflowLoader(ALoader):
         _load_list = self._load_list[tcf_path] 
         model = self._file_list[tcf_path]
         self.current_control = ['TCF']
-        self._control_files = {'TCF': control.TcfControlFile(model.hash)}
-        self._control_files['TCF'].logic.addLogic(self._logic_list[tcf_path])
+        self._control_files = {'TCF': control.TcfControlFile(model)}
+        self._control_files['TCF'].logic.add(self._logic_list[tcf_path])
         self._control_files['TCF'].control_files.append(model)
         self.buildControlFiles(_load_list, model)
         
@@ -157,14 +179,14 @@ class TuflowLoader(ALoader):
 
         """
         for part in _load_list:
-            self._control_files[self.current_control[-1]].parts.addPart(part)
+            self._control_files[self.current_control[-1]].parts.add(part)
             if part.obj_type == 'model':
                 p = part.getAbsolutePath()
                 if not part.model_type in self._control_files.keys():
                     self._control_files[part.model_type] = control.ControlFile(part.model_type)
                     for l in self._logic_list[p]:
                         l.remove_callback = self._control_files[part.model_type].removeLogicItem
-                    self._control_files[part.model_type].logic.addLogic(self._logic_list[p])
+                    self._control_files[part.model_type].logic.add(self._logic_list[p])
                 self.current_control.append(part.model_type)
                 self._control_files[part.model_type].control_files.append(part)
                 self.buildControlFiles(self._load_list[p], self._file_list[p])
