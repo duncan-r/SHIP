@@ -107,6 +107,18 @@ class TuflowModel(object):
         for c in self.control_files:
             c.updateRoot(root)
         
+    def removeTcfModelFile(self, model_file):
+        """Remove an existing ModelFile from 'TCF' and update ControlFile.
+        
+        Args:
+            model_files(ModelFile): the ModelFile being removed.
+        """
+        if not model_file in self.control_files[model_file.model_type].control_files:
+            raise AttributeError("model_file doesn't exists in %s control_files" % model_file.model_type)
+        
+        self.control_files[model_file.model_type].removeControlFile(model_file)
+        self.control_files['TCF'].parts.remove(model_file)
+
     
     def replaceTcfModelFile(self, model_file, control_file, replace_file):
         """Replace an existing ModelFile in 'TCF' and update ControlFile.
@@ -137,26 +149,19 @@ class TuflowModel(object):
         will take precedence.
 
          Args:
-            model_file(ModelFile): the replacement TuflowPart.
+            model_file(ModelFile): the replacement ModelFile TuflowPart.
             control_file(ControlFile): containing the contents to replace the
                 existing ControlFile.
         """
-        after = kwargs.get('after', None)
-        before = kwargs.get('before', None)
-        if after is not None:
-            replace_file = after
-        elif before is not None:
-            replace_file = before
-        else:
+        if not 'after' in kwargs.keys() and not 'before' in kwargs.keys():
             raise AttributeError("Either 'before' or 'after' TuflowPart kwarg must be given")
         
         if model_file in self.control_files[model_file.model_type].control_files:
             raise AttributeError('model_file already exists in this ControlFile') 
 
-        indices = self.control_files[model_file.model_type].lastIndexOfControlFile(
-                                                                replace_file)
         self.control_files[model_file.model_type].addControlFile(
-                                        model_file, control_file, indices)
+                                        model_file, control_file, **kwargs)
+        self.control_files['TCF'].parts.add(model_file, **kwargs)
     
 
 
@@ -191,12 +196,32 @@ class UserVariables(object):
         elif isinstance(filepart, TuflowModelVariable):
             if filepart._variable_type == 'scenario':
                 self.scenario[filepart._variable_name] = filepart
+                self.variable[filepart._variable_name] = filepart
             else:
                 self.event[filepart._variable_name] = filepart
+                self.variable[filepart._variable_name] = filepart
         else:
             raise TypeError('filepart must be of type TuflowUserVariable or TuflowModelVariable')
         
-    def scenarioEventValuesToDict(self):
+    def variablesToDict(self):
+        """Get the values of the variables.
+        
+        Note that, like tuflow, scenario and event values will be includes in
+        the variables dict returned.
+
+            {'name1': var1, 'name2': var2, 'nameN': name2}
+        
+        Return:
+            dict - with variables names as key and values as values.
+        """
+#         scenario = [s.variable for s in self.scenario.values()]
+#         event = [e.variable for e in self.event.values()]
+#         variable = [v.variable for v in self.variable.values()]
+#         return {'scenario': scenario, 'event': event, 'variable': variable}
+        return self.variable
+
+        
+    def seValsToDict(self):
         """Get the values of the scenario and event variables.
         
         Returns the currently active scenario and event values only - not the

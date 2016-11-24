@@ -1,13 +1,14 @@
 """
 
  Summary:
-     
+     Contains all of the TuflowPart type classes used to store the data within
+     Tuflow control files.
 
  Author:  
      Duncan Runnacles
 
  Created:  
-     01 Apr 2016
+     20 Nov 2016
 
  Copyright:  
      Duncan Runnacles 2016
@@ -21,9 +22,11 @@ from __future__ import unicode_literals
 
 import copy
 import uuid
+import os
 
 from ship.utils.filetools import PathHolder
 from ship.tuflow import FILEPART_TYPES as fpt
+from ship.utils import utilfunctions as uf
 # from ship.tuflow.tuflowmodel import EventSourceData
 
 import logging
@@ -56,18 +59,28 @@ class TuflowPart(object):
             self.associates.logic = kwargs['logic']
     
     def allParents(self, parent_list):
-        """
+        """Get all the hash codes of all parents to this object.
+        
+        Recursive method to search up through all of the parents - in the
+        associates object - and retrieve their hash codes.
+        
+        The parent hash codes will be returned in ascending order. I.e. the
+        immediate parent will be at index 0, then it's parent, and so on.
+        
+        Note:
+            parent_list arg is used to pass the found parents through the
+            recursion. When calling this method you should probably always 
+            provide an empty list.
+        
+        Return:
+            list -  containing the hash codes for every parent of the called
+            TuflowPart in assending order.
         """
         if self.associates.parent is not None:
             parent_list.append(self.associates.parent.hash)
             parent_list = self.associates.parent.allParents(parent_list)
         
         return parent_list
-#         if self.associates.parent is not None:
-#             parent_list.append(self.associates.parent.hash)
-#             parent_list.extend(self.associates.parent.allParents(parent_list))
-#         else:
-#             return parent_list
         
     def isInSeVals(self, se_vals):
         """Check that this TuflowPart or it's parents are inside given logic terms.
@@ -116,8 +129,8 @@ class TuflowPart(object):
         if logic is None:
             return True
         
-        output = logic.isInTerms(p, se_vals)
-        return output
+        is_in = logic.isInTerms(p, se_vals)
+        return is_in
     
 
     def getPrintableContents(self):
@@ -250,7 +263,7 @@ class TuflowUserVariable(ATuflowVariable):
         self.command = 'Set Variable ' + value
     
     def getPrintableContents(self):
-        return self.buildPrintline(self.command, unicode(self._variable), self.comment), False
+        return self.buildPrintline(self.command, uf.encodeStr(self._variable), self.comment), False
 
 
 class TuflowModelVariable(ATuflowVariable):
@@ -335,25 +348,38 @@ class TuflowFile(TuflowPart, PathHolder):
         PathHolder.__init__(self, path, root)
     
     
-    def getAbsolutePath(self):
+    def absolutePathAllTypes(self):
+        rel_roots = self.getRelativeRoots([])
+        paths = []
+        if self.all_types: 
+            all_types = self.all_types
+        else:
+            all_types = [self.extension]
+        for a in all_types:
+            f = self.filename + '.' + a
+            paths.append(PathHolder.absolutePath(self, filename=f,
+                                               relative_roots=rel_roots))
+        return paths
+    
+    def absolutePath(self):
         """Get the absolute path of this object.
         """
         rel_roots = self.getRelativeRoots([])
-        abs_path = PathHolder.getAbsolutePath(self, relative_roots=rel_roots)
+        abs_path = PathHolder.absolutePath(self, relative_roots=rel_roots)
         return abs_path
-    
     
     def getRelativeRoots(self, roots):
         """Get the relative paths of this and all parent objects.
         
         Recursively calls all of it's parents to obtain the relative paths
-        before calling getAbsolutePath of the PathHolder superclass.
+        before calling absolutePath of the PathHolder superclass.
         """
         if not self.associates.parent is None:
-            roots.extend(self.associates.parent.getRelativeRoots(roots))
-        if self.relative_root: 
-            roots.extend([self.relative_root])
+            self.associates.parent.getRelativeRoots(roots)
+        if self.relative_root:
+            roots.append(self.relative_root)
         return roots
+        
     
     def checkPipedStatus(self, path):
         has_next = False; has_prev = False
@@ -378,11 +404,11 @@ class TuflowFile(TuflowPart, PathHolder):
 
     def getPrintableContents(self):
         if not self.relative_root == None and not self.has_own_root:
-            path = self.getRelativePath()
+            path = self.relativePath()
         elif not self.root == None:
-            path = os.path.join(self.root, self.getFileNameAndExtension())
+            path = os.path.join(self.root, self.filenameAndExtension())
         else:
-            path = self.getFilenameAndExtension()
+            path = self.filenameAndExtension()
 
         out, has_prev = self.checkPipedStatus(path)
         if out:
@@ -426,14 +452,30 @@ class ResultFile(TuflowFile):
 
 class GisFile(TuflowFile):
     
-    GIS_TYPES = {'mi': ('mif', 'mid'), 'shape': ('shp', 'shx', 'dbf')}
+    GIS_TYPES = {'mi': ('mif', 'mid'), 'shp': ('shp', 'shx', 'dbf')}
     
     def __init__(self, parent, **kwargs):
         TuflowFile.__init__(self, parent, 'gis', **kwargs)
         
         # Needed to catch GIS files without an extension
-        if self.file_name == '': 
-            self.file_name = os.path.basename(path)
+        if self.filename == '': 
+            self.filename = os.path.basename(kwargs['path'])
+        
+        # Try and work out what kind of gis file it is when it doesn't have
+        # an extension
+        # DEBUG
+        if self.extension == '':
+            if 'test' in kwargs.keys():
+                self.extension = kwargs['test']
+            else:
+                self.extension = 'mif'
+                if not os.path.exists(self.absolutePath()):
+                    self.extension = 'mid'
+                    if not os.path.exists(self.absolutePath()):
+                        self.extension = 'shp'
+                        if not os.path.exists(self.absolutePath()):
+                            self.extension = ''
+            
             
         self.gis_type = None
         for key in GisFile.GIS_TYPES:
@@ -468,54 +510,118 @@ class TuflowLogic(TuflowPart):
         self.commands = []
         self.comments = []
         self.remove_callback = None
+        self.add_callback = None
         self.check_sevals = False
         self._top_written = False
         
         self.END_CLAUSE = 'End'
         """Override with with whatever the end statement is (e.g. 'End If')"""
     
-    def addPart(self, part, group=-1):
-        self.parts.append(part)
-        self.group_parts[group].append(part.hash)
+    def addPart(self, part, group=-1, **kwargs):
+        """Add a new TuflowPart.
+        
+        **kwargs:
+            skip_callback=False(bool): if true it won't call the callback 
+                function in the ControlFile. Basically don't use this.
+            
+        Args:
+            part(TuflowPart): the part to add.
+            group(int): the clause group to add the part to.
+            skip_callback=False(bool): if true it won't call the callback 
+                function in the ControlFile. Basically don't change this.
+        """
+        skip_callback = kwargs.get('skip_callback', False)
+        part.associates.logic = self
+        self.parts.append(part.hash)
+        self.group_parts[group].append(part)
+        if not skip_callback:
+            self.add_callback(part, self.group_parts[group][-1])
     
     def insertPart(self, new_part, adjacent_part):
-        if not adjacent_part in self.parts:
+        """Insert a TuflowPart adjacent to an existing part.
+        
+        This allows you to have control over where in a group a part is placed.
+        If you don't care where it goes in the group, or you want it to go at
+        the end of the group use addPart() instead.
+        
+        Args:
+            new_part(TuflowPart): the part to add.
+            adjacent_part(TuflowPart): the part to put the new part next to.
+                It will be placed above the existing part.
+        """
+        if not adjacent_part.hash in self.parts:
             raise ValueError('adjacent_part could not be found')
-        g = self.getGroup(adjacent_part.hash)
-        index = self.group_parts[g].index(adjacent_part.hash)
-        self.parts.append(new_part)
-        self.group_parts[g].insert(index, new_part.hash)
+        g = self.getGroup(adjacent_part)
+        index = self.group_parts[g].index(adjacent_part)
+        new_part.associates.logic = self
+        self.parts.append(new_part.hash)
+        self.group_parts[g].insert(index, new_part)
+        self.add_callback(new_part, adjacent_part)
     
     def removePart(self, part):
-        hash = part.hash if self.isTuflowPart(part) else part
-
+        """Remove a TuflowPart.
+        
+        Will also call a callback function to the ControlFile object that 
+        contains this TuflowLogic and ensure that the PartHolder order is
+        updated. It just ensures that the TuflowPart is moved out of the 
+        scope of the parts still within the TuflowLogic.
+        
+        Args:
+            part(TuflowPart):
+        """
         for p in self.parts:
-            if p.hash == hash:
-                self.parts.remove(p)
+            if p == part.hash:
+                self.parts.remove(part.hash)
                 break
         for i, group in enumerate(self.group_parts):
             for j, val in enumerate(group):
-                if val == hash:
+                if val == part:
                     del self.group_parts[i][j]
                     break
  
-        last_hash = self.group_parts[-1][-1]
-        self.remove_callback(hash, last_hash)        
+        if self.group_parts and self.group_parts[-1]:
+            last_part = self.group_parts[-1][-1]
+        else:
+            last_part = None
+        part.associates.logic = None
+        self.remove_callback(part, last_part)
         
     def getAllParts(self, hash_only):
-        """"""
+        """Return all of the TuflowParts in this TuflowLogic.
+        
+        Args:
+            hash_only: if True the TuflowPart.hash codes otherwise the actual
+                TuflowPart will be.
+        
+        Return:
+            list - of TuflowPart's or TuflowPart.hash
+        """
         if not hash_only:
-            return self.parts
+            parts = []
+            for group in self.group_parts:
+                for p in group:
+                    parts.append(p)
+            return parts
         else:
-            return [p.hash for p in self.parts]
+            return self.parts
     
-    def getGroup(self, part_hash):
+    def getGroup(self, part):
+        """Return the group index of the given part.
+        
+        Args:
+            part(TuflowPart):
+        
+        Return:
+            int - the index of the group that this part is in, or -1 if it
+                could not be found.
+        """
         for i, g in enumerate(self.group_parts):
-            if part_hash in g: return i
+            if part in g: return i
         else:
             return -1
     
     def getLogic(self, hash_only):
+        """TODO: Check what this does and if it's used."""
         if self.associates.logic is None:
             return None
         else:
@@ -525,24 +631,45 @@ class TuflowLogic(TuflowPart):
                 return self.associates.logic
     
     def isTuflowPart(self, part):
+        """Internal function."""
         if isinstance(part, uuid.UUID):
             return False
-        elif isinstance(filepart, TuflowPart):
+        elif isinstance(part, TuflowPart):
             return True
         else:
             raise TypeError('filepart must be either TuflowPart or TuflowPart.hash')
         
-    def isInClause(self, filepart, term):
-        hash = part.hash if self.isTuflowPart(filepart) else filepart
-        for i, term in enumerate(self.terms):
-            for t in term:
+    def isInClause(self, part, term):
+        """Test whether the given part is within a particular clause.
+        
+        Args:
+            part(TuflowPart): check if it's in this TuflowLogic.
+            term(str): term to check the part against. 
+        
+        Return:
+            bool - True if the term is part of one of the clauses in this 
+                TuflowLogic and the part is within that clause; Else False.
+        """
+#         hash = part.hash if self.isTuflowPart(part) else part
+        for i, terms in enumerate(self.terms):
+            for t in terms:
                 if t == term:
-                    success = True if hash in self.group_parts[i] else False
+                    success = True if part in self.group_parts[i] else False
                     return success
         return False
+
+    def allTerms(self):
+        """Returns all of the terms in every clause."""
+        out = []
+        for terms in self.terms:
+            out.extend(terms)
+        return out
     
     def isInTerms(self, part, se_vals): 
         """Checks to see if the clause terms associated with part match se_vals.
+        
+        If the part is in an 'Else' clause it checks that the se_vals DON'T
+        match any of the terms in any of the clauses.
         
         Args:
             part(TuflowPart): to find the terms for. If now reference of the
@@ -553,30 +680,44 @@ class TuflowLogic(TuflowPart):
             bool - True if the part is within the given se_vals, otherwise False.
         """
         retval = False
-        group = self.getGroup(part.hash)
+        group = self.getGroup(part)
         if group == -1: return False
-        terms = self.terms[self.getGroup(part.hash)]
-        for t in terms:
-            if t in se_vals['scenario'] or t in se_vals['event']: 
-                retval = True
-#                 if check_parents and part.associates.parent is not None:
-#                     parent = part.associates.parent
-#                     if parent.associates.logic is not None:
-#                         retval = parent.associates.logic.isInTerms(parent, se_vals, True, retval)
-                break
+        terms = self.terms[group]
+        command = self.commands[group]
+        se_keys = se_vals.keys()
+
+        '''
+        If 'Else' we need to check if it's NOT in any of the terms. So check
+        all of the terms and compare against the se_vals. If there's no
+        match then we set retval to True.
+        '''
+        if command.upper() == 'ELSE':
+            all_terms = self.allTerms()
+            found = True
+            if 'scenario' in se_keys:
+                found = set(all_terms).isdisjoint(set(se_vals['scenario']))
+            elif 'event' in se_keys:
+                found = set(all_terms).isdisjoint(set(se_vals['event']))
+            if found == True: retval = True
+        
+        # Otherwise we need to check if this groups terms are in the se_vals
+        else:
+            for t in terms:
+                if 'scenario' in se_keys and t in se_vals['scenario']:
+                    retval = True; break
+                elif 'event' in se_keys and t in se_vals['event']:
+                    retval = True; break
         return retval
     
     def getPrintableContents(self, part, group=0):
-        """
-        """
+        """Return contents formatted for printing."""
         out = self.getTopClause(part, [], False)
         return out
     
     def getTopClause(self, part, out, force):
-        """
-        """
+        """Get the top clause command and terms formatted for printing."""
         if not force and not self.group_parts[0]: return out
-        if force or self.group_parts[0][0] == part.hash:
+        if force or self.group_parts[0][0] == part:
             self._top_written = True
             out.insert(0, self._getContentsLine(0))
             if not self.associates.logic is None:
@@ -584,15 +725,16 @@ class TuflowLogic(TuflowPart):
         return out
 
     def getEndClause(self, part):
-        if self.group_parts[-1][-1] == part.hash:
+        """Get the end clause formatted for printing."""
+        if self.group_parts[-1][-1] == part:
             self._top_written = False
             return self.END_CLAUSE
         return ''
         
     def _getContentsLine(self, group=0):
+        """Get a clause line formatted for printing.
         """
-        """
-        if group > self.group_parts: raise IndexError('Group %s does not exist' % group)
+        if group > len(self.group_parts): raise IndexError('Group %s does not exist' % group)
         if self.terms[group]:# is not None:
             t = ' | '.join(self.terms[group])
             line = self.commands[group] + ' == ' + t
@@ -605,6 +747,17 @@ class TuflowLogic(TuflowPart):
 class IfLogic(TuflowLogic): 
     
     def __init__(self, parent, **kwargs):
+        """Constructor.
+        
+        **kwargs:
+            'command(str)': the command (e.g. If Scenario) for the opening clause.
+            'terms'(list): list of terms for the first clause 
+                (e.g. ['scen1', 'scen2', 'scenN'].
+            'comment'(str): any comment next to the first clause.
+        
+        Args:
+            parent(ModelFile): that contains this TuflowLogic.
+        """
         TuflowLogic.__init__(self, parent, 'iflogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         self.all_terms = []
@@ -618,15 +771,19 @@ class IfLogic(TuflowLogic):
         self.END_CLAUSE = 'End If'
     
     def getPrintableContents(self, part, out):
-
+        """Get the printable contents for this TuflowLogic."""
         out = TuflowLogic.getPrintableContents(self, part, out) 
         out = self.checkMiddleClause(part, out)
         return out
 
     def checkMiddleClause(self, part, out):
+        """Check to see if there's any middle clause.
+        
+        Used for writing out the clauses when printing to file.
+        """
         for i, val in enumerate(self.group_parts):
             if i > 0:
-                if val[0] == part.hash:
+                if val[0] == part:
                     
                     if not self.group_parts[0] and not self._top_written:
                         out = self.getTopClause(None, out, True)
@@ -635,6 +792,13 @@ class IfLogic(TuflowLogic):
         return out
 
     def addClause(self, command, terms, comment=''):
+        """Add a new clause to this TuflowLogic.
+        
+        Args:
+            command(str): the command part of the clause (e.g. 'Else if Event ==')
+            terms(list): str's of terms for clause (e.g. ['evt1', 'evt2', 'evtN'].
+            comment=''(str): any comment for the clause line.
+        """
         self.commands.append(command.strip())
         if terms is not None: 
             self.terms.append([i.strip() for i in terms])
@@ -646,8 +810,24 @@ class IfLogic(TuflowLogic):
         
 # class BlockLogic(TuflowLogic): 
 class BlockLogic(TuflowLogic): 
+    """For any logic that uses a 'Define something'.
+    
+    I can only think of 'Define Event == term1 | term2 | termN', but maybe
+    there are others?
+    """
     
     def __init__(self, parent, **kwargs):
+        """Constructor.
+        
+        **kwargs:
+            'command(str)': the command (e.g. If Scenario) for the opening clause.
+            'terms'(list): list of terms for the first clause 
+                (e.g. ['scen1', 'scen2', 'scenN'].
+            'comment'(str): any comment next to the first clause.
+        
+        Args:
+            parent(ModelFile): that contains this TuflowLogic.
+        """
         TuflowLogic.__init__(self, parent, 'blocklogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:
@@ -658,10 +838,33 @@ class BlockLogic(TuflowLogic):
         self.check_sevals = True
         self.END_CLAUSE = 'End Define'
     
+    def addClause(self):
+        """Only one clause allowed in this type."""
+        raise NotImplementedError('Not supported for this TuflowLogic type')
+    
     
 class SectionLogic(BlockLogic): 
+    """Used for all other types of scoping logic.
+    
+    This includes things like 'Define Output Zone ==' etc. The only real 
+    difference between this and BlockLogic is that BlockLogic sets
+    check_sevals = True. It kind of makes sense to treat them slightly 
+    differently though as the BlockLogic and IfLogic are used with scenario
+    and event logic.
+    """
     
     def __init__(self, parent, **kwargs):
+        """Constructor.
+        
+        **kwargs:
+            'command(str)': the command (e.g. If Scenario) for the opening clause.
+            'terms'(list): list of terms for the first clause 
+                (e.g. ['scen1', 'scen2', 'scenN'].
+            'comment'(str): any comment next to the first clause.
+        
+        Args:
+            parent(ModelFile): that contains this TuflowLogic.
+        """
         TuflowLogic.__init__(self, parent, 'sectionlogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:

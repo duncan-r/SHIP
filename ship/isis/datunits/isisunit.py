@@ -218,84 +218,86 @@ class AIsisUnit(object):
     
     
 #     def getRowDataType(self, key, collection_key='main', copy=False):
-    def rowDataType(self, key, rowdata_key='main'):
-        """Getter for the data series in the data_object dictionary.
-
-        Depending on the data that the subclass contains this could be 
-        anything... a dictionary a string a integer. It is up to the client 
-        and the subclass to ensure that this is clear.
-        
-        Args:
-            key (str): The key for the data_object requested.
-            collection_key='main' (str): the key for the row_collection to 
-                return. Most objects will only contain a single row_collection,
-                like the RiverUnit, but some like bridges have opening data and
-                orifice data rows as well. See individual AIsisUnit 
-                implemenations for more details on what they contain.
-        
-        Returns:
-            DataObject requested by client or False if unit has no rows.
-        
-        Raises:
-            KeyError: If key does not exist. 
-        """
-        if not self.has_datarows:
-            return False
-        try:
-            return self.row_data[rowdata_key].getDataObject(key)
-        except KeyError:
-            logger.warning('Key %s does not exist in collection' % (key))
-            raise KeyError ('Key %s does not exist in collection' % (key))
+#     def rowDataType(self, key, rowdata_key='main'):
+#         """Getter for the data series in the data_object dictionary.
+# 
+#         Depending on the data that the subclass contains this could be 
+#         anything... a dictionary a string a integer. It is up to the client 
+#         and the subclass to ensure that this is clear.
+#         
+#         Args:
+#             key (str): The key for the data_object requested.
+#             collection_key='main' (str): the key for the row_collection to 
+#                 return. Most objects will only contain a single row_collection,
+#                 like the RiverUnit, but some like bridges have opening data and
+#                 orifice data rows as well. See individual AIsisUnit 
+#                 implemenations for more details on what they contain.
+#         
+#         Returns:
+#             DataObject requested by client or False if unit has no rows.
+#         
+#         Raises:
+#             KeyError: If key does not exist. 
+#         """
+#         if not self.has_datarows:
+#             return False
+#         try:
+#             return self.row_data[rowdata_key].getDataObject(key)
+#         except KeyError:
+#             logger.warning('Key %s does not exist in collection' % (key))
+#             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
 #     def getRowDataTypeAsList(self, key, collection_key='main'):
-    def rowDataTypeAsList(self, key, rowdata_key='main'):
+    def rowDataObj(self, key, rowdata_key='main'):
         """Returns the row data object as a list.
-
+ 
         This will return the row_collection data object referenced by the key
         provided in list form.
-
+ 
         If you intend to update the values you should use getRowDataObject
         instead as the data provided will be mutable and therefore reflected in
         the values held by the row_collection. If you just want a quick way to
         loop through the values in one of the data objects  and only intend to
         read the data then use this.
-        
+         
         Args:
-            key (str): the key for the data object requested. It is best to use 
+            key (int): the key for the data object requested. It is best to use 
                the class constants (i.e. RiverUnit.CHAINAGE) for this.
-        
+            rowdata_key(str): key to a RowDataCollection in row_data.
+         
         Returns:
             List containing the data in the DataObject that the key points
                  to. Returns false if there is no row collection.
-        
+         
         Raises:
-            KeyError: If key does not exist.
+            KeyError: If key or rowdata_key don't exist.
         """
-        if not self.has_datarows:
-            return False
-        try:
-            data_col = self.row_data[rowdata_key].getDataObject(key)
-            vals = []
-            for i in range(0, data_col.record_length):
-                vals.append(data_col.getValue(i))
-            return vals
-        except KeyError:
-            logger.warning('Key %s does not exist in collection' % (key))
-            raise KeyError ('Key %s does not exist in collection' % (key))
+        if not self.hasRowData: return None
+        return self.row_data[rowdata_key].dataObject(key)
+#         try:
+#             data_col = self.row_data[rowdata_key].dataObject(key)
+#             vals = []
+#             for i in range(0, data_col.record_length):
+#                 vals.append(data_col.getValue(i))
+#             return vals
+#         except KeyError:
+#             logger.warning('Key %s does not exist in collection' % (key))
+#             raise KeyError ('Key %s does not exist in collection' % (key))
     
     
 #     def getRow(self, index):
     def row(self, index, rowdata_key='main'):
         """Get the data vals in a particular row by index.
-        
+         
         Args:
             index(int): the index of the row to return.
-            
+             
         Return:
             dict - containing the values for the requested row.
         """
-        return self.row_data[rowdata_key].row(index)
+        if not self.hasRowData: return None
+        return self.row_data[rowdata_key].rowAsDict(index)
     
      
 #     def getHeadData(self):
@@ -371,7 +373,7 @@ class AIsisUnit(object):
     # DEBUG
     # TODO
 #     def updateDataRow(self, row_vals, index=None, rowdata_key='main'):
-    def updateRow(self, row_vals, index=None, rowdata_key='main'):
+    def updateRow(self, row_vals, index, rowdata_key='main'):
         """
         """
         if index >= self.row_data[rowdata_key].numberOfRows():
@@ -386,12 +388,7 @@ class AIsisUnit(object):
 #                 raise ValueError ('Chainage increase is negative')
         
         # Call the row collection add row method to add the new row.
-        if collection_name is None:
-            self.row_collection.updateRow(values_dict=row_vals, index=index)
-        
-        else:
-            self.additional_row_collections[collection_name].updateRow(
-                                        values_dict=row_vals, index=index)
+        self.row_data[rowdata_key].updateRow(row_vals=row_vals, index=index)
             
     
 #     def addDataRow(self, row_vals, collection_name=None, index=None, 
@@ -425,8 +422,11 @@ class AIsisUnit(object):
                 the row into. If None it will be appended to the end.
         """
         # If index is >= record length it gets set to None and is appended
-        if index >= self.row_data[rowdata_key].numberOfRows():
+        if index is not None and index >= self.row_data[rowdata_key].numberOfRows():
             index = None
+        
+        if index is None:
+            index = self.row_data[rowdata_key].numberOfRows()
         
         self.row_data[rowdata_key].addRow(row_vals, index)
         
@@ -535,10 +535,10 @@ class UnknownUnit(AIsisUnit):
     FILE_KEY = 'UNKNOWN'
     FILE_KEY2 = None
      
-    def __init__ (self): 
+    def __init__ (self, **kwargs): 
         """Constructor.
         """
-        AIsisUnit.__init__(self) 
+        AIsisUnit.__init__(self, **kwargs) 
         self._unit_type = 'unknown'
         self._unit_category = 'unknown'
         self._name = 'unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
@@ -566,10 +566,12 @@ class CommentUnit(AIsisUnit):
     FILE_KEY2 = None
        
 
-    def __init__(self, text=''):
+    def __init__(self, **kwargs):
         """Constructor.
         """
-        AIsisUnit.__init__(self) 
+        AIsisUnit.__init__(self, **kwargs) 
+        
+        text = kwargs.get('text', '')
         self._unit_type = CommentUnit.UNIT_TYPE
         self._unit_category = CommentUnit.UNIT_CATEGORY
         self._name = 'comment_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
@@ -629,16 +631,31 @@ class HeaderUnit(AIsisUnit):
     FILE_KEY2 = None
     
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """Constructor.
         """
-        AIsisUnit.__init__(self)
-#         self._unit_type = 'header' 
-#         self._unit_category = 'meta'
+        AIsisUnit.__init__(self, **kwargs)
         self._unit_type = HeaderUnit.UNIT_TYPE
         self._unit_category = HeaderUnit.UNIT_CATEGORY
         self._name = 'header'
-        self.has_datarows = False
+        self.head_data = {
+            'name': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
+            'revision': HeadDataItem('1', '{:>10}', 1, 0, dtype=dt.STRING),
+            'node_count': HeadDataItem(0, '{:>10}', 2, 0, dtype=dt.INT),
+            'fr_lower': HeadDataItem(0.750, '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3),
+            'fr_upper': HeadDataItem(0.900, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
+            'min_depth': HeadDataItem(0.100, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
+            'direct_method': HeadDataItem(0.001, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
+            'unknown': HeadDataItem('12SI', '{:>10}', 2, 5, dtype=dt.STRING), 
+            'water_temp': HeadDataItem(10.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
+            'flow': HeadDataItem(0.010, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
+            'head': HeadDataItem(0.010, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
+            'math_damp': HeadDataItem(0.700, '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
+            'pivot': HeadDataItem(0.100, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
+            'relax': HeadDataItem(0.700, '{:>10}', 3, 5, dtype=dt.FLOAT, dps=3),
+            'dummy': HeadDataItem(0.000, '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3), 
+            'roughness': HeadDataItem('', '{:>10}', 5, 0, dtype=dt.STRING), 
+        }
             
     
     def readUnitData(self, unit_data, file_line): 

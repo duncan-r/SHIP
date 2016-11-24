@@ -61,10 +61,10 @@ class BridgeUnit (AIsisUnit):
     FILE_KEY2 = None
     
 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         """Constructor.
         """
-        AIsisUnit.__init__(self)
+        AIsisUnit.__init__(self, **kwargs)
 
         self._unit_type = BridgeUnit.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -152,16 +152,19 @@ class BridgeUnit (AIsisUnit):
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
-                
-                self.row_data['main'].addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
-                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
-                self.row_data['main'].addValue(rdt.ROUGHNESS, unit_data[i][20:30].strip())
-                # Might not exist
+
+                chain   = unit_data[i][0:10].strip()
+                elev    = unit_data[i][10:20].strip()
+                rough   = unit_data[i][20:30].strip()
                 try:
                     bank = unit_data[i][40:51].strip()
                 except:
-                    bank = ''
-                self.row_data['main'].addValue(rdt.EMBANKMENT, bank)
+                    bank = None
+                
+                self.row_data['main'].addRow({
+                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
+                    rdt.ROUGHNESS: rough, rdt.EMBANKMENT: bank
+                })
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -268,7 +271,7 @@ class BridgeUnit (AIsisUnit):
                 raise KeyError ('collection_name %s does not exist in row collection' % (collection_name))
         
         # Call superclass method to add the new row
-        AIsisUnit.updateDataRow(self, index=index, row_vals=row_vals)
+        AIsisUnit.updateRow(self, index=index, row_vals=row_vals)
     
    
     def addRow(self, row_vals, rowdata_key='main', index=None): 
@@ -427,13 +430,13 @@ class BridgeUnitUsbpr (BridgeUnit):
     FILE_KEY2 = 'USBPR1978'
 
 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         """Constructor.
         
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self)
+        BridgeUnit.__init__(self, **kwargs)
         
         self._unit_type = BridgeUnitUsbpr.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -444,7 +447,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
             'remote_us': HeadDataItem('', '{:<12}', 2, 2, dtype=dt.STRING),
             'remote_ds': HeadDataItem('', '{:<12}', 2, 3, dtype=dt.STRING),
-            'roughness_type': HeadDataItem('MANNING', '{:<8}', 3, 0, dtype=dt.CONSTANT, choices=('MANNING',)),
+            'roughness_type': HeadDataItem('MANNING', '{:<7}', 3, 0, dtype=dt.CONSTANT, choices=('MANNING',)),
             'calibration_coef': HeadDataItem(1.000, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=3),
             'skew_angle': HeadDataItem(0.000, '{:>10}', 4, 1, dtype=dt.FLOAT, dps=3),
             'width': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
@@ -532,13 +535,15 @@ class BridgeUnitUsbpr (BridgeUnit):
             # Load the geometry data
             for i in range(file_line, out_line):
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the river section.
-                self.row_data['opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
-                self.row_data['opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
-                self.row_data['opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
-                self.row_data['opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
+                ostart   = unit_data[i][0:10].strip()
+                oend     = unit_data[i][10:20].strip()
+                spring   = unit_data[i][20:30].strip()
+                soffit   = unit_data[i][30:40].strip()
+                
+                self.row_data['opening'].addRow({
+                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
+                    rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
+                })
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -566,15 +571,18 @@ class BridgeUnitUsbpr (BridgeUnit):
             # Load the geometry data
             for i in range(file_line, out_line):
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the river section.
-                self.row_data['culvert'].addValue(rdt.INVERT, unit_data[i][0:10].strip())
-                self.row_data['culvert'].addValue(rdt.SOFFIT, unit_data[i][10:20].strip())
-                self.row_data['culvert'].addValue(rdt.AREA, unit_data[i][20:30].strip())
-                self.row_data['culvert'].addValue(rdt.CD_PART, unit_data[i][30:40].strip())
-                self.row_data['culvert'].addValue(rdt.CD_FULL, unit_data[i][40:50].strip())
-                self.row_data['culvert'].addValue(rdt.DROWNING, unit_data[i][50:60].strip())
+                invert      = unit_data[i][0:10].strip()
+                soffit      = unit_data[i][10:20].strip()
+                area        = unit_data[i][20:30].strip()
+                cd_part     = unit_data[i][30:40].strip()
+                cd_full     = unit_data[i][40:50].strip()
+                drowning    = unit_data[i][50:60].strip()
+                
+                self.row_data['culvert'].addRow({
+                    rdt.INVERT: invert, rdt.SOFFIT: soffit, rdt.AREA: area, 
+                    rdt.CD_PART: cd_part, rdt.CD_FULL: cd_full, 
+                    rdt.DROWNING: drowning
+                })
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -666,13 +674,13 @@ class BridgeUnitArch (BridgeUnit):
     FILE_KEY2 = 'ARCH'
 
 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         """Constructor.
         
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self)
+        BridgeUnit.__init__(self, **kwargs)
 
         self._unit_type = BridgeUnitArch.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -765,11 +773,16 @@ class BridgeUnitArch (BridgeUnit):
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
+
+                ostart   = unit_data[i][0:10].strip()
+                oend     = unit_data[i][10:20].strip()
+                spring   = unit_data[i][20:30].strip()
+                soffit   = unit_data[i][30:40].strip()
                 
-                self.row_data['opening'].addValue(rdt.OPEN_START, unit_data[i][0:10].strip())
-                self.row_data['opening'].addValue(rdt.OPEN_END, unit_data[i][10:20].strip())
-                self.row_data['opening'].addValue(rdt.SPRINGING_LEVEL, unit_data[i][20:30].strip())
-                self.row_data['opening'].addValue(rdt.SOFFIT_LEVEL, unit_data[i][30:40].strip())
+                self.row_data['opening'].addRow({
+                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
+                    rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
+                })
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')

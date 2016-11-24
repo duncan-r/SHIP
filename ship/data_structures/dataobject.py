@@ -72,7 +72,7 @@ class ADataRowObject(object):
                     (self, value, index).
         """
         self.data_type = datatype
-        self.record_length = 0
+#         self.record_length = 0
         self.format_str = format_str 
         self.row_pos = row_pos
         self.default = kwargs.get('default', None)
@@ -85,6 +85,13 @@ class ADataRowObject(object):
         self._max = len(self.data_collection)
         self._current = 0
     
+    
+    @property
+    def record_length(self):
+        return len(self.data_collection)
+    
+    def __len__(self):
+        return len(self.data_collection)
     
     def __iter__(self):
         """Return an iterator for the data_collection list"""
@@ -206,7 +213,7 @@ class ADataRowObject(object):
                 raise IndexError ('DataObject addValue() index out of bounds')
 
         self.has_changed = True
-        self.record_length += 1
+#         self.record_length += 1
         self._max = len(self.data_collection)
            
 
@@ -259,7 +266,7 @@ class ADataRowObject(object):
             raise IndexError ('DataObject deleteValue() index out of bounds')
         
         self.has_changed = True
-        self.record_length -= 1
+#         self.record_length -= 1
         self._max = len(self.data_collection)
    
    

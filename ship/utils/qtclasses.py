@@ -81,18 +81,18 @@ class MyFileDialogs(QtGui.QFileDialog):
             return False
 
         if not multi_file:
-            file_name = str(QtGui.QFileDialog.getOpenFileName(self, 'Open File', path, file_types))
-            if not file_name == '':
-                logger.info('Opening file: ' + file_name)
-                return file_name
+            filename = str(QtGui.QFileDialog.getOpenFileName(self, 'Open File', path, file_types))
+            if not filename == '':
+                logger.info('Opening file: ' + filename)
+                return filename
             else:
                 logger.info('User cancelled file open process')
                 return False
         else:
-            file_names = QtGui.QFileDialog.getOpenFileNames(self, 'Open Files', path, file_types)
-            if not len(file_names) < 1:
+            filenames = QtGui.QFileDialog.getOpenFileNames(self, 'Open Files', path, file_types)
+            if not len(filenames) < 1:
                 str_names = []
-                for f in file_names:
+                for f in filenames:
                     str_names.append(str(f))
                 logger.info('Opening files: %s' % str(str_names))
                 return str_names
@@ -114,10 +114,10 @@ class MyFileDialogs(QtGui.QFileDialog):
         Returns:
             str - containing the chosen file path or False if cancelled.
         """
-        file_name = str(QtGui.QFileDialog.getSaveFileName(self, 'Save File', path, file_types))
-        if not file_name == '':
-            logger.info('Saving file: Filename = ' + file_name)
-            return file_name
+        filename = str(QtGui.QFileDialog.getSaveFileName(self, 'Save File', path, file_types))
+        if not filename == '':
+            logger.info('Saving file: Filename = ' + filename)
+            return filename
         else:
             logger.info('User cancelled file save process')
             return False

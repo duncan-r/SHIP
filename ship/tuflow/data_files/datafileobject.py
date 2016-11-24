@@ -123,20 +123,20 @@ class ADataFileObject(object):
         """
         try:
             contents = self._getPrintableContents()
-            filetools.writeFile(contents, self.path_holder.getAbsolutePath())
+            filetools.writeFile(contents, self.path_holder.absolutePath())
         except IOError:
             logger.error('Could not write contents for %s file to %s' %
-                (self.path_holder.extension, self.path_holder.getAbsolutePath()))
+                (self.path_holder.extension, self.path_holder.absolutePath()))
             raise IOError ('Unable to write file to disc')  
         
         if self.subfiles and plus_subfiles:
             for subfile in self.subfiles:
                 try:
                     contents = subfile._getPrintableContents()
-                    filetools.writeFile(contents, subfile.path_holder.getAbsolutePath())
+                    filetools.writeFile(contents, subfile.path_holder.absolutePath())
                 except IOError:
                     logger.error('Could not write contents for %s file to %s' %
-                        (subfile.path_holder.getAbsolutePath()))
+                        (subfile.path_holder.absolutePath()))
                     raise 
     
     
@@ -190,14 +190,14 @@ class ADataFileObject(object):
         paths = []
         if include_this:
             if not name_only:
-                paths.append(self.path_holder.getAbsolutePath())
+                paths.append(self.path_holder.absolutePath())
             else:
-                paths.append(self.path_holder.getFileNameAndExtension())
+                paths.append(self.path_holder.filenameAndExtension())
         for s in self.subfiles:
             if not name_only:
-                paths.append(s.path_holder.getAbsolutePath())
+                paths.append(s.path_holder.absolutePath())
             else:
-                paths.append(s.path_holder.getFileNameAndExtension())
+                paths.append(s.path_holder.filenameAndExtension())
         
         if resolve_paths:
             paths = self.resolveEvtSrc(paths)
@@ -342,9 +342,9 @@ class BcDataObject(ADataFileObject):
         paths = []
         if include_this:
             if not name_only:
-                paths.append(self.path_holder.getAbsolutePath())
+                paths.append(self.path_holder.absolutePath())
             else:
-                paths.append(self.path_holder.getFileNameAndExtension())
+                paths.append(self.path_holder.filenameAndExtension())
                 
         source = self.row_collection.getDataObject(self.keys.SOURCE)
         for s in source:
@@ -507,21 +507,21 @@ class ADataFileSubfile(object):
     and be derived from this class.
     """
     
-    def __init__(self, path_holder, row_collection, file_name, comment_lines=[]):
+    def __init__(self, path_holder, row_collection, filename, comment_lines=[]):
         """Constructor.
         
         Args:
             path_holder (PathHolder): containing file path data.
             row_collection (rowdatacollection): containing all of the
                 row data read from file.
-            file_name (string): the name of file the object is based on.
+            filename (string): the name of file the object is based on.
             comment_lines=[] (list): containing any comment only lines that
                 do not need accessing from within the row data.
         """
         self.path_holder = path_holder
         self.row_collection = row_collection 
         self.keys = None
-        self.file_name = file_name
+        self.filename = filename
         self.comment_lines = comment_lines
     
     
@@ -537,7 +537,7 @@ class SubfileMatEnum(object):
 class DataFileSubfileMat(ADataFileSubfile):
     """Concrete instance of ADataFileSubfile"""
     
-    def __init__(self, path_holder, row_collection, comment_lines, file_name, 
+    def __init__(self, path_holder, row_collection, comment_lines, filename, 
                                         head1_location, head2_location):
         """Constructor.
         
@@ -545,7 +545,7 @@ class DataFileSubfileMat(ADataFileSubfile):
             path_holder (PathHolder): containing file path data.
             row_collection (rowdatacollection): containing all of the
                 row data read from file.
-            file_name (string): the name of file the object is based on.
+            filename (string): the name of file the object is based on.
             comment_lines=[] (list): containing any comment only lines that
                 do not need accessing from within the row data.
             head1_location (int): location of the first key header in the file
@@ -553,7 +553,7 @@ class DataFileSubfileMat(ADataFileSubfile):
             head2_location (int): location of the second key header in the file
                 columns.
         """
-        ADataFileSubfile.__init__(self, path_holder, row_collection, file_name,
+        ADataFileSubfile.__init__(self, path_holder, row_collection, filename,
                                   comment_lines)
 
         self.keys = SubfileMatEnum()

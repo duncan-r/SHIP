@@ -1,0 +1,20 @@
+!#####################################################################################
+! ****************************      TEST SHIP MODEL      *****************************
+! ****************************           TRD 1           *****************************
+!#####################################################################################
+
+!Define base Z points
+Set Zpts == 1 ! Defines global elevation in mAOD. Initialises grid values
+Read GIS Z Line THIN == gis\2d_zln_shiptest_trd_v1_L.shp | gis\2d_zln_shiptest_trd_v1_P.shp ! some comment
+
+If Scenario == scen1
+	Read GIS Z Shape == gis\some_zshp_trd_v1_R.shp
+Else
+	Read GIS Z Shape == gis\some_zshp_trd_v2_R.shp
+End If
+	
+If Event == evnt2
+	Read GIS Z Line == gis\summit_event_zln_trd_v1_L.shp
+Else
+	Read GIS Z Line == gis\summit_event_zln_trd_v2_L.shp
+End If

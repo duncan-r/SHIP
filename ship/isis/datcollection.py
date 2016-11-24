@@ -33,6 +33,7 @@ from ship.utils import filetools as ft
 from ship.isis.datunits import ROW_DATA_TYPES as rdt
 from ship.isis.datunits.isisunit import CommentUnit
 from ship.isis import isisunitfactory as iuf
+from ship.utils import utilfunctions as uf
 
 import logging
 logger = logging.getLogger(__name__)
@@ -225,9 +226,11 @@ class DatCollection(object):
         """
         update_node_count = kwargs.get('update_node_count', True)
         if isinstance(unit, AIsisUnit):
-            index = self.index(unit, unit_type)
-        else:
             index = self.index(unit)
+        else:
+            if unit_type is None:
+                raise AttributeError('A unit_type must be given when a unit name is supplied')
+            index = self.index(unit, unit_type)
             
         if index != -1:
             name = self.units[index]._name
@@ -250,27 +253,6 @@ class DatCollection(object):
 
         else:
             return False
-                
-                
-#         
-#         for u in self.units:
-#             if u.name == name_key:
-#                 if not u.UNIT_TYPE == unit_type:
-#                     continue
-#                 else:
-#                     self.units.remove(u)
-#                     self._max = len(self.units)
-#                     if update_node_count:
-#                         ic = self.getUnit('Initial Conditions')
-#                         try:
-#                             ic.deleteRowByName(u.name)
-#                         except KeyError:
-#                             logger.warning('No initial conditions found for unit %' % u.name)
-#                         header = self.getUnit('Header')
-#                         self.node_count = header.head_data['node_count'] = int(header.head_data['node_count']) - 1
-#                     return True
-#         
-#         return False
     
     
 #     def getIndex(self, unit, unit_type=None):
@@ -296,7 +278,7 @@ class DatCollection(object):
         index = -1
         if isinstance(unit, AIsisUnit):
             index = self.units.index(unit)
-        elif isinstance(unit, basestring):
+        elif uf.isString(unit):
             for i, u in enumerate(self.units):
                 if u.name == unit:
                     if unit_type == u.unit_type:
@@ -352,7 +334,7 @@ class DatCollection(object):
             IOError - If unable to write to file.
         """
         if filepath is None:
-            filepath = self.path_holder.getAbsolutePath()
+            filepath = self.path_holder.absolutePath()
             
         contents = self.getPrintableContents()
         ft.writeFile(contents, filepath)
@@ -379,7 +361,7 @@ class DatCollection(object):
                 False if there are none of the CATEGORY in the 
                 collection.
         """
-        if isinstance(unit_keys, basestring):
+        if uf.isString(unit_keys):
             unit_keys = [unit_keys]
 
         types = [] 
@@ -416,7 +398,7 @@ class DatCollection(object):
         Return:
             List of the specified unit type.
         """
-        if isinstance(type_keys, basestring):
+        if uf.isString(type_keys):
             type_keys = [type_keys]
 
         types = [] 
@@ -493,27 +475,20 @@ class DatCollection(object):
         
     
 #     def setUnit(self, unit, unit_type=None):
-    def setUnit(self, unit, unit_type):
+    def setUnit(self, unit):
         """Replace the contents of a certain unit with the given one.
         
-        Each isisunit has a .name variable. The name of the unit will be 
-        checked against the collection. If the name is found within the
-        collection that unit will be replaced with the given one. If no
-        matching name is found it will return False.
+        Each isisunit have a .name and .unit_type variable. The .nane and
+        .unit_type will be checked against the collection. If the name and
+        matching unit_type is found within thecollection that unit will be 
+        replaced with the given one. 
         
-        Sometimes different units can have the same name (e.g. RefhUnit and
-        RiverUnit). This function will always set the first unit it finds.
-        To avoid this you can specifiy an AIsisUnit.UNIT_TYPE to retrieve::
-            >>> getUnit(river.name, river.UNIT_TYPE)
-
         Args:
-            name_key (str): name of the unit.
-            unit_type(str): the AIsisUnit.TYPE to find.
+            unit (AIsisUnit): the unit to replace.
         
-        Returns:
-            True if the unit was successfully updated. False if the unit does 
-            not have a name variable set. False if the unit name doesn't match 
-            any in the collection.
+        Raises:
+            NameError, AttributeError - if the .name or .unit_type could not
+            be found.
         """
         try:
             name = unit._name
@@ -529,13 +504,10 @@ class DatCollection(object):
         for i, u in enumerate(self.units, 0):
             if u.name == unit.name:
                 self.units[i] = unit
-                return True
-        
-        return False
         
         
 #     def getNoOfUnits(self): 
-    def noOfUnits(self): 
+    def numberOfUnits(self): 
         """The number of units currently held in the collection.
         
         Returns:
@@ -575,10 +547,9 @@ class DatCollection(object):
 
         path_holder = ft.PathHolder(dat_path)
         dat = cls(path_holder)
-        factory = iuf.IsisUnitFactory()
-        file_line, hunit = factory.createUnit(contents, 0, 'header', 0)
-        file_line, icunit = factory.createUnit(contents, file_line, 'initialconditions', 1)
-        cunit = CommentUnit('Created by SHIP library on %s' % datetime.now().strftime('%Y-%M-%d %H:%M'))
+        hunit = iuf.IsisUnitFactory.createUnit('header')
+        icunit = iuf.IsisUnitFactory.createUnit('initial_conditions')
+        cunit = CommentUnit(text=('Created by SHIP library on %s' % datetime.now().strftime('%Y-%M-%d %H:%M')))
         dat.addUnit(hunit, update_node_count=False)
         dat.addUnit(cunit, update_node_count=False)
         dat.addUnit(icunit, update_node_count=False)

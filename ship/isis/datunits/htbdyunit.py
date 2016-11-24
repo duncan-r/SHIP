@@ -52,13 +52,13 @@ class HtbdyUnit (AIsisUnit):
     FILE_KEY2 = None
 
 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         """Constructor.
         
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self)
+        AIsisUnit.__init__(self, **kwargs)
         
         self._unit_type = HtbdyUnit.UNIT_TYPE
         self._unit_category = HtbdyUnit.UNIT_CATEGORY
@@ -146,12 +146,12 @@ class HtbdyUnit (AIsisUnit):
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
+                elev   = unit_data[i][0:10].strip()
+                time   = unit_data[i][10:20].strip()
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the spill section.
-                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][0:10].strip())
-                self.row_data['main'].addValue(rdt.TIME, unit_data[i][10:20].strip())
+                self.row_data['main'].addRow({
+                    rdt.ELEVATION: elev, rdt.TIME: time
+                })
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -240,6 +240,9 @@ class HtbdyUnit (AIsisUnit):
         """
         if not rdt.ELEVATION in row_vals.keys():
             raise AttributeError('row_vals must contain an ELEVATION value')
+        
+        elevation = row_vals[rdt.ELEVATION]
+        time = row_vals.get(rdt.TIME, None)
 
         if not index is None and index < 0:
             raise IndexError('Index value cannot be less than zero')

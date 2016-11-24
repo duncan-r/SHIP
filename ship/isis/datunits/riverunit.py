@@ -95,7 +95,7 @@ class RiverUnit (AIsisUnit):
             # update_callback is called every time a value is added or updated
             do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
             do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.39, no_of_dps=3),
+            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.039, no_of_dps=3),
             do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False),
             do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3),
             do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''),
@@ -161,30 +161,27 @@ class RiverUnit (AIsisUnit):
         try:
             # Load the geometry data
             for i in range(file_line, end_line):
+                chain   = unit_data[i][0:10].strip()
+                elev    = unit_data[i][10:20].strip()
+                rough   = unit_data[i][20:30].strip()
+                panel   = unit_data[i][30:35].strip()
+                rpl     = unit_data[i][35:40].strip()
+                bank    = unit_data[i][40:50].strip()
+                east    = unit_data[i][50:60].strip()
+                north   = unit_data[i][60:70].strip()
+                deact   = unit_data[i][70:80].strip()
+                special = unit_data[i][80:90].strip()
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the river section.
-                self.row_data['main'].addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
-                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
-                self.row_data['main'].addValue(rdt.ROUGHNESS, unit_data[i][20:30].strip())
-                self.row_data['main'].addValue(rdt.PANEL_MARKER, unit_data[i][30:35].strip())
-                self.row_data['main'].addValue(rdt.RPL, unit_data[i][35:40].strip())
-                self.row_data['main'].addValue(rdt.BANKMARKER, unit_data[i][40:50].strip())
-                
-                # It seems that FMP will allow models to load that have no
-                # value in the easting and northing parts. This checks if they
-                # do and if not replaces with None so a default will be used.
-                east = unit_data[i][50:60].strip()
-                north = unit_data[i][60:70].strip()
                 if east == '': east = None
                 if north == '': north = None
-                self.row_data['main'].addValue(rdt.EASTING, east)
-                self.row_data['main'].addValue(rdt.NORTHING, north)
-                    
-                self.row_data['main'].addValue(rdt.DEACTIVATION, unit_data[i][70:80].strip())
-                self.row_data['main'].addValue(rdt.SPECIAL, unit_data[i][80:90].strip())
-
+                
+                self.row_data['main'].addRow(
+                    {rdt.CHAINAGE: chain, rdt.ELEVATION: elev, rdt.ROUGHNESS: rough,
+                     rdt.RPL: rpl, rdt.PANEL_MARKER: panel, rdt.BANKMARKER: bank, 
+                     rdt.EASTING: east, rdt.NORTHING: north, 
+                     rdt.DEACTIVATION: deact, rdt.SPECIAL: special
+                }) 
+                
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
@@ -219,7 +216,6 @@ class RiverUnit (AIsisUnit):
         out_data = []
         for i in range(0, row_count):
             out_data.append(self.row_data['main'].getPrintableRow(i))
-        
         return out_data
    
   

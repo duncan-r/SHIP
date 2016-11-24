@@ -338,7 +338,7 @@ class Ief(object):
             IOError - If unable to write to file.
         """
         if filepath is None:
-            filepath = self.path_holder.getAbsolutePath()
+            filepath = self.path_holder.absolutePath()
             
         contents = self.getPrintableContents()
         ft.writeFile(contents, filepath)

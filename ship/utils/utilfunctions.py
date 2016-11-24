@@ -127,6 +127,12 @@ def isNumeric(s):
     except (ValueError, TypeError):
         return False
 
+def encodeStr(value):
+    try:
+        value = unicode(value, "utf-8")
+        return value
+    except (NameError, TypeError):
+        return value
 
 def isString(value):
     """Tests a given value to see if it is an instance of basestring or not.
@@ -387,7 +393,7 @@ def enum(*sequential, **named):
         'THREE'
     """
     enums = dict(zip(sequential, range(len(sequential))), **named)
-    reverse = dict((value, key) for key, value in enums.iteritems())
+    reverse = dict((value, key) for key, value in enums.items())
     enums['reverse_mapping'] = reverse
     return type(str('Enum'), (), enums)
 

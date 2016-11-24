@@ -59,6 +59,7 @@ class InitialConditionsUnit (AIsisUnit):
         self._unit_category = InitialConditionsUnit.UNIT_CATEGORY
         self._name = "initial_conditions"
         self._name_types = {}
+        self._node_count = 0
 #         self.has_datarows = True
 #         self.has_ics = False
         
@@ -86,21 +87,29 @@ class InitialConditionsUnit (AIsisUnit):
         """
         """
         self._node_count = kwargs['node_count']
+        self._name_types = kwargs['name_types']
 
         i = file_line
         out_line = file_line + self._node_count + 2
         for i in range(file_line, out_line):
             if i < file_line + 2: continue  # Skip the first couple of header lines
             
-            self.row_data['main'].addValue(rdt.LABEL, unit_data[i][0:12].strip())
-            self.row_data['main'].addValue(rdt.QMARK, unit_data[i][12:14].strip())
-            self.row_data['main'].addValue(rdt.FLOW, unit_data[i][14:24].strip())
-            self.row_data['main'].addValue(rdt.STAGE, unit_data[i][24:34].strip())
-            self.row_data['main'].addValue(rdt.FROUDE_NO, unit_data[i][34:44].strip())
-            self.row_data['main'].addValue(rdt.VELOCITY, unit_data[i][44:54].strip())
-            self.row_data['main'].addValue(rdt.UMODE, unit_data[i][54:64].strip())
-            self.row_data['main'].addValue(rdt.USTATE, unit_data[i][64:74].strip())
-            self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][74:84].strip())
+            label       = unit_data[i][0:12].strip()
+            qmark       = unit_data[i][12:14].strip()
+            flow        = unit_data[i][14:24].strip()
+            stage       = unit_data[i][24:34].strip()
+            froude_no   = unit_data[i][34:44].strip()
+            velocity    = unit_data[i][44:54].strip()
+            umode       = unit_data[i][54:64].strip()
+            ustate      = unit_data[i][64:74].strip()
+            elevation   = unit_data[i][74:84].strip()
+
+            self.row_data['main'].addRow({
+                rdt.LABEL: label, rdt.QMARK: qmark, rdt.FLOW: flow,
+                rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity, 
+                rdt.UMODE: umode, rdt.USTATE: ustate, 
+                rdt.ELEVATION: elevation
+            }) 
             
         return out_line - 1
        
@@ -163,11 +172,17 @@ class InitialConditionsUnit (AIsisUnit):
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
-        index = 0
-        labels = self.row_data['main'].rowAsList(rdt.LABEL)
-        index = labels.index(name)
-        if index == -1:
-            raise AttributeError
+        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        try:
+            index = labels.index(name)
+        except ValueError:
+            raise KeyError('Name does not exist in initial conditions: ' + str(name))
+        
+#         index = 0
+#         labels = self.row_data['main'].dataObAsList(rdt.LABEL)
+#         index = labels.index(name)
+#         if index == -1:
+#             raise AttributeError
         
         # Call superclass method to add the new row
         AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
@@ -213,7 +228,7 @@ class InitialConditionsUnit (AIsisUnit):
             self._name_types[row_vals[rdt.LABEL]] = [unit_type]
 
         # Don't add the same ic's in twice
-        labels = self.row_data['main'].rowAsList(rdt.LABEL)
+        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
         if row_vals[rdt.LABEL] in labels:
             return self._node_count
 
@@ -237,17 +252,21 @@ class InitialConditionsUnit (AIsisUnit):
         Raises:
             KeyError - if section_name does not exist.
         """
-        labels = self.row_data['main'].rowAsList(rdt.LABEL)
-        index = labels.index(unit_name)
-        
-        if index == -1:
+        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        try:
+            index = labels.index(unit_name)
+        except ValueError:
             raise KeyError('Name does not exist in initial conditions: ' + str(unit_name))
+#         if index == -1:
+#             raise KeyError('Name does not exist in initial conditions: ' + str(unit_name))
         
         # Delete the ic if the unit_name is the only one using it
         # Otherwise remove the type and keep the ic's as they are
 #         if unit_name in self._name_types.keys():
 #         if unit_type in self._name_types[unit_name]:
-        if len(self._name_types[unit_name]) > 1:
+        if not unit_name in self._name_types.keys():
+            return
+        elif len(self._name_types[unit_name]) > 1:
             self._name_types[unit_name].remove(unit_type)
         else:
             self.deleteRow(index)
@@ -271,7 +290,7 @@ class InitialConditionsUnit (AIsisUnit):
         Return:
             dict - containing the values for the requested row.
         """
-        labels = self.row_data['main'].rowAsList(rdt.LABEL)
+        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
         index = labels.index(section_name)
         
         if index == -1:

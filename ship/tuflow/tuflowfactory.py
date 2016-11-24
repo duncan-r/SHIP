@@ -10,6 +10,7 @@ import copy
 from ship.tuflow.tuflowmodel import TuflowTypes
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.tuflow import tuflowfilepart as tuflowpart
+from ship.utils import utilfunctions as uf
 
 
 
@@ -89,7 +90,7 @@ class TuflowFactory(object):
         parts = []
         for i, s in enumerate(split_var):
             s = s.strip()
-            name = prefix + unicode(i+1)
+            name = prefix + uf.encodeStr(str(i+1))
             parts.append(tuflowpart.TuflowModelVariable(parent, **{
                     'logic': kwargs.get('logic', None), 'command': kwargs['command'],
                     'comment': kwargs['comment'], 'variable': s, 'name': name
@@ -174,6 +175,57 @@ class TuflowFactory(object):
             kwargs['model_type'] = getExtension(kwargs['path'])
         part = tuflowpart.ModelFile(parent, **kwargs)
         return [part] 
+    
+    @staticmethod
+    def createIfLogic(parent, commands, terms, comments):
+        """Create a new IfLogic object.
+        
+        Args:
+            parent(ModelFile): the parent TuflowPart.
+            commands(list): a list of the command part to add for each clause.
+                e.g. 'If Scenario', 'Else', 'Else If Event', etc.
+            terms:(list(list)): terms to add for each clause. e.g.
+                [['scen1', 'scen2'], ['scen3']]
+            comments(list): the comment that should be attached to the end of
+                each clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
+        
+        Return:
+            IfLogic - created with given args.
+        
+        Raises:
+            ValueError - if commands, terms and comments are not the same length.
+        """
+        if not len(commands) == len(terms) == len(comments):
+            raise ValueError('commands, terms and comments must be the same length')
+        
+        iflogic = None
+        for i, c in enumerate(commands):
+            if i == 0:
+                vars = {'command': c, 'terms': terms[i], 'comment': comments[i]}
+                iflogic = tuflowpart.IfLogic(parent, **vars)
+            else:
+                iflogic.addClause(c, terms[i], comments[i])
+        
+        return iflogic
+
+    @staticmethod
+    def createBlockLogic(parent, commands, terms, comments):
+        """Create a new IfLogic object.
+        
+        Args:
+            parent(ModelFile): the parent TuflowPart.
+            commands(str): the command part e.g. 'Define Event'.
+            terms:(list): terms to add for the clause ['scen1', 'scen2'].
+            comments(str): the comment that should be attached to the end of
+                the clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
+        
+        Return:
+            BlockLogic - created with given args.
+        """
+        vars = {'command': commands, 'terms': terms, 'comment': comments}
+        blocklogic = tuflowpart.BlockLogic(parent, **vars)
+        
+        return blocklogic
 
 
 def partsFromPipedFiles(part_type, parent, **kwargs):
@@ -257,7 +309,7 @@ def checkEstryAuto(line, parent):
     if l.startswith('ESTRY CONTROL FILE'):
         if 'AUTO' in l:
             has_auto = True
-            line = 'Estry Control File == ' + parent.file_name + '.ecf'
+            line = 'Estry Control File == ' + parent.filename + '.ecf'
     return line, has_auto
 
 
@@ -331,9 +383,9 @@ def separateComment(instruction):
         comment_char = ''
  
     if len(split) > 1:
-        return split[0], split[1], comment_char
+        return split[0].strip(), split[1].strip(), comment_char
     else:
-        return split[0], '', comment_char
+        return split[0].strip(), '', comment_char
     
 
 def resolveResult(result_part):
@@ -363,7 +415,7 @@ def resolveResult(result_part):
     Returns:
         ResultFile - ammended.
     """
-    rtype = result_part.result_type
+    rtype = result_part.result_type.upper()
              
     is_absolute = os.path.isabs(result_part.path_as_read)
     basename = os.path.basename(result_part.path_as_read)
@@ -398,15 +450,17 @@ def resolveResult(result_part):
         else:
             result_part.relative_root = result_part.path_as_read + os.sep
             
-    result_part.file_name = ''
+    result_part.filename = ''
     result_part.extension = ''
-#         result_part.file_name_is_prefix = False
+#         result_part.filename_is_prefix = False
     
     # A trailing string is a prefix in check files so set that up here
     if rtype == 'CHECK':
         if not trailing_slash:
-            result_part.file_name_is_prefix = True
-            result_part.file_name = os.path.basename(result_part.path_as_read)
+            if not result_part.has_own_root:
+                result_part.relative_root = result_part.relative_root + os.sep
+            result_part.filename_is_prefix = True
+            result_part.filename = os.path.basename(result_part.path_as_read)
    
     return result_part 
     

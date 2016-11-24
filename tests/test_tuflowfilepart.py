@@ -1,216 +1,222 @@
+from __future__ import unicode_literals
 
 import os
 import unittest
-import hashlib
-
+ 
 from ship.tuflow import tuflowfilepart as tfp
 from ship.tuflow import FILEPART_TYPES as ft
-
-
+from ship.tuflow import tuflowfactory as f
+ 
+ 
 class TuflowFilePartTests(unittest.TestCase):
-    '''Tests the function and setup of the TuflowFile object and it's subclasses.
+    '''Tests TuflowPart's and subclasses.
     
-    TODO:
-        Need to to check for the double file command line in the model files.
-        This is where two files are "piped" together on a single line. This has
-        not been implemented yet, but should be tested carefully when it is.
+    Note:
+        These test look at the general behaviour of TuflowPart's. Including the
+        methods within TuflowPart itself and the main subclasses, like
+        ATuflowVariable and TuflowFile.
+        
+        Tests within test_tuflowfactor.py provide decent coverage of creating
+        new instances of specific TuflowPart's and checking that they have
+        been instanciated properly. If you need to add tests to check that 
+        they have been created properly they should probably go in the factory
+        tests.
     '''
-    
-    def setUp(self):
-        self.fake_root = 'c:\\some\\fake\\root'
-        self.fake_parent_relative_root = '..\\model\\'
-        self.fake_abs_path = 'c:\\first\\second\\third\\fourth\\TuflowFile.mid'
-        self.real_relative_path = '..\\testinputdata\\someplace_v2.0.tgc'
-        self.path_with_comment = 'mi\someplace_2d_zln_bridge_v1.0.MIF ! Some comment'
-        self.real_command = 'Read MI Z Line RIDGE' 
-        self.real_double_file = 'mi\\someplace_2d_bc_ALL_v3.0.MIF | mi\\someplace_2d_zpt_rivers_v2.0.MIF'
-        
-        self.real_variables = 'h v q d MB1 ZUK0  ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard'
-        self.real_command_var = 'Map Output Data Types'
-        
-        self.hex_hash = hashlib.md5(self.fake_abs_path.encode())
-        self.hex_hash = self.hex_hash.hexdigest()
-        
-        
-    def test_instance(self):
-        sf = tfp.TuflowFile(1, 'c:\\madeuppath\\file.mif', self.hex_hash, 3, 'Read GIS', 'tcf')
-        self.assertIsInstance(sf, tfp.TuflowFilePart, 'TuflowFile is not TuflowFilePartInstance')
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command_var, 'tcf')
-        self.assertIsInstance(mv, tfp.TuflowFilePart, 'ModelVariables is not TuflowFilePartInstance')
-        
-        
-    def test_object_setup(self):
-        '''Check that the constructor loads all of the parameters in properly.
-        '''
-        sf = tfp.TuflowFile(1, self.path_with_comment, self.hex_hash, 3, self.real_command, self.fake_root)
-        
-        # Check that it works to set up with a comment and relative path
-        self.assertEqual(sf.comment, 'Some comment', 'Comment does not match')
-        self.assertEqual(sf.relative_root, 'mi', 'relative path does not match')
-        self.assertEqual(sf.command, 'Read MI Z Line RIDGE', 'Comment not set properly')
-        self.assertEqual(sf.file_name, 'someplace_2d_zln_bridge_v1.0', 'fileName does not match')
-        self.assertEqual(sf.extension, 'mif', 'extension does not match')
-        self.assertEqual(sf.getRelativePath(), 'mi\someplace_2d_zln_bridge_v1.0.mif', 'relative path does not match')
-        self.assertEqual(sf.getFileNameAndExtension(), 'someplace_2d_zln_bridge_v1.0.mif', 'name and extension does not match')
-        
-        # Check that an absolute path works
-        sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 2, self.real_command, 'tcf')
-        self.assertEqual(sf.relative_root, None, 'relative root should be None')
-        self.assertEqual(sf.comment, None, 'Comment should be None')
-        self.assertEqual(sf.command, 'Read MI Z Line RIDGE', 'command was not set properly')
-        self.assertEqual(sf.file_name, 'TuflowFile', 'fileName does not match')
-        self.assertEqual(sf.extension, 'mid', 'extension does not match')
-        self.assertEqual(sf.getFileNameAndExtension(), 'TuflowFile.mid', 'absolute file name does not match')
-        self.assertFalse(sf.getRelativePath(), 'relative path is not None')
-
-
-    def test_getAbsolutePath(self):
-        '''Check that we can retrive the absolute path without problems
-        '''
-        # Check the absolute path is set and returned correctly
-        sf = None
-        sf = tfp.TuflowFile(1, self.path_with_comment, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
-        self.assertEqual(os.path.join(self.fake_root, '..\model\mi\someplace_2d_zln_bridge_v1.0.mif'), sf.getAbsolutePath(), 'abspath does not match: ' + sf.getAbsolutePath())
-        
-        # Check that the root and relative root are set and combined correctly
-        sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
-        self.assertEqual(os.path.join(self.fake_root, self.fake_parent_relative_root, self.real_relative_path), sf.getAbsolutePath(), 'abspath is not root + relative root')
-        
-
-    def test_getRelativePath(self):
-        '''Check that we can retrieve the relative path without problems
-        '''
-        # Check that the relative path is set and returned correctly
-        sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root)
-        self.assertEqual(self.real_relative_path, sf.getRelativePath(), 'relative path does not match')
-        
-        # Check that setting an absolute path sets the relative path to None
-        sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
-        self.assertFalse(sf.getRelativePath(), 'relative path is not False')
-        
      
-    def test_getNameAndExtension(self):
-        '''Check that we can get the file name with the extension without problems
-        '''
-        sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
-        self.assertEqual('TuflowFile.mid', sf.getFileNameAndExtension(), 'name and extension do not match')
+    def setUp(self):
         
+        # Setup a main .tcf file
+        self.fake_root = 'c:/path/to/fake/'
+        self.tcf = tfp.ModelFile(None, **{'path': 'tcffile.tcf', 'command': None,
+                                            'comment': None, 'model_type': 'TCF',
+                                            'root': self.fake_root})
         
-    def test_setPathsWithAbsolutePaths(self):
-        '''Check that the path variables can be set properly with a new absolute path. 
-        '''
-        # Check path setting works without keeping relative path
-        sf = None
-        path = 'c:\\some\\random\\path\\with\\file.shp'
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf')
-        sf.setPathsWithAbsolutePath(path, False)
-        self.assertEqual(path, sf.getAbsolutePath(), 'absolute paths do not match')
-        self.assertFalse(sf.getRelativePath(), 'relative path does not match')
+        # Setup a tgc file with tcf parent
+        tgc_line = "Geometry Control File == ..\\model\\tgcfile.tgc ! A tgc comment"
+        self.tgc = f.TuflowFactory.getTuflowPart(tgc_line, self.tcf)[0]
+        
+        # Setup a gis file with tgc parent
+        gis_line = "Read Gis Z Shape == gis\\gisfile.shp ! A gis comment"
+        self.gis = f.TuflowFactory.getTuflowPart(gis_line, self.tgc)[0]
+        var_line = "Timestep == 2 ! A var comment"
+        self.var = f.TuflowFactory.getTuflowPart(var_line, self.tgc)[0]
+        gis_line2 = "Read Gis Z Shape == gis\\gisfile2.shp ! A gis 2 comment"
+        self.gis2 = f.TuflowFactory.getTuflowPart(gis_line2, self.tgc)[0]
+        
+        # For the evt testing stuff
+        line_evt = "Read Gis Z Shape == gis\\gisfile_evt.shp ! A gis 3 comment"
+        self.gis_evt = f.TuflowFactory.getTuflowPart(line_evt, self.tgc)[0]
+        linevar_evt = "Timestep == 6 ! A var evt comment"
+        self.var_evt = f.TuflowFactory.getTuflowPart(linevar_evt, self.tgc)[0]
+        # For the scenario testing stuff
+        line_scen = "Read Gis Z Shape == gis\\gisfile_evt.shp ! A gis 3 comment"
+        self.gis_scen = f.TuflowFactory.getTuflowPart(line_scen, self.tgc)[0]
+        linevar_scen = "Timestep == 6 ! A var scen comment"
+        self.var_scen = f.TuflowFactory.getTuflowPart(linevar_scen, self.tgc)[0]
+        
+        if_args = {
+            'commands': ['If Scenario', 'Else'], 'terms': [['scen1', 'scen2'], []], 
+            'comments': ['', '']
+        }
+        self.iflogic = f.TuflowFactory.createIfLogic(self.tgc, if_args['commands'], 
+                                                     if_args['terms'],
+                                                     if_args['comments'])
+        self.iflogic.add_callback = self.fakeCallbackfunc
+        self.iflogic.remove_callback = self.fakeCallbackfunc
+        
+        evt_args = {
+            'commands': 'Define Event', 'terms': ['event1', 'event2'],
+            'comments': ''
+        }
+        self.evtlogic = f.TuflowFactory.createBlockLogic(self.tgc, evt_args['commands'],
+                                                         evt_args['terms'],
+                                                         evt_args['comments'])
+        self.evtlogic.add_callback = self.fakeCallbackfunc
+        self.evtlogic.remove_callback = self.fakeCallbackfunc
 
-        # and with keeping the relative path
-        sf = None
-        sf = tfp.TuflowFile(1, self.real_relative_path, self.hex_hash, 3, self.real_command, 'tcf', self.fake_root, self.fake_parent_relative_root)
-        sf.setPathsWithAbsolutePath(path, True)
-        self.assertEqual(os.path.join('c:\\some\\random\\path\\with', self.fake_parent_relative_root, '..\\testinputdata', 'file.shp'), sf.getAbsolutePath(), 'absolute paths do not match')
-       
+        self.iflogic.addPart(self.gis, 0)
+        self.iflogic.addPart(self.var, 0)
+        self.iflogic.addPart(self.gis2, 1)
         
-    def test_setFileName(self):
-        '''Check that the fileName is set properly.
-        '''
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
-        sf.setFileName('newfile')
-        self.assertEqual('newfile.mid', sf.getFileNameAndExtension(), 'fileName with no extension not set properly')
+        # Not needed now as it's done automatically in TuflowLogic.addPart()
+#         self.gis.associates.logic = self.iflogic
+#         self.var.associates.logic = self.iflogic
+#         self.gis2.associates.logic = self.iflogic
 
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
-        sf.setFileName('newfile1.shp', True)
-        self.assertEqual('newfile1.mid', sf.getFileNameAndExtension(), 'fileName and removed extension not set properly')
-       
-        sf.setFileName('newfile2.shp', True, True)
-        self.assertEqual('newfile2.shp', sf.getFileNameAndExtension(), 'fileName and extension not set properly')
-       
+    
+    def test_TPallParents(self):
+        """Check that it returns parents properly.
         
-    def test_getPathExists(self):
-        '''Not sure how to test for this at the moment.
-        Could use a path to the test files for it. Need to make sure that any
-        links to paths in the test folder will hold when packing into egg
-        format.
-        '''
+        TuflowPart method.
+        """
+        tgc_parents = self.tgc.allParents([])
+        gis_parents = self.gis.allParents([])
+        
+        tgc_hashes = [self.tcf.hash]
+        for i, t in enumerate(tgc_parents):
+            self.assertEqual(t, tgc_hashes[i])
+            
+        gis_hashes = [self.tgc.hash, self.tcf.hash]
+        for i, t in enumerate(gis_parents):
+            self.assertEqual(t, gis_hashes[i])
+    
+    def test_TPisInSeVals(self):
+        """Check that parts show up with correct scenario/event values.
+        
+        TuflowPart method.
+        """
+        se_vals = {
+            'scenario': ['scen1']
+        }
+        self.assertTrue(self.gis.isInSeVals(se_vals))
+        self.assertTrue(self.var.isInSeVals(se_vals))
+        self.assertFalse(self.gis2.isInSeVals(se_vals))
+        
+        se_vals = {
+            'scenario': ['whatever']
+        }
+        self.assertFalse(self.gis.isInSeVals(se_vals))
+        self.assertFalse(self.var.isInSeVals(se_vals))
+        self.assertTrue(self.gis2.isInSeVals(se_vals))
+    
+    def test_TFabsolutePath(self):
+        """Test return value of absolutePath in TuflowFile."""
+        path1 = 'c:\\path\\to\\model\\tgcfile.tgc'
+        path2 = 'c:\\path\\to\\model\\gis\\gisfile.shp'
+        self.assertEqual(path1, self.tgc.absolutePath())
+        self.assertEqual(path2, self.gis.absolutePath())
+    
+    def test_TFabsolutePathAllTypes(self):
+        """Test return all types of absolute path in TuflowFile.
+        
+        This will return the same as absolutePath if there is only one associated
+        file extension. Otherwise it will return one path for each type.
+        """
+        paths = ['c:\\path\\to\\model\\gis\\gisfile.shp',
+                 'c:\\path\\to\\model\\gis\\gisfile.shx',
+                 'c:\\path\\to\\model\\gis\\gisfile.dbf']
+        self.assertListEqual(paths, self.gis.absolutePathAllTypes())
+    
+    def test_TFrelativePath(self):
+        """Test return value of relativePaths in TuflowFile."""
+        path1 = ['..\\model']
+        path2 = ['..\\model', 'gis']
+        self.assertListEqual(path1, self.tgc.getRelativeRoots([]))
+        self.assertListEqual(path2, self.gis.getRelativeRoots([]))
+    
+    def test_TLaddPart(self):
+        """Test adding a new part to TuflowLogic."""
+        self.evtlogic.addPart(self.gis_evt)
+        self.assertIn(self.gis_evt, self.evtlogic.group_parts[0])
+        self.assertIn(self.gis_evt.hash, self.evtlogic.parts)
+        
+        self.iflogic.addPart(self.gis_scen, 1)
+        self.assertIn(self.gis_scen, self.iflogic.group_parts[1])
+        self.assertIn(self.gis_scen.hash, self.iflogic.parts)
+    
+    def test_TLinsertPart(self):
+        """Test inserting a new part to TuflowLogic."""
+        self.iflogic.insertPart(self.gis_scen, self.gis)
+        self.assertIn(self.gis_scen, self.iflogic.group_parts[0])
+        self.iflogic.insertPart(self.var_scen, self.gis2)
+        self.assertIn(self.var_scen, self.iflogic.group_parts[1])
+    
+    def test_removePart(self):
+        self.evtlogic.addPart(self.gis_evt)
+        self.evtlogic.removePart(self.gis_evt)
+        self.assertEqual(len(self.evtlogic.group_parts[0]), 0)
+        self.assertEqual(len(self.evtlogic.parts), 0)
+    
+    def test_getAllParts(self):
+        self.evtlogic.addPart(self.gis_evt)
+        parts = self.evtlogic.getAllParts(hash_only=True)
+        self.assertEqual(len(parts), 1)
+        self.assertEqual(parts[0], self.gis_evt.hash)
+        
+        parts = self.iflogic.getAllParts(hash_only=True)
+        self.assertEqual(len(parts), 3)
+        testp = [self.gis.hash, self.gis2.hash, self.var.hash]
+        self.assertEqual(set(parts), set(testp))
+    
+    def test_getGroup(self):
+        self.evtlogic.addPart(self.gis_evt)
+        g1 = self.evtlogic.getGroup(self.gis_evt)
+        g2 = self.evtlogic.getGroup(self.gis)
+        self.assertEqual(g1, 0)
+        self.assertEqual(g2, -1)
+        
+        g1 = self.iflogic.getGroup(self.gis)
+        g2 = self.iflogic.getGroup(self.gis2)
+        self.assertEqual(g1, 0)
+        self.assertEqual(g2, 1)
+    
+    def test_isInClause(self):
+        self.assertTrue(self.iflogic.isInClause(self.gis, 'scen1'))
+        self.assertFalse(self.iflogic.isInClause(self.gis2, 'scen1'))
+    
+    def test_allTerms(self):
+        self.assertListEqual(self.evtlogic.allTerms(), ['event1', 'event2'])
+        self.assertListEqual(self.iflogic.allTerms(), ['scen1', 'scen2'])
+    
+    def test_isInTerms(self):
+        se_vals = {'scenario': ['scen1'],
+                   'event': ['event1'],
+                   'variable': {} 
+                  }
+        self.assertTrue(self.iflogic.isInTerms(self.gis, se_vals))
+        self.assertFalse(self.iflogic.isInTerms(self.gis2, se_vals))
+        se_vals = {'scenario': ['scen122'],
+                   'event': ['event122'],
+                   'variable': {} 
+                  }
+        self.assertFalse(self.iflogic.isInTerms(self.gis, se_vals))
+        self.assertTrue(self.iflogic.isInTerms(self.gis2, se_vals))
+        
+        
+    def fakeCallbackfunc(self, new_part, old_part):
+        """Used to contain the callback functions in the TuflowLogic."""
         pass
         
-    
-    def test_getPathExistsAllTypes(self):
-        '''See notes for test_getPathExists() function above.
-        '''
-        pass
-    
-    
-    def test_getPrintableContents(self):
-        '''Checks that the TuflowFile object returns it's contents in a format
-        appropriate for writing to a tuflow model file.
-        '''
-        sf = tfp.TuflowFile(1, self.path_with_comment, self.hex_hash, 3, self.real_command, self.fake_root)
-        self.assertEqual('Read MI Z Line RIDGE == mi\someplace_2d_zln_bridge_v1.0.mif ! Some comment', sf.getPrintableContents(), 'printable contents do not match')
-
-        sf = None
-        sf = tfp.TuflowFile(1, self.fake_abs_path, self.hex_hash, 3, self.real_command, 'tcf')
-        p = sf.getPrintableContents()
-        self.assertEqual('Read MI Z Line RIDGE == c:\\first\\second\\third\\fourth\\TuflowFile.mid', sf.getPrintableContents(), 'printable contents for absolute path do not match')
-
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 3, self.real_command_var, 'tcf')
-        self.assertEqual('Map Output Data Types == h v q d MB1 ZUK0 ! Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard', mv.getPrintableContents(), 'printable contents do not match')
-        
-        # Test that it works with a scenario/event placholder path
-        sf = None
-        path = '..\\testinputdata\\someplace_ROUGH_4h_v2.0.tgc # Some comment stuff'
-        actual_name = 'someplace_~s1~_~e1~_v2.0'
-        command = 'READ GEOMETRY FILE'
-        sf = tfp.TuflowFile(1, path, self.hex_hash, ft.MODEL, command, self.fake_root)
-        sf.actual_name = actual_name
-        self.assertEqual('READ GEOMETRY FILE == ..\\testinputdata\\someplace_~s1~_~e1~_v2.0.tgc ! Some comment stuff', sf.getPrintableContents(), 'printable contents do not match: ' + sf.getPrintableContents())
-       
-       
-    def test_gisFile_setup(self):
-        '''Check that we create a GisFile instance when given the right file name
-        '''
-        # Check that mapinfo files get recognised
-        gf = tfp.GisFile(1, '..\mi\gisMIfileName.mif', self.hex_hash, 2, self.real_command, self.fake_root)
-        self.assertIsInstance(gf, tfp.GisFile, 'Did not create GisFile correctly')
-        
-        gf = tfp.GisFile(1, '..\mi\gisMIfileName.mid', self.hex_hash, 2, self.real_command, self.fake_root)
-        self.assertIsInstance(gf, tfp.GisFile, 'Did not create GisFile correctly')
-
-        gf = tfp.GisFile(1, '..\mi\gisShpfileName.shp', self.hex_hash, 2, self.real_command, self.fake_root)
-        self.assertIsInstance(gf, tfp.GisFile, 'Did not create GisFile correctly')
         
         
-    def test_dataFile_setup(self):
-        '''Check that we create a DataFile instance when given the right file name.
-        '''
-        # Check that materials files get recognised
-        df = tfp.DataFile(1, '..\model\materialsfile.tmf', self.hex_hash, 3,  'Read Materials File', self.fake_root)
-        self.assertIsInstance(df, tfp.DataFile, 'Did not create DataFile correctly')
-    
-
-    
-    '''
-        Model variable section
-    ''' 
-    def test_inputVars(self):
-        '''Check that all of the variables in the object have been loaded properly
-        '''
-        mv = tfp.ModelVariables(1, self.real_variables, self.hex_hash, 4, self.real_command, 'tcf')
-        self.assertEqual(mv.comment, 'Output: Levels, Velocities, Unit Flows, Depths, Mass Error & Hazard', 'comment does not match')
-        self.assertEqual(mv.raw_var, 'h v q d MB1 ZUK0', 'raw_var does not match')
-
-        split_vars = ['h', 'v', 'q', 'd', 'MB1', 'ZUK0']
-        multi_var = mv.multi_var
-        self.assertListEqual(split_vars, multi_var, 'list variables are not equal')
-              
-        
-         
         

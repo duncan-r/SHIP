@@ -149,7 +149,7 @@ class DatLoader(ATool, ALoader):
 
         # Create a unit from the header data in the first few lines of the dat file.
         if not self.is_ied:
-            i, self.temp_unit = unit_factory.createUnit(self.contents, 0, 'HEADER', 0)
+            i, self.temp_unit = unit_factory.createUnitFromFile(self.contents, 0, 'HEADER', 0)
             in_unknown_section = False
 
             # Now we can update the HeaderUnit subContents 
@@ -184,7 +184,7 @@ class DatLoader(ATool, ALoader):
                 '''
 #                 i, self.temp_unit = unit_factory.createUnit(self.contents, i, 
 #                         unit_vars[first_word], self.cur_no_of_units)
-                i, self.temp_unit = unit_factory.createUnit(self.contents, i, 
+                i, self.temp_unit = unit_factory.createUnitFromFile(self.contents, i, 
                                                             first_word, 
                                                             self.cur_no_of_units)
                 

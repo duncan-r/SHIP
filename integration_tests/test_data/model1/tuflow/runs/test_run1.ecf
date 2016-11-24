@@ -1,0 +1,52 @@
+
+!#############################################################################
+! SIMULATION DATA
+!#############################################################################
+
+! Set the geographic location to UK projection
+SHP Projection == ..\model\gis\Projection.prj
+GIS Projection Check == WARNING
+!SHP Projection == CoordSys Earth Projection 8, 79, "m", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)
+
+!-----------------------------------------------------------------------------
+! Define time information
+!Start Time == 0 ! simulation start time (hours)
+!End Time == 20   ! simulation end time (hours)
+Timestep == 0.25   ! timestep (seconds)
+
+!#############################################################################
+! DEFINE OUTPUT INFORMATION
+!#############################################################################
+
+Start Output == 0  ! start output time (hours)
+Output Interval (s) == 120  ! interval at which 1D results are recorded (seconds)
+Output Folder == ..\results\1d\estry\ ! destination of 1d results files
+!Write CSV Online == ON ! Write the spreadsheet output during simulation. If this command is ommited, csv output is only written at the end of a simulation
+Write Check Files == ..\checks\1d\  ! destination of 1d check files. Prefix them with "1d"
+
+!#############################################################################
+! 1D MODEL INFORMATION
+!#############################################################################
+
+! 1D Estry culverts at ds railway embankment
+
+!Read GIS BC == ..\model\gis\1d_bc_shiptest_ecf_v1_P.shp ! downstream tidal boundary
+BC Database == ..\bc_dbase\bc_dbase_shiptest_v1.csv ! ydatabase that relates the names of boundary conditions within MapInfo tables to their data (eg hydrographs)
+
+!----
+! Read in network definition data
+!Read GIS Network == ..\model\gis\1d_nwk_shiptest_v1_L.shp ! 1d network file.
+!Read MI Table Links == 
+
+
+!##########################################################################
+! DEFINE OUTPUT INFORMATION
+!##########################################################################
+!--------------------------------------------------------------------------
+! Define times for writing results
+!Start Map Output == 0 ! ystart map output time (hours)
+Map Output Interval == 120 ! yfrequency the map output data is written to file (seconds)
+!Map Output Data Types == d v q h !d E F h q R t V W Z1 ZH  ! Non-default output variables
+Time Series Output Interval (s) == 120 ! yfrequency the timeseries data is written to file (seconds)
+CSV Time == Hours
+

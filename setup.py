@@ -5,16 +5,16 @@ import shutil
 '''
 Usage:
     Compile to .egg format:
-    c:\python27\python.exe setup.py bdist_egg
+    $Python setup.py bdist_egg
     
     Compile to windows installer format:
-    c:\python27\python.exe setup.py bdist_wininst
+    $Python setup.py bdist_wininst
     
     Compile to zip format
-    c:\python27\python.exe setup.py bdist --format=zip
+    $Python setup.py bdist --format=zip
     
     Create raw source distribution:
-    c:\python27\python.exe setup.py sdist
+    $Python setup.py sdist
 '''
 
 
@@ -46,26 +46,29 @@ setup(  name='ship',
         long_description=readme(),
         classifiers=[
           'Development Status :: 1 - Beta',
-          'License :: OSI Approved :: GNU General Public License',
+          'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
           'Topic :: Utilities :: Model processing :: API',
         ],
-        keywords='ISIS TUFLOW Utilities Files Tools API',
+        keywords='FMP TUFLOW Utilities Files Tools API',
         url='https://github.com/duncan-r/SHIP',
         author='Duncan Runnacles',
         author_email='duncan.runnacles@thomasmackay.co.uk',
-        license='GPL',
+        license='MIT',
         
         # Include the test suite
         test_suite='tests',
         
         # Package exclusions
-        packages=find_packages(exclude=['tests', 'docs']),
+        packages=find_packages(exclude=['tests', 'integration_tests', 'docs']),
           
         # No package requirements at the moment
-        #install_requires=[
-        #    ,
-        #],
+        install_requires=[
+            'future',
+        ],
          
         include_package_data=True,
         zip_safe=False,

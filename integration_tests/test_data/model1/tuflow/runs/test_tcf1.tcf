@@ -1,0 +1,90 @@
+!*****************************************************************************
+!********** THIS .TCF IS USED TO DEVELOP THE COMPLETE TUFLOW MODEL ***********
+!*****************************************************************************
+
+! Shortcut to .ecf:  Model_Proforma.ecf     ! Change the filename to the associated .ecf file so it can be opened using the right-click shortcut
+! Shortcut to .tlf:  log\Exton_020.tlf ! Change the filename to the associated .tlf file so it can be opened using the right-click shortcut
+
+!#############################################################################
+! SIMULATION DATA
+!#############################################################################
+
+! Set projection
+GIS Format == SHP
+SHP Projection == ..\model\gis\Projection.prj
+GIS Projection Check == WARNING
+!SHP Projection == CoordSys Earth Projection 8, 79, "m", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)
+
+!#############################################################################
+! lINK MATERIALS VALUES TO ROUGHNESS COEFFICIENTS
+!#############################################################################
+
+Read Materials File == ..\model\materials_shiptest_v1.csv ! looks for the file relating the materials values in the MapInfo file to a roughness coefficient
+
+!#############################################################################
+! FMP COMPONENTS
+!#############################################################################
+Read GIS ISIS Nodes == ..\model\gis\1d_nodes_shiptest_v1_P.shp
+Read GIS ISIS Network == ..\model\gis\1d_nwk_shiptest_v1_L.shp
+Read GIS ISIS WLL == ..\model\gis\1d_WLL_shiptest_v1_L.shp
+
+
+BC Database == ..\bc_dbase\bc_dbase_shiptest_v1.csv ! boundary condition flow/head
+!Read GIS BC == ..\model\gis\1d_bc_shiptest_v1_P.shp
+
+!#############################################################################
+! CONTROL FILES
+!#############################################################################
+Geometry Control File == ..\model\test_tgc1.tgc ! reference to the geometry control file for this simulation
+
+Define Event == Evnt1
+	BC Control File == ..\model\test_tbc1.tbc ! reference to the boundary control file for this simulation
+	Set IWL == -1
+End Define
+Define Event == Evnt2
+	BC Control File == ..\model\test_tbc2.tbc ! reference to the boundary control file for this simulation
+	Set IWL == -2
+End Define
+!ESTRY Control File Auto !looks for an .ecf file with the same name as the .tcf file
+
+!#############################################################################
+! DEFINE OUTPUT INFORMATION
+!#############################################################################
+
+! Define what results are to be output
+Map Output Data Types == d v q h Z0 MB1 MB2 !d E F h q R t V W Z1 ZH  ! Non-default output variables
+Store Maximums and Minimums == ON MAXIMUMS ONLY  ! can save peak and minimum values (ON) or peak values only (ON MAXIMUMS ONLY)
+
+!-----------------------------------------------------------------------------
+! Define times for writing results
+Start Map Output == 0 ! start map output time (hours)
+Map Output Interval == 120  ! frequency the map output data is written to file (seconds)
+Time Series Output Interval (s) == 120 ! frequency the timeseries data is written to file (seconds)
+Screen/Log Display Interval == 10 ! frequency with which output is displayed in the DOS window during a simulation
+CSV Time == Hours
+
+!-----------------------------------------------------------------------------
+! Define location of results and check files
+Output Folder == ..\results\2d\ ! destination of 2d results. Can be on a network drive although is generally faster to write to local hard drive
+Write Check Files == ..\checks\2d\  ! destination of 2d check files. Prefix them with "2d"
+
+!#############################################################################
+! OTHER SIMULATION PARAMETERS
+!#############################################################################
+
+!Set IWL == -2
+Log Folder == log
+
+
+!-----------------------------------------------------------------------------
+! Define the location for time series output in the 2d domain
+Read GIS PO == ..\model\gis\2d_po_shiptest_v1_L.shp
+Write PO Online == on
+!Read GIS PO == ..\model\gis\2d_po_*****_001_R.shp | 2d_po_*****_001_P.shp | 2d_po_*****_001_L.shp ! plot output layer defines locations within the 2d domain where time series results should be recorded
+!Write PO Online == on ! writes the time series results from plot outputs throughout the simulation.
+
+!-----------------------------------------------------------------------------
+! Restart files
+!Read Restart File == *.trf  ! Reads restart file. If no filepath given, the .trf (and .erf if relevant) should be placed in the same file as the .tcf
+!Write Restart File at Time == 10  ! Time at which restart file will be first written
+!Write Restart File Interval == 5 ! Interval at which restart file will be written after time given in above line.

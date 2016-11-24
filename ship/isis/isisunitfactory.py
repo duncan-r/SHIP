@@ -54,6 +54,17 @@ class IsisUnitFactory(object):
     
     This is a Factory pattern object for the creation of isisunit subclasses.
     """
+    available_units = (
+        isisunit.HeaderUnit,
+        riverunit.RiverUnit, 
+        refhunit.RefhUnit,
+        icu.InitialConditionsUnit,
+        gisinfounit.GisInfoUnit,
+        bridgeunit.BridgeUnitArch,
+        bridgeunit.BridgeUnitUsbpr,
+        spillunit.SpillUnit,
+        htbdyunit.HtbdyUnit,
+    )
     
     def __init__(self):
         """Constructor.
@@ -67,46 +78,17 @@ class IsisUnitFactory(object):
         self.same_reach = False
         self._ic_name_types = {}
         
-        self.available_units = (
-            isisunit.HeaderUnit,
-            riverunit.RiverUnit, 
-            refhunit.RefhUnit,
-            icu.InitialConditionsUnit,
-            gisinfounit.GisInfoUnit,
-            bridgeunit.BridgeUnitArch,
-            bridgeunit.BridgeUnitUsbpr,
-            spillunit.SpillUnit,
-            htbdyunit.HtbdyUnit,
-        )
-#         self.available_units = {
-#             isisunit.HeaderUnit.FILE_KEY: (
-#                 isisunit.HeaderUnit.FILE_KEY2, isisunit.HeaderUnit),
-#             riverunit.RiverUnit.FILE_KEY: (
-#                 riverunit.RiverUnit.FILE_KEY2, riverunit.RiverUnit), 
-#             refhunit.RefhUnit.FILE_KEY: (
-#                 refhunit.RefhUnit.FILE_KEY2, refhunit.RefhUnit),
-#             icu.InitialConditionsUnit.FILE_KEY: (
-#                 icu.InitialConditionsUnit.FILE_KEY2, icu.InitialConditionsUnit),
-#             gisinfounit.GisInfoUnit.FILE_KEY: (
-#                 gisinfounit.GisInfoUnit.FILE_KEY2, gisinfounit.GisInfoUnit),
-#             bridgeunit.BridgeUnitArch.FILE_KEY: (
-#                 bridgeunit.BridgeUnitArch.FILE_KEY2, bridgeunit.BridgeUnitArch)
-#                                 'gisinfo': gisinfounit.GisInfoUnit,
-#                                 'header': isisunit.HeaderUnit, 
-#                                 'comment': isisunit.CommentUnit,
-#                                 'bridge': bridgeunit.BridgeUnitUsbpr,
-#                                 'bridge': bridgeunit.BridgeUnitArch,
-#                                 'spill': spillunit.SpillUnit,
-#                                 'junction': junctionunit.JunctionUnit,
-#                                 'refh': refhunit.RefhUnit,
-#                                 'orifice': orificeunit.OrificeUnit,
-#                                 'outlet': orificeunit.OutfallUnit,
-#                                 'frelief': orificeunit.FloodReliefArchUnit,
-#                                 'culvert': culvertunit.CulvertInletUnit,
-#                                 'culvert': culvertunit.CulvertOutletUnit,
-#                                 'htbdy': htbdyunit.HtbdyUnit,
-#                                 'interolate': interpolateunit.InterpolateUnit,
-#         }
+#         self.available_units = (
+#             isisunit.HeaderUnit,
+#             riverunit.RiverUnit, 
+#             refhunit.RefhUnit,
+#             icu.InitialConditionsUnit,
+#             gisinfounit.GisInfoUnit,
+#             bridgeunit.BridgeUnitArch,
+#             bridgeunit.BridgeUnitUsbpr,
+#             spillunit.SpillUnit,
+#             htbdyunit.HtbdyUnit,
+#         )
         
         try:
             self._getFileKeys()
@@ -123,16 +105,16 @@ class IsisUnitFactory(object):
         defines the key word used in the .dat file. This is then used to
         recognise when a unit of that type has been found.
         """
-        self.unit_keys = [k.FILE_KEY for k in self.available_units if k.FILE_KEY is not None]
+        self.unit_keys = [k.FILE_KEY for k in IsisUnitFactory.available_units if k.FILE_KEY is not None]
         self.units = {}
-        for u in self.available_units:
+        for u in IsisUnitFactory.available_units:
             if u.FILE_KEY is None: continue
             if not u.FILE_KEY in self.units.keys():
                 self.units[u.FILE_KEY] = []
             self.units[u.FILE_KEY].append((u.FILE_KEY2, u))
             
     
-    def createUnit(self, contents, file_line, file_key, file_order, reach_number = None):
+    def createUnitFromFile(self, contents, file_line, file_key, file_order, reach_number = None):
         """
         """
         # Update reach number info
@@ -179,6 +161,7 @@ class IsisUnitFactory(object):
         constructor_kwargs = {}
         if file_key == 'INITIAL':
             read_kwargs['node_count'] = self.unit_count
+            read_kwargs['name_types'] = self._ic_name_types
         elif file_key == 'RIVER':
             constructor_kwargs['reach_number'] = self.reach_number
 
@@ -190,53 +173,89 @@ class IsisUnitFactory(object):
         '''
         if file_key == 'HEADER':
             self.unit_count = unit.head_data['node_count'].value
-#         if key == 'header':
-#             self.ic_rows = unit.node_count
-        
-        if file_key == 'INITIAL':
-            unit._name_types = self._ic_name_types
-        else:
+
+        if file_key != 'INITIAL': 
             self.findIcLabels(unit)
 
         return file_line, unit
+    
+    
+    @staticmethod
+    def createUnit(unit_type, **kwargs):
+        """Create a new AIsisUnit.
         
+        **kwargs:
+            'name': the name variable to apply to the unit. If not found
+                'unknown' will be set.
+            'name_ds': the name_ds variable to apply to the unit. If not found
+                'unknown' will be set.
+            head_data: dict of head_data values to set in the AIsisUnit.
+            row_data: dict of row_data keys containing lists of row data to
+                set in the unit.
         
-#         if file_key == 'RIVER':
-#             # River can also be used for Muskingham units
-#             if not contents[file_line+1].strip().startswith('SECTION'):
-#                 return file_line, False
-#             
-#             reach_no = self._getReachNumber(reach_number)
-#             unit = riverunit.RiverUnit(reach_no)
+        The row_data kwarg is expected to be set out like the following::
         
-#         elif key == 'initialconditions' or key == 'gisinfo':
-#             unit = self.available_units[key](self.ic_rows)
-#         
-#         elif key == 'bridge':
-#             if contents[file_line + 1].strip().startswith('USBPR1978'):
-#                 unit = bridgeunit.BridgeUnitUsbpr()
-#             else:
-#                 unit = bridgeunit.BridgeUnitArch()
-#         
-#         elif key == 'culvert':
-#             if contents[file_line + 1].strip().startswith('INLET'):
-#                 unit = culvertunit.CulvertInletUnit()
-#             else:
-#                 unit = culvertunit.CulvertOutletUnit()
-#         
-#         # All other units only need a file_order for their constructor.
-#         else:
-#             '''If no matching unit can be found False is return as the second
-#             part of the tuple and the datloader will know to start creating an
-#             UnknownUnit.
-#             '''
-#             if key in self.available_units.keys():
-#                 unit = self.available_units[key]()
-#             else:
-#                 return file_line, False
+            self.brg_rowdata = {
+                'main': [
+                    {rdt.CHAINAGE: 0.0, rdt.ELEVATION: 20.0},
+                    {rdt.CHAINAGE: 2.0, rdt.ELEVATION: 10.0},
+                    {rdt.CHAINAGE: 4.0, rdt.ELEVATION: 10.0},
+                    {rdt.CHAINAGE: 6.0, rdt.ELEVATION: 20.0},
+                ],
+                'opening': [
+                    {rdt.OPEN_START: 0.0, rdt.OPEN_END: 2.0},
+                    {rdt.OPEN_START: 4.0, rdt.OPEN_END: 6.0}
+                ]
+            }
         
-        # Send contents to unit for construction.
-
+        I.e. dict's of row_data types to update, containing a list of row_vals
+        data to set. These will be used to call the addRow() method in the
+        AIsisUnit. The contents of the list entries will be specific to the
+        unit_type. For more information see the addRow() method and row_data
+        setup of specific AIsisUnit's.
+        
+        Args:
+            unit_type(str): the AIsisUnit.UNIT_TYPE to create.
+        
+        Return:
+            AIsisUnit - the newly created unit.
+        """
+        u = None
+        for i in IsisUnitFactory.available_units:
+            if i.UNIT_TYPE == unit_type:
+                u = i
+        
+        if u is None:
+            raise ValueError("unit type '" + str(unit_type) + "' is not supported")
+        
+        unit = u()
+        head_data = kwargs.get('head_data', None)
+        row_data = kwargs.get('row_data', None)
+        unit.name = kwargs.get('name', 'unknown')
+        unit.name_ds = kwargs.get('name_ds', 'unknown')
+        
+        if unit.unit_category == 'river':
+            unit.reach_number = kwargs.get('reach_number', -1)
+        
+        # Update any head_data values given
+        if head_data is not None:
+            head_keys = unit.head_data.keys()
+            for key, val in head_data.items():
+                if key in head_keys:
+                    unit.head_data[key].value = val
+        
+        # Update any row_data entries given
+        if row_data is not None:
+            rowdata_keys = unit.row_data.keys()
+            # For different RowDataCollections
+            for row_key, row_data in row_data.items():
+                if row_key in rowdata_keys:
+                    # For different rows to add
+                    for entry in row_data:
+                        unit.row_data[row_key].addRow(entry)
+        
+        return unit
+    
 
     def findIcLabels(self, unit):
         """

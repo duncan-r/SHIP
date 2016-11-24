@@ -68,7 +68,7 @@ class RowDataCollection(object):
 #         self._min = 0
 #         self._current = 0
         self._updateCallback = kwargs.get('update_callback', None)
-    
+
     
     @classmethod
     def bulkInitCollection(cls, dataobjects, **kwargs):
@@ -78,6 +78,9 @@ class RowDataCollection(object):
             rc._max = len(rc._collection)
         return rc
     
+    @property
+    def row_count(self):
+        return self.numberOfRows()
     
 #     def __iter__(self):
 #         """Return an iterator for the units list"""
@@ -119,10 +122,194 @@ class RowDataCollection(object):
         self._collection.append(dataobject)
         self._max = len(self._collection)
     
+    
+    def indexOfDataObj(self, key):
+        """Get the index of the DataObject with data_type equal to key.
+        """
+        for i, c in enumerate(self._collection):
+            if c.data_type == key:
+                return i
+    
+    def iterateRows(self, key=None):
+        """Returns a generator for iterating through the rows in the collection.
         
-    def addValue(self, key, value=None):
+        If no key is given it will return a list containing all of the values
+        in the row.
+        
+        Args:
+            key=None(int): ROW_DATA_TYPE to return. If None all values in the
+                row will be returned as a list.
+                
+        Return:
+            list if key == None, a single value otherwise.
+        """
+        if key is None:
+            for i in range(0, self.row_count):
+                yield [o.getValue(i) for o in self._collection]
+        else:
+            index = self.indexOfDataObj(key)
+            for i in range(0, self.row_count):
+                yield self._collection[index].getValue(i)
+        
+    
+    def rowAsDict(self, index):
+        """Get the data vals in a particular row by index.
+        
+        Args:
+            index(int): the index of the row to return.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        output = {}
+        for obj in self._collection:
+            output[obj.data_type] = obj.getValue(index)
+        
+        return output
+
+
+    def rowAsList(self, index):
+        """Get the data vals in a particular row by index.
+        
+        Args:
+            index(int): the index of the row to return.
+            
+        Return:
+            dict - containing the values for the requested row.
+        """
+        output = []
+        for obj in self._collection:
+            output.append(obj.getValue(index))
+        
+        return output
+        
+    
+    def dataObject(self, name_key):
+        """Return the ADataRowObject instance requested.
+        
+        Args:
+            name_key (str): The key to use to retrieve the object 
+                (e.g. 'chainage'). This is usually a class declared constant 
+                e.g. RiverUnit.CHAINAGE.
+        
+        Returns:
+            ADataRowObject or False if the key doesn't match any in the 
+            collection.
+            
+        
+        Note: 
+            Returns a shallow copy of the collection. Any changes to the
+            values will remain within the main list. If you want to be 
+            able to change it without affecting the main copy use
+            getDataObjectCopy().
+        """
+        for obj in self._collection:
+            if obj.data_type == name_key:
+                return obj
+        else:
+            raise KeyError ('name_key %s was not found in collection' % (name_key))
+    
+
+    def dataObjAsList(self, key):
+        """Returns the row data object as a list.
+
+        This will return the row_collection data object referenced by the key
+        provided in list form.
+
+        If you intend to update the values you should use getRowDataObject
+        instead as the data provided will be mutable and therefore reflected in
+        the values held by the row_collection. If you just want a quick way to
+        loop through the values in one of the data objects  and only intend to
+        read the data then use this.
+        
+        Args:
+            key(str): the key for the data object requested. It is best 
+                to use  the class constants (i.e. RiverUnit.CHAINAGE) for this.
+        
+        Returns:
+            List containing the data in the DataObject that the key points
+                 to. Returns false if there is no row collection.
+        
+        Raises:
+            KeyError: If key does not exist.
+        """                
+        try:
+            data_col = self.dataObject(key)
+            if data_col == False: raise KeyError ('Key %s does not exist in collection' % (key))
+            
+            vals = []
+#             for i in range(0, data_col.record_length):
+            for i in data_col:
+                vals.append(i)
+#                 vals.append(data_col.getValue(i))
+            return vals
+        except KeyError:
+            raise
+
+    
+#     def rowDataAsList(self, key=None):
+    def toList(self):
+        """Returns the row data a list.
+        
+        Collects the row data in each of the ADataObjects in this collection
+        into a list. Then adds them to a list based on the order of this 
+        collection. I.e. each inner list is the data pertaining to a single 
+        ADataObject.
+        
+        Example:
+            [
+                [0.0, 1.5, 3.0],
+                [32.5, 31.0, 31.5],
+                [0.03, 0.03, 0.03]
+            ]
+        
+        Returns:
+            List - containing lists of the data in the DataObjects in this
+                collection.
+
+        Raises:
+            KeyError: If key does not exist.
+        """
+        outlist = []
+        for c in self._collection:
+            innerlist = []
+            for i in c:
+                innerlist.append(i)
+            outlist.append(innerlist)
+        return outlist
+                
+    
+    def toDict(self):
+        """Returns the row data object as a dict.
+
+        Provides a dict where keys are the datunits.ROW_DATA_TYPES and the
+        values are lists of the values for that type in sequence.
+
+        If you intend to update the values you should use getRowDataObject
+        instead as the data provided will be mutable and therefore reflected in
+        the values held by the collection. If you just want to read the data 
+        then use this.
+        
+        Returns:
+            dict - containing lists of values by ROW_DATA_TYPE.
+        """
+        vals = {}
+        for c in self._collection:
+            inner = []
+            for i in c:
+                inner.append(i)
+            vals[c.data_type] = inner
+        return vals
+    
+        
+    def _addValue(self, key, value=None):
         """Add a new value to the data object in the collection as referenced by
         the key provided.
+        
+        Note:
+            You almost certainly don't want to be using this. It's used internally
+            to add values to ADataObject's. If you need to add data use the
+            addRow() method.
         
         Args:
             key (int): Name of the data object to add the given value to.
@@ -143,10 +330,15 @@ class RowDataCollection(object):
                 break
         else:
             raise KeyError ('Key %s does not exist in collection' % (key))
+        
     
-    
-    def setValue(self, key, value, index):
+    def _setValue(self, key, value, index):
         """Set the value to the data object in the collection.
+
+        Note:
+            You almost certainly don't want to be using this. It's used internally
+            to set alues to ADataObject's. If you need to add data use the
+            updateRow() method. It will check consitency across the collection.
         
         Args:
             key (int): the type data object to add the given value to.
@@ -192,38 +384,6 @@ class RowDataCollection(object):
                 
         return out_str
     
-    
-    def rowAsDict(self, index):
-        """Get the data vals in a particular row by index.
-        
-        Args:
-            index(int): the index of the row to return.
-            
-        Return:
-            dict - containing the values for the requested row.
-        """
-        output = {}
-        for obj in self._collection:
-            output[obj.data_type] = obj.getValue(index)
-        
-        return output
-
-
-    def rowAsList(self, index):
-        """Get the data vals in a particular row by index.
-        
-        Args:
-            index(int): the index of the row to return.
-            
-        Return:
-            dict - containing the values for the requested row.
-        """
-        output = []
-        for obj in self._collection:
-            output.append(obj.getValue(index))
-        
-        return output
-    
         
     def updateRow(self, row_vals, index):
         """Add a new row to the units data rows.
@@ -249,8 +409,14 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
-        if index > self.numberOfRows():
+        if index > self.row_count:
             raise IndexError
+
+        dataobj_keys = self.collectionTypes()
+        vkeys = row_vals.keys()
+        for k in vkeys:
+            if not k in dataobj_keys:
+                raise KeyError('ROW_DATA_TYPE ' + str(k) + 'is not in collection')
         
         try:
             # Need to make a deep copy of the data_object so we can reset them back
@@ -258,10 +424,10 @@ class RowDataCollection(object):
             # in the different objects out of sync.
             temp_list = self._deepCopyDataObjects(self._collection) 
             
-            for key, val in values_dict.items():
-                self.setValue(key, val, index)
+            for key, val in row_vals.items():
+                self._setValue(key, val, index)
             
-        except (IndexError, ValueError, Exception), err:
+        except (IndexError, ValueError, Exception) as err:
             self._resetDataObject(temp_list)
             raise err
         finally:
@@ -271,7 +437,7 @@ class RowDataCollection(object):
      
         
 #     def addNewRow(self, row_vals, index):
-    def addRow(self, row_vals, index):
+    def addRow(self, row_vals, index=None):
         """Add a new row to the units data rows.
         
         Creates a new row from the values in the supplied value dict at the location
@@ -289,14 +455,21 @@ class RowDataCollection(object):
         Args:
             row_vals (dict): Contains the names of the data objects of
                 collection as keys and the new row values as values.
-            index (int): The index at which to insert the row.
+            index (int): The index at which to insert the row. If None it will
+                be appended to end of the collection.
         
         Raises:
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
-        if index > self.numberOfRows():
+        if index is not None and index > self.row_count:
             raise IndexError
+        
+        dataobj_keys = self.collectionTypes()
+        vkeys = row_vals.keys()
+        for k in vkeys:
+            if not k in dataobj_keys:
+                raise KeyError('ROW_DATA_TYPE ' + str(k) + 'is not in collection')
         
         temp_list = None
         try:
@@ -305,7 +478,6 @@ class RowDataCollection(object):
             # in the different objects out of sync.
             temp_list = self._deepCopyDataObjects(self._collection) 
             
-            vkeys = row_vals.keys()
             for obj in self._collection:
                 if not obj.data_type in vkeys:
                     if obj.default is not None:
@@ -316,7 +488,7 @@ class RowDataCollection(object):
                     obj.addValue(row_vals[obj.data_type], index)
             
             if not self.checkRowsInSync():
-                raise RunTimeError
+                raise RuntimeError
             
         except (IndexError, ValueError, Exception):
             self._resetDataObject(temp_list)
@@ -343,7 +515,7 @@ class RowDataCollection(object):
         Raise:
             IndexError: if index is out of the bounds of the collection.
         """
-        if index < 0 or index > self.numberOfRows():
+        if index < 0 or index > self.row_count:
             raise IndexError
         
         try:
@@ -378,102 +550,6 @@ class RowDataCollection(object):
             keys.append(obj.data_type)
             
         return keys
-    
-    
-    def dataObject(self, name_key):
-        """Return the ADataRowObject instance requested.
-        
-        Args:
-            name_key (str): The key to use to retrieve the object 
-                (e.g. 'chainage'). This is usually a class declared constant 
-                e.g. RiverUnit.CHAINAGE.
-        
-        Returns:
-            ADataRowObject or False if the key doesn't match any in the 
-            collection.
-            
-        
-        Note: 
-            Returns a shallow copy of the collection. Any changes to the
-            values will remain within the main list. If you want to be 
-            able to change it without affecting the main copy use
-            getDataObjectCopy().
-        """
-        for obj in self._collection:
-            if obj.data_type == name_key:
-                return obj
-        else:
-            raise KeyError ('name_key %s was not found in collection' % (name_key))
-    
-    
-#     def rowDataAsList(self, key=None):
-    # TODO: this should be dataObjAsList
-    def dataObjAsList(self, key=None):
-        """Returns the row data object as a list.
-
-        This will return the row_collection data object referenced by the key
-        provided in list form.
-
-        If you intend to update the values you should use getRowDataObject
-        instead as the data provided will be mutable and therefore reflected in
-        the values held by the row_collection. If you just want a quick way to
-        loop through the values in one of the data objects  and only intend to
-        read the data then use this.
-        
-        Args:
-            key=None (str): the key for the data object requested. It is best 
-                to use  the class constants (i.e. RiverUnit.CHAINAGE) for this.
-                If None then all rows are returned.
-        
-        Returns:
-            List containing the data in the DataObject that the key points
-                 to. Returns false if there is no row collection.
-        
-        Raises:
-            KeyError: If key does not exist.
-        """
-        if key is None:
-            outlist = []
-            for c in self._collection:
-                innerlist = []
-                for i in range(0, c.record_length):
-                    innerlist.append(c.getValue(i))
-                outlist.append(innerlist)
-            return outlist
-                
-        try:
-            data_col = self.dataObject(key)
-            if data_col == False: raise KeyError ('Key %s does not exist in collection' % (key))
-            
-            vals = []
-            for i in range(0, data_col.record_length):
-                vals.append(data_col.getValue(i))
-            return vals
-        except KeyError:
-            raise 
-    
-    
-    def toDict(self):
-        """Returns the row data object as a dict.
-
-        provides a dict where keys are the datunits.ROW_DATA_TYPES and the
-        values are lists of the values for that type in sequence.
-
-        If you intend to update the values you should use getRowDataObject
-        instead as the data provided will be mutable and therefore reflected in
-        the values held by the collection. If you just want to read the data 
-        then use this.
-        
-        Returns:
-            dict - containing the list of values by ROW_DATA_TYPE.
-        """
-        vals = {}
-        for c in self._collection:
-            inner = []
-            for i in range(0, c.record_length):
-                inner.append(c.getValue(i))
-            vals[c.data_type] = inner
-        return vals
                 
     
     def dataObjectCopy(self, name_key):
@@ -500,25 +576,25 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
             
     
-    def dataValue(self, name_key, index):
-        """Get the value of a data object in the collection.
-        
-        Args:
-            name_key (str): The name of the data object to get the value from.
-            index: int - the row index to get the value from or False if the key
-               doesn't exist in the collection.
-        
-        Returns:
-            The requested value or False if the key or index do not exist.
-        """
-        if index > self.numberOfRows():
-            raise IndexError ('Index %s is greater than number of values in collection' % (index))
-
-        for obj in self._collection:
-            if obj.data_type == name_key:
-                return obj.getValue(index)
-        else:
-            raise KeyError ('name_key %s was not found in collection' % (name_key))
+#     def dataValue(self, name_key, index):
+#         """Get the value of a data object in the collection.
+#         
+#         Args:
+#             name_key (str): The name of the data object to get the value from.
+#             index: int - the row index to get the value from or False if the key
+#                doesn't exist in the collection.
+#         
+#         Returns:
+#             The requested value or False if the key or index do not exist.
+#         """
+#         if index > self.row_count:
+#             raise IndexError ('Index %s is greater than number of values in collection' % (index))
+# 
+#         for obj in self._collection:
+#             if obj.data_type == name_key:
+#                 return obj.getValue(index)
+#         else:
+#             raise KeyError ('name_key %s was not found in collection' % (name_key))
         
     
     def deleteDataObject(self, name_key):
@@ -549,7 +625,8 @@ class RowDataCollection(object):
         if not self.checkRowsInSync():
             raise RuntimeError('RowCollection objects are not in sync')
 
-        return self._collection[0].record_length
+        return len(self._collection[0])
+#         return self._collection[0].record_length
     
     
     def checkRowsInSync(self):

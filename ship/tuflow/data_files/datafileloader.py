@@ -226,7 +226,7 @@ def readXsFile(datafile):
     '''
     row_collection = setupRowCollection()
     ext = datafile.extension.lower()
-    file_path = datafile.getAbsolutePath()
+    file_path = datafile.absolutePath()
     
     # If we're loading a MapInfo mid/mif file
     if ext == 'mif' or ext == 'mid':
@@ -249,8 +249,8 @@ def readXsFile(datafile):
         row_collection = loadShapeFile(file_path, row_collection)
     
     else:
-        logger.warning('Invalid file extension for XS type in file: ' + datafile.getFileNameAndExtension())
-        raise ValueError ('Invalid file extension for XS type in file: ' + datafile.getFileNameAndExtension())
+        logger.warning('Invalid file extension for XS type in file: ' + datafile.filenameAndExtension())
+        raise ValueError ('Invalid file extension for XS type in file: ' + datafile.filenameAndExtension())
     
     # Always return an empty comments list because there will never be any.
     return row_collection, []
@@ -356,7 +356,7 @@ def readBcFile(datafile, args_dict={}):
     row_collection.initCollection(do.StringData(0, 'actual_header', format_str=', {0}', default=''))
     row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
         
-    path = datafile.getAbsolutePath()
+    path = datafile.absolutePath()
     required_headers = ['Name', 'Source']
     try:
         logger.info('Loading data file contents from disc - %s' % (path))
@@ -559,7 +559,7 @@ def readMatCsvFile(datafile, args_dict={}):
     row_collection.initCollection(do.StringData(13, 'actual_header', format_str='{0}', default=''))
     row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
 
-    path = datafile.getAbsolutePath()
+    path = datafile.absolutePath()
     try:
         logger.info('Loading data file contents from disc - %s' % (path))
         with open(path, 'rb') as csv_file:
@@ -776,7 +776,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
     
     path_holder = filetools.PathHolder(path, root)
     mat_sub = dataobj.DataFileSubfileMat(path_holder, row_collection, comment_lines, 
-                                         path_holder.file_name, head1_loc,
+                                         path_holder.filename, head1_loc,
                                          head2_loc)
     return mat_sub
 
@@ -800,7 +800,7 @@ def readTmfFile(datafile):
     comment_types = ['#', '!']
     tmf_enum = dataobj.TmfEnum()
 
-    path = datafile.getAbsolutePath()
+    path = datafile.absolutePath()
     value_order = range(11)
     
     row_collection = RowDataCollection()

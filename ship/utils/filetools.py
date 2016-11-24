@@ -43,6 +43,8 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
+from ship.utils import utilfunctions as uf
+
 
 HAS_QT = True
 """If Qt is not installed on the machine running the library we can't use any 
@@ -79,7 +81,7 @@ def getFile(file_path):
     try:
         with open(file_path, 'rU') as f:
             for line in f:
-                file_contents.append(unicode(line))
+                file_contents.append(uf.encodeStr(line))
     except IOError:
         logger.error('Read file IOError')
         raise IOError ('Unable to read file at: ' + file_path) 
@@ -97,7 +99,7 @@ def writeFile(contents, file_path, add_newline=True):
     
     Args:
         contents (List) - lines to be written.
-        file_name (str) - Name of file to create.
+        filename (str) - Name of file to create.
         add_newline=True (Bool): adds a '\n' to the end of each line written
             if set to True.
     
@@ -120,7 +122,7 @@ def writeFile(contents, file_path, add_newline=True):
         raise TypeError
     
         
-def getDirectoryFileNames(path): 
+def directoryFileNames(path): 
     """Get a list of filenames in a directory.
 
     Args:
@@ -150,7 +152,7 @@ def getDirectoryFileNames(path):
     return files
 
 
-def getDirectoryDialog(path=''):
+def directoryDialog(path=''):
     """Launch a file dialog and return the user selected directory.
 
     If PyQt libraries are not available (HAS_QT == False) this function will
@@ -257,7 +259,7 @@ def getSaveFileDialog(path='', types='All (*.*)'):
 ###############################                                                                         
 """
 
-def getPathExists(path):
+def pathExists(path):
     """Test whether a path exists.
 
     Args:
@@ -272,7 +274,7 @@ def getPathExists(path):
     return False
 
 
-def getFinalFolder(path):
+def finalFolder(path):
         """Get the last folder in the path.
         
         Args:
@@ -332,19 +334,19 @@ def getFileName(in_path, with_extension=False):
             Str - file name, with or without the extension appended or a 
                  blank string if there is no file name in the path.
         """
-        file_name = os.path.basename(in_path)
+        filename = os.path.basename(in_path)
         
-        if os.path.sep in in_path[-2:] or (with_extension and not '.' in file_name):
+        if os.path.sep in in_path[-2:] or (with_extension and not '.' in filename):
             return ''
         
         if with_extension:
-            return file_name
+            return filename
         else:
-            file_name = os.path.splitext(file_name)[0]
-            return file_name
+            filename = os.path.splitext(filename)[0]
+            return filename
         
 
-def getDirectory(in_path):
+def directory(in_path):
     """Get the directory component of the given path.
 
     Checks the given path to see if it has a file or not. 
@@ -402,12 +404,13 @@ class PathHolder(object):
                 file that they are called from. The root will allow for an 
                 absolute path to be created from the relative path.
         """
-        if not isinstance(path, basestring):
-            raise TypeError
+#         if not isinstance(path, basestring):
+#         if not type(path) in (str, unicode):
+#             raise TypeError
         
         self.root = root
         self.relative_root = None
-        self.file_name = None
+        self.filename = None
         self.extension = None
         self.path_as_read = None
 #         self.parent_relative_root = ''
@@ -427,17 +430,18 @@ class PathHolder(object):
         self.path_as_read = path = path.strip()
         
         if os.path.isabs(path): 
-            root = getDirectory(path)
+            root = directory(path)
             
             if self.root == None:
                 self.root = root
-            self.setFileName(getFileName(path, with_extension=True), True, True)
+            self.setFilename(getFileName(path, with_extension=True), True, True)
         else:
-            self.relative_root = getDirectory(path)
-            self.setFileName(getFileName(path, True), True, True)
+            self.relative_root = directory(path)
+            self.setFilename(getFileName(path, True), True, True)
     
     
-    def getFinalFolder(self):
+#     def getFinalFolder(self):
+    def finalFolder(self):
         """Get the last folder in the path.
 
         If the relative_root variable is set it will be taken from that. 
@@ -451,10 +455,10 @@ class PathHolder(object):
         """
         final_folder = False
         if not self.relative_root == None and not self.relative_root == False:
-            final_folder = getFinalFolder(self.relative_root)
+            final_folder = finalFolder(self.relative_root)
         
         elif not self.root == None:
-            final_folder = getFinalFolder(self.root)
+            final_folder = finalFolder(self.root)
 
         return final_folder
     
@@ -471,61 +475,63 @@ class PathHolder(object):
             self.root = setFinalFolder(self.root, folder_name)
             
     
-    def getAbsolutePath(self, file_name=None, relative_roots=[], normalize=True):
+#     def getAbsolutePath(self, filename=None, relative_roots=[], normalize=True):
+    def absolutePath(self, filename=None, relative_roots=[], normalize=True):
         """Get the absolute path of the file path stored in this object.
 
         If there is no root variables set it will return False because there
         is no way of knowing what the absolute path will be.
         
         Args:
-            file_name: Optional - if a different file name to the one 
+            filename: Optional - if a different file name to the one 
                 currently stored in this object is required it can be 
                 specified with this variable.
         
         Returns:
             str - absolute path of this object.
         """
-        if file_name is None: 
-            file_name = self.getFileNameAndExtension()
+        if filename is None: 
+            filename = self.filenameAndExtension()
         
         outpath = False
         if relative_roots and not self.root is None:
 #         if not self.root == None and not self.relative_root == None:
-            paths = [self.root] + relative_roots + [file_name]
+            paths = [self.root] + relative_roots + [filename]
             if normalize:
                 outpath = os.path.normpath(os.path.join(*paths))
             else:
                 outpath = os.path.join(*paths)
 #             return os.path.join(self.root, self.parent_relative_root, 
-#                                         self.relative_root, file_name)
+#                                         self.relative_root, filename)
 
 
-#             if not file_name == None:
+#             if not filename == None:
 #                 return os.path.join(self.root, self.parent_relative_root, 
-#                                         self.relative_root, file_name)
+#                                         self.relative_root, filename)
 #             
 #             else:
 #                 return os.path.join(self.root, self.parent_relative_root,
-#                             self.relative_root, self.getFileNameAndExtension())
+#                             self.relative_root, self.filenameAndExtension())
         
 #         elif not self.root == None and self.relative_root == None:
         elif not self.root is None:
             if normalize:
-                outpath = os.path.normpath(os.path.join(self.root, file_name))
+                outpath = os.path.normpath(os.path.join(self.root, filename))
             else:
-                outpath = os.path.join(self.root, file_name)
-#             if not file_name == None:
-#                 return os.path.join(self.root, file_name)
+                outpath = os.path.join(self.root, filename)
+#             if not filename == None:
+#                 return os.path.join(self.root, filename)
 #             
 #             else:
-#                 return os.path.join(self.root, self.getFileNameAndExtension())
+#                 return os.path.join(self.root, self.filenameAndExtension())
         
         return outpath
 #         else:
 #             return outpath
         
     
-    def getDirectory(self):
+#     def getDirectory(self):
+    def directory(self):
         """Get the directory of the file path stored in this object.
 
         This makes sure that the correct path, taking into consideration any
@@ -548,7 +554,8 @@ class PathHolder(object):
             return False
         
     
-    def getRelativePath(self, with_extension=True, file_name=None):
+#     def getRelativePath(self, with_extension=True, filename=None):
+    def relativePath(self, with_extension=True, filename=None):
         """Returns the full relative root with filename for this object.
 
         
@@ -558,7 +565,7 @@ class PathHolder(object):
         Args:
             with_extension=True (bool): append the extension to the end of the
                 path if True.
-            file_name=None (str): if a different file name to the one 
+            filename=None (str): if a different file name to the one 
                 currently stored in this object is required it can be 
                 specified with this variable.
         
@@ -568,31 +575,33 @@ class PathHolder(object):
         """            
         if not self.relative_root == None:
             
-            if file_name is None:
+            if filename is None:
                 if not with_extension:
-                    return os.path.join(self.relative_root, self.file_name)
+                    return os.path.join(self.relative_root, self.filename)
                 else:
-                    return os.path.join(self.relative_root, self.getFileNameAndExtension())
+                    return os.path.join(self.relative_root, self.filenameAndExtension())
             else:
-                return os.path.join(self.relative_root, file_name)
+                return os.path.join(self.relative_root, filename)
         
         return False
     
     
-    def getFileNameAndExtension(self):
+#     def getFileNameAndExtension(self):
+    def filenameAndExtension(self):
         """Return the file name with the file extension appended.
         
         Returns:
             str - file name with the extension appended or a blank string if
                  the file name does not exist.
         """
-        if self.file_name:
-            return self.file_name + '.' + self.extension
+        if self.filename:
+            return self.filename + '.' + self.extension
         else:
             return ''
         
 
-    def setPathsWithAbsolutePath(self, absolute_path, keep_relative_root=False):
+#     def setPathsWithAbsolutePath(self, absolute_path, keep_relative_root=False):
+    def setAbsolutePath(self, absolute_path, keep_relative_root=False):
         """Sets the absolute path of this object.
         
         Takes an absolute path and set the file variables in this object with
@@ -618,15 +627,16 @@ class PathHolder(object):
                 this object it will be set to None unless this variable is 
                 set to True.         """
         absolute_path = absolute_path.strip()
-        self.root, file_name = os.path.split(absolute_path)
-        self.file_name, ext = os.path.splitext(file_name)
+        self.root, filename = os.path.split(absolute_path)
+        self.filename, ext = os.path.splitext(filename)
         self.extension = ext[1:]
         
         if not keep_relative_root:
             self.relative_root = None
     
     
-    def setFileName(self, file_name, has_extension=False, keep_extension=False):
+#     def setFileName(self, filename, has_extension=False, keep_extension=False):
+    def setFilename(self, filename, has_extension=False, keep_extension=False):
         """Updates the filename variables with the given file name.
 
         The caller can provide a filename with or without an extension and choose
@@ -643,18 +653,19 @@ class PathHolder(object):
                given filename this should be True. Otherwise the file extension
                on the new filename will be discarded.
         """
-        file_name = file_name.strip()
+        filename = filename.strip()
         if keep_extension:
-            self.file_name, ext = os.path.splitext(file_name)
+            self.filename, ext = os.path.splitext(filename)
             self.extension = ext[1:].lower()
         else:
             if has_extension:
-                self.file_name = os.path.splitext(file_name)[0]
+                self.filename = os.path.splitext(filename)[0]
             else:
-                self.file_name = file_name
+                self.filename = filename
             
 
-    def getPathExists(self, ext=None):
+#     def getPathExists(self, ext=None):
+    def pathExists(self, ext=None):
         """Test whether the path exists..
         
         Note:
@@ -671,15 +682,15 @@ class PathHolder(object):
            
             # If we have a relative root we need to use that as well. if the 
             # relative root shouldn't be used we will have had a new root set
-            # and the relative root set to None in the setPathsWithAbsolutePath()
+            # and the relative root set to None in the setAbsolutePath()
             # function. 
             if not self.relative_root == None:
                 path = os.path.join(path, self.relative_root)
             
             if ext == None:
-                path = os.path.join(path, self.getFileNameAndExtension())
+                path = os.path.join(path, self.filenameAndExtension())
             else:
-                path = os.path.join(path, self.file_name + '.' + ext)
+                path = os.path.join(path, self.filename + '.' + ext)
             if os.path.exists(path):
                 return True
             

@@ -52,13 +52,13 @@ class SpillUnit (AIsisUnit):
     FILE_KEY2 = None
 
 
-    def __init__(self): 
+    def __init__(self, **kwargs): 
         """Constructor.
         
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self)
+        AIsisUnit.__init__(self, **kwargs)
 
         self._name = 'Spl'
         self._name_ds = 'SplDS'
@@ -128,22 +128,25 @@ class SpillUnit (AIsisUnit):
             # Load the geometry data
             for i in range(file_line, out_line):
                 
-                # Put the values into the respective data objects            
-                # This is done based on the column widths set in the Dat file
-                # for the spill section.
-                self.row_data['main'].addValue(rdt.CHAINAGE, unit_data[i][0:10].strip())
-                self.row_data['main'].addValue(rdt.ELEVATION, unit_data[i][10:20].strip())
+                chain  = unit_data[i][0:10].strip()
+                elev   = unit_data[i][10:20].strip()
+                east   = None
+                north  = None
+
+                '''
+                In some edge cases there are no values set in the file for the
+                easting and northing, so use defaults. this actually checks 
+                that they are both there, e starts at 21, n starts at 31
+                '''
+                if len(unit_data[i]) > 31:
+                    east   = unit_data[i][20:30].strip()
+                    north  = unit_data[i][30:40].strip()
                 
-                # In some edge cases there are no values set in the file for the
-                # easting and northing, so use defaults. this actually checks 
-                # that they are both there, e starts at 21, n starts at 31
-                if not len(unit_data[i]) > 31:
-                    self.row_data['main'].addValue(rdt.EASTING)
-                    self.row_data['main'].addValue(rdt.NORTHING)
-                else:
-                    self.row_data['main'].addValue(rdt.EASTING, unit_data[i][20:30].strip())
-                    self.row_data['main'].addValue(rdt.NORTHING, unit_data[i][30:40].strip())
-                
+                self.row_data['main'].addRow({
+                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
+                    rdt.EASTING: east, rdt.NORTHING: north
+                })
+
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
@@ -197,7 +200,7 @@ class SpillUnit (AIsisUnit):
         return out
         
 #     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): 
-    def addDataRow(self, row_vals, rowdata_key='main', index=None):
+    def addRow(self, row_vals, rowdata_key='main', index=None):
         """Adds a new row to the spill unit.
 
         Ensures that certain requirements of the data rows, such as the 

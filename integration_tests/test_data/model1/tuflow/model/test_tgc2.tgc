@@ -1,0 +1,40 @@
+!#####################################################################################
+! ****************************      TEST SHIP MODEL      *****************************
+! ****************************           TGC 1           *****************************
+!#####################################################################################
+
+!#############################################################################
+! DEFINE THE ACTIVE GRID
+!#############################################################################
+
+! Location and cell size of grid
+Read GIS Location == gis\2d_loc_shiptest_tgc2_v1_L.shp ! defines the SW corner and orientation of the 2D grid
+Grid Size (X,Y) == 5000,4500 ! grid dimensions in meters
+Cell Size == 2 ! cell size in meters
+
+Set Variable MyTgcVariable == 5
+
+!-----------------------------------------------------------------------------
+! Define active cells
+Set Code == 0 ! set all cells to inactive, then activate those within the study area using the command below
+Read GIS Code == gis\2d_code_shiptest_tgc2_v1_R.shp ! reads in 2D code. Activates the cells within this polygon
+Read GIS Code BC == gis\2d_bc_hx_shiptest_tgc2_v1_R.shp ! read in BC code from 2d_bc_ layer (alternative to 2d_code_ approach above). Activates the cells within this polygon
+
+!###############
+! Call another tgc file
+!###############
+Read File == test_trd2.trd ! trd 2
+
+
+!Define base Z points
+Set Zpts == 20 ! Defines global elevation in mAOD. Initialises grid values
+Read Grid Zpts == grid\shiptest_tgc2_v1_DTM_2m.asc ! Merged lidar 2m
+
+!Define Key Floodplain Features
+!COMMENT: The order that geometry modification files are read in, defines the order the moadifcations are written (and overwritten!) in the 2D domain
+Read GIS Z Line THICK == gis\2d_zln_shiptest_tgc2_v1_L.shp | gis\2d_zln_shiptest_tgc2_v1_P.shp ! Sets bank elevations 
+Read GIS Zpts == gis\2d_zpt_shiptest_tgc2_v1_R.shp 
+
+!Stop
+Set Mat == 18
+Read GIS MAT == gis\2d_mat_shiptest_tgc2_v1_R.shp ! material comment

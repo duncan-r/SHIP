@@ -85,8 +85,9 @@ class TuflowLoader(ALoader):
         if not os.path.exists(tcf_path):
             raise IOError('Tcf file at %s does not exist' % tcf_path)
         root, tcf_name = os.path.split(tcf_path)
-        root = unicode(root)
-        tcf_name = unicode(tcf_name)
+        root = uf.encodeStr(root)
+#         root = unicode(root)
+        tcf_name = uf.encodeStr(tcf_name)
 
         self.tuflow_model = TuflowModel(root)
         
@@ -94,7 +95,7 @@ class TuflowLoader(ALoader):
         main_file = tuflowpart.ModelFile(None, **{'path': tcf_name, 'command': None,
                                                 'comment': None, 'model_type': 'TCF',
                                                 'root': root})
-        tcf_path = main_file.getAbsolutePath()
+        tcf_path = main_file.absolutePath()
 #         self.tuflow_model.main_file = main_file
         
         # Setup the file and object holders
@@ -110,13 +111,16 @@ class TuflowLoader(ALoader):
         self.tuflow_model.control_files = self._control_files
         self.tuflow_model.bc_event = self._bc_event
         self.tuflow_model.user_variables = self.user_variables
+        self.tuflow_model.control_files['TCF'].add_callback = self.tuflow_model.addTcfModelFile
+        self.tuflow_model.control_files['TCF'].remove_callback = self.tuflow_model.removeTcfModelFile
+        self.tuflow_model.control_files['TCF'].replace_callback = self.tuflow_model.replaceTcfModelFile
         return self.tuflow_model
 
 
-    def loadControlFile(self, model_file): #control_path, relative_path, parent_hash):
+    def loadControlFile(self, model_file): 
         """
         """
-        path = model_file.getAbsolutePath()
+        path = model_file.absolutePath()
         if not os.path.exists(path):
             raise IOError('model_file path does not exists at: ' + path)
     
@@ -124,7 +128,6 @@ class TuflowLoader(ALoader):
         root = model_file.root
         self._file_queue.enqueue(model_file)
         self._fetchTuflowModel(root)
-#         self._orderModel(path)
         _load_list = self._load_list[path] 
         model = self._file_list[path]
         mtype = model_file.model_type
@@ -135,19 +138,6 @@ class TuflowLoader(ALoader):
         self._control_files[mtype].control_files.append(model_file)
         self.buildControlFiles(_load_list, model)
         return self._control_files[mtype]
-        i=0
-
-        
-#         if tuflow_model.root is None or not os.path.isdir(tuflow_model.root):
-#             raise ValueError('TuflowModel root value must exist and be findable')
-#         if not os.path.exists(control_path):
-#             raise IOError('Control file path does not exist: ' + control_path)
-#         
-#         self._resetLoader()
-#         vars = {}
-#         vars['path'] = os.path.join(relative_path, os.path.basename(control_path))
-#         cfile = tuflowpart.ModelFile(uuid.uuid4(), parent_hash)
-#         self._file_queue.enqueue(control_path)
     
     
     def _orderModel(self, tcf_path):
@@ -181,11 +171,9 @@ class TuflowLoader(ALoader):
         for part in _load_list:
             self._control_files[self.current_control[-1]].parts.add(part)
             if part.obj_type == 'model':
-                p = part.getAbsolutePath()
+                p = part.absolutePath()
                 if not part.model_type in self._control_files.keys():
                     self._control_files[part.model_type] = control.ControlFile(part.model_type)
-                    for l in self._logic_list[p]:
-                        l.remove_callback = self._control_files[part.model_type].removeLogicItem
                     self._control_files[part.model_type].logic.add(self._logic_list[p])
                 self.current_control.append(part.model_type)
                 self._control_files[part.model_type].control_files.append(part)
@@ -215,9 +203,9 @@ class TuflowLoader(ALoader):
             # DEBUG
 #             self.scenario_vals['s'] = 'CHEESE'
 #             self.event_vals['e2'] = 'HAM'
-#             control_part.file_name = 'something_~s1~_~e2~_blah'
+#             control_part.filename = 'something_~s1~_~e2~_blah'
             # DEBUG
-            cpath = control_part.getAbsolutePath()
+            cpath = control_part.absolutePath()
 #             logger.debug('cpath before resolve: ' + cpath)
 #             print ('cpath before resolve: ' + cpath)
 #             cpath = uf.getSEResolvedFilename(cpath, {'scenario': self.scenario_vals, 'event': self.event_vals})
@@ -259,7 +247,7 @@ class TuflowLoader(ALoader):
         def addLogicAssociate(lpart, logic_stack):
             if logic:
                 lpart.associates.logic = logic[-1]
-                logic[-1].addPart(lpart)
+                logic[-1].addPart(lpart, skip_callback=True)
             logic.append(lpart)
             return logic
         
@@ -324,7 +312,7 @@ class TuflowLoader(ALoader):
             for p in parts:
                 contents.append(p)
                 if logic:
-                    current_logic.addPart(p)
+                    current_logic.addPart(p, skip_callback=True)
         
         unknown_store = createUnknown(unknown_store, current_logic)
         return contents, logic_done
@@ -340,8 +328,8 @@ class TuflowLoader(ALoader):
         vars = {}
         command, vars['comment'], cchar = tfactory.separateComment(line)
         if '==' in line:
-           vars['command'], vars['terms'] = tfactory.breakLine(command)
-           vars['terms'] = [vars['terms']]
+            vars['command'], vars['terms'] = tfactory.breakLine(command)
+            vars['terms'] = [vars['terms']]
         else:
             vars['command'] = command
             vars['terms'] = None
@@ -375,11 +363,11 @@ class TuflowLoader(ALoader):
         if 'EVENT' in part.command.upper():
             if not self.event_vals:
                 for i, e in enumerate(part.split_variable):
-                    self.event_vals['e' + unicode(i+1)] = e
+                    self.event_vals['e' + uf.encodeStr(i+1)] = e
         else:
             if not self.scenario_vals:
                 for i, s in enumerate(part.split_variable):
-                    self.scenario_vals['s' + unicode(i+1)] = s
+                    self.scenario_vals['s' + uf.encodeStr(i+1)] = s
     
     
     '''
