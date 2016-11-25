@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import os
+import copy
 
 from ship.utils.fileloaders import fileloader
 from ship.tuflow import tuflowfactory as factory
@@ -13,6 +14,7 @@ class TuflowUpdateTests(object):
     
     def runTests(self):
         self.loadTuflowModel()
+        self.test_changeActiveStatus()
         self.test_addPartToPartHolder()
         self.test_removePartFromPartHolder()
         self.test_addPartToLogicHolder()
@@ -27,10 +29,36 @@ class TuflowUpdateTests(object):
         self.tuflow = loader.loadFile(path)
         assert(self.tuflow.missing_model_files == [])
         print ('Tuflow model load complete.')
+    
+    def test_changeActiveStatus(self):
+        print ('Testing update active status...')
+        tuflow = copy.deepcopy(self.tuflow)
+        control = tuflow.control_files['TGC']
+
+        # Make sure we know what it is before
+        zpt_part = control.contains(command="Set Zpts", variable="2",
+                                    parent_filename="test_trd2")
+        zln_part = control.contains(command="Z Line THIN", filename="zln_shiptest_trd_v2")
+        parts = zpt_part + zln_part
+        assert(len(parts) == 3)
+
+        trd = control.contains(filename="test_trd2")[0]
+        trd.active = False
+
+        # Then check after
+        zpt_part = control.contains(command="Set Zpts", variable="2",
+                                    parent_filename="test_trd2")
+        zln_part = control.contains(command="Z Line THIN", filename="zln_shiptest_trd_v2")
+        parts = zpt_part + zln_part
+        assert(len(parts) == 0)
+        
+        print ('pass')
 
     def test_addPartToPartHolder(self):
         print ('Testing add part to PartHolder...')
-        control = self.tuflow.control_files['TGC']
+#         tuflow = copy.deepcopy(self.tuflow)
+        tuflow = self.tuflow
+        control = tuflow.control_files['TGC']
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c
@@ -70,7 +98,9 @@ class TuflowUpdateTests(object):
     def test_removePartFromPartHolder(self):
         print ('Testing remove part to LogicHolder...')
         
-        control = self.tuflow.control_files['TGC']
+#         tuflow = copy.deepcopy(self.tuflow)
+        tuflow = self.tuflow
+        control = tuflow.control_files['TGC']
         
         part1 = control.contains(command='Timestep', variable='12')[0]
         part2 = control.contains(command='Timestep', variable='22')[0]
@@ -92,7 +122,9 @@ class TuflowUpdateTests(object):
     def test_addPartToLogicHolder(self):
         print ('Testing add part to LogicHolder...')
 
-        control = self.tuflow.control_files['TGC']
+#         tuflow = copy.deepcopy(self.tuflow)
+        tuflow = self.tuflow
+        control = tuflow.control_files['TGC']
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c
@@ -115,7 +147,9 @@ class TuflowUpdateTests(object):
     def test_removePartFromLogicHolder(self):
         print ('Testing remove part to LogicHolder...')
 
-        control = self.tuflow.control_files['TGC']
+#         tuflow = copy.deepcopy(self.tuflow)
+        tuflow = self.tuflow
+        control = tuflow.control_files['TGC']
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c

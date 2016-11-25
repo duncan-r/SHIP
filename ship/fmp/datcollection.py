@@ -28,11 +28,11 @@ from __future__ import unicode_literals
 import os
 from datetime import datetime
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 from ship.utils import filetools as ft
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-from ship.isis.datunits.isisunit import CommentUnit
-from ship.isis import isisunitfactory as iuf
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits.isisunit import CommentUnit
+from ship.fmp import isisunitfactory as iuf
 from ship.utils import utilfunctions as uf
 
 import logging
@@ -130,8 +130,8 @@ class DatCollection(object):
         Raises:
             AttributeError: When a non-isisunit type is given.
         """
-        if not isinstance(unit, AIsisUnit):
-            raise AttributeError ('Given unit is not of type AIsisUnit')
+        if not isinstance(unit, AUnit):
+            raise AttributeError ('Given unit is not of type AUnit')
         
         update_node_count = kwargs.get('update_node_count', True)
         ics = kwargs.get('ics', {})
@@ -213,19 +213,19 @@ class DatCollection(object):
                 if missing it will default to True
         
         Args:
-            unit(str | AIsisUnit): Can either be the AIsisUnit.name or the
-                AIsisUnit.
+            unit(str | AUnit): Can either be the AUnit.name or the
+                AUnit.
             unit_type=None(str): If unit is a name str this must be provided to 
                 ensure that the correct unit is removed. E.g. a RiverUnit and 
-                an RefhUnit can both have the same AIsisUnit.name value, but 
+                an RefhUnit can both have the same AUnit.name value, but 
                 different .unit_type's.
-                If unit is an AIsisUnit this will be ignored.
+                If unit is an AUnit this will be ignored.
 
         Raises:
             KeyError: if the name doesn't exist. 
         """
         update_node_count = kwargs.get('update_node_count', True)
-        if isinstance(unit, AIsisUnit):
+        if isinstance(unit, AUnit):
             index = self.index(unit)
         else:
             if unit_type is None:
@@ -257,7 +257,7 @@ class DatCollection(object):
     
 #     def getIndex(self, unit, unit_type=None):
     def index(self, unit, unit_type=None):
-        """Get the index a particular AIsisUnit in the collection.
+        """Get the index a particular AUnit in the collection.
         
         Either the unit itself or its name can be provided as the argument.
         
@@ -267,16 +267,16 @@ class DatCollection(object):
         is given the first unit with the matching name will be returned.
         
         Args:
-            unit(AIsisUnit or str): the AIsisUnit or the name of the AIsisUnit
+            unit(AUnit or str): the AUnit or the name of the AUnit
                 to find the index for.
-            unit_type=None(str): the unit_type member of the AIsisUnit (e.g. 
+            unit_type=None(str): the unit_type member of the AUnit (e.g. 
                 for a USBPR bridge the unit_category == Bridge and unit_type == 'Usbpr').
         
         Return:
             int - the index of the given unit, or -1 if it could not be found.
         """
         index = -1
-        if isinstance(unit, AIsisUnit):
+        if isinstance(unit, AUnit):
             index = self.units.index(unit)
         elif uf.isString(unit):
             for i, u in enumerate(self.units):
@@ -347,14 +347,14 @@ class DatCollection(object):
         Iterate through the collection and get all of the different categories
         within the model.
         
-        Categories are defined by the AIsisUnits. For example:
+        Categories are defined by the AUnits. For example:
         USBPR and Arch bridge units are different, but both will be 
         categorised as 'bridge'.
         
         Args:
             unit_keys (str | []): The unit variables defined in 
                 the unit. Can be either a string representing a single CATEGORY 
-                of AIsisUnit or a list of strings for multiple types. 
+                of AUnit or a list of strings for multiple types. 
         
         Returns:
             List containing all the specified CATEGORY of unit in the model or
@@ -393,7 +393,7 @@ class DatCollection(object):
         Args:
             type_keys (str | []): The unit_type variables defined in 
                 the unit. Can be either a string representing a single type 
-                of AIsisUnit or a list of strings for multiple types. 
+                of AUnit or a list of strings for multiple types. 
         
         Return:
             List of the specified unit type.
@@ -428,21 +428,26 @@ class DatCollection(object):
     
     
 #     def getUnit(self, key, unit_type=None):
-    def unit(self, key, unit_type=None):
+    def unit(self, key, unit_type=None, unit_category=None):
         """Fetch a unit from the collection by name.
         
         Each isisunit in the collection is guaranteed to have a unique id.
         You can access the unit if you know it's ID. The ID is the 
-        AIsisUnit.name variable.
+        AUnit.name variable.
         
         Sometimes different units can have the same name (e.g. RefhUnit and
         RiverUnit). This function will always return the first unit it finds.
-        To avoid this you can specifiy an AIsisUnit.UNIT_TYPE to retrieve::
+        To avoid this you can specifiy an AUnit.UNIT_TYPE to retrieve::
             >>> getUnit(river.name, river.UNIT_TYPE)
+        
+        Note that if both unit_type and unit_category are given whichever is
+        found to match against the unit.name first will be returned. This 
+        shouldn't make any difference in practise.
 
         Args:
             name_key (str): name of the unit.
-            unit_type=None(str): the AIsisUnit.TYPE to find.
+            unit_type=None(str): the AUnit.TYPE to find.
+            unit_category=None(str): the AUnit.CATEGORY to find.
         
         Returns:
             isisunit object corresponding to the given name, or False
@@ -464,11 +469,11 @@ class DatCollection(object):
             
         for u in self.units:
             if u.name == key:
-                if unit_type == None:
+                if unit_type is None and unit_category is None:
                     return u
-                elif not u.unit_type == unit_type:
-                    continue
-                else:
+                elif unit_type and u.unit_type == unit_type:
+                    return u
+                elif unit_category and u.unit_category == unit_category:
                     return u
         else:
             return False
@@ -484,7 +489,7 @@ class DatCollection(object):
         replaced with the given one. 
         
         Args:
-            unit (AIsisUnit): the unit to replace.
+            unit (AUnit): the unit to replace.
         
         Raises:
             NameError, AttributeError - if the .name or .unit_type could not
@@ -494,7 +499,7 @@ class DatCollection(object):
             name = unit._name
             utype = unit._unit_type
         except (NameError, AttributeError) as err:
-            logger.error('Provided AIsisUnit does not have a name and/or unit_type variable - Data Corruption!')
+            logger.error('Provided AUnit does not have a name and/or unit_type variable - Data Corruption!')
             logger.exception(err)
             raise
         

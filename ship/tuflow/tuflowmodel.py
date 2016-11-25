@@ -104,11 +104,17 @@ class TuflowModel(object):
         Args:
             root(str): the new root to set.
         """
-        for c in self.control_files:
+        for c in self.control_files.values():
             c.updateRoot(root)
         
     def removeTcfModelFile(self, model_file):
         """Remove an existing ModelFile from 'TCF' and update ControlFile.
+        
+        Note:
+            You can call this function directly if you want to, but it is also
+            hooked into a callback in the TCF ControlFile. This means that when
+            you use the standard ControlFile add/remove/replaceControlFile()
+            methods these will be called automatically.
         
         Args:
             model_files(ModelFile): the ModelFile being removed.
@@ -123,6 +129,11 @@ class TuflowModel(object):
     def replaceTcfModelFile(self, model_file, control_file, replace_file):
         """Replace an existing ModelFile in 'TCF' and update ControlFile.
         
+        Note:
+            You can call this function directly if you want to, but it is also
+            hooked into a callback in the TCF ControlFile. This means that when
+            you use the standard ControlFile add/remove/replaceControlFile()
+            methods these will be called automatically.
         
         Args:
             model_file(ModelFile): the replacement TuflowPart.
@@ -140,6 +151,12 @@ class TuflowModel(object):
     
     def addTcfModelFile(self, model_file, control_file, **kwargs):
         """Add a new ModelFile instance to a TCF type ControlFile.
+
+        Note:
+            You can call this function directly if you want to, but it is also
+            hooked into a callback in the TCF ControlFile. This means that when
+            you use the standard ControlFile add/remove/replaceControlFile()
+            methods these will be called automatically.
         
         **kwargs:
             after(TuflowPart): the part to add the new ModelFile after.

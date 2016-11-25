@@ -1,52 +1,53 @@
 # 
+# from __future__ import unicode_literals
+# 
 # import unittest
 # import os
-# import hashlib
-# 
+#  
 # from ship.tuflow.data_files import datafileloader
 # from ship.tuflow.data_files.datafileobject import TmfDataObject, \
 #                                 BcDataObject, MatCsvDataObject, XsDataObject
 # from ship.tuflow.tuflowfilepart import DataFile, GisFile
 # from ship.data_structures.rowdatacollection import RowDataCollection
 # from ship.data_structures import dataobject as do 
-# 
-# 
+#  
+#  
 # class DataFileLoaderTests(unittest.TestCase):
 #     '''Tests the function and setup of the ADataFileComponent_OLD object and it's 
 #     subclasses.
 #     '''
-#     
+#      
 #     def setUp(self):
 #         '''Setup any expensive variables that are needed for all tests.
 #         '''
 #         self.curd = os.getcwd()
 #         self.comment_types = ['!', '#']
-#         
-#     
+#          
+#      
 #     def test_extractInlineComment(self):
 #         """Check that comments are extracted from line correctly"""
-# 
+#  
 #         testline1 = '1,0.06,,,,,,,,,,! Open pasture'
 #         testline2 = '1,0.06,,,,,,,,,,# Open pasture'
 #         outline = '1,0.06,,,,,,,,,,'
 #         outcomment = ' Open pasture'
-#         
+#          
 #         self.assertTupleEqual((outline, outcomment), datafileloader._extractInlineComment(testline1, self.comment_types), 'Inline comment extraction fail for "!"')
 #         self.assertTupleEqual((outline, outcomment), datafileloader._extractInlineComment(testline2, self.comment_types), 'Inline comment extraction fail for "#"')
-#         
-#     
+#          
+#      
 #     def test_hasCommentOnlyLine(self):
 #         """Check that we can pick up lines with only comments on"""
-# 
+#  
 #         testline1 = '! Some comment only line'
 #         testline2 = '# Some comment only line 2'
 #         testline3 = '1,0.06,,,,,,,,,,! Open pasture'
-#         
+#          
 #         self.assertEqual(testline1, datafileloader.hasCommentOnlyLine(testline1, self.comment_types), 'Comment only line fail for "!"')
 #         self.assertEqual(testline2, datafileloader.hasCommentOnlyLine(testline2, self.comment_types), 'Comment only line fail for "#"')
 #         self.assertFalse(datafileloader.hasCommentOnlyLine(testline3, self.comment_types), 'Not a comment only line fail')
-#         
-#     
+#          
+#      
 #     def test_createXsDataFileObject_Shp(self):
 #         """Loads a 1d cross section gis file and checks the contents get setup."""
 #         

@@ -1,15 +1,19 @@
 from __future__ import unicode_literals
 
 import os
+import copy
 
 from ship.utils.fileloaders import fileloader
+from ship.utils import filetools as ft
 
 
 class TuflowLoadTests(object):
     
     def runTests(self):
 
-        self.loadTuflowModel()
+        path = self.loadTuflowModel()
+#         self.test_deactiveLogic()
+        self.test_writeTuflowModel()
         self.test_controlFileTypes()
         self.test_allFilepaths()
         self.test_variables()
@@ -23,7 +27,73 @@ class TuflowLoadTests(object):
         loader = fileloader.FileLoader()
         self.tuflow = loader.loadFile(path)
         assert(self.tuflow.missing_model_files == [])
+        return path
         print ('Tuflow model load complete.')
+    
+    def test_writeTuflowModel(self):
+        """Note this will write the outputs of the tuflow model to disk.
+        
+        No comparisons of the data are done here. It's just a convenience so
+        that you can check the output files and make sure that they look like
+        they should.
+        Outputs will be written to SHIP/integration_tests/test_output/asread/
+        """
+        print ('Test writing tuflow model...')
+        cwd = os.path.join(os.getcwd(), 'integration_tests', 'test_output')
+        need_dirs = [cwd,
+                     os.path.join(cwd, 'asread'), 
+                     os.path.join(cwd, 'asread/model1'),
+                     os.path.join(cwd, 'asread/model1/tuflow'),
+                     os.path.join(cwd, 'asread/model1/tuflow/runs'),
+                     os.path.join(cwd, 'asread/model1/tuflow/model')
+                    ]
+        try:
+            for n in need_dirs:
+                if not os.path.isdir(n):
+                    os.mkdir(n)
+        except IOError:
+            print ('\t Could not make test directeries - aborting test')
+            print ('\nFail!\n')
+        tuflow = copy.deepcopy(self.tuflow)
+        new_root = os.path.normpath(need_dirs[4])       # ending 'runs'
+        root_compare = os.path.normpath(need_dirs[3])   # ending 'tuflow'
+        tuflow.root = new_root
+        contents = {}
+        for ckey, cval in tuflow.control_files.items():
+            if not ckey in contents.keys():
+                contents[ckey] = {}
+            temp = cval.getPrintableContents()
+            for tkey, tval in temp.items():
+#                 print ('root compare: ' + root_compare)
+#                 print ('tkey:         ' + tkey)
+                assert(root_compare in tkey)
+                contents[ckey][tkey] = tval
+        
+        for ctype, c in contents.items():
+            for pkey, val in c.items():
+                ft.writeFile(val, pkey)
+
+        del tuflow
+        print ('pass')
+    
+    def test_deactiveLogic(self):
+        pass
+#         print ('Test deactivation logic...')
+#         tuflow = copy.deepcopy(self.tuflow)
+#         logic = tuflow.control_files['TGC'].logic[1]
+#         logic.active = False
+#         trd = tuflow.control_files['TGC'].contains(filename="test_trd2")[0]
+#         trd.active = False
+#         gis = tuflow.control_files['TGC'].contains(filename="whatevs_shiptest_tgc_v1_P")[0]
+#         gis.active = False
+#         gis2 = tuflow.control_files['TGC'].contains(filename="whatevs_shiptest_tgc_v2_P")[0]
+#         gis2.active = False
+#         trd2 = tuflow.control_files['TGC'].contains(filename="test_trd1")[0]
+#         trd2.active = False
+#         trd2 = tuflow.control_files['TGC'].contains(filename="test_trd3")[0]
+#         trd2.active = False
+#         del tuflow
+#         print ('pass')
 
     def test_controlFileTypes(self):
         print ('Testing control_files keys...')
@@ -47,7 +117,7 @@ class TuflowLoadTests(object):
             'summit_event_zln_trd_v2_L.shp',
             'test_trd2.trd',
             '2d_zln_shiptest_trd_v2_L.shp',
-            '2d_zln_shiptest_red_v2_P.shp',
+            '2d_zln_shiptest_trd_v2_P.shp',
             'shiptest_tgc_v1_DTM_2m.asc',
             '2d_zln_shiptest_tgc_v1_L.shp',
             '2d_zln_shiptest_tgc_v1_P.shp',
@@ -153,7 +223,7 @@ class TuflowLoadTests(object):
                         'summit_event_zln_trd_v2_L.shp',
                         'test_trd2.trd',
                         '2d_zln_shiptest_trd_v2_L.shp',
-                        '2d_zln_shiptest_red_v2_P.shp',
+                        '2d_zln_shiptest_trd_v2_P.shp',
                         'test_trd3.trd',
                         '2d_zln_shiptest_trd_v3_L.shp',
                         '2d_zln_shiptest_trd_v3_P.shp',

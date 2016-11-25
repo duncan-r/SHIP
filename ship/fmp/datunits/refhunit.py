@@ -26,15 +26,15 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 from ship.data_structures.rowdatacollection import RowDataCollection 
 from ship.data_structures import DATA_TYPES as dt
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.headdata import HeadDataItem
 
 
 
-class RefhUnit(AIsisUnit): 
-    """Concrete implementation of AIsisUnit storing Isis River Unit
+class RefhUnit(AUnit): 
+    """Concrete implementation of AUnit storing Isis River Unit
     data.
 
     Contains a reference to a rowdatacollection for storing and
@@ -45,7 +45,7 @@ class RefhUnit(AIsisUnit):
     are available.
     
     See Also:
-        AIsisUnit
+        AUnit
     """
     
     UNIT_TYPE = 'refh'
@@ -57,7 +57,7 @@ class RefhUnit(AIsisUnit):
     def __init__(self, **kwargs): 
         """Constructor.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
         
         self._unit_type = RefhUnit.UNIT_TYPE
         self._unit_category = RefhUnit.UNIT_CATEGORY
@@ -169,7 +169,7 @@ class RefhUnit(AIsisUnit):
         """Reads the unit data into the geometry objects.
         
         See Also:
-            AIsisUnit - readUnitData for more information.
+            AUnit - readUnitData for more information.
         
         Args:
             unit_data (list): The section of the isis dat file pertaining 

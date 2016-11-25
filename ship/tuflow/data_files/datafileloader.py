@@ -62,8 +62,8 @@ def loadDataFile(datafile, args_dict={}):
     with BC Event Text and BC Event Name used in the control files to define
     what should be used. Other options are the use of scenario and event 
     definitions. Within these BC Event Source can be defined to associate 
-    certain placeholders with values e.g.:
-    ::
+    certain placeholders with values e.g.::
+
         Define Event == 8hr
             BC Event Source == ~DUR~ | 8hr
             BC Database == ..\bc_dbase\my_bcdbase.csv
@@ -87,8 +87,8 @@ def loadDataFile(datafile, args_dict={}):
         The args_dict is CURRENTLY NOT USED, but will be supported soon.
             
     See Also:
-        :class:'TuflowFile'.
-        :class:'DataFileObject'.
+        TuflowFile
+        DataFileObject
     """
     if not isinstance(datafile, TuflowFile):
         raise AttributeError('datafile is not an instance of TuflowFile')
@@ -99,7 +99,7 @@ def loadDataFile(datafile, args_dict={}):
             raise AttributeError ('datafile is not an instance of GisFile')
         
         row_data, comments = readXsFile(datafile)
-        xs = dataobj.XsDataObject(row_data, datafile, comments)
+        xs = dataobj.XsDataObject(row_data, datafile, comments, args_dict)
         return xs
     
     # Anything else must be a DataFile instance
@@ -111,7 +111,7 @@ def loadDataFile(datafile, args_dict={}):
     if command == 'READ MATERIALS FILE':
         if datafile.extension.lower() == 'tmf':
             row_data, comments = readTmfFile(datafile)
-            tmf = dataobj.TmfDataObject(row_data, datafile, comments)
+            tmf = dataobj.TmfDataObject(row_data, datafile, comments, args_dict)
             return tmf
 
         if datafile.extension.lower() == 'csv':
@@ -126,7 +126,7 @@ def loadDataFile(datafile, args_dict={}):
 
     elif command == 'BC DATABASE':
         row_data, comments = readBcFile(datafile, args_dict)
-        bc = dataobj.BcDataObject(row_data, datafile, comments)
+        bc = dataobj.BcDataObject(row_data, datafile, comments, args_dict)
         return bc 
     
     else:
@@ -158,17 +158,17 @@ def readXsFile(datafile):
         for i, t in enumerate(table.records):
             count = 0
             for entry in t.values():
-                row_collection.addValue(count, entry)
+                row_collection._addValue(count, entry)
                 count += 1
             
             # Need to catch the fact that skew does not exist in some versions.
             if count < len(xs_enum.ITERABLE):
                 logger.info('1d_xs does not have skew column - adding default value')
                 for k in range(count, len(xs_enum.ITERABLE)):
-                    row_collection.addValue(k)
+                    row_collection._addValue(k)
 
 #             print t['Source'] + ' : ' + t['Type'] + ' : ' + t['Column_1']
-            row_collection.addValue('row_no', i)
+            row_collection._addValue('row_no', i)
         
         return row_collection
     
@@ -182,16 +182,16 @@ def readXsFile(datafile):
                 for i, row in enumerate(csv_file):
 
                     for j, entry in enumerate(row):
-                        row_collection.addValue(j, entry)
+                        row_collection._addValue(j, entry)
                     
                     # Need to catch the fact that skew does not exist in some versions.
                     if len(row) < len(xs_enum.ITERABLE):
                         logger.info('1d_xs does not have skew column - adding deafult value')
                         for k in range(len(row), len(xs_enum.ITERABLE)):
-                            row_collection.addValue(k)
+                            row_collection._addValue(k)
 
     #                 print row[0] + ' : ' + row[1] + ' : ' + row[3]
-                    row_collection.addValue('row_no', i)
+                    row_collection._addValue('row_no', i)
 
         except IOError:
             logger.error('Unable to load file at: ' + file_path)
@@ -275,6 +275,7 @@ def readBcFile(datafile, args_dict={}):
     value_seperator = ','
     comment_types = ['#', '!']
     bc_enum = dataobj.BcEnum()
+    bc_event_data = args_dict
     
     def _checkHeaders(row, required_headers):
         """Checks that any required headers can be found.
@@ -317,7 +318,7 @@ def readBcFile(datafile, args_dict={}):
         head_check = _checkHeaders(row, required_headers)
         for i, v in enumerate(bc_enum.ITERABLE):
             if i < row_length:
-                row_collection.addValue('actual_header', row[i]) 
+                row_collection._addValue('actual_header', row[i]) 
         
         return row_collection
 
@@ -334,13 +335,13 @@ def readBcFile(datafile, args_dict={}):
             rowdatacollection: updated with header row details.
         """
         if '!' in row[-1] or '#' in row[-1]:
-            row_collection.addValue('comment', row[-1])
+            row_collection._addValue('comment', row[-1])
         
         # Add the row data in the order that it appears in the file
         # from left to right.
         for i in bc_enum.ITERABLE:
             if i < len(row):
-                row_collection.addValue(i, row[i])
+                row_collection._addValue(i, row[i])
         
         return row_collection
 
@@ -360,7 +361,7 @@ def readBcFile(datafile, args_dict={}):
     required_headers = ['Name', 'Source']
     try:
         logger.info('Loading data file contents from disc - %s' % (path))
-        with open(path, 'rb') as csv_file:
+        with open(path, 'rU') as csv_file:
             csv_file = csv.reader(csv_file)
                     
 
@@ -384,7 +385,7 @@ def readBcFile(datafile, args_dict={}):
                         row_collection = _loadHeadData(line, row_collection, required_headers)
                     else:
                         row_collection = _loadRowData(line, i, row_collection)
-                        row_collection.addValue('row_no', row_count)
+                        row_collection._addValue('row_no', row_count)
                         row_count += 1                        
                     
                     comment_lines.append(None)
@@ -396,7 +397,7 @@ def readBcFile(datafile, args_dict={}):
     # Just need to reset the has_changed variable because it will have been
     # set to True while loading everything in.
     for i in range(0, len(bc_enum.ITERABLE)):
-        row_collection.getDataObject(i).has_changed = False
+        row_collection.dataObject(i).has_changed = False
     
     return row_collection, comment_lines
 
@@ -427,7 +428,7 @@ def readMatCsvFile(datafile, args_dict={}):
         new_row = [None] * 12
 
         if '!' in row[-1] or '#' in row[-1]:
-            row_collection.addValue('comment', row[-1])
+            row_collection._addValue('comment', row[-1])
             
         new_row[0] = row[0]
         new_row[1] = row[1]
@@ -437,7 +438,7 @@ def readMatCsvFile(datafile, args_dict={}):
         row_length = len(new_row)
         for i, v in enumerate(new_row):
             if i < row_length:
-                row_collection.addValue('actual_header', new_row[i]) 
+                row_collection._addValue('actual_header', new_row[i]) 
         
         return row_collection
 
@@ -528,7 +529,7 @@ def readMatCsvFile(datafile, args_dict={}):
             rowdatacollection: updated with header row details.
         """
         if '!' in row[-1] or '#' in row[-1]:
-            row_collection.addValue('comment', row[-1])
+            row_collection._addValue('comment', row[-1])
         new_row = [None] * 12
         
         # Add the row data in the order that it appears in the file
@@ -538,7 +539,7 @@ def readMatCsvFile(datafile, args_dict={}):
                 new_row = _disectEntry(i, row[i], new_row)
         
         for val, item in enumerate(new_row):
-            row_collection.addValue(val, item)
+            row_collection._addValue(val, item)
         
 
     # First entry doesn't want to have a comma in front when formatting.
@@ -589,7 +590,7 @@ def readMatCsvFile(datafile, args_dict={}):
                         else:
                             _loadRowData(line, i, row_collection)
                         
-                        row_collection.addValue('row_no', line_count)
+                        row_collection._addValue('row_no', line_count)
                         line_count += 1
                         comment_lines.append(None)
             except IndexError:
@@ -691,7 +692,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
                     head1_location = i
                 if entry == header2:
                     head2_location = i
-                row_collection.addValue('actual_header', entry) 
+                row_collection._addValue('actual_header', entry) 
         
         return row_collection, head1_location, head2_location
     
@@ -716,13 +717,13 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
             comment_lines.append(None)
             
         if '!' in row[-1] or '#' in row[-1]:
-            row_collection.addValue('comment', row[-1])
+            row_collection._addValue('comment', row[-1])
         
         # Add the row data in the order that it appears in the file
         # from left to right.
         for i in range(col_length):
             if i < len(row):
-                row_collection.addValue(i, row[i])
+                row_collection._addValue(i, row[i])
         
         return row_collection, comment_lines
     
@@ -768,7 +769,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
                     else:
                         row_collection, comment_lines = _loadRowData(line, i, row_collection, comment_lines, col_length, start_row)
                     
-                    row_collection.addValue('row_no', i)
+                    row_collection._addValue('row_no', i)
     
     except IOError:
         logger.warning('Cannot load file - IOError')
@@ -873,13 +874,13 @@ def _loadRowData(line, row_number, row_collection, val_range, comment_types,
         # If we have gone beyond the number of values split we can just put
         # default values in all the other collection data types
         if i < split_length and not split_vals[i].strip() == '':
-            row_collection.addValue(i, split_vals[i].strip())
+            row_collection._addValue(i, split_vals[i].strip())
         else:
-            row_collection.addValue(i)
+            row_collection._addValue(i)
 
     if not comment is None:
-        row_collection.addValue('comment', comment)
-    row_collection.addValue('row_no', row_number)
+        row_collection._addValue('comment', comment)
+    row_collection._addValue('row_no', row_number)
         
     return row_collection
 

@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 import unittest
  
-from ship.isis.datunits import spillunit
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-from ship.isis.isisunitfactory import IsisUnitFactory
+from ship.fmp.datunits import spillunit
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.isisunitfactory import IsisUnitFactory
  
 class test_SpillUnit(unittest.TestCase):
     """

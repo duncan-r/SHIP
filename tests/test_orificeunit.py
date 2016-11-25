@@ -1,6 +1,6 @@
 # import unittest
 # 
-# from ship.isis.datunits import orificeunit as ou
+# from ship.fmp.datunits import orificeunit as ou
 # 
 # class test_SpillUnit(unittest.TestCase):
 #     """

@@ -1,7 +1,7 @@
 """
 
  Summary:
-    Factory class for building the AIsisUnits from an ISIS data file.
+    Factory class for building the AUnits from an ISIS data file.
     This is used to read and build the parts of the ISIS dat file.
 
  Author:  
@@ -32,10 +32,10 @@ import os
 from ship.utils.atool import ATool
 from ship.utils.fileloaders.loader import ALoader
 from ship.utils import filetools as ftools
-from ship.isis.isisunitfactory import IsisUnitFactory
+from ship.fmp.isisunitfactory import IsisUnitFactory
 from ship.utils import utilfunctions as uf
-from ship.isis.datunits.isisunit import UnknownUnit
-from ship.isis.datcollection import DatCollection
+from ship.fmp.datunits.isisunit import UnknownUnit
+from ship.fmp.datcollection import DatCollection
 
 import logging
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class DatLoader(ATool, ALoader):
 
         self.cur_no_of_units = 0
         self.contents = []          # Contents of dat file
-        self.temp_unit = None       # AIsisUnit
+        self.temp_unit = None       # AUnit
         self.is_ied = False         # If used to load an .ied file
         self._ic_name_types = {}
         

@@ -4,7 +4,7 @@ import unittest
  
 from ship.data_structures import dataobject as do
 from ship.data_structures.dataobject import ADataRowObject
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
  
  
 class DataObjectsTest(unittest.TestCase):

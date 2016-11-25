@@ -38,7 +38,7 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, TuflowVariable
+from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, TuflowVariable, ModelFile
 
     
 
@@ -52,7 +52,8 @@ class ControlFile(object):
         self.control_files = []
         
    
-    def files(self, filepart_type=None, no_duplicates=True, se_vals=None):
+    def files(self, filepart_type=None, no_duplicates=True, se_vals=None,
+              **kwargs):
         """Get all the TuflowFile types that match the criteria.
         
         TuflowPart's will be returned in order.
@@ -70,7 +71,8 @@ class ControlFile(object):
         """
         return self.fetchPartType(TuflowFile, filepart_type, no_duplicates, se_vals)
     
-    def variables(self, filepart_type=None, no_duplicates=True, se_vals=None):
+    def variables(self, filepart_type=None, no_duplicates=True, se_vals=None,
+              **kwargs):
         """Get all the ATuflowVariable types that match the criteria.
         
         TuflowPart's will be returned in order.
@@ -88,11 +90,13 @@ class ControlFile(object):
         """
         return self.fetchPartType(TuflowVariable, filepart_type, no_duplicates, se_vals)
     
-    def logics(self, filepart_type=None, se_vals=None):
+    def logics(self, filepart_type=None, se_vals=None, **kwargs):
         """
         """
+        ignore_inactive = kwargs.get('ignore_active', True)
         vars = []
         for logic in self.logic:
+            if ignore_inactive and not logic.active: continue
             if filepart_type is not None and logic.tpart_type != filepart_type:
                 continue
             vars.append(logic)
@@ -101,7 +105,7 @@ class ControlFile(object):
 
     
     def fetchPartType(self, instance_type, filepart_type=None, no_duplicates=True,
-                      se_vals=None):
+                      se_vals=None, **kwargs):
         """Get all the TuflowPart's that match the criteria.
         
         TuflowPart's will be returned in order.
@@ -117,10 +121,12 @@ class ControlFile(object):
         Return:
             list - of filepaths that matched.
         """
+        active_only = kwargs.get('active_only', True)
         found_commands = []
         fetch_sibling = False
         vars = []
         for part in self.parts:#[::-1]:
+            if active_only and not part.active: continue
             if not isinstance(part, instance_type): continue
             if filepart_type is not None and part.tpart_type != filepart_type:
                 continue
@@ -149,7 +155,7 @@ class ControlFile(object):
         return vars
     
     def filepaths(self, filepart_type=None, absolute=False, no_duplicates=True,
-                  no_blanks=True, se_vals=None):
+                  no_blanks=True, se_vals=None, **kwargs):
         """Get all the TuflowFile filepaths that match the criteria.
         
         Filepaths will be returned in order.
@@ -168,8 +174,10 @@ class ControlFile(object):
         Return:
             list - of filepaths that matched.
         """
+        active_only = kwargs.get('active_only', True)
         paths = []
         for part in self.parts:
+            if active_only and not part.active: continue
             p = None
             if not isinstance(part, TuflowFile): continue
             if filepart_type is not None and part.tpart_type != filepart_type:
@@ -203,7 +211,7 @@ class ControlFile(object):
         return output
 
     
-    def checkPathsExist(self, se_vals=None):
+    def checkPathsExist(self, se_vals=None, **kwargs):
         """Check that all of the TuflowFile type's absolute paths exist.
         
         Args:
@@ -213,8 +221,10 @@ class ControlFile(object):
         Return:
             list - containing all TuflowFile's that failed the check.
         """
+        active_only = kwargs.get('active_only', True)
         failed = []
         for part in self.parts:
+            if active_only and not part.active: continue
             if not isinstance(part, TuflowFile): continue
             if not os.path.exists(part.absolutePath()):
                 failed.append(part)
@@ -239,7 +249,7 @@ class ControlFile(object):
         else:
             return ''.join(['\t' for x in range(indent)])
         
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         """Return the control files with contents formatted for writing to file.
         
         Return:
@@ -251,6 +261,8 @@ class ControlFile(object):
         cur_ctrl = None
         out = {}
         indent = 0
+        active_only = kwargs.get('active_only', True)
+        open_logic = 0
          
         for p in self.parts:
             if not cur_ctrl == p.associates.parent.hash:
@@ -260,28 +272,31 @@ class ControlFile(object):
             
             # Get any logic clauses that appear above this part
             if p.associates.logic is not None:
+                # Helps track open logic clauses when parts are inactive
                 logic_clause = []
-                logic_clause = p.associates.logic.getPrintableContents(p, logic_clause)
+                logic_clause = p.associates.logic.getPrintableContents(
+                                                            p, logic_clause)
                 for i, l in enumerate(logic_clause):
+                    open_logic += 1 
                     out[cur_ctrl].append(self.createIndent(indent) + l)
-                    if 'IF' in l.upper() or 'ELSE' in l.upper() or 'DEFINE' in l.upper():
-                        indent += 1
+                    indent += 1
 
             # Get the part
-            pout, add_to_prev = p.getPrintableContents()
-            if add_to_prev:
-                out[cur_ctrl][-1] = out[cur_ctrl][-1] + pout
-            else:
-                out[cur_ctrl].append(self.createIndent(indent) + pout)
+            if not active_only or (active_only and p.active != False):
+                pout, add_to_prev = p.getPrintableContents()
+                if add_to_prev:
+                    out[cur_ctrl][-1] = out[cur_ctrl][-1] + pout
+                else:
+                    out[cur_ctrl].append(self.createIndent(indent) + pout)
             
             # Get any closing statements for logic clauses
             if p.associates.logic is not None:
                 logic_clause = p.associates.logic.getEndClause(p)
-                if indent > 0: indent -= 1
-                if logic_clause: out[cur_ctrl].append(self.createIndent(indent) + logic_clause)
+                indent -= 1
+                if logic_clause and open_logic > 0:
+                    out[cur_ctrl].append(self.createIndent(indent) + logic_clause)
+                    open_logic -= 1
                 
-        keys = out.keys()
-        paths = {}
         for c in self.control_files:
             path = c.absolutePath()
             out[path] = out.pop(c.hash)
@@ -350,6 +365,8 @@ class ControlFile(object):
             command(str): text to search for in a TuflowPart.command.
             variable(str): characters to search for in a TuflowPart.variable.
             filename(str): text to search for in a TuflowPart.filename.
+            parent_filename(str): text to search for in a 
+                TuflowPart.associates.parent.filename.
         
         Return:
             list - of TuflowParts that match the search term.
@@ -357,34 +374,35 @@ class ControlFile(object):
         command = kwargs.get('command', '').upper()
         variable = kwargs.get('variable', '').upper()
         filename = kwargs.get('filename', '').upper()
+        parent_filename = kwargs.get('parent_filename', '').upper()
+        active_only = kwargs.get('active_only', True)
         results = []
         for part in self.parts:
             out = None
+            if active_only and not part.active: 
+                continue
+
+            if parent_filename:
+                try:
+                    if parent_filename in part.associates.parent.filename.upper():out = part
+                    else: continue #out = None
+                except AttributeError: continue
             if command:
                 try:
-                    if command in part.command.upper():
-                        out = part
-#                         out.append(part)
-                except AttributeError:
-                    continue
+                    if command in part.command.upper():out = part
+                    else: continue
+                except AttributeError: continue
             if variable:
                 try:
-                    if variable in part.variable.upper():
-                        out = part
-                    else:
-                        out = None
-#                         out.append(part)
-                except AttributeError:
-                    continue
+                    if variable in part.variable.upper(): out = part
+                    else: continue
+                except AttributeError: continue
             if filename:
                 try:
-                    if filename in part.filename.upper():
-                        out = part
-                    else:
-                        out = None
-#                         out.append(part)
-                except AttributeError:
-                    continue
+                    if filename in part.filename.upper(): out = part
+                    else: continue
+                except AttributeError: continue
+
             if out is not None:
                 results.append(out) 
         
@@ -838,10 +856,35 @@ class TcfControlFile(ControlFile):
         self.parts = PartHolder()
         self.logic = LogicHolder()
         self.control_files = []
-        self.mainfile = mainfile
+        self._mainfile = mainfile
         self.remove_callback = remove_callback
         self.replace_callback = replace_callback
         self.add_callback = add_callback
+    
+    @property
+    def mainfile(self):
+        return self._mainfile
+    
+    @mainfile.setter
+    def mainfile(self, value):
+        if not isinstance(value, ModelFile):
+            raise ValueError('value must be of type ModelFile')
+        if not value.model_type == 'TCF':
+            raise ValueError("value must be model_type 'TCF'")
+        self._mainfile = value
+        if not value in self.control_files:
+            self.control_files.append(value)
+
+    def updateRoot(self, root, must_exist=True):
+        """Update the root variable of all TuflowPart's.
+        
+        Args:
+            root(str): the new directory path.
+            must_exist=True(bool): if True and the given root directory doesn't
+                exist it will raise a ValueError.
+        """
+        ControlFile.updateRoot(self, root, must_exist=must_exist)
+        self._mainfile.root = root
         
      
     def removeControlFile(self, model_file):
@@ -868,31 +911,6 @@ class TcfControlFile(ControlFile):
                 self.remove_callback(model_file)
         else:
             return ControlFile.removeControlFile(self, model_file)
-
-#             # First find all of the old controlfile parts to remove
-#             to_delete, part_index, _ = self.allParentHashes(model_file.hash, self.parts)
-# 
-#             # Then remove them
-#             to_delete.reverse()
-#             for part in to_delete:
-#                 self.parts.remove(part)
-# 
-#             # Next the logic
-#             to_delete, logic_index, _ = self.allParentHashes(model_file.hash, self.logic)
-#                 
-#             # Then remove them
-#             to_delete.reverse()
-#             for logic in to_delete:
-#                 self.logic.parts.remove(logic)
-# 
-#             # Finally the control_files
-#             to_delete, control_index, _ = self.allParentHashes(model_file.hash, self.control_files)
-#             to_delete.append(model_file)
-#             to_delete.reverse()
-#             for c in to_delete:
-#                 self.control_files.remove(c)
-#             
-#             return {'parts': part_index, 'logic': logic_index, 'control_files': control_index}
 
     
     def addControlFile(self, model_file, control_file, **kwargs):
@@ -921,11 +939,6 @@ class TcfControlFile(ControlFile):
                 self.add_callback(model_file, control_file, **kwargs)
         else:
             ControlFile.addControlFile(self, model_file, control_file, **kwargs)
-#             if model_file in self.control_files:
-#                 raise AttributeError('model_file already exists in this ControlFile') 
-#             self.parts.parts[start_indices['parts'] : start_indices['parts']] = control_file.parts
-#             self.logic.parts[start_indices['logic'] : start_indices['logic']] = control_file.logic
-#             self.control_files[start_indices['control_files'] : start_indices['control_files']] = control_file.control_files
 
     
     def replaceControlFile(self, model_file, control_file, replace_modelfile):
@@ -947,10 +960,5 @@ class TcfControlFile(ControlFile):
         else:
             ControlFile.replaceControlFile(self, model_file, control_file, 
                                            replace_modelfile)
-#             if model_file in self.control_files:
-#                 raise AttributeError('model_file already exists in this ControlFile') 
-#             start_index = self.removeControlFile(replace_modelfile)
-#             self.addControlFile(control_file, start_index)
-        
         
         

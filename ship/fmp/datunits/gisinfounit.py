@@ -24,14 +24,14 @@
 from __future__ import unicode_literals
 
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class GisInfoUnit (AIsisUnit):
+class GisInfoUnit (AUnit):
     """isisunit for storing the GIS info.
 
     Stores the GIS info found at the bottom of .dat file.
@@ -66,7 +66,7 @@ class GisInfoUnit (AIsisUnit):
                 to pass it to the superclass.
         """
     
-        AIsisUnit.__init__(self)
+        AUnit.__init__(self)
         self._unit_type = GisInfoUnit.UNIT_TYPE
         self._unit_category = GisInfoUnit.UNIT_CATEGORY
         self._name = "GisInfo"

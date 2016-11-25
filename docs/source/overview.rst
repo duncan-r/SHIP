@@ -7,7 +7,7 @@ Overview
 The SHIP library can be used to read, write and amend the majority of Flood
 Modeller Pro and Tuflow model configuration files. If you find that there is a
 particular file type that you need which isn't supported, please make a feature
-request (or even consider :ref:`contributing-top`).
+request (or even consider :ref:`contributing`).
 
 
 The API currently has three core packages:
@@ -21,6 +21,10 @@ The API currently has three core packages:
 Topics
 ******
 
+*These docs are currently in the process of being put together. There are*
+*probably a lot of things missing and I'm sure some (many?) mistakes. If you*
+*find anything wrong or unintelligible please let me know.*
+
 The :ref:`overview-intro` on this page covers the basics of loading and 
 accesssing the data in both Flood Modeller and Tuflow models. You'll want to 
 start here and when you've got your head around this look at the Flood Modeller 
@@ -32,7 +36,7 @@ Flood Modeller
 
    - :ref:`ief-top`: class that contains all of the .ief file data.  
    - :ref:`DatCollection-top`: class that contains all of the .dat and .ief file data.  
-   - :ref:`unit-top`: class representing all of the different components of a
+   - :ref:`unit-top`: class' representing all of the different components of a
      Flood Modeller .dat or .ied file.  
    - :ref:`rowdatacollection-top`: class containing all of the variable length 
      data in AUnit types.
@@ -85,7 +89,7 @@ The only interface you need to use for loading all model files is the FileLoader
    # Get the loaded tuflow model as a TuflowModel object
    tuflow_model = loader.loadFile(tcf_path)
    
-   # Get the loaded tuflow model as a TuflowModel object
+   # Get the loaded .ief file as an Ief object
    ief = loader.loadFile(ief_path)
    
    # ... etc
@@ -95,9 +99,9 @@ The only interface you need to use for loading all model files is the FileLoader
 Accessing model data
 ####################
 
-Now that you have a loaded model you can access the data that it contains. The
-approach to this varies slightly depending on which kind of model or file type
-was loaded.
+Now that you have a loaded model/model file you can access the data that it 
+contains. The approach to this varies slightly depending on which kind of 
+model or file type was loaded.
 
 
 Flood Modeller
@@ -108,17 +112,17 @@ DatCollection class. This is an iterator based class that contains all of the
 data in the either .dat or .ied files (depending on which was loaded).
 
 This class contains several interfaces for accessing and updating data within
-the model. The model data is contianed within the 'Unit' classes 
+the model. The model data is contained within the 'AUnit' type classes 
 (e.g. RiverUnit, BridgeUnit, RefhUnit). These can be accessed by iterating 
-through the DatCollection or can be grouped::
+through the DatCollection or they can be grouped::
 
-   # ... We already have a DatCollection, loaded as above
-   dat = loader.loadModel(datfile)
+   # ... We have a DatCollection, loaded as above
+   dat = loader.loadModel(dat_path)
    
    # You can loop through all of the Units in the model
    for unit in DatCollection:
       print (unit.name)       # The main label for the unit.
-      print (unit.unit_type)  # Would be 'Arch' for an BridgeUnitArch
+      print (unit.unit_type)  # Would be 'Arch' for a BridgeUnitArch
       
    # Or you can retrieve a subset of units in a variety of ways
    # By category. Returns a list
@@ -150,8 +154,10 @@ Accessing head_data is simple::
    # You could loop through a list of return type/category as you would with
    # any list, but for this example we'll use a single unit.
    
-   # As above
-   bridge = dat.unit('SECT3_BU')
+   # As above - note that you don't have to provide a type or category, but if
+   # you don't you may get the wrong unit. For example: a river and adjacent
+   # Refh unit can have the same name.
+   bridge = dat.unit('SECT3_BU', 'bridge')
    
    # Print upstream label, downstream label, category and type
    print (bridge.name, bridge.name_ds, bridge.unit_category, bridge.unit_type)
@@ -170,18 +176,59 @@ There's two main things you need to know:
      this would contain values for chainage, elevation, manning's, embankments).
    - RowDataCollection's store this data in DataObject classes. These group the
      same types of data into a single object (e.g. all the chainage, or elevation).
+
+**Note**
+There are two functions in the AUnit itself that you can use as convenience
+functions for accessing RowDataCollection data::
+
+   from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+
+   # Get a DataObject containing the CHAINAGE data
+   dobj = bridge.rowDataObj(rdt.CHAINAGE, rowdata_type='main')
+   
+   # Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for
+   # a specific row index
+   row = bridge.row(0, rowdata_key='main')
        
 If you want to access rows of data there are two functions that you will probably
-want to use. The first is simply called row()::
+want to use either:
+
+   - rowAsList(index): return a list of that data in the row at index where the
+   - rowAsDict(index): return a dict of that data in the row at index where the
+     keys are ROW_DATA_TYPES (in datunits.__init__.py module).
+   - iterateRow(): returns a generator that can be used to loop all rows.
+
+Example::
+
+   # list
+   row = bridge.row_data['main'].rowAsList()
+   # dict
+   row = bridge.row_data['main'].rowAsDict()
 
    # Loop the row_data
-   # TODO: check this and write more
-   for i, r in enumerate(bridge.row_data['main']):
-      row = r.row
+   for row in bridge.row_data['main'].iterateRows():
+      print (row) # prints a list
+   
+   # You can also get all the row data if you want
+   rows = bridge.row_data['main'].toList()   # Returns list of lists with all data
+   rows = bridge.row_data['main'].toDict()   # Returns dict of lists with all data
 
-Most of the time you will probably want to access the different ROW_DATA_TYPES
-held by the collection. If you only need to read the data the best approach is
-to use either rowAsList() or toDict()::
+
+Most of the time you will probably want to access the different DataObjects
+(defined by ROW_DATA_TYPES constants) held by the collection. If you only need 
+to read the data the best approach is to use either:
+   
+   - dataObject(ROW_DATA_TYPES): return a DataObject.
+   - dataObjectAsList(ROW_DATA_TYPES): return a list of the data in the DataObject. 
+   - toDict(): returns a dict of all of the DataObject with values in a list
+     and keys as ROW_DATA_TYPES.
+
+Note that you can also get these from the AUnit itself with:
+
+   - dataObj(ROW_DATA_TYPES, rowdata_key='main')
+   - dataObjAsList(ROW_DATA_TYPES, rowdata_key='main')
+
+Example::
 
    # Import the ROW_DATA_TYPES enum
    from ship.fmp.datunits import ROW_DATA_TYPES as rdt
@@ -198,7 +245,7 @@ to use either rowAsList() or toDict()::
    rgh1 = row_stuff[rdt.ROUGHNESS][0]
   
 If you want to update the values in a DataObject or you need more control you 
-might want to get the object itself::
+you should use the DataObject itself::
 
    rgh_obj = bridge.row_data['main'].dataObj(rdt.ROUGHNESS)
    
@@ -210,8 +257,13 @@ might want to get the object itself::
       # here will also be made in the DatCollection.
       r.setValue(r.getValue * 1.2)
 
-Just a couple of notes about row_data. You can check to see if a unit has any 
-row_data with::
+**NOTE**
+*The above approach is fine if you just want to update some values, like* 
+*altering the roughness above. DON'T use this to add or remove values from the*
+*DataObject! RowDataCollection keeps track of the length of the different*
+*DataObjects and will start throwing errors if they differ.*
+
+You can check to see if a unit has any row_data with::
 
    # prints True for bridge units (False for, say, an OrificeUnit)
    print (bridge.has_row_data)
@@ -223,14 +275,15 @@ task.
 Other row_data key's are specific to what they do. For example with a
 UsbprBridge::
    
-   orifice_rows = usbpr.row_data['culvert'] # bridge culvert data
+   culver_rows = usbpr.row_data['culvert'] # bridge culvert data
    opening_rows = usbpr.row_data['opening'] # bridge opening data
    
 That's the end of this short introduction on the fmp package. There's obviously
-a lot more you can do; we havn't covered reading .ief files yet and we haven't
+a lot more you can do; we haven't covered reading .ief files yet and we haven't
 really looked at updating or adding new content. For the .ief files you will
 want to have a look at :ref:`Ief-top` and for more on dealing with .dat files and
-.ied files :ref:`DatCollection-top`.
+.ied files :ref:`DatCollection-top`. You can also find more information
+on :ref:`rowdatacollection-top` here.
 
    
 Tuflow
@@ -265,11 +318,11 @@ ControlFile objects contain two main collections, a collection of 'parts' in a
 PartHolder class and a collection of 'logic' in a LogicHolder class. Almost all
 of the content in a TuflowModel is held in these iterators.
 
-The core component of all section of a tuflow model is the TuflowPart - the
-objects held in the PartHolder collection. TuflowPart is abstract, but it is 
-inherited by all other components of a Tuflow model: including logic. Similar
-to the way that all units are subclasses of AUnit in the fmp package. Generally
-they are further subclasses from three different interfaces:
+The core data structure of a tuflow model is the TuflowPart - the objects held 
+in the PartHolder collection. TuflowPart is abstract, but it is inherited by 
+all other components of a Tuflow model: including logic. Similar to the way 
+that all units are subclasses of AUnit in the fmp package. Generally they are 
+further subclasses from three different interfaces:
 
    - **ATuflowVariable** - all of the variables in a tuflow model, commands like
      'Set IWL == 12' for example.
@@ -286,7 +339,7 @@ The most common type of variable class you'll see are:
 
    - **TuflowVariable**: standard variable class used for most variables in the
      tuflow model files.
-   - **TuflowKeyVal**: used where a placholder and variable are supplied at the 
+   - **TuflowKeyVal**: used where a placeholder and variable are supplied at the 
      same time, for example 'BC Event Source == Q100 | SHIP'.
    - **TuflowUserVariable**: user defined variables. for example 
      'Set Variable MyTcfVariable == 1'
@@ -309,8 +362,8 @@ access some data::
 
    tuflow = loader.loadFile(tcf_path)  # returns TuflowModel instance 
    
-   # You can loop through the control_files dict and do everything if you need
-   # Here we'll just use the TGC ControlFile
+   # You can loop through the control_files dict and do everything if you need.
+   # Here, to save typing, we'll just use the TGC ControlFile
    tgc = tuflow.control_files['TGC']
    
    # You can then loop through all of the TuflowParts if you need
@@ -321,12 +374,12 @@ access some data::
    # Or you could access subsets of the collection
    
    # This will give you all ATuflowVariable parts in the TGC file.
-   variables = tgc.variables()   # Returns a list
+   variables = tgc.variables()   # Returns a list of ATuflowVariable types
    
    # This will give you only the gis files in the TGC file.
    # To do this you'll need to import the FILEPART_TYPES enum from tuflow.__init__.py
    from ship.tuflow import FILEPART_TYPES as ft
-   gis = tgc.files(part_type=ft.GIS)   # Returns a list
+   gis = tgc.files(part_type=ft.GIS)   # Returns a list of GisFile types
    
    # You can loop through the returned lists to access the data in the TuflowPart
    for v in variables:
@@ -347,11 +400,10 @@ ControlFile through the control_files list::
    for c in tgc.control_files:
       print(c.filename)
    
-TuflowParts also contain reference to other objects that they have an 
-association with. This is done through the 'associates' object. Currently these
-include:
+TuflowParts contain reference to other objects that they have an association 
+with. This is done through the 'associates' object. Currently these include:
 
-   - parent: the ModelFile that contained the TuflowPart.
+   - parent: the ModelFile that contains the TuflowPart.
    - logic: TuflowLogic associated with this TUflowPart. This can == None.
    - sibling_next: Another TuflowPart on the same command line as this.
    - sibling_prev: Same as sibling_next except it is the TuflowPart to the
@@ -419,8 +471,8 @@ affecting the other instances you will need to do::
       print ("They're different")   # Will print this one
 
 Also note that you don't want to just reassign self.associates.parent = new_parent
-as the new_parent will be a 'hanging object' if you like. Meaning that it 
-isn't associated with a, in this case TGC, ControlFile and it isn't referenced
+as the new_parent will be a 'hanging object', if you like. Meaning that it 
+isn't associated with a, in this case, TGC ControlFile and it isn't referenced
 by a TCF or another TGC file. For more information on this have a look at the
 :ref:`addingtuflowparts-top` section.
 
@@ -494,12 +546,12 @@ yourself::
    
 If your model contains logic you may want to be able to interogate the contents
 using this logic. TuflowModel objects contain a variable 'user_variables' which
-is a UserVariables object. This object stores both scenario and event values and
+is a UserVariables class. This object stores both scenario and event values and
 any user defined variables (TuflowUserVariable - see above). If you call the
 following method in the UserVariable class you will get the same dict discussed
 above::
 
-   se_vals = tuflow.user_variables.scenarioEventValuesToDict()
+   se_vals = tuflow.user_variables.seValsToDict()
    
 Almost all of the ControlFile class methods accept this dict as an argument. 
 When given it will only return the TuflowPart/filepaths/whatever that are
@@ -545,6 +597,16 @@ scenario (and event) variables, i.e. where the scenario == scen1::
     '2d_bc_hx_shiptest_tgc_v1_R.shp',
     '2d_whatevs_shiptest_tgc_v2_P.shp',
     'test_trd1.trd']
+
+**NOTE**
+The checks for scenario and event logic are recursive. They will search all the
+way up through the parent heirachy to make sure they should be included. This
+means that if you have, for example, two .tgc. files within a logic clause and
+only one is active, then all TuflowParts that lead back to the .tcg ModelFile
+that is not in the correct logic clause will be ignored. So don't be surprised
+if a TuflowPart that doesn't have any logic associate is skipped. If you follow
+it back up the heirachy you will (hopefully) find that it's the correct
+behviour.
    
    
    

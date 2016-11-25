@@ -102,6 +102,31 @@ Accessing and updating
 *For more fine grained control of accessing and updating the data within the*
 *RowDataCollection's you should use the RowDataCollection itself*.
 
+When accessing data in RowDataCollection's held by an AUnit type more
+functionality is available in the methods within the RowDataCollection itself.
+There is though a couple of convenience hooks in the AUnit interface for 
+common requests. These include:
+   
+   - rowDataObj(key, rowdata_type='main'): to return one of the DataObject's in
+     the RowDataCollection.
+   - row(index, rowdata_type='main'): to return the contents of a particular
+     row in a RowDataCollection.
+     
+example::
+
+   # Assume we have RiverUnit called river.
+   from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+   
+   # Returns the ROUGHNESS DataObject from the row data in the 'main' row_data
+   dobj = river.rowDataObj(rdt.ROUGNESS)
+   
+   # You can now get at the data in this (note you shouldn't ever add any new
+   # data to a DataObject directly, you should use the addRow method in the
+   # RowDataCollection that keeps track of the data sanity. Although you can
+   # update values if wanted. For example:
+   for i, item in enumerate(dobj):
+      dobj[i] = item * 1.2
+
 The AUnit types contain some methods for adding and removing rows from the
 RowDataCollection's:
    
@@ -130,14 +155,14 @@ file. To use RiverUnit as an example::
               }
    
    # Appends a new row to the end of the 'main' RowDataCollection
-   dat.addNewRow(row_vals)
+   dat.addRow(row_vals)
    
    # However most units will set defaults for the values that they can
    # So this will work as well
    row_vals = {
                   rdt.CHAINAGE: 12.5, rdt.ELEVATION: 35.0
               }
-   dat.addNewRow(row_vals)
+   dat.addRow(row_vals)
 
    # Check the docs for individual units to see which ones are set as default.
 

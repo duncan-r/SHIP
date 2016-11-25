@@ -34,7 +34,7 @@ from ship.data_structures.dataobject import *
 class RowDataCollection(object):
     """Composite/Facade for the ADataRowObject classes.
     
-    AIsisUnit classes should instantiate this class in order to manage all the
+    AUnit classes should instantiate this class in order to manage all the
     ADataRowObject classes used to hold the units row data.
     There are several convenience methods to retrieve and safely update the
     contents.
@@ -45,7 +45,7 @@ class RowDataCollection(object):
         the ROW_DATA_TYPES enum values in the datunits package.
     
     See Also:
-        ROW_DATA_TYPE - in :class:'datunits <ship.isis.datunits>' module.
+        ROW_DATA_TYPE - in :class:'datunits <ship.fmp.datunits>' module.
     
     TODO:
           Need to find a way to safely add values to the collection while making
@@ -81,29 +81,6 @@ class RowDataCollection(object):
     @property
     def row_count(self):
         return self.numberOfRows()
-    
-#     def __iter__(self):
-#         """Return an iterator for the units list"""
-# #         return iter(self._collection)
-#         return self._
-#     
-#     
-#     def __next__(self):
-#         """Iterate to the next unit"""
-#         if self._current > self._max or self._current < self._min:
-#             raise StopIteration
-#         else:
-#             self._current += 1
-#             return self._collection[self._current] 
-#     
-#     
-#     def __getitem__(self, key):
-#         """Gets a value from _collection using index notation.
-#         
-#         Returns:
-#             contents of the _collection element at index.
-#         """
-#         return self._collection[key]
     
 
     def initCollection(self, dataobject):
@@ -211,10 +188,10 @@ class RowDataCollection(object):
     
 
     def dataObjAsList(self, key):
-        """Returns the row data object as a list.
+        """Returns a DataObject as a list.
 
-        This will return the row_collection data object referenced by the key
-        provided in list form.
+        This will return the row_collection DataObject referenced by the key
+        provided (as a ROW_DATA_TYPES) in list form.
 
         If you intend to update the values you should use getRowDataObject
         instead as the data provided will be mutable and therefore reflected in
@@ -238,10 +215,8 @@ class RowDataCollection(object):
             if data_col == False: raise KeyError ('Key %s does not exist in collection' % (key))
             
             vals = []
-#             for i in range(0, data_col.record_length):
             for i in data_col:
                 vals.append(i)
-#                 vals.append(data_col.getValue(i))
             return vals
         except KeyError:
             raise

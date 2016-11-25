@@ -31,18 +31,18 @@
 
 from __future__ import unicode_literals
 
-from ship.isis.datunits import spillunit
-from ship.isis.datunits import riverunit
-from ship.isis.datunits import junctionunit
-from ship.isis.datunits import initialconditionsunit as icu
-from ship.isis.datunits import gisinfounit
-from ship.isis.datunits import bridgeunit
-from ship.isis.datunits import isisunit 
-from ship.isis.datunits import refhunit
-from ship.isis.datunits import orificeunit
-from ship.isis.datunits import culvertunit
-from ship.isis.datunits import htbdyunit 
-from ship.isis.datunits import interpolateunit 
+from ship.fmp.datunits import spillunit
+from ship.fmp.datunits import riverunit
+from ship.fmp.datunits import junctionunit
+from ship.fmp.datunits import initialconditionsunit as icu
+from ship.fmp.datunits import gisinfounit
+from ship.fmp.datunits import bridgeunit
+from ship.fmp.datunits import isisunit 
+from ship.fmp.datunits import refhunit
+from ship.fmp.datunits import orificeunit
+from ship.fmp.datunits import culvertunit
+from ship.fmp.datunits import htbdyunit 
+from ship.fmp.datunits import interpolateunit 
 
 import logging
 logger = logging.getLogger(__name__)
@@ -64,6 +64,13 @@ class IsisUnitFactory(object):
         bridgeunit.BridgeUnitUsbpr,
         spillunit.SpillUnit,
         htbdyunit.HtbdyUnit,
+        junctionunit.JunctionUnit,
+        orificeunit.OrificeUnit,
+        orificeunit.FloodReliefUnit,
+        orificeunit.OutfallUnit,
+        culvertunit.CulvertUnitInlet,
+        culvertunit.CulvertUnitOutlet,
+        interpolateunit.InterpolateUnit,
     )
     
     def __init__(self):
@@ -78,18 +85,6 @@ class IsisUnitFactory(object):
         self.same_reach = False
         self._ic_name_types = {}
         
-#         self.available_units = (
-#             isisunit.HeaderUnit,
-#             riverunit.RiverUnit, 
-#             refhunit.RefhUnit,
-#             icu.InitialConditionsUnit,
-#             gisinfounit.GisInfoUnit,
-#             bridgeunit.BridgeUnitArch,
-#             bridgeunit.BridgeUnitUsbpr,
-#             spillunit.SpillUnit,
-#             htbdyunit.HtbdyUnit,
-#         )
-        
         try:
             self._getFileKeys()
         except Exception as err:
@@ -101,7 +96,7 @@ class IsisUnitFactory(object):
     def _getFileKeys(self):
         """Get the file keys for the available units.
         
-        Every AIsisUnit type class must declare a static variable that 
+        Every AUnit type class must declare a static variable that 
         defines the key word used in the .dat file. This is then used to
         recognise when a unit of that type has been found.
         """
@@ -182,14 +177,14 @@ class IsisUnitFactory(object):
     
     @staticmethod
     def createUnit(unit_type, **kwargs):
-        """Create a new AIsisUnit.
+        """Create a new AUnit.
         
         **kwargs:
             'name': the name variable to apply to the unit. If not found
                 'unknown' will be set.
             'name_ds': the name_ds variable to apply to the unit. If not found
                 'unknown' will be set.
-            head_data: dict of head_data values to set in the AIsisUnit.
+            head_data: dict of head_data values to set in the AUnit.
             row_data: dict of row_data keys containing lists of row data to
                 set in the unit.
         
@@ -210,15 +205,15 @@ class IsisUnitFactory(object):
         
         I.e. dict's of row_data types to update, containing a list of row_vals
         data to set. These will be used to call the addRow() method in the
-        AIsisUnit. The contents of the list entries will be specific to the
+        AUnit. The contents of the list entries will be specific to the
         unit_type. For more information see the addRow() method and row_data
-        setup of specific AIsisUnit's.
+        setup of specific AUnit's.
         
         Args:
-            unit_type(str): the AIsisUnit.UNIT_TYPE to create.
+            unit_type(str): the AUnit.UNIT_TYPE to create.
         
         Return:
-            AIsisUnit - the newly created unit.
+            AUnit - the newly created unit.
         """
         u = None
         for i in IsisUnitFactory.available_units:

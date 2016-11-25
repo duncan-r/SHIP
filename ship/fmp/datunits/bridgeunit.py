@@ -31,18 +31,18 @@ logger = logging.getLogger(__name__)
 import math
 from collections import OrderedDict
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.headdata import HeadDataItem
 from ship.utils.tools import geometry
 from ship.data_structures import DATA_TYPES as dt
 
 
 
-class BridgeUnit (AIsisUnit): 
-    """Subclass of AIsisUnit storing Isis Bridge Unit data.
+class BridgeUnit (AUnit): 
+    """Subclass of AUnit storing Isis Bridge Unit data.
 
     Note:
         This really an abstract class for any bridge unit and is not really
@@ -64,7 +64,7 @@ class BridgeUnit (AIsisUnit):
     def __init__(self, **kwargs): 
         """Constructor.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
 
         self._unit_type = BridgeUnit.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -112,7 +112,7 @@ class BridgeUnit (AIsisUnit):
         """Reads the unit data into the geometry objects.
          
         See Also:
-            AIsisUnit
+            AUnit
              
         Args: 
             unit_data (list): The section of the isis dat file pertaining to 
@@ -177,7 +177,7 @@ class BridgeUnit (AIsisUnit):
         """Retrieve the data in this unit.
 
         See Also:
-            AIsisUnit - getData()
+            AUnit - getData()
             
         Returns:
             String list - output data formated the same as in the .DAT file.
@@ -271,7 +271,7 @@ class BridgeUnit (AIsisUnit):
                 raise KeyError ('collection_name %s does not exist in row collection' % (collection_name))
         
         # Call superclass method to add the new row
-        AIsisUnit.updateRow(self, index=index, row_vals=row_vals)
+        AUnit.updateRow(self, index=index, row_vals=row_vals)
     
    
     def addRow(self, row_vals, rowdata_key='main', index=None): 
@@ -285,7 +285,7 @@ class BridgeUnit (AIsisUnit):
         ommitted. If they are they will be given defaults.
         
         Examples:
-            >>> import ship.isis.datunits.rdt as rdt
+            >>> import ship.fmp.datunits.rdt as rdt
             >>> unit.addRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)
 
         Args:
@@ -309,7 +309,7 @@ class BridgeUnit (AIsisUnit):
             ADataObject and subclasses for information on the parameters.
         """
         self._checkRowKeys(row_vals, rowdata_key)
-        AIsisUnit.addRow(self, row_vals=row_vals, rowdata_key=rowdata_key, index=index)
+        AUnit.addRow(self, row_vals=row_vals, rowdata_key=rowdata_key, index=index)
     
     
     def _checkRowKeys(self, row_vals, rowdata_key):

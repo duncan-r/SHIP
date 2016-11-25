@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 
 class ADataRowObject(object):
-    """Abstract class for all data objects used in an AIsisUnit class.
+    """Abstract class for all data objects used in an AUnit class.
     
     Note:
         It is unlikley that you want to call a class of this type directly.

@@ -23,15 +23,15 @@
 
 from __future__ import unicode_literals
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 from ship.data_structures.rowdatacollection import RowDataCollection
 from ship.data_structures import dataobject as do
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 import logging
 logger = logging.getLogger(__name__)
 
-class InitialConditionsUnit (AIsisUnit):
+class InitialConditionsUnit (AUnit):
     """isisunit for storing the initial conditions.
 
     Stores the initial conditions data; near the end of the .dat file.
@@ -54,7 +54,7 @@ class InitialConditionsUnit (AIsisUnit):
                 .DAT file. This will always be at the end but before the 
                 GISINFO if there is any.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
         self._unit_type = InitialConditionsUnit.UNIT_TYPE
         self._unit_category = InitialConditionsUnit.UNIT_CATEGORY
         self._name = "initial_conditions"
@@ -148,7 +148,7 @@ class InitialConditionsUnit (AIsisUnit):
         """
         
         # Call superclass method to add the new row
-        AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index)
         
 
 #     def updateDataRowByName(self, row_vals, name):
@@ -185,7 +185,7 @@ class InitialConditionsUnit (AIsisUnit):
 #             raise AttributeError
         
         # Call superclass method to add the new row
-        AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index)
     
 
 #     def addDataRow(self, row_vals): 
@@ -200,7 +200,7 @@ class InitialConditionsUnit (AIsisUnit):
         are they will be given defaults.
         
         Examples:
-            >>> import ship.isis.datunits.ROW_DATA_TYPES as rdt
+            >>> import ship.fmp.datunits.ROW_DATA_TYPES as rdt
             >>> ics.addRow({rdt.LABEL:UNITNAME, rdt.STAGE:10.2}, index=4)
 
         Args:
@@ -233,7 +233,7 @@ class InitialConditionsUnit (AIsisUnit):
             return self._node_count
 
         # Call superclass method to add the new row
-        AIsisUnit.addRow(self, row_vals=row_vals, index=None)
+        AUnit.addRow(self, row_vals=row_vals, index=None)
         self._node_count += 1
         return self._node_count
     
@@ -242,11 +242,11 @@ class InitialConditionsUnit (AIsisUnit):
     def deleteRowByName(self, unit_name, unit_type):
         """Delete one of the RowDataCollection objects in the row_collection.
         
-        This calls the AIsisUnit deleteRow method, but obtains the index
+        This calls the AUnit deleteRow method, but obtains the index
         of the row to be deleted from the name first.
         
         Args:
-            section_name(str): the name of the AIsisUnit to be removed from
+            section_name(str): the name of the AUnit to be removed from
                 the initial conditions.
         
         Raises:
@@ -278,13 +278,13 @@ class InitialConditionsUnit (AIsisUnit):
     def rowByName(self, section_name):
         """Get the data vals in a particular row by name.
         
-        This is the same functionality as the AIsisUnit's getRow(int) method
+        This is the same functionality as the AUnit's getRow(int) method
         which returns a row in the RowDataCollection by the index value given.
         In this case it will find the index based on the section label and 
         return the same dictionary of row values.
         
         Args:
-            section_name(str): the name of the AIsisUnit to be removed from
+            section_name(str): the name of the AUnit to be removed from
                 the initial conditions.
             
         Return:

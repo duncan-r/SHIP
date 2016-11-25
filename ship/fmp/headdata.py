@@ -32,10 +32,10 @@ from ship.utils import utilfunctions as uf
 
 
 class HeadDataItem(object):
-    """Objects stored in the head_data dict in AIsisUnit's.
+    """Objects stored in the head_data dict in AUnit's.
     
     Allow for formatting variables and value checks to be encapsulated in one
-    place rather than littered around all subclasses of AIsisUnit.
+    place rather than littered around all subclasses of AUnit.
     """
     
     def __init__(self, value, format_str, line_no, col_no, **kwargs):

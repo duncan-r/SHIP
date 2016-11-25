@@ -1,11 +1,11 @@
 """
 
  Summary:
-    Contains the AIsisUnit, CommentUnit, HeaderUnit and UnknownSection 
+    Contains the AUnit, CommentUnit, HeaderUnit and UnknownSection 
     classes.
-    The AIsisUnit is an abstract base class for all types of Isis unit read
+    The AUnit is an abstract base class for all types of Isis unit read
     in through the ISIS data file. All section types that are built should
-    inherit from the AIsisUnit baseclass.
+    inherit from the AUnit baseclass.
 
  Author:  
      Duncan Runnacles
@@ -29,16 +29,16 @@ import random
 import copy
 # from abc import ABCMeta, abstractmethod
 
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.data_structures import DATA_TYPES as dt
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.headdata import HeadDataItem
 
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
     
-class AIsisUnit(object): 
+class AUnit(object): 
     """Abstract base class for all Dat file units.
     
     This class must be inherited by all classes representing an isis
@@ -230,7 +230,7 @@ class AIsisUnit(object):
 #             collection_key='main' (str): the key for the row_collection to 
 #                 return. Most objects will only contain a single row_collection,
 #                 like the RiverUnit, but some like bridges have opening data and
-#                 orifice data rows as well. See individual AIsisUnit 
+#                 orifice data rows as well. See individual AUnit 
 #                 implemenations for more details on what they contain.
 #         
 #         Returns:
@@ -347,7 +347,7 @@ class AIsisUnit(object):
             data (list): raw data for the section as supplied to the class.
 
         Note:
-            When a class inherits from AIsisUnit it should override this method 
+            When a class inherits from AUnit it should override this method 
             with unit specific load behaviour. This is likely to include: 
             populate unit specific header value dictionary and in some units 
             creating row data object.
@@ -398,7 +398,7 @@ class AIsisUnit(object):
         """Add a new data row to one of the row data collections.
         
         Provides the basics of a function for adding additional row dat to one
-        of the RowDataCollection's held by an AIsisUnit type.
+        of the RowDataCollection's held by an AUnit type.
         
         Checks that key required variables: ROW_DATA_TYPES.CHAINAGE amd 
         ROW_DATA_TYPES.ELEVATION are in the kwargs and that inserting chainge in
@@ -510,7 +510,7 @@ class AIsisUnit(object):
 
 
     
-class UnknownUnit(AIsisUnit):
+class UnknownUnit(AUnit):
     """ Catch all section for unknown parts of the .dat file.
     
     This can be used for all sections of the isis dat file that have not had
@@ -538,7 +538,7 @@ class UnknownUnit(AIsisUnit):
     def __init__ (self, **kwargs): 
         """Constructor.
         """
-        AIsisUnit.__init__(self, **kwargs) 
+        AUnit.__init__(self, **kwargs) 
         self._unit_type = 'unknown'
         self._unit_category = 'unknown'
         self._name = 'unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
@@ -552,7 +552,7 @@ class UnknownUnit(AIsisUnit):
         self.head_data['all'] = data
 
 
-class CommentUnit(AIsisUnit):
+class CommentUnit(AUnit):
     """Holds the data in COMMENT sections of the .dat file.
     
     This is very similar to the UnknownSection in that all it does is grab the
@@ -569,7 +569,7 @@ class CommentUnit(AIsisUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AIsisUnit.__init__(self, **kwargs) 
+        AUnit.__init__(self, **kwargs) 
         
         text = kwargs.get('text', '')
         self._unit_type = CommentUnit.UNIT_TYPE
@@ -614,7 +614,7 @@ class CommentUnit(AIsisUnit):
         return output
 
 
-class HeaderUnit(AIsisUnit):
+class HeaderUnit(AUnit):
     """This class deals with the data file values at the top of the file.
     
     
@@ -634,7 +634,7 @@ class HeaderUnit(AIsisUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
         self._unit_type = HeaderUnit.UNIT_TYPE
         self._unit_category = HeaderUnit.UNIT_CATEGORY
         self._name = 'header'

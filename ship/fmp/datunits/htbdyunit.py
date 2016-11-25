@@ -22,12 +22,12 @@
 """
 from __future__ import unicode_literals
 
-from ship.isis.datunits.isisunit import AIsisUnit
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits.isisunit import AUnit
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
 from ship.utils import utilfunctions as uf
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.headdata import HeadDataItem
 from ship.data_structures import DATA_TYPES as dt
 
 import logging
@@ -35,8 +35,8 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class HtbdyUnit (AIsisUnit): 
-    """Concrete implementation of AIsisUnit storing Isis HTBDY Unit data.
+class HtbdyUnit (AUnit): 
+    """Concrete implementation of AUnit storing Isis HTBDY Unit data.
 
     Contains a reference to a rowdatacollection for storing and
     accessing all the row data. i.e. the stage-time data for the section.
@@ -44,7 +44,7 @@ class HtbdyUnit (AIsisUnit):
     are available.
     
     See Also:
-        AIsisUnit
+        AUnit
     """
     UNIT_TYPE = 'htbdy'
     UNIT_CATEGORY = 'boundary_ds'
@@ -58,7 +58,7 @@ class HtbdyUnit (AIsisUnit):
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
         
         self._unit_type = HtbdyUnit.UNIT_TYPE
         self._unit_category = HtbdyUnit.UNIT_CATEGORY
@@ -94,7 +94,7 @@ class HtbdyUnit (AIsisUnit):
                 this section 
         
         See Also:
-            AIsisUnit - readUnitData()
+            AUnit - readUnitData()
         """
         file_line, rows = self._readHeadData(unit_data, file_line)
         file_line = self._readRowData(unit_data, file_line, rows)

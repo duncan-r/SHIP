@@ -24,13 +24,13 @@ For example if we have the following (slightly shortened) RiverUnit setup:
 +--------------+--------------+--------------+--------------+
 |   Chainage   |  Elevation   |   Roughness  | Panel Marker |
 +==============+==============+==============+==============+
-|    0.00      |     10.0     |     0.04     |     Yes      |
+|    0.00      |     10.0     |     0.04     |    True      |
 +--------------+--------------+--------------+--------------+      
-|    3.00      |     5.0      |     0.04     |     No       |
+|    3.00      |     5.0      |     0.04     |    False     |
 +--------------+--------------+--------------+--------------+
-|    5.00      |     5.0      |     0.04     |     No       |
+|    5.00      |     5.0      |     0.04     |    False     |
 +--------------+--------------+--------------+--------------+  
-|    6.00      |     10.0     |     0.04     |     Yes      |
+|    6.00      |     10.0     |     0.04     |    True      |
 +--------------+--------------+--------------+--------------+ 
 
 There will be four DataObject's in this case, one for each of the coumns. These
@@ -66,7 +66,37 @@ you're going to update any of the values in them it's easier to retrieve the
 specific DataObject from the RowDataCollection and use it directly.
 
 The main method for accessing data in a RowDataCollection is row(). It returns 
-a dict containing all values in a row at the given index.
+a dict containing all values in a row at the given index. Usually you will
+probably want to access the DataObject's rather than row data - if so, see
+the next paragraph. If you do want to access data by row you can use the 
+following methods:
+
+   - **row(int)**: returns the row at the given index.
+   - **rowAsDict(int)**: returns the data in the row at the given index as a
+     dict, where the keys are ROW_DATA_TYPES and the values are the values for
+     that type in that row.
+   - **iterateRows()**: returns a generator that can be used to iterate through
+     the rows in the RowDataCollection.
+     
+For example::
+
+   # assume we have already obtained a RiverUnit from the DatCollection
+   # Also assume the RowDataCollection holds the data in the exammple table
+   # above
+
+   # Iterate through each of the rows
+   for row in river.row_data['main'].iterateRows():
+      print (row)
+    
+   # Get a row as a dict
+   row = river.row_data['main'].rowAsDict(0)
+   print (row[rdt.CHAINAGE])     # prints 0.0
+   print (row[rdt.ELEVATION])    # prints 10.0 
+   print (row[rdt.ROUGHNESS])    # prints 0.04
+   
+   row = river.row_data['main'].rowAsList(0)
+   print ([0.0, 10.0, 0.04, True] = row)  # prints True
+   
 
 Most of the time you are more likely to want to group the data by a particular
 DataObject type. This can be done in several ways:
@@ -77,10 +107,6 @@ DataObject type. This can be done in several ways:
      as a list.
 
 Example::
-
-   # assume we have already obtained a RiverUnit from the DatCollection
-   # Also assume the RowDataCollection holds the data in the exammple table
-   # above
    
    # returns a dict 
    rdc = river.row_data['main'].toDict()
@@ -99,7 +125,7 @@ Example::
    # prints True
    print (chainage == [0.00, 3.00, 5.00, 6.00])
 
-   # Fetch the actual DataObject itself under the ROOUGHNESS key
+   # Fetch the actual DataObject itself under the ROUGHNESS key
    dataobj = river.row_data['main'].dataObj(rdt.ROUGHNESS)
    
    # Can now access the DataObject directly

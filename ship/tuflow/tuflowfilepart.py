@@ -35,28 +35,97 @@ logger = logging.getLogger(__name__)
 
 
 class AssociatedParts(object):
-    """
+    """Stores associate TuflowPart references.
+    
+    Every TuflowPart will hold a copy of this class. It is used to store 
+    references to any other TuflowPart's that it has an association with.
     """
     
-    def __init__(self, parent):
+    def __init__(self, parent, **kwargs):
+        self._parent = None
         self.parent = parent
         self.sibling_prev = None
         self.sibling_next = None
-        self.logic = None
+        self._logic = None
+        
+        self.notify_active_changed = kwargs.get('notify_active', None) 
+        
+    @property
+    def parent(self):
+        return self._parent
     
+    @parent.setter
+    def parent(self, value):
+        if self._parent is not None:
+            self._parent.observers.remove(self)
+
+        self._parent = value
+        if value is not None:
+            self._parent.observers.append(self)
+    
+    @property
+    def logic(self):
+        return self._logic
+    
+    @logic.setter
+    def logic(self, value):
+        if self._logic is not None:
+            self._logic.observers.remove(self)
+
+        self._logic = value
+        if value is not None:
+            self._logic.observers.append(self)
+
+    def observedActiveChange(self, status):
+        """called by the parent when registered as an observer."""
+        self.notify_active_changed(status)
+
 
 class TuflowPart(object):
-    """
+    """Interface for all TuflowPart's.
+    
+    All components containing data stored by ControlFile subclass this one.
     """
     
     def __init__(self, parent, obj_type, **kwargs):
         self.hash = uuid.uuid4()
         self.obj_type = obj_type
-        self.associates = AssociatedParts(parent)
-        self.active = kwargs.get('active', True)
+        self._active = kwargs.get('active', True)
         self.tpart_type = kwargs.get('tpart_type', None)
+
+        self.associates = AssociatedParts(parent, notify_active=self._parentActiveChanged)
         if 'logic' in kwargs.keys() and kwargs['logic'] is not None: 
             self.associates.logic = kwargs['logic']
+
+        self.observers = []
+        """This is a poor man's observer interface.
+        
+        If an object wants to be notified of key internal changes, such as the
+        Logic being activated/deactivated, then can add themselves to this
+        list.
+        
+        If an object is added to this list it should implement the following
+        methods:
+
+            - observedActiveChange(bool)
+        """
+    
+    def _parentActiveChanged(self, status):    
+        """Called when self.associated observedActiveChanged is called."""
+        self.active = status
+    
+    @property
+    def active(self):
+        return self._active
+
+    @active.setter
+    def active(self, value):
+        if not value == False:
+            value = True
+        self._active = value
+        for o in self.observers:
+            o.observedActiveChange(value)
+    
     
     def allParents(self, parent_list):
         """Get all the hash codes of all parents to this object.
@@ -133,7 +202,7 @@ class TuflowPart(object):
         return is_in
     
 
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         """
         """
         raise NotImplementedError
@@ -172,7 +241,7 @@ class UnknownPart(TuflowPart):
         self.data = kwargs['data'] # raises keyerror
     
     
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         return self.data, False
     
 
@@ -236,7 +305,7 @@ class TuflowVariable(ATuflowVariable):
         s = s.split(self.split_char)
         self._split_variable = [i.strip() for i in s]
 
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         return self.buildPrintline(self.command, self._variable, self.comment), False
 
 
@@ -262,7 +331,7 @@ class TuflowUserVariable(ATuflowVariable):
         self._variable_name = value   
         self.command = 'Set Variable ' + value
     
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         return self.buildPrintline(self.command, uf.encodeStr(self._variable), self.comment), False
 
 
@@ -290,7 +359,7 @@ class TuflowModelVariable(ATuflowVariable):
     def variable_name(self, value):
         self._variable_name = value
     
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         has_next = False; has_prev = False
         if self.associates.sibling_prev is not None: has_prev = True
         if self.associates.sibling_next is not None: has_next = True
@@ -317,7 +386,7 @@ class TuflowKeyValue(ATuflowVariable):
         self.key = keyval[0].strip()
         self.value = keyval[1].strip()
     
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         instruction = ' | '.join([self.key, self.value])
         return self.buildPrintline(self.command, instruction, self.comment), False
 
@@ -402,7 +471,7 @@ class TuflowFile(TuflowPart, PathHolder):
             return [], False
 
 
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         if not self.relative_root == None and not self.has_own_root:
             path = self.relativePath()
         elif not self.root == None:
@@ -426,13 +495,13 @@ class ModelFile(TuflowFile):
         self.has_auto = kwargs.get('has_auto', False)
     
     
-    def getPrintableContents(self):
+    def getPrintableContents(self, **kwargs):
         if self.model_type == 'ECF' and self.has_auto:
             line = 'Estry Control File Auto '
             if self.comment: line += '! ' + self.comment
             line = (line, False)
         else:
-            line = TuflowFile.getPrintableContents(self)
+            line = TuflowFile.getPrintableContents(self, **kwargs)
         return line
 
 
@@ -509,13 +578,45 @@ class TuflowLogic(TuflowPart):
         self.terms = [[]]
         self.commands = []
         self.comments = []
-        self.remove_callback = None
-        self.add_callback = None
-        self.check_sevals = False
         self._top_written = False
+
+        self.remove_callback = None
+        """Function called when a TuflowPart is removed."""
+
+        self.add_callback = None
+        """Function called when a TuflowPart is added."""
+        
+#         self.observers = []
+#         """This is a poor man's observer interface.
+#         
+#         If an object wasnt to be notified of key internal changes, such as the
+#         Logic being activated/deactivated, then can add themselves to this
+#         list.
+#         
+#         If an object is added to this list it should implement the following
+#         methods:
+# 
+#             - observedActiveChange(bool)
+#         """
+        
+        self.check_sevals = False
+        """Whether to check the scenarion event values."""
         
         self.END_CLAUSE = 'End'
         """Override with with whatever the end statement is (e.g. 'End If')"""
+    
+#     @property 
+#     def active(self):
+#         return self._active
+#     
+#     @active.setter
+#     def active(self, value):
+#         if value == False:
+#             value = False
+#         else:
+#             value = True
+#         for o in self.observers:
+#             o.observedActiveChange(value)
     
     def addPart(self, part, group=-1, **kwargs):
         """Add a new TuflowPart.
@@ -709,17 +810,24 @@ class TuflowLogic(TuflowPart):
                     retval = True; break
         return retval
     
-    def getPrintableContents(self, part, group=0):
-        """Return contents formatted for printing."""
-        out = self.getTopClause(part, [], False)
+    def getPrintableContents(self, part, out, group=0, **kwargs):
+        """Return contents formatted for printing.
+        
+        Args:
+            part(TuflowPart): current TuflowPart in PartHolder parts list.
+            out(list): list to update.
+        """
+        force = kwargs.get('force', False)
+        out = self.getTopClause(part, [], False, **kwargs)
         return out
     
-    def getTopClause(self, part, out, force):
+    def getTopClause(self, part, out, force, **kwargs):
         """Get the top clause command and terms formatted for printing."""
         if not force and not self.group_parts[0]: return out
         if force or self.group_parts[0][0] == part:
             self._top_written = True
-            out.insert(0, self._getContentsLine(0))
+            if self.active:
+                out.insert(0, self._getContentsLine(0))
             if not self.associates.logic is None:
                 out = self.associates.logic.getTopClause(self, out, False)
         return out
@@ -728,7 +836,10 @@ class TuflowLogic(TuflowPart):
         """Get the end clause formatted for printing."""
         if self.group_parts[-1][-1] == part:
             self._top_written = False
-            return self.END_CLAUSE
+            if self.active:
+                return self.END_CLAUSE
+            else:
+                return ''
         return ''
         
     def _getContentsLine(self, group=0):
@@ -770,13 +881,13 @@ class IfLogic(TuflowLogic):
         self.check_sevals = True
         self.END_CLAUSE = 'End If'
     
-    def getPrintableContents(self, part, out):
+    def getPrintableContents(self, part, out, **kwargs):
         """Get the printable contents for this TuflowLogic."""
-        out = TuflowLogic.getPrintableContents(self, part, out) 
-        out = self.checkMiddleClause(part, out)
+        out = TuflowLogic.getPrintableContents(self, part, out, **kwargs) 
+        out = self.getMiddleClause(part, out)
         return out
 
-    def checkMiddleClause(self, part, out):
+    def getMiddleClause(self, part, out):
         """Check to see if there's any middle clause.
         
         Used for writing out the clauses when printing to file.
@@ -787,8 +898,8 @@ class IfLogic(TuflowLogic):
                     
                     if not self.group_parts[0] and not self._top_written:
                         out = self.getTopClause(None, out, True)
-                    
-                    out.append(self._getContentsLine(i))
+                    if self.active:
+                        out.append(self._getContentsLine(i))
         return out
 
     def addClause(self, command, terms, comment=''):

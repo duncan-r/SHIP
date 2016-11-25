@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
  
 import unittest
-from ship.isis.datcollection import DatCollection
-from ship.isis import isisunitfactory as iuf
-from ship.isis.datunits import riverunit
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datcollection import DatCollection
+from ship.fmp import isisunitfactory as iuf
+from ship.fmp.datunits import riverunit
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.utils.filetools import PathHolder
  
  

@@ -74,7 +74,7 @@ And then tgcfile.tgc might look something like this::
    Read GIS Code == gis\2d_code_R.shp
    Read GIS Z Line == gis\2d_zln_L.shp | gis\2d_zln_P.shp
 
-When the model was load the FileLoader would return a TuflowModel that was
+When loading the model with the FileLoader it will return a TuflowModel
 setup like this::
 
    tuflow = loader.loadFile(tcf_path)

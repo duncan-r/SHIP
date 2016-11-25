@@ -47,11 +47,11 @@ class ADataFileObject(object):
     must contain a method for writing the data back to file.
     
     See Also:
-        :class:'DataFile'  
-        :module:'DataFileLoader'
+        DataFile
+        DataFileLoader
     """
     
-    def __init__(self, row_collection, file_part, comment_lines=[]):
+    def __init__(self, row_collection, file_part, comment_lines=[], args_dict={}):
         self.row_collection = row_collection 
         self.path_holder = file_part
         self.type = self.path_holder.extension
@@ -59,10 +59,10 @@ class ADataFileObject(object):
         self.keys = None
         self.subfiles = []
         self.comment_lines = comment_lines
-        self.evt_src_data = file_part.evt_src_data
+        self.evt_src_data = args_dict
         
     
-    def getDataEntry(self, key):
+    def getDataObject(self, key):
         """Returns the ADataObject associated with the given key.
         
         The Keys for each class are usually defined by a related enum. These
@@ -83,7 +83,8 @@ class ADataFileObject(object):
         return self.row_collection.getDataObject(key)
 
 
-    def getDataEntryAsList(self, key):
+#     def getDataEntryAsList(self, key):
+    def dataObjectAsList(self, key):
         """Returns the a list of the data associated with the given key.
         
         The Keys for each class are usually defined by a related enum. These
@@ -315,7 +316,7 @@ class BcDataObject(ADataFileObject):
     Reads/Writes the data in tuflow boundary condition database csv files.
     '''
      
-    def __init__(self, row_collection, file_part, comment_lines):
+    def __init__(self, row_collection, file_part, comment_lines, args_dict={}):
         """Constructor
 
         Args:
@@ -324,7 +325,7 @@ class BcDataObject(ADataFileObject):
             comment_lines (list): containing the contents of any comment only
                 lines in the file.
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines)
+        ADataFileObject.__init__(self, row_collection, file_part, comment_lines, args_dict)
         self.keys = BcEnum()
     
     
@@ -397,7 +398,7 @@ class MatCsvDataObject(ADataFileObject):
     Reads/Writes the data in tuflow Materials csv files.
     '''
      
-    def __init__(self, row_collection, file_part, comment_lines):
+    def __init__(self, row_collection, file_part, comment_lines, args_dict={}):
         """Constructor
 
         Args:
@@ -406,7 +407,7 @@ class MatCsvDataObject(ADataFileObject):
             comment_lines (list): containing the contents of any comment only
                 lines in the file.
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines)
+        ADataFileObject.__init__(self, row_collection, file_part, comment_lines, args_dict)
         self.keys = MatCsvEnum()
         
         
@@ -507,7 +508,7 @@ class ADataFileSubfile(object):
     and be derived from this class.
     """
     
-    def __init__(self, path_holder, row_collection, filename, comment_lines=[]):
+    def __init__(self, path_holder, row_collection, filename, comment_lines=[], args_dict={}):
         """Constructor.
         
         Args:

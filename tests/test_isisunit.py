@@ -1,6 +1,6 @@
 # import unittest
 #  
-# from ship.isis.datunits import isisunit
+# from ship.fmp.datunits import isisunit
 #   
 # class HeaderUnitTests(unittest.TestCase):
 #     '''Test class for the HeaderUnit class.

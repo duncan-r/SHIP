@@ -31,32 +31,70 @@ you don't know what I have a long list of things like I'd like to get done.
 
 .. _contributing-stuff:
 
+
+#################
+Main Requirements
+#################
+
+The most obvious missing feature at the moment is FMP unit coverage. Focus up
+to this point has been getting the API reasonably solide and making sure that
+the foundations are in place. The amount of FMP units currently included is
+therefore a bit limited (partly by design and not wanting to re-write them
+all after changes). Normally we will add new units when they are needed for
+a script or a tool. If there is one that you need it is probably a good place
+to start with contributions.
+
+The best approach is to have a look at the RiverUnit. It's reasonably simple,
+but includes everything that is supported in some way. The basic process is:
+
+   - Create a new module for the new unit.
+   - Add the basic requirements:
+      * Set the UNIT_TYPE and UNIT_CATEGORY static class constants and set
+        the member variables to the same.
+      * Create the standard setup and instantiate HeadDataItem dict and
+        required RowDataCollections in the constructor.
+      * readUnitData() method. This is called by the UnitFactory and is given
+        the current .dat/.ied file line and the contents list.
+      * Add the import for the unit to the UnitFactory and add the class to
+        the 'available_units' list in UnitFactory.
+      * Write the code to parse the file contents in readUnitData.
+      * Write the code to return the formatted contents in getData().
+
+and that's it. It doesn't normally take very long to put a unit together. Once
+you've made one please add a module to the tests package and try and get some
+decent test coverage for it.
+
+It would also be great if you could let me know if you're planning on working
+on anything. Then we can try and avoid duplicated effort.
+
 #######
 Testing
 #######
 
 The API has a suite of unit tests for all of its components. These use the 
 Python UnitTest Framework. Unit tests allow for the software to be fully 
-checked to make sure that it operates as intended by ensuring all function 
-behaviour is reviewed for a range of circumstances.
+checked to make sure that it operates as intended by ensuring all behaviour is 
+reviewed for a range of circumstances.
 
 If you want to better understand the API the tests are a good place to start. 
 The tests show how the functions should be working. They should also help 
-to better understand some of the data structures, which can seem a bit 
-complicated on the surface.
+to better understand some of the data structures.
 
-There is a folder within the library called “unittests” that contains the 
-UnitTestSuite.py file. This file calls all of the individual test modules stored 
-in the “maintests” package. All new functionality should have unit tests written 
-and stored in this package. The UnitTestSuite.py file should then be updated to 
-call the new tests.
+There is a folder within the library called “tests” that contains the 
+UnitTestSuite.py file. This file calls all of the individual tests. All new 
+functionality should have unit tests written and stored in this package. 
 
 Whenever any changes are made to the code base in the API the full suite of unit 
 tests should be run to check that the changes have not broken any other part of 
-the code base.
+the code base. These should be done with "tox" to ensure that a clean 
+environment is used and it is checked against both python 2.7 and 3.5. There
+is a "tox.ini" file in the main folder. If you do::
 
-When running the tests some errors may be raised by the logger from attempts to 
-add illegal values to certain data objects. As long as all the tests pass it’s fine.
+   $ cd SHIP
+   $ tox
+
+the tox.ini file should take care of the rest.
+
 
 #######
 Logging

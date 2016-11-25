@@ -7,7 +7,7 @@ Ief
 In Flood Modeller .ief files are the run forms used to pull together and run
 the different components of a model. The SHIP library contains the Ief class
 for dealing with these files. It allows for accessing and/or updating the
-different variables and file paths withing the .ief file.
+different variables and file paths within the .ief file.
 
 ###################
 Loading an ief file

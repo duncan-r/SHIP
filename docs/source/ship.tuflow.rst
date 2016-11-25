@@ -11,6 +11,22 @@ Subpackages
 Submodules
 ----------
 
+ship.tuflow.controlfile module
+------------------------------
+
+.. automodule:: ship.tuflow.controlfile
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ship.tuflow.tuflowfactory module
+--------------------------------
+
+.. automodule:: ship.tuflow.tuflowfactory
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ship.tuflow.tuflowfilepart module
 ---------------------------------
 
@@ -23,14 +39,6 @@ ship.tuflow.tuflowmodel module
 ------------------------------
 
 .. automodule:: ship.tuflow.tuflowmodel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ship.tuflow.controlfile module
-----------------------------------
-
-.. automodule:: ship.tuflow.controlfile
     :members:
     :undoc-members:
     :show-inheritance:

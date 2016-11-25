@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import unittest
  
-from ship.isis.datunits import bridgeunit
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits import bridgeunit
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
  
 class BridgeUnitTests(unittest.TestCase): 
     """

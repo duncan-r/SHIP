@@ -20,6 +20,11 @@ following the link.
 If you are interested in contributing to the project please take a look at the
 :ref:`contributing` page. 
 
+Please note these docs are still being put together and are not complete yet.
+There is also almost certainly many typos/errors and probably some issues with
+the code examples. I will try and get these sorted as soon as possible once 
+focused has moved away from actually get the code together.
+
 
 About versions
 ##############

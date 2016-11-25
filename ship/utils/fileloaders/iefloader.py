@@ -23,7 +23,7 @@
 from ship.utils.atool import ATool
 from ship.utils import filetools
 from ship.utils.fileloaders.loader import ALoader
-from ship.isis.ief import Ief
+from ship.fmp.ief import Ief
 from ship.utils import utilfunctions as uf
 
 import os

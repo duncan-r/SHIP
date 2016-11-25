@@ -22,11 +22,11 @@
 """
 from __future__ import unicode_literals
 
-from ship.isis.datunits.isisunit import AIsisUnit
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.datunits.isisunit import AUnit
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.headdata import HeadDataItem
 from ship.data_structures import DATA_TYPES as dt
 
 import logging
@@ -34,8 +34,8 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class SpillUnit (AIsisUnit): 
-    """Concrete implementation of AIsisUnit storing Isis Spill Unit data.
+class SpillUnit (AUnit): 
+    """Concrete implementation of AUnit storing Isis Spill Unit data.
 
     Contains a reference to a rowdatacollection for storing and
     accessing all the row data. i.e. the geometry data for the section,
@@ -44,7 +44,7 @@ class SpillUnit (AIsisUnit):
     are available.
     
     See Also:
-        AIsisUnit
+        AUnit
     """
     UNIT_TYPE = 'spill'
     UNIT_CATEGORY = 'spill'
@@ -58,7 +58,7 @@ class SpillUnit (AIsisUnit):
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
 
         self._name = 'Spl'
         self._name_ds = 'SplDS'
@@ -92,7 +92,7 @@ class SpillUnit (AIsisUnit):
                 this section 
         
         See Also:
-            AIsisUnit - readUnitData()
+            AUnit - readUnitData()
         """
         file_line = self._readHeadData(unit_data, file_line)
         file_line = self._readRowData(unit_data, file_line)
@@ -229,7 +229,7 @@ class SpillUnit (AIsisUnit):
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
         # Call superclass method to add the new row
-        AIsisUnit.addRow(self, row_vals, index=index)
+        AUnit.addRow(self, row_vals, index=index)
         
     
         

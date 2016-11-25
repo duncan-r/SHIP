@@ -23,11 +23,11 @@
 
 from __future__ import unicode_literals
 
-from ship.isis.datunits.isisunit import AIsisUnit
+from ship.fmp.datunits.isisunit import AUnit
 from ship.data_structures import dataobject as do
 from ship.data_structures.rowdatacollection import RowDataCollection 
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-from ship.isis.headdata import HeadDataItem
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
+from ship.fmp.headdata import HeadDataItem
 from ship.data_structures import DATA_TYPES as dt
 
 import logging
@@ -35,8 +35,8 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class RiverUnit (AIsisUnit): 
-    """Concrete implementation of AIsisUnit storing Isis River Unit
+class RiverUnit (AUnit): 
+    """Concrete implementation of AUnit storing Isis River Unit
     data.
 
     Contains a reference to a rowdatacollection for storing and
@@ -47,7 +47,7 @@ class RiverUnit (AIsisUnit):
     are available.
     
     See Also:
-        AIsisUnit
+        AUnit
     """
     
     UNIT_TYPE = 'river'
@@ -63,7 +63,7 @@ class RiverUnit (AIsisUnit):
             fileOrder (int): The location of this unit in the file.
             reach_number (int): The reach ID for this unit.
         """
-        AIsisUnit.__init__(self, **kwargs)
+        AUnit.__init__(self, **kwargs)
 
         self._unit_type = RiverUnit.UNIT_TYPE
         self._unit_category = RiverUnit.UNIT_CATEGORY
@@ -117,7 +117,7 @@ class RiverUnit (AIsisUnit):
         """Reads the unit data into the geometry objects.
         
         See Also:
-            AIsisUnit - readUnitData for more information.
+            AUnit - readUnitData for more information.
         
         Args:
             unit_data (list): The section of the isis dat file pertaining 
@@ -259,7 +259,7 @@ class RiverUnit (AIsisUnit):
         """
         
         # Call superclass method to add the new row
-        AIsisUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index)
         
     
     # addDataRow
@@ -274,7 +274,7 @@ class RiverUnit (AIsisUnit):
         ommitted. If they are they will be given defaults.
         
         Examples:
-            >>> import ship.isis.datunits.ROW_DATA_TYPES as rdt
+            >>> import ship.fmp.datunits.ROW_DATA_TYPES as rdt
             >>> river_unit.addDataRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)
 
         Args:
@@ -297,7 +297,7 @@ class RiverUnit (AIsisUnit):
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
         # Call superclass method to add the new row
-        AIsisUnit.addRow(self, row_vals, index=index)
+        AUnit.addRow(self, row_vals, index=index)
             
 
         
