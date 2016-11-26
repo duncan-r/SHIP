@@ -15,10 +15,6 @@
      Duncan Runnacles 2016
 
  TODO:
-     There's a lot of functions in this module or more specifically the 
-     IsisUnitFactory class that should be private, but currenlty aren't.
-     
-     They need to be set to private to avoid confusion.
 
  Updates:
      DR - 21/02/16: Major change to the setup of the factory. It no longer 
@@ -114,7 +110,6 @@ class IsisUnitFactory(object):
         """
         # Update reach number info
         if not file_key == 'RIVER' or file_key == 'COMMENT':
-#         if not key == 'river' or key == 'comment':
             self.same_reach = False
             
         '''Need to deal with RiverUnit slightly differently because it records

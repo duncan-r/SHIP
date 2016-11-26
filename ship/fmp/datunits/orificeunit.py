@@ -59,9 +59,10 @@ class OrificeUnit(AUnit):
             'bore_area': HeadDataItem(0.000, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
             'us_sill_level': HeadDataItem(0.000, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'ds_sill_level': HeadDataItem(0.000, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-            'weir_flow': HeadDataItem(0.000, '{:>10}', 2, 5, dtype=dt.FLOAT, dps=3),
-            'surcharged_flow': HeadDataItem(0.000, '{:>10}', 2, 6, dtype=dt.FLOAT, dps=3),
-            'modular_limit': HeadDataItem(0.000, '{:>10}', 2, 6, dtype=dt.FLOAT, dps=3),
+            'shape': HeadDataItem('RECTANGLE', '{:>10}', 2, 5, dtype=dt.CONSTANT, choices=('RECTANGLE', 'CIRCULAR')),
+            'weir_flow': HeadDataItem(0.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
+            'surcharged_flow': HeadDataItem(0.000, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
+            'modular_limit': HeadDataItem(0.000, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
         }
 
     
@@ -88,6 +89,7 @@ class OrificeUnit(AUnit):
         self.head_data['bore_area'].value = unit_data[file_line + 3][20:30].strip()
         self.head_data['us_sill_level'].value = unit_data[file_line + 3][30:40].strip()
         self.head_data['ds_sill_level'].value = unit_data[file_line + 3][40:50].strip()
+        self.head_data['shape'].value = unit_data[file_line + 3][50:60].strip()
         self.head_data['weir_flow'].value = unit_data[file_line + 4][:10].strip()
         self.head_data['surcharged_flow'].value = unit_data[file_line + 4][10:20].strip()
         self.head_data['modular_limit'].value = unit_data[file_line + 4][20:30].strip()
@@ -105,10 +107,10 @@ class OrificeUnit(AUnit):
         '''
         out = []
         out.append('ORIFICE ' + self.head_data['comment'].value)
-        out.append('\n{:>12}'.format(self._name) + '{:>12}'.format(self._name_ds))
-        
+        out.append('\n'+self.head_data['type'].value)
+        out.append('\n{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
         key_order = ['invert_level', 'soffit_level', 'bore_area', 'us_sill_level',
-                     'ds_sill_level', 'weir_flow', 'surcharged_flow',
+                     'ds_sill_level', 'shape', 'weir_flow', 'surcharged_flow',
                      'modular_limit']
         for k in key_order:
             out.append(self.head_data[k].format(True))

@@ -48,7 +48,7 @@ So if you've been using this library, sorry :( . I think though that you will
 find it much improved and it's defintiely easier to maintain and improve going
 forward. Not also that "the possible API break" stage is through and any
 functionality will be properly deprecated for a reasonable amoutn of time from 
-now on. For more info on what's changed see ..
+now on. For more info on what's changed see :ref:`updatechanges-top`.
 
 
 Python version

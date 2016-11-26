@@ -125,7 +125,7 @@ class ControlFile(object):
         found_commands = []
         fetch_sibling = False
         vars = []
-        for part in self.parts:#[::-1]:
+        for part in self.parts:
             if active_only and not part.active: continue
             if not isinstance(part, instance_type): continue
             if filepart_type is not None and part.tpart_type != filepart_type:
@@ -135,9 +135,6 @@ class ControlFile(object):
                 if not self.checkPartLogic(part, se_vals): continue
             
             if no_duplicates:
-#                 if isinstance(part, TuflowFile):
-#                     if part.associates.parent.model_type == 'TBC':
-#                         print ('command:  ' + part.command + '  |  ' + 'filename:  ' + part.filename)
                 if part.command in found_commands and not fetch_sibling:
                     continue
                 else:
@@ -243,12 +240,6 @@ class ControlFile(object):
         for part in self.parts:
             part.root = root
     
-    def createIndent(self, indent):
-        if indent < 1: 
-            return ''
-        else:
-            return ''.join(['\t' for x in range(indent)])
-        
     def getPrintableContents(self, **kwargs):
         """Return the control files with contents formatted for writing to file.
         
@@ -256,6 +247,12 @@ class ControlFile(object):
             dict - control files paths as keys and a ordered list of Tuflow
                 commands as the values.
         """
+        def createIndent(indent):
+            if indent < 1: 
+                return ''
+            else:
+                return ''.join(['\t' for x in range(indent)])
+        
         logic_stack = {}
         logic_group = {}
         cur_ctrl = None
@@ -278,7 +275,7 @@ class ControlFile(object):
                                                             p, logic_clause)
                 for i, l in enumerate(logic_clause):
                     open_logic += 1 
-                    out[cur_ctrl].append(self.createIndent(indent) + l)
+                    out[cur_ctrl].append(createIndent(indent) + l)
                     indent += 1
 
             # Get the part
@@ -287,14 +284,14 @@ class ControlFile(object):
                 if add_to_prev:
                     out[cur_ctrl][-1] = out[cur_ctrl][-1] + pout
                 else:
-                    out[cur_ctrl].append(self.createIndent(indent) + pout)
+                    out[cur_ctrl].append(createIndent(indent) + pout)
             
             # Get any closing statements for logic clauses
             if p.associates.logic is not None:
                 logic_clause = p.associates.logic.getEndClause(p)
                 indent -= 1
                 if logic_clause and open_logic > 0:
-                    out[cur_ctrl].append(self.createIndent(indent) + logic_clause)
+                    out[cur_ctrl].append(createIndent(indent) + logic_clause)
                     open_logic -= 1
                 
         for c in self.control_files:
@@ -367,6 +364,8 @@ class ControlFile(object):
             filename(str): text to search for in a TuflowPart.filename.
             parent_filename(str): text to search for in a 
                 TuflowPart.associates.parent.filename.
+            active_only(bool): if True only parts currently set to 'active' will
+                be returned. Default is True.
         
         Return:
             list - of TuflowParts that match the search term.
@@ -502,7 +501,6 @@ class ControlFile(object):
             out['part_cfile'] = c_part
         
         return out 
-#         return {'parts': part_index, 'logic': logic_index, 'control_files': control_index}
     
     
     def removeControlFile(self, model_file):
@@ -650,7 +648,6 @@ class PartHolder(object):
         self.parts[key] = value
     
     
-#     def addPart(self, filepart, **kwargs):#after=None, before=None):
     def add(self, filepart, **kwargs):
         """
         
@@ -659,7 +656,6 @@ class PartHolder(object):
         after = kwargs.get('after', None)
         before = kwargs.get('before', None)
         suppress_add_same = kwargs.get('suppress_add_same', False)
-#         take_logic = kwargs.get('take_logic', True)
 
         if filepart in self.parts:
             if not suppress_add_same:
@@ -692,16 +688,6 @@ class PartHolder(object):
                 else:
                     self.parts.insert(index + 1, filepart)
                 
-#             for i, p in enumerate(self.parts):
-#                 if not found_parent and p.associates.parent == filepart.associates.parent:
-#                     found_parent = True
-#                     if len(self.parts) + 1 >= i:
-#                         self.parts.append(filepart)
-#                     else:
-#                         self.parts.insert(i+1, filepart)
-#             if not found_parent:
-#                 self.parts.append(filepart)
-    
     
     def replace(self, part, replace_part):
         """
@@ -715,7 +701,6 @@ class PartHolder(object):
         self.parts.insert(index, part)
             
 
-#     def movePart(self, part, after):
     def move(self, part, **kwargs): #after):
         after = kwargs('after', None)
         before = kwargs('before', None)
@@ -729,36 +714,21 @@ class PartHolder(object):
         
         
     def index(self, part):
-#         if isinstance(part, TuflowPart):
-#             hash = part.hash
-#         elif isinstance(part, uuid.UUID):
-#             hash = part
-#         else:
-#             raise ValueError ('Reference part is not of type TuflowPart or a hashcode.')
         if not isinstance(part, TuflowPart):
             raise ValueError('part must be TuflowPart type')
         try:
             return self.parts.index(part)
         except ValueError:
             return -1
-#             raise ValueError('Reference part does not exist (%s)' % hash)
     
     def lastIndexOfParent(self, parent):
-#         found_parent = False
         index = -1
-#         if not self.parts: return index
         for i, p in enumerate(self.parts):
             if p.associates.parent == parent:
                 index = i
-#             if not found_parent and p.associates.parent == parent:
-#                 found_parent = i
-#                 continue
-#             if found_parent and not p.associates.parent != parent:
-#                 return i
         return index
     
     
-#     def getPart(self, filepart, filepart_type=None):
 #     def get(self, filepart, filepart_type=None):
 #         """
 #         """

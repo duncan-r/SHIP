@@ -1,6 +1,15 @@
 """
 
  Summary:
+     This is the main class for the integration tests.
+     
+     It calls a suite of tests that work on an actual loaded TuflowModel to
+     check that it functions properly in the 'real world'.
+     
+     Note that one of the tests will attempt to write out the model to a folder
+     called 'test_output' in the integration_tests directory. This folder is
+     added to the .gitignore file. If your python path is different in may go
+     elsewhere as it uses the getcwd() function...so keep an eye on it!
 
  Author:  
      Duncan Runnacles

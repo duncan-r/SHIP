@@ -300,7 +300,12 @@ class ADataRowObject(object):
             The formatted value.
         """
         pass
-        
+    
+    def setChangeStatus(self, status): 
+        if status == False:
+            self.has_changed = False
+        elif status == True:
+            self.has_changed = True
 
 
 class IntData(ADataRowObject):

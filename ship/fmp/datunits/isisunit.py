@@ -90,25 +90,6 @@ class AUnit(object):
         self._unit_category = 'Unknown'
         """The ISIS unit category - e.g. for type 'Usbpr' it would be 'Bridge'"""
         
-#         self.has_datarows = False      
-        """Flag stating whether the unit contains an unknown no. of data rows.
-        
-        This could be geometry in river or bridge units etc, or other data
-        rows like inital conditions or hydrograph values.
-        
-        If False then the unit only contains head_data. A dictionary containing
-        set values that are always present in the file - e.g. Orifice.
-        """
-        
-#         self.no_of_collections = 1                           
-        """Total number of row collections held by this file. 
-        
-        If set to zero it means the same as has_datarows = False. Set to one as 
-        default because zero is dealt with by has_datarows and if that is set 
-        to True then there must be at least 1 row_collection.
-        """
-
-#         self.row_collection = None 
         self.row_data = {} 
         """Collection containing all of the ADataRow objects.
         
@@ -116,16 +97,6 @@ class AUnit(object):
         In a RiverUnit, for example, this will hold the RowDataObject's 
         containing the CHAINAGE, ELEVATION, etc.
         """
-        
-#         self.additional_row_collections = None  
-        """Flag stating whether the unit contains additional row data.
-        
-        This is used for units that contain more than one set of unknow length
-        data series - e.g. opening data in bridges.
-        
-        If this is used it should be instanciated as an OrderedDict
-        """
-
         self.head_data = {}
         """Dictionary containing set values that are always present in the file.
         
@@ -133,10 +104,6 @@ class AUnit(object):
         values that appear in set locations, usually at the top of the unit
         data in the .dat file.
         """
-
-        
-#         self.ic_labels = []
-        
     
     @property
     def name(self):
@@ -162,8 +129,7 @@ class AUnit(object):
             return True
     
     @property
-#     def has_row_data(self):
-    def hasRowData(self):
+    def has_row_data(self):
         if not self.row_data:
             return False
         else:
@@ -172,7 +138,7 @@ class AUnit(object):
     @property
     def unit_type(self):
         return self._unit_type
-
+ 
     @property
     def unit_category(self):
         return self._unit_category
@@ -194,61 +160,12 @@ class AUnit(object):
         """
         return [] 
         
-        
-#     def getUnitVars(self): 
-
-        
-#     # TODO: These are superflous methods. Need removing.
-#     def getName( self ): 
-
-        
-#     def getUnitType( self ):
-#     def unitType(self):
-
-
-#     def getUnitUNIT_CATEGORY(self):
-
-    
-    
-#     def getDeepCopy(self):
     def copy(self):
         """Returns a copy of this unit with it's own memory allocation."""
         object_copy = copy.deepcopy(self)
         return object_copy
     
     
-#     def getRowDataType(self, key, collection_key='main', copy=False):
-#     def rowDataType(self, key, rowdata_key='main'):
-#         """Getter for the data series in the data_object dictionary.
-# 
-#         Depending on the data that the subclass contains this could be 
-#         anything... a dictionary a string a integer. It is up to the client 
-#         and the subclass to ensure that this is clear.
-#         
-#         Args:
-#             key (str): The key for the data_object requested.
-#             collection_key='main' (str): the key for the row_collection to 
-#                 return. Most objects will only contain a single row_collection,
-#                 like the RiverUnit, but some like bridges have opening data and
-#                 orifice data rows as well. See individual AUnit 
-#                 implemenations for more details on what they contain.
-#         
-#         Returns:
-#             DataObject requested by client or False if unit has no rows.
-#         
-#         Raises:
-#             KeyError: If key does not exist. 
-#         """
-#         if not self.has_datarows:
-#             return False
-#         try:
-#             return self.row_data[rowdata_key].getDataObject(key)
-#         except KeyError:
-#             logger.warning('Key %s does not exist in collection' % (key))
-#             raise KeyError ('Key %s does not exist in collection' % (key))
-    
-    
-#     def getRowDataTypeAsList(self, key, collection_key='main'):
     def rowDataObj(self, key, rowdata_key='main'):
         """Returns the row data object as a list.
  
@@ -273,20 +190,10 @@ class AUnit(object):
         Raises:
             KeyError: If key or rowdata_key don't exist.
         """
-        if not self.hasRowData: return None
+        if not self.has_row_data: return None
         return self.row_data[rowdata_key].dataObject(key)
-#         try:
-#             data_col = self.row_data[rowdata_key].dataObject(key)
-#             vals = []
-#             for i in range(0, data_col.record_length):
-#                 vals.append(data_col.getValue(i))
-#             return vals
-#         except KeyError:
-#             logger.warning('Key %s does not exist in collection' % (key))
-#             raise KeyError ('Key %s does not exist in collection' % (key))
     
-    
-#     def getRow(self, index):
+
     def row(self, index, rowdata_key='main'):
         """Get the data vals in a particular row by index.
          
@@ -296,27 +203,10 @@ class AUnit(object):
         Return:
             dict - containing the values for the requested row.
         """
-        if not self.hasRowData: return None
+        if not self.has_row_data: return None
         return self.row_data[rowdata_key].rowAsDict(index)
     
      
-#     def getHeadData(self):
-#         """Returns the header data from this unit.
-#  
-#         This includes the details outlined at the top of the unit such as the
-#         unit name, labels, global variables, etc.
-#         for some units, such as HeaderUnit or Junctions this is all of the 
-#         data. Other units, such as the RiverUnit also have RowDataObjects.
-#         
-#         Note:
-#             Must be overriden by all concrete classes.
-#          
-#         Returns:
-#             The header data for this unit or None if it hasn't been initialised.
-#         """
-#         raise NotImplementedError
-
-
     def getData(self): 
         """Getter for the unit data.
   
@@ -360,7 +250,6 @@ class AUnit(object):
         self.head_data['all'] = data
         
     
-#     def deleteDataRow(self, index, rowdata_key=None):
     def deleteRow(self, index, rowdata_key='main'):
         """Removes a data row from the RowDataCollection.
         """
@@ -370,29 +259,15 @@ class AUnit(object):
         self.row_data[rowdata_key].deleteRow(index)
         
     
-    # DEBUG
-    # TODO
-#     def updateDataRow(self, row_vals, index=None, rowdata_key='main'):
     def updateRow(self, row_vals, index, rowdata_key='main'):
         """
         """
         if index >= self.row_data[rowdata_key].numberOfRows():
             raise IndexError ('Given index is outside bounds of row_collection data')
         
-#         # Check that there won't be a negative change in chainage across row.
-#         c = row_vals.get(rdt.CHAINAGE)
-#         if check_negative and not c is None:
-#             if self._checkChainageIncreaseNotNegative(index, 
-#                                         row_vals.get(rdt.CHAINAGE)) == False:
-#                 logger.error('Chainage increase is negative')
-#                 raise ValueError ('Chainage increase is negative')
-        
         # Call the row collection add row method to add the new row.
         self.row_data[rowdata_key].updateRow(row_vals=row_vals, index=index)
             
-    
-#     def addDataRow(self, row_vals, collection_name=None, index=None, 
-#                                                 check_negative=True):
     
     def addRow(self, row_vals, rowdata_key='main', index=None):
         """Add a new data row to one of the row data collections.
@@ -431,8 +306,6 @@ class AUnit(object):
         self.row_data[rowdata_key].addRow(row_vals, index)
         
     
-#     def _checkChainageIncreaseNotNegative(self, index, chainageValue, 
-#                                                     collection_name=None):
     def checkIncreases(self, data_obj, value, index):
         """Checks that: prev_value < value < next_value.
         
@@ -692,14 +565,11 @@ class HeaderUnit(AUnit):
         Returns:
             List - data formatted for writing to the new dat file.
         """
-        out_data = []
         out = []
         key_order = ['name', 'revision', 'node_count', 'fr_lower', 'fr_upper', 'min_depth',
                      'direct_method', 'unknown', 'water_temp', 'flow', 'head',
                      'math_damp', 'pivot', 'relax', 'dummy']
-#         print ('REFH getData')
         for k in key_order:
-#             print(k)
             out.append(self.head_data[k].format(True))
         out = ''.join(out).split('\n')
         

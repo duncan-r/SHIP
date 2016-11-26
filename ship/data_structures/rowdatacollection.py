@@ -64,9 +64,6 @@ class RowDataCollection(object):
         self._collection = []
         self._min_collection = 0
         self._current_collection = 0
-#         self._max = len(self._collection)
-#         self._min = 0
-#         self._current = 0
         self._updateCallback = kwargs.get('update_callback', None)
 
     
@@ -222,7 +219,6 @@ class RowDataCollection(object):
             raise
 
     
-#     def rowDataAsList(self, key=None):
     def toList(self):
         """Returns the row data a list.
         
@@ -276,6 +272,28 @@ class RowDataCollection(object):
             vals[c.data_type] = inner
         return vals
     
+    
+    def dataValue(self, key, index):
+        """Get the value in a DataObject at index.
+        
+        Args:
+            key(int): ROW_DATA_TYPES for the DataObject.
+            index(int): the row to return the value from.
+            
+        Return:
+            The value in the DataObject at given index.
+        
+        Raises:
+            KeyError - if key does not exist in collection.
+            IndexError - if index does not exist in DataObject.
+        """
+        for c in self._collection:
+            if c.data_type == key:
+                val = c.getValue(index)
+                return val
+        else:
+            raise KeyError('DataObject %s does not exist in collection' % key)
+
         
     def _addValue(self, key, value=None):
         """Add a new value to the data object in the collection as referenced by
@@ -411,7 +429,6 @@ class RowDataCollection(object):
             del temp_list
      
         
-#     def addNewRow(self, row_vals, index):
     def addRow(self, row_vals, index=None):
         """Add a new row to the units data rows.
         
@@ -551,27 +568,6 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
             
     
-#     def dataValue(self, name_key, index):
-#         """Get the value of a data object in the collection.
-#         
-#         Args:
-#             name_key (str): The name of the data object to get the value from.
-#             index: int - the row index to get the value from or False if the key
-#                doesn't exist in the collection.
-#         
-#         Returns:
-#             The requested value or False if the key or index do not exist.
-#         """
-#         if index > self.row_count:
-#             raise IndexError ('Index %s is greater than number of values in collection' % (index))
-# 
-#         for obj in self._collection:
-#             if obj.data_type == name_key:
-#                 return obj.getValue(index)
-#         else:
-#             raise KeyError ('name_key %s was not found in collection' % (name_key))
-        
-    
     def deleteDataObject(self, name_key):
         """Delete the ADataRowObject instance requested.
         
@@ -601,7 +597,6 @@ class RowDataCollection(object):
             raise RuntimeError('RowCollection objects are not in sync')
 
         return len(self._collection[0])
-#         return self._collection[0].record_length
     
     
     def checkRowsInSync(self):

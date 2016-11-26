@@ -65,9 +65,9 @@ class CulvertUnitInlet(CulvertUnit):
         
         self.head_data = {
             'comment': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
-            'k': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=3),
+            'k': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=4),
             'm': HeadDataItem(0.000, '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3),
-            'c': HeadDataItem(0.000, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
+            'c': HeadDataItem(0.000, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=4),
             'y': HeadDataItem(0.000, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'ki': HeadDataItem(0.000, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
             'conduit_type': HeadDataItem('A', '{:>10}', 2, 5, dtype=dt.CONSTANT, choices=('A', 'B', 'C')),
@@ -126,7 +126,7 @@ class CulvertUnitInlet(CulvertUnit):
         out = []
         out.append('CULVERT ' + self.head_data['comment'].value)
         out.append('\nINLET')
-        out.append('\n'+'{:>12}'.format(self._name) + '{:>12}'.format(self._name_ds))
+        out.append('\n'+'{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
         
         key_order = ['k', 'm', 'c', 'y', 'ki', 'conduit_type', 'screen_width',
                      'bar_proportion', 'debris_proportion', 'loss_coef',

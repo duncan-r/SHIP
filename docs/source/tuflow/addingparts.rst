@@ -36,9 +36,9 @@ ControlFile is the main container for the data. It stores all of the parts of
 control files in two iterator classes: PartHolder and LogicHolder. The actual
 data is all stored in classes that extend the TuflowPart interface.
 
-It all looks a little bit like this:
+It all looks a little bit like this slightly simplified diagram:
 
-**INSERT IMAGE OF SETUP HERE**
+.. image:: Tuflow_Design_Simple.png
 
 ################
 How it all works
@@ -97,12 +97,13 @@ ControlFile it would only affect that one object. If you use the SHIP methods
 for this stuff it makes sure that everything gets updated and kept in sync.
 
 **Side Note**
-*The SHIP library doesn't actually delete components of a loaded model by default.*
-*It sets the TuflowPart 'active' flag to False. When this flag is False the*
-*TuflowPart won't be written to file or included in the results of any queries,*
-*etc. However, this approach makes it easy to deactivate sections of the model*
-*and then maybe copy them or move them elsewhere, i.e. have them ready to*
-*reactivate easily when wanted.*
+*You don't actually need to delete an item to hide from most of the querying*
+*methods and the write and getPrintableContents methods. You can simply set*
+*the 'active' member of any TuflowPart to False. This part will then notify*
+*all the other TuflowPart's that are beneath them (and they the same) and they*
+*will all have active set to False as well. This impact of this is that you*
+*effectively remove a part and anything under it, but still have access to it*
+*if you need. You can also turn a part off, do something and then reactivate it.*
 
 Dealing with logic
 ==================
@@ -224,23 +225,23 @@ It's pretty simple to add TuflowPart's to a control file really. You just need
 to think a little about where you are trying to add it. PartHolder has three
 methods:
 
-   - add(filepart, kwargs): add a new TuflowPart. Takes some keyword args:
-        * after - the TuflowPart in the list to put it after.
-        * before - the TuflowPart in the list to put it before. Note that if
+   - **add(filepart, kwargs)**: add a new TuflowPart. Takes some keyword args:
+        * **after** - the TuflowPart in the list to put it after.
+        * **before** - the TuflowPart in the list to put it before. Note that if
           neither 'before' or 'after' are given it will be appened to the end of
           the list.
-        * take_logic - bool value, whether to take the logic from the adjacent
+        * **take_logic** - bool value, whether to take the logic from the adjacent
           part. Defaults to True and to take the logic of the part below. If
           'before' is given as a kwarg it will take the logic from that. If
           False and it's placed in between two parts with the same logic clause
           it will be set to True (otherwise it would break the file setup).
-   - move(filepart, kwargs): moves a TuflowPart to another part of the list.
+   - **move(filepart, kwargs)**: moves a TuflowPart to another part of the list.
      kwargs are the same as for add, but you must supply either a 'before' or
      'after' part.
-   - remove(filepart): removed the TuflowPart from the list. It will also 
+   - **remove(filepart)**: removed the TuflowPart from the list. It will also 
      return the removed part. Note it is usually better to call the deactivate
      method instead.
-   - deactivate(filepart): sets the 'active' flag for this part to False. 
+   - **deactivate(filepart)**: sets the 'active' flag for this part to False. 
      Essentially stops it from being used in anything, but keeps it in the list.
 
 Adding ModelFile parts
@@ -308,41 +309,56 @@ probably want to do it a different way.
 Other than the reason in SIDENOTE you will want to use either:
 
    - the addModelFile method in TuflowModel. 
-   - the addModelFile method in ControlFile.
+   - the addControlFile method in ControlFile.
    
-If you want to add a new ModelFile to 'TCF' you should use the method in
-TuflowModel. This is because it needs to update two separate ControlFiles, the
-'TCF' ControlFile and whatever the other type is 'TGC', 'TBC', etc. 
-If you want to add a model file (.trd for example) to a different type of 
-ControlFile you should use the method in ControlFile.
+Long story short, don't use the addModelFile method in TuflowModel. You can if
+you want and it will work the same, but there is a clause in the TcfControlFile
+that will call that method anyway. It's probably easier to remember to use the
+addControlFile method in ControlFile all of the time.
 
-Both methods take a TuflowPart as the first argument - to know where the newly
-created ModelFile should go - and an optional filepath argument as the second.
-They will create a new ModelFile object, if a path is given it will load the 
-contents of the file - creating all the TuflowPart's - add adding them in the
-corrent order in the PartHolder. They will update the appropriate 
-ControlFile.control_files list. And just generally make sure that everything
-looks good. 
+The only reason that it needs to the TuflowModel methods is because changes in
+the 'TCF' ControlFile will need to notify another ControlFile, say 'TGC' if the
+ModelFile being added will need to update contents in there.
 
-**TODO: Need to think this through a little bit more**
+The addControlFile method takes three arguments:
+   - **filepart(ModelFile)**: the new ModelFile to add.
+   - **control(ControlFile)**: the newly loaded ControlFile to update the 
+     existing one with.
+   - **adjacent_part(ModelFile)**: an existing ModelFile to use as an indicator
+     of where the contents should go.
+
 Example::
 
-   # import the fileloader
-   from ship.utils.fileloaders.fileloader import FileLoader
+   # import the tuflowloader
+   # I might change this so you can use the FileLoader, like the others, at
+   # some point, but this will always work
+   from ship.utils.fileloaders.tuflowloader import TuflowLoader
 
+   # Assume that we already have a loaded TuflowModel called tuflow
    tcf = tuflow.control_files['TCF']
    
-   ref_part = None
-   for part in tcf.parts:
-      if part.command.lower() == geometry control file:
-         ref_part = part
-   
-   loader = Fileloader()
-   load_args = {'command_line': 'Geometry Control File == ..\model\tgcfile2.tgc ! new file added"}
-   modelfile, contents = FileLoader.loadFile("C:/path/to/new/tgcfile2.tgc", load_args)
-   tuflow.addModelFile(ref_part, modelfile)
+   # Get the existing tgc file to use as a location reference in the tcf
+   # Remember that contains returns a list. We know there's only 1 so grab it
+   existing_tgc = tcf.contains(command='Geometry Control')[0]
 
-   TODO: To be continued ...
+   # Create a new ModelFile with the TuflowFactory
+   # Note that tcf is given as the parent file
+   line = "Geometry Control File == ..\\model\\test_tgc2.tgc"
+   tgc_part = factory.TuflowFactory.getTuflowPart(line, tcf.mainfile)[0]
+
+   # Load the contents of the new tgc ModelFile
+   loader = TuflowLoader()
+   tgc_control = loader.loadControlFile(tgc_part)
+   
+   # Add the ModelFile and ControlFile contents to the TuflowModel
+   tcf.addControlFile(tgc_part, tgc_control, after=existing_tgc)
+
+   # passes
+   assert(tgc_part in tuflow.control_files['TGC'].control_files)
+
+   # passes
+   test_part = tuflow.control_files['TGC'].contains(filename='shiptest_tgc2_v1_DTM_2m')
+   assert(len(test_part) == 1)
 
 
 #####################
@@ -392,7 +408,9 @@ of one of them::
    # the file will be put in
    tfile = GisFile(parent, **vars)
 
-Or if you prefer you can use one of the static methods in the TuflowFactory::
+Or if you prefer you can use one of the static methods in the TuflowFactory. If
+you do this you can either call the method that builds that specific part, or
+make life easier and just call getTuflowPart::
 
    from ship.tuflow import tuflowfactory as tf
    

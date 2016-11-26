@@ -4,6 +4,7 @@ import os
 import unittest
  
 from ship.tuflow import tuflowfilepart as tfp
+from ship.tuflow.tuflowfilepart import TuflowPart
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfactory as f
  
@@ -118,6 +119,26 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertFalse(self.gis.isInSeVals(se_vals))
         self.assertFalse(self.var.isInSeVals(se_vals))
         self.assertTrue(self.gis2.isInSeVals(se_vals))
+    
+    def test_TPresolvePlaceholder(self):
+        """Test return value of resolvePlaceholder in TuflowPart."""
+        data_line = "Read Materials File == Materials_<<s1>>.tmf ! A tmf comment"
+        vardata = f.TuflowFactory.getTuflowPart(data_line, self.tgc)[0]
+        var_line = "Cell Size == <<size>> ! a cell size comment"
+        varvar = f.TuflowFactory.getTuflowPart(var_line, self.tgc)[0]
+        
+        user_vars = {
+            's1': 'scen1', 'size': '10', 'e1': 'event1', 'anothervar': '2.5'
+        }
+        path = vardata.absolutePath(user_vars=user_vars)
+        self.assertEqual('c:\\path\\to\\model\\Materials_scen1.tmf', path)
+        var = TuflowPart.resolvePlaceholder(varvar.variable, user_vars)
+        var2 = varvar.resolvedVariable(user_vars)
+        var3 = varvar.resolvePlaceholder(varvar.variable, user_vars=user_vars)
+        self.assertEqual(var, '10')
+        self.assertEqual(var2, '10')
+        self.assertEqual(var3, '10')
+        
     
     def test_TFabsolutePath(self):
         """Test return value of absolutePath in TuflowFile."""

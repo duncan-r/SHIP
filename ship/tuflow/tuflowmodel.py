@@ -28,9 +28,6 @@
 
 from __future__ import unicode_literals
 
-import os
-import operator
-
 from ship.tuflow.tuflowfilepart import TuflowFile, TuflowKeyValue, TuflowUserVariable, TuflowModelVariable
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
@@ -197,6 +194,7 @@ class UserVariables(object):
         self.variable = {}
         self.scenario = {}
         self.event = {}
+        self._names = []
         self.has_cmd_args = False
     
     def add(self, filepart, vtype=None):
@@ -207,18 +205,82 @@ class UserVariables(object):
         
         Raises:
             TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.
+            ValueError - if filepart already exists.
         """
+        if filepart._variable_name in self._names:
+            raise ValueError('variable already exists with that name - use replace instead')
+
         if isinstance(filepart, TuflowUserVariable):
             self.variable[filepart.variable_name] = filepart
+            self._names.append(filepart.variable_name)
+
         elif isinstance(filepart, TuflowModelVariable):
             if filepart._variable_type == 'scenario':
+                if filepart._variable_name == 's1' or filepart._variable_name == 's':
+                    if 's' in self._names or 's1' in self._names:
+                        raise ValueError("variable already exists with that " +
+                                         "name - use replace instead\n" + 
+                                         "note 's' and 's1' are treated the same.")
                 self.scenario[filepart._variable_name] = filepart
                 self.variable[filepart._variable_name] = filepart
+                self._names.append(filepart.variable_name)
+
             else:
+                if filepart._variable_name == 'e1' or filepart._variable_name == 'e':
+                    if 'e' in self._names or 'e1' in self._names:
+                        raise ValueError("variable already exists with that " +
+                                         "name - use replace instead\n" + 
+                                         "note 'e' and 'e1' are treated the same.")
                 self.event[filepart._variable_name] = filepart
                 self.variable[filepart._variable_name] = filepart
+                self._names.append(filepart.variable_name)
         else:
             raise TypeError('filepart must be of type TuflowUserVariable or TuflowModelVariable')
+    
+    def replace(self, filepart):
+        """Replace an existing variable.
+        
+        Args:
+            filepart(TuflowModelVariables or TuflowUserVariable):  
+        
+        Raises:
+            TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.
+            ValueError - if filepart doesn't already exist.
+        """
+        
+        # Make sure it actually already exists.
+        # s & s1 and e & e1 are treated as the same name - same as tuflow
+        temp_name = filepart._variable_name
+        if temp_name == 's' or temp_name == 's1':
+            if not 's' in self._names and not 's1' in self._names:
+                raise ValueError("filepart doesn't seem to exist in UserVariables.")
+        elif temp_name == 'e' or temp_name == 'e1':
+            if not 'e' in self._names and not 'e1' in self._names:
+                raise ValueError("filepart doesn't seem to exist in UserVariables.")
+        elif not filepart._variable_name in self._names:
+            raise ValueError("filepart doesn't seem to exist in UserVariables.")
+        
+        # Delete the old one and call add() with the new one
+        if temp_name == 's' or temp_name == 's1':
+            if 's' in self.scenario.keys():
+                del self.scenario['s'] 
+                del self.variable['e']
+            if 's1' in self.scenario.keys():
+                del self.scenario['s1'] 
+                del self.variable['e1']
+                self.add(filepart, 'scenario')
+        if temp_name == 'e' or temp_name == 'e1':
+            if 'e' in self.scenario.keys():
+                del self.event['e'] 
+                del self.variable['e']
+            if 'e1' in self.scenario.keys():
+                del self.event['e1'] 
+                del self.variable['e1']
+                self.add(filepart, 'event')
+        else:
+            del self.variable[temp_name]
+            self.add(filepart)
+            
         
     def variablesToDict(self):
         """Get the values of the variables.
@@ -231,11 +293,10 @@ class UserVariables(object):
         Return:
             dict - with variables names as key and values as values.
         """
-#         scenario = [s.variable for s in self.scenario.values()]
-#         event = [e.variable for e in self.event.values()]
-#         variable = [v.variable for v in self.variable.values()]
-#         return {'scenario': scenario, 'event': event, 'variable': variable}
-        return self.variable
+        out = {}
+        for vkey, vval in self.variable.items():
+            out[vkey] = vval.variable
+        return out
 
         
     def seValsToDict(self):
@@ -259,10 +320,13 @@ class UserVariables(object):
             key(str): key for either the scenario, event, or variables dict.
         """
         if key in self.scenario.keys():
+            self._names.remove(self.scenario[key]._variable_name)
             del self.scenario[key]
         if key in self.event.keys():
+            self._names.remove(self.scenario[key]._variable_name)
             del self.event[key]
         if key in self.variable.keys():
+            self._names.remove(self.scenario[key]._variable_name)
             del self.variable[key]
     
     def get(self, key, vtype=None):

@@ -171,10 +171,6 @@ class HtbdyUnit (AUnit):
         """
         out_data = self._getHeadData()
         out_data.extend(self._getRowData()) 
-        
-        for o in out_data:
-            print (o)
-        
         return out_data
   
   
@@ -241,35 +237,33 @@ class HtbdyUnit (AUnit):
         if not rdt.ELEVATION in row_vals.keys():
             raise AttributeError('row_vals must contain an ELEVATION value')
         
-        elevation = row_vals[rdt.ELEVATION]
+        elevation = row_vals.get(rdt.ELEVATION, None)
         time = row_vals.get(rdt.TIME, None)
 
-        if not index is None and index < 0:
+        if index is not None and index < 0:
             raise IndexError('Index value cannot be less than zero')
         if index == 1 and time is None:
             raise ValueError('Cannot determine timestep with only 1 previous value')
         
         # If it's the same as the record length then we can set index to None
         # type and it will be appended instead of inserted.
-        num_rows = self.row_data['main'].getNumberOfRows()
+        num_rows = self.row_data['main'].numberOfRows()
         orig_index = index
         if index is None or index >= num_rows:
             index = num_rows
-        else:
-            t0 = self.row_data['main'].getDataValue(rdt.TIME, index)
-            if not time is None and time < t0:
-                raise ValueError('Time values must increase')
         
         if time is None:
-            t1 = self.row_data['main'].getDataValue(rdt.TIME, index-1)
-            t2 = self.row_data['main'].getDataValue(rdt.TIME, index-2)
+            temp = index
+            if index == num_rows: temp = index - 1
+            t1 = self.row_data['main'].dataValue(rdt.TIME, temp)
+            t2 = self.row_data['main'].dataValue(rdt.TIME, temp-1)
             time = t1 + (t1 - t2)
         
         if orig_index is None:
-            self.row_data['main'].addValue(rdt.TIME, time)
-            self.row_data['main'].addValue(rdt.ELEVATION, elevation)
+            self.row_data['main'].addRow({rdt.TIME: time, 
+                                          rdt.ELEVATION: elevation})
         else:
-            self.row_data['main'].setValue(rdt.TIME, time, index)
-            self.row_data['main'].setValue(rdt.ELEVATION, elevation, index)
+            self.row_data['main'].addRow({rdt.TIME: time, 
+                                             rdt.ELEVATION: elevation}, index)
     
         

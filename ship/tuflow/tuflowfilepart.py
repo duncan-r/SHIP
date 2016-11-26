@@ -79,7 +79,7 @@ class AssociatedParts(object):
     def observedActiveChange(self, status):
         """called by the parent when registered as an observer."""
         self.notify_active_changed(status)
-
+    
 
 class TuflowPart(object):
     """Interface for all TuflowPart's.
@@ -88,6 +88,7 @@ class TuflowPart(object):
     """
     
     def __init__(self, parent, obj_type, **kwargs):
+        self.TOP_CLASS = 'part'
         self.hash = uuid.uuid4()
         self.obj_type = obj_type
         self._active = kwargs.get('active', True)
@@ -202,6 +203,48 @@ class TuflowPart(object):
         return is_in
     
 
+    @staticmethod
+    def resolvePlaceholder(value, user_vars):
+        """Replaces the contents of a placeholder value with an actual value.
+        
+        Tuflow allows scenario, event and user defined variables to be used
+        as placeholders. This method will check for a given value against a 
+        dict of current variables and update the value if found.
+        
+        Example::
+            
+            # Original tcf command
+            Cell Size == <<myvar>>
+            Read Materials File == '..\Materials_<<s1>>.tmf
+            Timestep == <<unknownvar>>
+            
+            # user_vars  note that this includes all variable in UserVars in
+            # a single dict
+            user_vars = {
+                's1': 'scen1', 's2': 'scen2', 'e1': 'event1', 'e2': 'event2',
+                'myvar': '12'
+            }
+            
+            # The above commands would return the following values when the
+            # above user_vars are given.
+            Cell Size == 12
+            Read Materials File == '..\Materials_scen1.tmf
+            Timestep == <<unknownvar>>
+        
+        Args:
+            value: the value to check for a placeholder and replace.
+            user_vars(dict): see UserVariables.variablesTodict().
+        
+        Return:
+            the value, updated if found or the same if not.
+        """
+        for vkey in user_vars.keys():
+            temp = '<<' + vkey + '>>'
+            if vkey in value: 
+                value = value.replace(temp, user_vars[vkey])
+        return value
+
+
     def getPrintableContents(self, **kwargs):
         """
         """
@@ -237,6 +280,7 @@ class TuflowPart(object):
 class UnknownPart(TuflowPart):
     
     def __init__(self, parent, **kwargs):
+        self.TOP_CLASS = 'unknown'
         TuflowPart.__init__(self, parent, 'unknown', **kwargs)
         self.data = kwargs['data'] # raises keyerror
     
@@ -248,6 +292,7 @@ class UnknownPart(TuflowPart):
 class ATuflowVariable(TuflowPart):
     def __init__(self, parent, obj_type='variable', **kwargs):
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        self.TOP_CLASS = 'avariable'
         self.command = kwargs['command'] # raise valuerror
         self._variable = kwargs['variable'].strip()
         self.comment = kwargs.get('comment', '')
@@ -259,6 +304,13 @@ class ATuflowVariable(TuflowPart):
     @variable.setter
     def variable(self, value):
         self._variable = value
+    
+    def resolvedVariable(self, user_vars):
+        """Return the variable with any placeholder vars resolved to a value.
+        
+        For more information on user_vars see TuflowPart.resolvePlaceholder.
+        """
+        return TuflowPart.resolvePlaceholder(self.variable, user_vars)
 
 
 class TuflowVariable(ATuflowVariable):
@@ -396,28 +448,42 @@ class TuflowFile(TuflowPart, PathHolder):
     """
     
     def __init__(self, parent, obj_type='file', **kwargs):
-        """
-        hash(str): unique code for this object.
-        parent(str): unique hash code for this object.
-        kwargs(dict): the components of this parts command line:: 
+        """Constructor.
+
+        **kwargs: 
             - 'path': 'relative\path\to\file.ext'   
             - 'command': 'command string'  
             - 'comment': 'comment at the end of the command'
+        
+        Args:
+            hash(str): unique code for this object.
+            parent(str): unique hash code for this object.
+        
+        Raises:
+            keyError: if kwargs 'root', 'command', 'path' are not given.
         """
         root = kwargs['root'] # raises keyerror
         self.command = kwargs['command'] 
         path = kwargs['path']
         self.comment = kwargs.get('comment', '') 
-
-        self.all_types = None
-        self.has_own_root = False
-#         self.actual_name = None
-        
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
         PathHolder.__init__(self, path, root)
+        self.TOP_CLASS = 'file'
+        self.all_types = None
+        self.has_own_root = False
     
     
-    def absolutePathAllTypes(self):
+    def absolutePathAllTypes(self, user_vars=None):
+        """Get the absolute paths for all_types.
+        
+        If the file has other file types in all_types (e.g. .shp, shx, .dbf)
+        this will return the absolute paths for all of them.
+        
+        Args:
+            user_vars(dict): a dict containing variable placeholder values as
+                keys and the actual values as values. See 
+                TuflowPart.resolvePlaceholder() method for more information.
+        """
         rel_roots = self.getRelativeRoots([])
         paths = []
         if self.all_types: 
@@ -426,15 +492,31 @@ class TuflowFile(TuflowPart, PathHolder):
             all_types = [self.extension]
         for a in all_types:
             f = self.filename + '.' + a
-            paths.append(PathHolder.absolutePath(self, filename=f,
-                                               relative_roots=rel_roots))
+            fpath = PathHolder.absolutePath(self, filename=f, 
+                                            relative_roots=rel_roots)
+
+            # Replace any variable placeholders if given
+            if user_vars:
+                fpath = TuflowPart.resolvePlaceholder(fpath, user_vars)
+
+            paths.append(fpath)
         return paths
     
-    def absolutePath(self):
+    def absolutePath(self, user_vars=None):
         """Get the absolute path of this object.
+
+        Args:
+            user_vars(dict): a dict containing variable placeholder values as
+                keys and the actual values as values. See 
+                TuflowPart.resolvePlaceholder() method for more information.
         """
         rel_roots = self.getRelativeRoots([])
         abs_path = PathHolder.absolutePath(self, relative_roots=rel_roots)
+
+        # Replace any variable placeholders if given
+        if user_vars:
+            abs_path = TuflowPart.resolvePlaceholder(abs_path, user_vars)
+
         return abs_path
     
     def getRelativeRoots(self, roots):
@@ -561,7 +643,6 @@ class DataFile(TuflowFile):
     def __init__(self, parent, **kwargs):
         TuflowFile.__init__(self, parent, 'data', **kwargs) 
         
-        
         for d in DataFile.DATA_TYPES:
             if self.extension in DataFile.DATA_TYPES[d]:
                 self.all_types = DataFile.DATA_TYPES[d]
@@ -573,6 +654,7 @@ class TuflowLogic(TuflowPart):
     
     def __init__(self, parent, obj_type='logic', **kwargs):
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        self.TOP_CLASS = 'logic'
         self.parts = []
         self.group_parts = [[]]
         self.terms = [[]]
@@ -586,37 +668,12 @@ class TuflowLogic(TuflowPart):
         self.add_callback = None
         """Function called when a TuflowPart is added."""
         
-#         self.observers = []
-#         """This is a poor man's observer interface.
-#         
-#         If an object wasnt to be notified of key internal changes, such as the
-#         Logic being activated/deactivated, then can add themselves to this
-#         list.
-#         
-#         If an object is added to this list it should implement the following
-#         methods:
-# 
-#             - observedActiveChange(bool)
-#         """
-        
         self.check_sevals = False
         """Whether to check the scenarion event values."""
         
         self.END_CLAUSE = 'End'
         """Override with with whatever the end statement is (e.g. 'End If')"""
     
-#     @property 
-#     def active(self):
-#         return self._active
-#     
-#     @active.setter
-#     def active(self, value):
-#         if value == False:
-#             value = False
-#         else:
-#             value = True
-#         for o in self.observers:
-#             o.observedActiveChange(value)
     
     def addPart(self, part, group=-1, **kwargs):
         """Add a new TuflowPart.
@@ -751,7 +808,6 @@ class TuflowLogic(TuflowPart):
             bool - True if the term is part of one of the clauses in this 
                 TuflowLogic and the part is within that clause; Else False.
         """
-#         hash = part.hash if self.isTuflowPart(part) else part
         for i, terms in enumerate(self.terms):
             for t in terms:
                 if t == term:
@@ -919,7 +975,6 @@ class IfLogic(TuflowLogic):
         self.group_parts.append([])
     
         
-# class BlockLogic(TuflowLogic): 
 class BlockLogic(TuflowLogic): 
     """For any logic that uses a 'Define something'.
     

@@ -137,6 +137,67 @@ access the data it contains in the following way::
 For additional information see the docstrings for the class you need in the 
 tuflowfilepart.py module.
 
+User set variables
+==================
+
+It is possible to set variables within the control file of a Tuflow model, or
+in fact hand them in on the command line as scenario/event values. when you
+request a TuflowVariable.variable or TuflowFile.filename/absolutePath/etc it
+will return the value as-read from the control file. Put another way, the SHIP
+library doesn't automatically resolve these variables and placeholders when 
+reading in the data. This might seem like a limitation, but it's actually quite
+powerfull as it lets you change the variable setup in a loaded model and be
+able to see the impacts without saving and reloading the model.
+
+The variables are stored in the UserVariables class in ship.tuflow.tuflowmodel.py.
+To get a dict of all of the currently set variables in a TuflowModel you call
+the variablesToDict() method of UserVariables. It will return a dict like::
+
+   user_vars = {
+      's1': 'scen1', 's2': 'scen2', 'e1': 'event1', 'myvar1': '10', 'myvar2': '1.5'
+   }
+
+Note that this is a mix of all the currently set scenario and event variables
+and the user set variable (i.e. using 'Set variable myvar == 10' in a control
+file).
+
+There are a couple of ways that you can retrieve te resolved value rather than
+the one with the placeholder in:
+   - You could, of course, just get the value and replace it yourself.
+   - Some methods in TuflowPart take a user_vars argument. If you give the dict
+     discussed above it will resolve any placeholders for you.
+   - There is a staticmethod in TuflowPart that you can call and it will 
+     resolve the value.
+     
+The first one is self explanatory. The second one can be found in methods like
+TuflowFile.absolutePath and TuflowVariable.resolveVariable. The third approach
+is great if you have a TuflowPart and want to resolve one of it's values::
+
+   # Assume that we have ControlFile called tgc already
+   # Also assume we are using the user_vars dict from above
+   for part in tgc.parts:
+      
+      # Note: TOP_CLASS is set in the main superclasses to save having to 
+      # import the different TuflowPart's and use isinstance all over the place.
+      # They are 'part' = TuflowPart, 'unknown' == UnknownPart, 
+      # 'avariable' == ATuflowVariable, 'file' == TuflowFile, 'logic' == TuflowLogic
+      if part.TOP_CLASS == 'avariable':
+         print (part.variable)
+         print (part.resolvePlaceholder(part.variable, user_vars)) 
+
+      elif part.TOP_CLASS == 'file':
+         print (part.filename)
+         print (part.resolvePlaceholder(part.filename, user_vars)) 
+
+The resolvePlaceholder method is also a staticmethod which means that you can
+check any value with it if you want::
+
+   from ship.tuflow.tuflowfilepart import TuflowPart
+   
+   # Prints "_2.5_"
+   print (TuflowPart.resolvePlaceholder("_<<myvar>>_", {"myvar": "2.5"})
+
+
 ###########################
 Additional TuflowFile stuff
 ###########################
