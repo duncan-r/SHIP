@@ -22,10 +22,10 @@ Contribute
 If you use (or are thinking of using) this library and believe there are some
 things that you would like to add to it, please do! If you have any questions 
 I'm more than happy to discuss how aspects of it work. Over time I plan to 
-add some stuff on the more intricate makeup of the structure here as well.
+add more details on the design here as well.
 
 If you plan to work on something perhaps let me know so we don't have repeated
-effort, or overlapping approaches. If you'd like to contribute something, but
+effort, or overlapping work. If you'd like to contribute something, but
 you don't know what I have a long list of things like I'd like to get done.
 
 
@@ -37,7 +37,7 @@ Main Requirements
 #################
 
 The most obvious missing feature at the moment is FMP unit coverage. Focus up
-to this point has been getting the API reasonably solide and making sure that
+to this point has been getting the API reasonably solid and making sure that
 the foundations are in place. The amount of FMP units currently included is
 therefore a bit limited (partly by design and not wanting to re-write them
 all after changes). Normally we will add new units when they are needed for
@@ -94,6 +94,14 @@ is a "tox.ini" file in the main folder. If you do::
    $ tox
 
 the tox.ini file should take care of the rest.
+
+There is also a set of integration tests in the 'integration_tests' folder. 
+These deal with more realistic use of the API (loading actual model data and
+changing some stuff to see what happens). They don't use the UnitTest
+framework, they're just a few modules with a __main__ module. When you update
+the library they will almost certainly fail until updated themselves. Probably
+don't worry too much about them when you add content; I'll have a look at them
+later.
 
 
 #######

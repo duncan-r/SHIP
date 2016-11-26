@@ -1,8 +1,8 @@
 Installing the Library
 ======================
 
-Using Pip:
-##########
+Using Pip
+#########
 
 The SHIP Library can be easily installed with pip. It is not hosted on Pip's Cheesewheel so you
 need to either install directly from GitHub with Pip, or clone the repo and
@@ -17,6 +17,7 @@ Install from GitHub with Pip. You can change develop to whatever branch you want
    pip install git+https://github.com/duncan-r/SHIP.git@develop
 
 Clone the library build locally::
+
    $ git clone https://github.com/duncan-r/SHIP.git
    $ cd SHIP
    $ git checkout develop

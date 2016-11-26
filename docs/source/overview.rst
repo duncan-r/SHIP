@@ -40,6 +40,8 @@ Flood Modeller
      Flood Modeller .dat or .ied file.  
    - :ref:`rowdatacollection-top`: class containing all of the variable length 
      data in AUnit types.
+   - :ref:`unitdescriptions-top`: Summary of all of the currently supported units
+     in the API and their head_data and row_data keys.
 
 Tuflow
 ======

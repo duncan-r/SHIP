@@ -32,8 +32,8 @@ class JunctionUnit(AUnit):
     '''Class for dealing with Junction units in the .dat file.'''
 
     # Class constants
-    UNIT_TYPE = 'Junction'
-    UNIT_CATEGORY = 'Junction'
+    UNIT_TYPE = 'junction'
+    UNIT_CATEGORY = 'junction'
     FILE_KEY = 'JUNCTION'
     FILE_KEY2 = None
     

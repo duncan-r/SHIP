@@ -127,7 +127,7 @@ class OutfallUnit(OrificeUnit):
 
     # Class constants
     UNIT_TYPE = 'outfall'
-    UNIT_CATEGORY = 'outfall'
+    UNIT_CATEGORY = 'orifice'
     FILE_KEY = 'OUTFALL'
     FILE_KEY2 = None
     
@@ -151,8 +151,8 @@ class FloodReliefUnit(OrificeUnit):
     '''
 
     # Class constants
-    UNIT_TYPE = 'relief_arch'
-    CATEGORY = 'relief_arch'
+    UNIT_TYPE = 'flood_relief'
+    CATEGORY = 'orifice'
     FILE_KEY = 'FLOOD RELIEF'
     FILE_KEY2 = None
     
