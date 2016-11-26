@@ -24,7 +24,6 @@ from ship.tuflow.data_files import datafileloader as dfl
 # Enum for accessing TuflowFilePart types (GIS, MODEL, RESULT, VARIABLE, DATA)
 from ship.tuflow import FILEPART_TYPES as ft
 
-
 def tuflowFileExample():
     """Find all gis and bc database files referenced by a tuflow model.
     
@@ -37,41 +36,45 @@ def tuflowFileExample():
     loader = fl.FileLoader()
     tuflow_model = loader.loadFile(tcf_file)
     
-    # Get file names and absolute paths of all gis files referenced by the model
-    # First we get all GIS type files in the TuflowModel and to avoid getting the
-    # same type twice, caused by the same GIS file referenced in two locations
-    # in the model control files, we set no_duplicates=True.
-    gis_files = tuflow_model.getFiles(file_type=ft.GIS, no_duplicates=True)
+    data_files = []
     names = []
     paths = []
-    for g in gis_files:
-        names.append(g.getFileNameAndExtension())
-        paths.append(g.getAbsolutePath())
+    # Loop through the different control files fetching the GIS and DATA files.
+    for ckey, cfile in tuflow_model.control_files.items():
+
+        # Get file names and absolute paths of all gis files referenced by the model
+        gis_files = cfile.files(filepart_type=ft.GIS)
+        for g in gis_files:
+            names.append(g.filenameAndExtension())
+            paths.append(g.absolutePath())
+
+        # Get the data files objs referenced by the model.
+        # These are files that point to additional data (tmf, bcdbase, 1d_xs, etc)
+        data_files = cfile.files(filepart_type=ft.DATA)
+
 
     gis_combined = dict(zip(names, paths))
     
-    # Get the data files objs referenced by the model.
-    # These are files that point to additional data (tmf, bcdbase, 1d_xs, etc)
-    bc_combined = []
-    data_objs = tuflow_model.getFiles(file_type=ft.DATA, no_duplicates=True)
     
     # Loop through the data_objs and extract the names and file sources for 
     # each of the BC Database type files
-    for data in data_objs:
+    bc_combined = []
+    for data in data_files:
         if data.command.upper() == 'BC DATABASE':
             
             bc = dfl.loadDataFile(data)
-            names = bc.getDataEntryAsList(bc.keys.NAME)
-            sources = bc.getDataEntryAsList(bc.keys.SOURCE)
-            bc_combined.append((data.getFileNameAndExtension(), dict(zip(names, sources))))
+            names = bc.dataObjectAsList(bc.keys.NAME)
+            sources = bc.dataObjectAsList(bc.keys.SOURCE)
+            bc_combined.append((data.filenameAndExtension(), dict(zip(names, sources))))
         
-    print 'GIS files in model:'
+    print ('GIS files in model:')
     for name, path in gis_combined.items(): 
-        print name + ':\n' + path
-    print '\nBC Database files in model:'
+        print (name + ':\n' + path)
+    print ('\nBC Database files in model:')
     for b in bc_combined:
-        print b[0]
-        for x in b[1].values(): print x
+        print (b[0])
+        for x in b[1].values(): 
+            print (x)
 
 
 

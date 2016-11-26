@@ -97,7 +97,7 @@ class RowDataCollection(object):
         self._max = len(self._collection)
     
     
-    def indexOfDataObj(self, key):
+    def indexOfDataObject(self, key):
         """Get the index of the DataObject with data_type equal to key.
         """
         for i, c in enumerate(self._collection):
@@ -121,7 +121,7 @@ class RowDataCollection(object):
             for i in range(0, self.row_count):
                 yield [o.getValue(i) for o in self._collection]
         else:
-            index = self.indexOfDataObj(key)
+            index = self.indexOfDataObject(key)
             for i in range(0, self.row_count):
                 yield self._collection[index].getValue(i)
         
@@ -184,7 +184,7 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
     
 
-    def dataObjAsList(self, key):
+    def DataObjectAsList(self, key):
         """Returns a DataObject as a list.
 
         This will return the row_collection DataObject referenced by the key

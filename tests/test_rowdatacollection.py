@@ -104,11 +104,11 @@ class RowDataCollectionTests(unittest.TestCase):
         return True, '' 
      
     
-    def test_indexOfDataObj(self):
+    def test_indexOfDataObject(self):
         """Should return the corrent index of a particular ADataObject in colleciton."""
-        index1 = self.testcol.indexOfDataObj(rdt.CHAINAGE)
-        index2 = self.testcol.indexOfDataObj(rdt.ELEVATION)
-        index3 = self.testcol.indexOfDataObj(rdt.ROUGHNESS)
+        index1 = self.testcol.indexOfDataObject(rdt.CHAINAGE)
+        index2 = self.testcol.indexOfDataObject(rdt.ELEVATION)
+        index3 = self.testcol.indexOfDataObject(rdt.ROUGHNESS)
         self.assertEquals(index1, 0)
         self.assertEquals(index2, 1)
         self.assertEquals(index3, 2)
@@ -156,10 +156,10 @@ class RowDataCollectionTests(unittest.TestCase):
         for i, o in enumerate(obj):
             self.assertEqual(o, test_vals[i])
     
-    def test_dataObjAsList(self):
+    def test_DataObjectAsList(self):
         """Should return the contents of a DataObject as a list."""
         test_list = [0.00, 3.65]
-        obj_list = self.testcol.dataObjAsList(rdt.CHAINAGE)
+        obj_list = self.testcol.DataObjectAsList(rdt.CHAINAGE)
         self.assertListEqual(obj_list, test_list)
     
     def test_toList(self):

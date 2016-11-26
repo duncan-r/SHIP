@@ -83,7 +83,6 @@ class ADataFileObject(object):
         return self.row_collection.getDataObject(key)
 
 
-#     def getDataEntryAsList(self, key):
     def dataObjectAsList(self, key):
         """Returns the a list of the data associated with the given key.
         
@@ -103,7 +102,7 @@ class ADataFileObject(object):
             raise KeyError ('Key %s does not match any avialable' % (key))
         
         outlist = []
-        data = self.row_collection.getDataObject(key)
+        data = self.row_collection.dataObject(key)
         outlist = [d for d in data]
 
         return outlist

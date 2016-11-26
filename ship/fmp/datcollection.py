@@ -132,7 +132,6 @@ class DatCollection(object):
         """
         if not isinstance(unit, AUnit):
             raise AttributeError ('Given unit is not of type AUnit')
-        
         update_node_count = kwargs.get('update_node_count', True)
         ics = kwargs.get('ics', {})
         

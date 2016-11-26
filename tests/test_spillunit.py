@@ -53,10 +53,10 @@ class test_SpillUnit(unittest.TestCase):
         
         self.assertEqual(s.row_data['main'].row_count, 3)
         
-        self.assertListEqual(s.row_data['main'].dataObjAsList(rdt.CHAINAGE), self.chainage)
-        self.assertListEqual(s.row_data['main'].dataObjAsList(rdt.ELEVATION), self.elevation)
-        self.assertListEqual(s.row_data['main'].dataObjAsList(rdt.EASTING), self.easting)
-        self.assertListEqual(s.row_data['main'].dataObjAsList(rdt.NORTHING), self.northing)
+        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.CHAINAGE), self.chainage)
+        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.ELEVATION), self.elevation)
+        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.EASTING), self.easting)
+        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.NORTHING), self.northing)
         
 
     def test_addDataRow(self):
@@ -89,6 +89,6 @@ class test_SpillUnit(unittest.TestCase):
             spill.addRow(args)
             
         # Check we catch non increasing chainage
-        args = {rdt.CHAINAGE: 5.0, rdt.ELEVATION: 37.2}
+        args = {rdt.CHAINAGE: 5.1, rdt.ELEVATION: 37.2}
         with self.assertRaises(ValueError):
             spill.addRow(args, index=1)

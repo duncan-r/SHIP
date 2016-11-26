@@ -172,7 +172,7 @@ class InitialConditionsUnit (AUnit):
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
-        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        labels = self.row_data['main'].DataObjectAsList(rdt.LABEL)
         try:
             index = labels.index(name)
         except ValueError:
@@ -228,7 +228,7 @@ class InitialConditionsUnit (AUnit):
             self._name_types[row_vals[rdt.LABEL]] = [unit_type]
 
         # Don't add the same ic's in twice
-        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        labels = self.row_data['main'].DataObjectAsList(rdt.LABEL)
         if row_vals[rdt.LABEL] in labels:
             return self._node_count
 
@@ -252,7 +252,7 @@ class InitialConditionsUnit (AUnit):
         Raises:
             KeyError - if section_name does not exist.
         """
-        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        labels = self.row_data['main'].DataObjectAsList(rdt.LABEL)
         try:
             index = labels.index(unit_name)
         except ValueError:
@@ -290,7 +290,7 @@ class InitialConditionsUnit (AUnit):
         Return:
             dict - containing the values for the requested row.
         """
-        labels = self.row_data['main'].dataObjAsList(rdt.LABEL)
+        labels = self.row_data['main'].DataObjectAsList(rdt.LABEL)
         index = labels.index(section_name)
         
         if index == -1:

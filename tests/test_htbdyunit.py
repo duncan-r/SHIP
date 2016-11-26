@@ -59,8 +59,8 @@ class test_HtbdyUnit(unittest.TestCase):
         h.readUnitData(self.htbdy_data, 0) 
         
         self.assertEqual(h.row_data['main'].row_count, 11)
-        self.assertListEqual(h.row_data['main'].dataObjAsList(rdt.TIME), self.time)
-        self.assertListEqual(h.row_data['main'].dataObjAsList(rdt.ELEVATION), self.elevation)
+        self.assertListEqual(h.row_data['main'].DataObjectAsList(rdt.TIME), self.time)
+        self.assertListEqual(h.row_data['main'].DataObjectAsList(rdt.ELEVATION), self.elevation)
         
         
     def test_getData(self):
@@ -103,16 +103,16 @@ class test_HtbdyUnit(unittest.TestCase):
         ttest1 = [0.0, 1.0, 2.0, 3.0, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
         etest1 = [1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0]
         h.addRow(row_vals={rdt.ELEVATION: 5.0, rdt.TIME: 4.5}, index=5)
-        outt = h.row_data['main'].dataObjAsList(rdt.TIME)
-        oute = h.row_data['main'].dataObjAsList(rdt.ELEVATION)
+        outt = h.row_data['main'].DataObjectAsList(rdt.TIME)
+        oute = h.row_data['main'].DataObjectAsList(rdt.ELEVATION)
         self.assertListEqual(ttest1, outt)
         self.assertListEqual(etest1, oute)
 
         ttest2 = [0.0, 1.0, 2.0, 3.0, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]
         etest2 = [1.0, 2.0, 3.0, 4.0, 5.0, 5.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 5.0]
         h.addRow(row_vals={rdt.ELEVATION: 5.0})
-        outt = h.row_data['main'].dataObjAsList(rdt.TIME)
-        oute = h.row_data['main'].dataObjAsList(rdt.ELEVATION)
+        outt = h.row_data['main'].DataObjectAsList(rdt.TIME)
+        oute = h.row_data['main'].DataObjectAsList(rdt.ELEVATION)
         self.assertListEqual(ttest2, outt)
         self.assertListEqual(etest2, oute)
         

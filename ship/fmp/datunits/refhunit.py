@@ -84,7 +84,7 @@ class RefhUnit(AUnit):
             'catchment_area': HeadDataItem(0.00, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=2),
             'saar': HeadDataItem(0, '{:>10}', 4, 1, dtype=dt.INT),
             'urbext': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
-            'season': HeadDataItem('WINTER', '{:>10}', 4, 3, dtype=dt.CONSTANT, choices=('WINTER', 'SUMMER')),
+            'season': HeadDataItem('DEFAULT', '{:>10}', 4, 3, dtype=dt.CONSTANT, choices=('DEFAULT', 'WINTER', 'SUMMER')),
             'published_report': HeadDataItem('DLL', '{:>10}', 4, 4, dtype=dt.CONSTANT, choices=('DLL', 'REPORT')),
             
             # Urban - only used if 'urban' == 'URBANREFH'

@@ -52,6 +52,7 @@ class IsisUnitFactory(object):
     """
     available_units = (
         isisunit.HeaderUnit,
+        isisunit.CommentUnit,
         riverunit.RiverUnit, 
         refhunit.RefhUnit,
         icu.InitialConditionsUnit,

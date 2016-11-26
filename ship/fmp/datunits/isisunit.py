@@ -166,7 +166,7 @@ class AUnit(object):
         return object_copy
     
     
-    def rowDataObj(self, key, rowdata_key='main'):
+    def rowDataObject(self, key, rowdata_key='main'):
         """Returns the row data object as a list.
  
         This will return the row_collection data object referenced by the key
@@ -331,10 +331,10 @@ class AUnit(object):
         """
         details = self._getAdjacentDataObjDetails(data_obj, value, index)
         if details['prev_value']:
-            if not value > details['prev_value']:
+            if not value >= details['prev_value']:
                 raise ValueError('CHAINAGE must be > prev index and < next index.')
         if details['next_value']:
-            if not value < details['next_value']:
+            if not value <= details['next_value']:
                 raise ValueError('CHAINAGE must be > prev index and < next index.')
     
     

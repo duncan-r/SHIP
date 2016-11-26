@@ -52,8 +52,8 @@ def iefExample():
     ief.setValue('2DFile', new_tcf)
     
     # Update the filename and write contents to disk
-    ief.path_holder.setFileName(fname + '_Updated')
-    ief_path = ief.path_holder.getAbsolutePath()
+    ief.path_holder.filename += '_Updated'
+    ief_path = ief.path_holder.absolutePath()
     ief.write(ief_path)
 
 

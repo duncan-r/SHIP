@@ -2,8 +2,7 @@
 from ship.utils.fileloaders import fileloader as fl
 from ship.utils import filetools
 # Used to accessing data stored in isis.datunits
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 def trimRiverSections():
     """Deactivates all parts of isis/fmp river sections outside bankmarkers.
@@ -16,19 +15,19 @@ def trimRiverSections():
     Saves the updated file to disk with _Updated appended to the filename.
     """
     # Load the dat file into a new DatCollection object (isis_model)
-    dat_file = r'C:\path\to\an\isis-fmp\datfile.dat'
+    dat_path = r'C:\path\to\an\isis-fmp\datfile.dat'
     loader = fl.FileLoader()
-    isis_model = loader.loadFile(dat_file)
+    isis_model = loader.loadFile(dat_path)
     
-     # Get the river sections from the model and loop through them
-    rivers = isis_model.getUnitsByCategory('River')
+    # Get the river sections from the model and loop through them
+    rivers = isis_model.unitsByCategory('river')
     for river in rivers:
         
         # Get the bankmarker locations as a list for this river section
-        bvals = river.getRowDataAsList(rdt.BANKMARKER)
+        bvals = river.row_data['main'].dataObjectAsList(rdt.BANKMARKER)
         
         # Get the DataObject for deactivation because we want to update it
-        deactivation_data = river.getRowDataObject(rdt.DEACTIVATION)
+        deactivation_data = river.row_data['main'].dataObjectAsList(rdt.DEACTIVATION)
         
         # Loop through the bankmarker values and each time we find one that's 
         # set (not False) we set the deactivation value at that index equal to 
@@ -40,9 +39,9 @@ def trimRiverSections():
                 deactivation_data.setValue('RIGHT', i)
     
     # Update the filename and write contents to disk
-    isis_model.path_holder.setFileName(fname + '_Updated')
-    dat_path = ief.path_holder.getAbsolutePath()
-    isis_model.write(dat_path)
+    isis_model.path_holder.filename = isis_model.path_holder.filename + '_Updated'
+    out_path = isis_model.path_holder.absolutePath()
+    isis_model.write(out_path)
     
 
 

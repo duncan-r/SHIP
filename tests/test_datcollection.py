@@ -117,9 +117,9 @@ class IsisUnitCollectionTest(unittest.TestCase):
 
         # Make sure initial conditions have been updated
         ic = self.dat.unit('initial_conditions')
-        ic_label = ic.row_data['main'].dataObjAsList(rdt.LABEL)
-        ic_elev = ic.row_data['main'].dataObjAsList(rdt.ELEVATION)
-        ic_flow = ic.row_data['main'].dataObjAsList(rdt.FLOW)
+        ic_label = ic.row_data['main'].DataObjectAsList(rdt.LABEL)
+        ic_elev = ic.row_data['main'].DataObjectAsList(rdt.ELEVATION)
+        ic_flow = ic.row_data['main'].DataObjectAsList(rdt.FLOW)
         self.assertListEqual(ic_label, ['riv1', 'riv2', 'riv3'], 'Initial conditions label update error')
         self.assertListEqual(ic_flow, [3.0, 0.0, 0.0], 'Initial conditions flow update error')
         self.assertListEqual(ic_elev, [10.0, 0.0, 0.0], 'Initial conditions elevation update error')
@@ -148,7 +148,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         for r in rivers:
             self.assertIn(r._name, test_unames)
         ic = self.dat.unit('initial_conditions')
-        ic_label = ic.row_data['main'].dataObjAsList(rdt.LABEL)
+        ic_label = ic.row_data['main'].DataObjectAsList(rdt.LABEL)
         self.assertListEqual(ic_label, ['riv1', 'riv3'])
         
         # Remove by name
@@ -160,7 +160,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         for r in rivers:
             self.assertIn(r._name, test_unames)
         ic = self.dat.unit('initial_conditions')
-        ic_label = ic.row_data['main'].dataObjAsList(rdt.LABEL)
+        ic_label = ic.row_data['main'].DataObjectAsList(rdt.LABEL)
         self.assertListEqual(ic_label, ['riv1'])
         
 

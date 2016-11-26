@@ -21,8 +21,7 @@
 
 import math
 from ship.utils.fileloaders import fileloader as fl
-from ship.isis.datunits import ROW_DATA_TYPES as rdt
-
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 def crossSectionWidth():
     """Calculate river and bridge cross section widths.
@@ -41,12 +40,12 @@ def crossSectionWidth():
     section_details = []
 
     # Get the river sections from the model and loop through them
-    rivers = isis_model.getUnitsByCategory('River')
+    rivers = isis_model.unitsByCategory('river')
     for river in rivers:
         
         # Get the width and deactivation values form the river section
-        xvals = river.getRowDataAsList(rdt.CHAINAGE)
-        dvals = river.getRowDataAsList(rdt.DEACTIVATION)
+        xvals = river.row_data['main'].dataObjectAsList(rdt.CHAINAGE)
+        dvals = river.row_data['main'].dataObjectAsList(rdt.DEACTIVATION)
         
         x_start = xvals[0]
         x_end = xvals[-1]
@@ -65,16 +64,16 @@ def crossSectionWidth():
         full_width = math.fabs(xvals[-1] - xvals[0])
         active_width = math.fabs(x_end - x_start)
         
-        section_details.append({'Name': river.name, 'Unit': river.CATEGORY, 
+        section_details.append({'Name': river.name, 'Unit': river.UNIT_CATEGORY, 
                                 'Full Width': full_width,
                                 'Active Width': active_width, 
                                 'Has deactivation': has_deactivation}
                               )
     
     # Get the widths of the bridges too
-    bridges = isis_model.getUnitsByCategory('Bridge')
+    bridges = isis_model.unitsByCategory('bridge')
     for bridge in bridges:
-        xvals = bridge.getRowDataAsList(rdt.CHAINAGE)
+        xvals = bridge.row_data['main'].dataObjectAsList(rdt.CHAINAGE)
         
         full_width = math.fabs(xvals[-1] - xvals[0])
         
@@ -88,7 +87,7 @@ def crossSectionWidth():
                               )
     
     for section in section_details:
-        print section
+        print (section)
 
 
 

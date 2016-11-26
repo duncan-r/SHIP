@@ -10,7 +10,8 @@ For more information containing an overview of the setup of the library,
 some usage examples and complete API docs you can clone the repo and build the 
 Sphynx documentation provided in the docs folder, or if you prefer you can view
 the [SHIP Docs](http://duncan-r.github.io/SHIP/index.html) hosted here on 
-GitHub.
+GitHub. There's also some example scripts that use the API available in the
+[examples folder](https://github.com/duncan-r/SHIP/tree/develop/examples).
 
 Notice
 ------

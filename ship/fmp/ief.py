@@ -304,7 +304,7 @@ class Ief(object):
                 contents.append('EventData=' + d['file'])
 
         # Now throw in everything else
-        for key, value in self.event_details.iteritems():
+        for key, value in self.event_details.items():
             if not key in event_start:
                 contents.append(key + '=' + value)
         
