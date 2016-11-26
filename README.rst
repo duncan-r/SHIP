@@ -8,20 +8,22 @@ Python as easy as possible.
 
 For more information containing an overview of the setup of the library,
 some usage examples and complete API docs you can clone the repo and build the 
-Sphynx documentation provided in the docs folder, or view it on GitHub under 
-the Wiki tab.
+Sphynx documentation provided in the docs folder, or if you prefer you can view
+the [SHIP Docs](http://duncan-r.github.io/SHIP/index.html) hosted here on 
+GitHub.
 
 Notice
 ------
 
 This library has had a major overhaul and cleanup. The 'develop' branch is now
 set to the new version. This is in-line with the 'getout clause' that was here
-before stating that everything was very beta and liable to change. now this has
+before stating that everything was very beta and liable to change. Now this has
 happened there will hopefully not be any more major breaking changes (without
 a decent deprecation period). Note that this is not completely true for the
 datafileloader and datafileobject modules, which still need overhauling. The
 good news is the documentation is now a lot better, so it should be easier to
-see what's going on.
+see what's going on. You can see the documentation for the project here:
+
 
 If you need to continue using the older (0.2.5) version there is a branch
 called 'release_0-2-5' available on the repo. If you want the latest version 
