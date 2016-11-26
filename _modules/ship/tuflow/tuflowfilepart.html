@@ -1,0 +1,1244 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.tuflow.tuflowfilepart &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.tuflow.tuflowfilepart</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.tuflow.tuflowfilepart</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">     Contains all of the TuflowPart type classes used to store the data within</span>
+<span class="sd">     Tuflow control files.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd"> Created:  </span>
+<span class="sd">     20 Nov 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">ship.utils.filetools</span> <span class="k">import</span> <span class="n">PathHolder</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="c1"># from ship.tuflow.tuflowmodel import EventSourceData</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="AssociatedParts"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.AssociatedParts">[docs]</a><span class="k">class</span> <span class="nc">AssociatedParts</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stores associate TuflowPart references.</span>
+<span class="sd">    </span>
+<span class="sd">    Every TuflowPart will hold a copy of this class. It is used to store </span>
+<span class="sd">    references to any other TuflowPart&#39;s that it has an association with.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sibling_prev</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sibling_next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_active_changed</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;notify_active&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> 
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+    
+    <span class="nd">@parent</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">logic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span>
+    
+    <span class="nd">@logic</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logic</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AssociatedParts.observedActiveChange"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.AssociatedParts.observedActiveChange">[docs]</a>    <span class="k">def</span> <span class="nf">observedActiveChange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;called by the parent when registered as an observer.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_active_changed</span><span class="p">(</span><span class="n">status</span><span class="p">)</span></div></div>
+    
+
+<div class="viewcode-block" id="TuflowPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart">[docs]</a><span class="k">class</span> <span class="nc">TuflowPart</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interface for all TuflowPart&#39;s.</span>
+<span class="sd">    </span>
+<span class="sd">    All components containing data stored by ControlFile subclass this one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">=</span> <span class="s1">&#39;part&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_type</span> <span class="o">=</span> <span class="n">obj_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tpart_type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">associates</span> <span class="o">=</span> <span class="n">AssociatedParts</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">notify_active</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parentActiveChanged</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;logic&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot;This is a poor man&#39;s observer interface.</span>
+<span class="sd">        </span>
+<span class="sd">        If an object wants to be notified of key internal changes, such as the</span>
+<span class="sd">        Logic being activated/deactivated, then can add themselves to this</span>
+<span class="sd">        list.</span>
+<span class="sd">        </span>
+<span class="sd">        If an object is added to this list it should implement the following</span>
+<span class="sd">        methods:</span>
+
+<span class="sd">            - observedActiveChange(bool)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">_parentActiveChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>    
+        <span class="sd">&quot;&quot;&quot;Called when self.associated observedActiveChanged is called.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">status</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span>
+
+    <span class="nd">@active</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">observedActiveChange</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="TuflowPart.allParents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.allParents">[docs]</a>    <span class="k">def</span> <span class="nf">allParents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all the hash codes of all parents to this object.</span>
+<span class="sd">        </span>
+<span class="sd">        Recursive method to search up through all of the parents - in the</span>
+<span class="sd">        associates object - and retrieve their hash codes.</span>
+<span class="sd">        </span>
+<span class="sd">        The parent hash codes will be returned in ascending order. I.e. the</span>
+<span class="sd">        immediate parent will be at index 0, then it&#39;s parent, and so on.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            parent_list arg is used to pass the found parents through the</span>
+<span class="sd">            recursion. When calling this method you should probably always </span>
+<span class="sd">            provide an empty list.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list -  containing the hash codes for every parent of the called</span>
+<span class="sd">            TuflowPart in assending order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parent_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+            <span class="n">parent_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">allParents</span><span class="p">(</span><span class="n">parent_list</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">parent_list</span></div>
+        
+<div class="viewcode-block" id="TuflowPart.isInSeVals"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.isInSeVals">[docs]</a>    <span class="k">def</span> <span class="nf">isInSeVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that this TuflowPart or it&#39;s parents are inside given logic terms.</span>
+<span class="sd">        </span>
+<span class="sd">        The parents must be checked when a part doesn&#39;t have a reference to any</span>
+<span class="sd">        logic because the part may exists inside a control file that does have</span>
+<span class="sd">        a logic clause. In this situation the part would not have any logic</span>
+<span class="sd">        directly assigned to it, but would be within the logical clause by</span>
+<span class="sd">        virtue of it&#39;s parent being inside it...</span>
+<span class="sd">                </span>
+<span class="sd">        Example::</span>
+<span class="sd">        :</span>
+<span class="sd">            a_tcf_file.tcf...</span>
+<span class="sd">            </span>
+<span class="sd">            If Scenario == somescenario</span>
+<span class="sd">                tgc1.tgc</span>
+<span class="sd">            Else</span>
+<span class="sd">                tgc2.tgc</span>
+<span class="sd">            End If</span>
+
+<span class="sd">            </span>
+<span class="sd">            tgc1.tgc...</span>
+<span class="sd">            </span>
+<span class="sd">            ! This file&#39;s logic == None, but if scenario == &#39;somescenario&#39; it</span>
+<span class="sd">            ! should not be returned.</span>
+<span class="sd">            Read GIS Z Line == afile.shp </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart): the part to check logic terms for.</span>
+<span class="sd">            user_vars(UserVariables): containing the current scenario and</span>
+<span class="sd">                event values.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            bool - True if it&#39;s in the logic terms, or False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="c1"># If the part doesn&#39;t have any logic check the parents.</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logic</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="k">break</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">if</span> <span class="n">logic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        
+        <span class="n">is_in</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">isInTerms</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">is_in</span></div>
+    
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="TuflowPart.resolvePlaceholder"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.resolvePlaceholder">[docs]</a>    <span class="k">def</span> <span class="nf">resolvePlaceholder</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replaces the contents of a placeholder value with an actual value.</span>
+<span class="sd">        </span>
+<span class="sd">        Tuflow allows scenario, event and user defined variables to be used</span>
+<span class="sd">        as placeholders. This method will check for a given value against a </span>
+<span class="sd">        dict of current variables and update the value if found.</span>
+<span class="sd">        </span>
+<span class="sd">        Example::</span>
+<span class="sd">            </span>
+<span class="sd">            # Original tcf command</span>
+<span class="sd">            Cell Size == &lt;&lt;myvar&gt;&gt;</span>
+<span class="sd">            Read Materials File == &#39;..\Materials_&lt;&lt;s1&gt;&gt;.tmf</span>
+<span class="sd">            Timestep == &lt;&lt;unknownvar&gt;&gt;</span>
+<span class="sd">            </span>
+<span class="sd">            # user_vars  note that this includes all variable in UserVars in</span>
+<span class="sd">            # a single dict</span>
+<span class="sd">            user_vars = {</span>
+<span class="sd">                &#39;s1&#39;: &#39;scen1&#39;, &#39;s2&#39;: &#39;scen2&#39;, &#39;e1&#39;: &#39;event1&#39;, &#39;e2&#39;: &#39;event2&#39;,</span>
+<span class="sd">                &#39;myvar&#39;: &#39;12&#39;</span>
+<span class="sd">            }</span>
+<span class="sd">            </span>
+<span class="sd">            # The above commands would return the following values when the</span>
+<span class="sd">            # above user_vars are given.</span>
+<span class="sd">            Cell Size == 12</span>
+<span class="sd">            Read Materials File == &#39;..\Materials_scen1.tmf</span>
+<span class="sd">            Timestep == &lt;&lt;unknownvar&gt;&gt;</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: the value to check for a placeholder and replace.</span>
+<span class="sd">            user_vars(dict): see UserVariables.variablesTodict().</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            the value, updated if found or the same if not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">vkey</span> <span class="ow">in</span> <span class="n">user_vars</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="s1">&#39;&lt;&lt;&#39;</span> <span class="o">+</span> <span class="n">vkey</span> <span class="o">+</span> <span class="s1">&#39;&gt;&gt;&#39;</span>
+            <span class="k">if</span> <span class="n">vkey</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span> 
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">[</span><span class="n">vkey</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="TuflowPart.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+    
+<div class="viewcode-block" id="TuflowPart.buildPrintline"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.buildPrintline">[docs]</a>    <span class="k">def</span> <span class="nf">buildPrintline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">instruction</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">command</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span> <span class="n">instruction</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">comment</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+    
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TuflowPart</span><span class="p">)</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">hash</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span>
+    
+    
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TuflowPart.copy"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowPart.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">new_version</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        
+        <span class="n">new_version</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
+        <span class="n">strip_unique</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">(</span><span class="s1">&#39;strip_unique&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">keep_logic</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">(</span><span class="s1">&#39;keep_logic&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">strip_unique</span><span class="p">:</span>
+            <span class="n">new_version</span><span class="o">.</span><span class="n">sibling_next</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">new_version</span><span class="o">.</span><span class="n">sibling_prev</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">new_version</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_logic</span><span class="p">:</span>
+                <span class="n">new_version</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">new_version</span></div></div>
+    
+    
+<div class="viewcode-block" id="UnknownPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.UnknownPart">[docs]</a><span class="k">class</span> <span class="nc">UnknownPart</span><span class="p">(</span><span class="n">TuflowPart</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+        <span class="n">TuflowPart</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="c1"># raises keyerror</span>
+    
+    
+<div class="viewcode-block" id="UnknownPart.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.UnknownPart.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="kc">False</span></div></div>
+    
+
+<div class="viewcode-block" id="ATuflowVariable"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.ATuflowVariable">[docs]</a><span class="k">class</span> <span class="nc">ATuflowVariable</span><span class="p">(</span><span class="n">TuflowPart</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowPart</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">=</span> <span class="s1">&#39;avariable&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span> <span class="c1"># raise valuerror</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span>
+    
+    <span class="nd">@variable</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">=</span> <span class="n">value</span>
+    
+<div class="viewcode-block" id="ATuflowVariable.resolvedVariable"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.ATuflowVariable.resolvedVariable">[docs]</a>    <span class="k">def</span> <span class="nf">resolvedVariable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the variable with any placeholder vars resolved to a value.</span>
+<span class="sd">        </span>
+<span class="sd">        For more information on user_vars see TuflowPart.resolvePlaceholder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">TuflowPart</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TuflowVariable"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowVariable">[docs]</a><span class="k">class</span> <span class="nc">TuflowVariable</span><span class="p">(</span><span class="n">ATuflowVariable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        kwargs(dict): the component of this parts command line::  </span>
+<span class="sd">            - &#39;variable&#39;: &#39;one or more variable&#39;  </span>
+<span class="sd">            - &#39;command&#39;: &#39;command string&#39;  </span>
+<span class="sd">            - &#39;comment&#39;: &#39;comment at end of command&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ATuflowVariable</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;split_char&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;\s&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createSplitVariable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">)</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span>
+    
+    <span class="nd">@variable</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">=</span> <span class="n">value</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createSplitVariable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">split_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_variable</span>
+    
+    <span class="nd">@split_variable</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">split_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span> <span class="k">else</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_char</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span> <span class="o">=</span> <span class="n">s</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">_split_variable</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="k">def</span> <span class="nf">_createSplitVariable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">split_char</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_split_variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TuflowVariable.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowVariable.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildPrintline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">),</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="TuflowUserVariable"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowUserVariable">[docs]</a><span class="k">class</span> <span class="nc">TuflowUserVariable</span><span class="p">(</span><span class="n">ATuflowVariable</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ATuflowVariable</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;uservariable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Set Variable &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TuflowUserVariable.noParent"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowUserVariable.noParent">[docs]</a>    <span class="k">def</span> <span class="nf">noParent</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">}</span>
+        <span class="n">uv</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">vars</span><span class="p">)</span>
+        <span class="n">uv</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">return</span> <span class="n">uv</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span>
+    
+    <span class="nd">@variable_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="n">value</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;Set Variable &#39;</span> <span class="o">+</span> <span class="n">value</span>
+    
+<div class="viewcode-block" id="TuflowUserVariable.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowUserVariable.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildPrintline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">),</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="TuflowModelVariable"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowModelVariable">[docs]</a><span class="k">class</span> <span class="nc">TuflowModelVariable</span><span class="p">(</span><span class="n">ATuflowVariable</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ATuflowVariable</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;modelvariable&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_variable_type</span> <span class="o">=</span> <span class="s1">&#39;scenario&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_variable_type</span> <span class="o">=</span> <span class="s1">&#39;event&#39;</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TuflowModelVariable.noParent"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowModelVariable.noParent">[docs]</a>    <span class="k">def</span> <span class="nf">noParent</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
+        <span class="n">mv</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mv</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span>
+    
+    <span class="nd">@variable_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">variable_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">=</span> <span class="n">value</span>
+    
+<div class="viewcode-block" id="TuflowModelVariable.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowModelVariable.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">has_next</span> <span class="o">=</span> <span class="kc">False</span><span class="p">;</span> <span class="n">has_prev</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">has_prev</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">has_next</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">line</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_prev</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="s1">&#39; == &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; | &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_next</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;! &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">has_prev</span></div></div>
+
+
+<div class="viewcode-block" id="TuflowKeyValue"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowKeyValue">[docs]</a><span class="k">class</span> <span class="nc">TuflowKeyValue</span><span class="p">(</span><span class="n">ATuflowVariable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ATuflowVariable</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;keyvalue&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">keyval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variable</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">keyval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">keyval</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="TuflowKeyValue.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowKeyValue.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instruction</span> <span class="o">=</span> <span class="s1">&#39; | &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildPrintline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">instruction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">),</span> <span class="kc">False</span></div></div>
+
+    
+<div class="viewcode-block" id="TuflowFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile">[docs]</a><span class="k">class</span> <span class="nc">TuflowFile</span><span class="p">(</span><span class="n">TuflowPart</span><span class="p">,</span> <span class="n">PathHolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        **kwargs: </span>
+<span class="sd">            - &#39;path&#39;: &#39;relative\path\to\file.ext&#39;   </span>
+<span class="sd">            - &#39;command&#39;: &#39;command string&#39;  </span>
+<span class="sd">            - &#39;comment&#39;: &#39;comment at the end of the command&#39;</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            hash(str): unique code for this object.</span>
+<span class="sd">            parent(str): unique hash code for this object.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            keyError: if kwargs &#39;root&#39;, &#39;command&#39;, &#39;path&#39; are not given.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="c1"># raises keyerror</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span> 
+        <span class="n">path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> 
+        <span class="n">TuflowPart</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">PathHolder</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">=</span> <span class="s1">&#39;file&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_types</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_own_root</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    
+<div class="viewcode-block" id="TuflowFile.absolutePathAllTypes"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile.absolutePathAllTypes">[docs]</a>    <span class="k">def</span> <span class="nf">absolutePathAllTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the absolute paths for all_types.</span>
+<span class="sd">        </span>
+<span class="sd">        If the file has other file types in all_types (e.g. .shp, shx, .dbf)</span>
+<span class="sd">        this will return the absolute paths for all of them.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            user_vars(dict): a dict containing variable placeholder values as</span>
+<span class="sd">                keys and the actual values as values. See </span>
+<span class="sd">                TuflowPart.resolvePlaceholder() method for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rel_roots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRelativeRoots</span><span class="p">([])</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_types</span><span class="p">:</span> 
+            <span class="n">all_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_types</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_types</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">extension</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_types</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">a</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> 
+                                            <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
+
+            <span class="c1"># Replace any variable placeholders if given</span>
+            <span class="k">if</span> <span class="n">user_vars</span><span class="p">:</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="n">TuflowPart</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">)</span>
+
+            <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span></div>
+    
+<div class="viewcode-block" id="TuflowFile.absolutePath"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile.absolutePath">[docs]</a>    <span class="k">def</span> <span class="nf">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the absolute path of this object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_vars(dict): a dict containing variable placeholder values as</span>
+<span class="sd">                keys and the actual values as values. See </span>
+<span class="sd">                TuflowPart.resolvePlaceholder() method for more information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rel_roots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRelativeRoots</span><span class="p">([])</span>
+        <span class="n">abs_path</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
+
+        <span class="c1"># Replace any variable placeholders if given</span>
+        <span class="k">if</span> <span class="n">user_vars</span><span class="p">:</span>
+            <span class="n">abs_path</span> <span class="o">=</span> <span class="n">TuflowPart</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="n">abs_path</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">abs_path</span></div>
+    
+<div class="viewcode-block" id="TuflowFile.getRelativeRoots"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile.getRelativeRoots">[docs]</a>    <span class="k">def</span> <span class="nf">getRelativeRoots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roots</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the relative paths of this and all parent objects.</span>
+<span class="sd">        </span>
+<span class="sd">        Recursively calls all of it&#39;s parents to obtain the relative paths</span>
+<span class="sd">        before calling absolutePath of the PathHolder superclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">getRelativeRoots</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">:</span>
+            <span class="n">roots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">roots</span></div>
+        
+    
+<div class="viewcode-block" id="TuflowFile.checkPipedStatus"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile.checkPipedStatus">[docs]</a>    <span class="k">def</span> <span class="nf">checkPipedStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">has_next</span> <span class="o">=</span> <span class="kc">False</span><span class="p">;</span> <span class="n">has_prev</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">has_prev</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">has_next</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">has_next</span> <span class="ow">or</span> <span class="n">has_prev</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_prev</span><span class="p">:</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">+</span> <span class="s1">&#39; == &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; | &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_next</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">:</span>
+                <span class="n">line</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;! &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                
+            <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">has_prev</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="TuflowFile.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowFile.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_own_root</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relativePath</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">()</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">has_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkPipedStatus</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">out</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">has_prev</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildPrintline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">),</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="ModelFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.ModelFile">[docs]</a><span class="k">class</span> <span class="nc">ModelFile</span><span class="p">(</span><span class="n">TuflowFile</span><span class="p">):</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;model_type&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_auto</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;has_auto&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="ModelFile.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.ModelFile.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;ECF&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_auto</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;Estry Control File Auto &#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">:</span> <span class="n">line</span> <span class="o">+=</span> <span class="s1">&#39;! &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">TuflowFile</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span></div></div>
+
+
+<div class="viewcode-block" id="ResultFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.ResultFile">[docs]</a><span class="k">class</span> <span class="nc">ResultFile</span><span class="p">(</span><span class="n">TuflowFile</span><span class="p">):</span> 
+
+    <span class="n">RESULT_TYPE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="s1">&#39;OUTPUT FOLDER&#39;</span><span class="p">,</span> <span class="s1">&#39;check&#39;</span><span class="p">:</span> <span class="s1">&#39;WRITE CHECK FILE&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;log&#39;</span><span class="p">:</span> <span class="s1">&#39;LOG&#39;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename_is_prefix</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="s1">&#39;UNKNOWN&#39;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">ResultFile</span><span class="o">.</span><span class="n">RESULT_TYPE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">result_type</span> <span class="o">=</span> <span class="n">key</span></div>
+
+
+<div class="viewcode-block" id="GisFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.GisFile">[docs]</a><span class="k">class</span> <span class="nc">GisFile</span><span class="p">(</span><span class="n">TuflowFile</span><span class="p">):</span>
+    
+    <span class="n">GIS_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mi&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;mif&#39;</span><span class="p">,</span> <span class="s1">&#39;mid&#39;</span><span class="p">),</span> <span class="s1">&#39;shp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;shp&#39;</span><span class="p">,</span> <span class="s1">&#39;shx&#39;</span><span class="p">,</span> <span class="s1">&#39;dbf&#39;</span><span class="p">)}</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;gis&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="c1"># Needed to catch GIS files without an extension</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
+        
+        <span class="c1"># Try and work out what kind of gis file it is when it doesn&#39;t have</span>
+        <span class="c1"># an extension</span>
+        <span class="c1"># DEBUG</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;test&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;mif&#39;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;mid&#39;</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;shp&#39;</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()):</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">gis_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">GisFile</span><span class="o">.</span><span class="n">GIS_TYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="ow">in</span> <span class="n">GisFile</span><span class="o">.</span><span class="n">GIS_TYPES</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_types</span> <span class="o">=</span> <span class="n">GisFile</span><span class="o">.</span><span class="n">GIS_TYPES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gis_type</span> <span class="o">=</span> <span class="n">key</span></div>
+        
+        
+        
+<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="n">TuflowFile</span><span class="p">):</span>
+    
+    <span class="n">DATA_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TMF&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;tmf&#39;</span><span class="p">,),</span> <span class="s1">&#39;CSV&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;csv&#39;</span><span class="p">,)}</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowFile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
+        
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">DATA_TYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">DATA_TYPES</span><span class="p">[</span><span class="n">d</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_types</span> <span class="o">=</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">DATA_TYPES</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">d</span></div>
+            
+    
+
+<div class="viewcode-block" id="TuflowLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic">[docs]</a><span class="k">class</span> <span class="nc">TuflowLogic</span><span class="p">(</span><span class="n">TuflowPart</span><span class="p">):</span> 
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s1">&#39;logic&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">TuflowPart</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">=</span> <span class="s1">&#39;logic&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span> <span class="o">=</span> <span class="p">[[]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_top_written</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;Function called when a TuflowPart is removed.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;Function called when a TuflowPart is added.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_sevals</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="sd">&quot;&quot;&quot;Whether to check the scenarion event values.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">END_CLAUSE</span> <span class="o">=</span> <span class="s1">&#39;End&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Override with with whatever the end statement is (e.g. &#39;End If&#39;)&quot;&quot;&quot;</span>
+    
+    
+<div class="viewcode-block" id="TuflowLogic.addPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.addPart">[docs]</a>    <span class="k">def</span> <span class="nf">addPart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">group</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new TuflowPart.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            skip_callback=False(bool): if true it won&#39;t call the callback </span>
+<span class="sd">                function in the ControlFile. Basically don&#39;t use this.</span>
+<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart): the part to add.</span>
+<span class="sd">            group(int): the clause group to add the part to.</span>
+<span class="sd">            skip_callback=False(bool): if true it won&#39;t call the callback </span>
+<span class="sd">                function in the ControlFile. Basically don&#39;t change this.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">skip_callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skip_callback&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_callback</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">group</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.insertPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.insertPart">[docs]</a>    <span class="k">def</span> <span class="nf">insertPart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_part</span><span class="p">,</span> <span class="n">adjacent_part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert a TuflowPart adjacent to an existing part.</span>
+<span class="sd">        </span>
+<span class="sd">        This allows you to have control over where in a group a part is placed.</span>
+<span class="sd">        If you don&#39;t care where it goes in the group, or you want it to go at</span>
+<span class="sd">        the end of the group use addPart() instead.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            new_part(TuflowPart): the part to add.</span>
+<span class="sd">            adjacent_part(TuflowPart): the part to put the new part next to.</span>
+<span class="sd">                It will be placed above the existing part.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">adjacent_part</span><span class="o">.</span><span class="n">hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;adjacent_part could not be found&#39;</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">adjacent_part</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">adjacent_part</span><span class="p">)</span>
+        <span class="n">new_part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">new_part</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_callback</span><span class="p">(</span><span class="n">new_part</span><span class="p">,</span> <span class="n">adjacent_part</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.removePart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.removePart">[docs]</a>    <span class="k">def</span> <span class="nf">removePart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove a TuflowPart.</span>
+<span class="sd">        </span>
+<span class="sd">        Will also call a callback function to the ControlFile object that </span>
+<span class="sd">        contains this TuflowLogic and ensure that the PartHolder order is</span>
+<span class="sd">        updated. It just ensures that the TuflowPart is moved out of the </span>
+<span class="sd">        scope of the parts still within the TuflowLogic.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">part</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                    <span class="k">break</span>
+ 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">last_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">last_part</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_callback</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">last_part</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="TuflowLogic.getAllParts"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getAllParts">[docs]</a>    <span class="k">def</span> <span class="nf">getAllParts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_only</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all of the TuflowParts in this TuflowLogic.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            hash_only: if True the TuflowPart.hash codes otherwise the actual</span>
+<span class="sd">                TuflowPart will be.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list - of TuflowPart&#39;s or TuflowPart.hash</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hash_only</span><span class="p">:</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">parts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.getGroup"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getGroup">[docs]</a>    <span class="k">def</span> <span class="nf">getGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the group index of the given part.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart):</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            int - the index of the group that this part is in, or -1 if it</span>
+<span class="sd">                could not be found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">g</span><span class="p">:</span> <span class="k">return</span> <span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.getLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getLogic">[docs]</a>    <span class="k">def</span> <span class="nf">getLogic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_only</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;TODO: Check what this does and if it&#39;s used.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hash_only</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">hash</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.isTuflowPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.isTuflowPart">[docs]</a>    <span class="k">def</span> <span class="nf">isTuflowPart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal function.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">TuflowPart</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;filepart must be either TuflowPart or TuflowPart.hash&#39;</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="TuflowLogic.isInClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.isInClause">[docs]</a>    <span class="k">def</span> <span class="nf">isInClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test whether the given part is within a particular clause.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart): check if it&#39;s in this TuflowLogic.</span>
+<span class="sd">            term(str): term to check the part against. </span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            bool - True if the term is part of one of the clauses in this </span>
+<span class="sd">                TuflowLogic and the part is within that clause; Else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">terms</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">term</span><span class="p">:</span>
+                    <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span>
+                    <span class="k">return</span> <span class="n">success</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="TuflowLogic.allTerms"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.allTerms">[docs]</a>    <span class="k">def</span> <span class="nf">allTerms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all of the terms in every clause.&quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">terms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">terms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.isInTerms"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.isInTerms">[docs]</a>    <span class="k">def</span> <span class="nf">isInTerms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Checks to see if the clause terms associated with part match se_vals.</span>
+<span class="sd">        </span>
+<span class="sd">        If the part is in an &#39;Else&#39; clause it checks that the se_vals DON&#39;T</span>
+<span class="sd">        match any of the terms in any of the clauses.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart): to find the terms for. If now reference of the</span>
+<span class="sd">                part can be found False will be returned.</span>
+<span class="sd">            se_Vals(dict): in format {&#39;scenario&#39;: [list, of]. &#39;event&#39;: [terms]}.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            bool - True if the part is within the given se_vals, otherwise False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="n">se_keys</span> <span class="o">=</span> <span class="n">se_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If &#39;Else&#39; we need to check if it&#39;s NOT in any of the terms. So check</span>
+<span class="sd">        all of the terms and compare against the se_vals. If there&#39;s no</span>
+<span class="sd">        match then we set retval to True.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">command</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ELSE&#39;</span><span class="p">:</span>
+            <span class="n">all_terms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allTerms</span><span class="p">()</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="s1">&#39;scenario&#39;</span> <span class="ow">in</span> <span class="n">se_keys</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_terms</span><span class="p">)</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="s1">&#39;event&#39;</span> <span class="ow">in</span> <span class="n">se_keys</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_terms</span><span class="p">)</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">found</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># Otherwise we need to check if this groups terms are in the se_vals</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;scenario&#39;</span> <span class="ow">in</span> <span class="n">se_keys</span> <span class="ow">and</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">;</span> <span class="k">break</span>
+                <span class="k">elif</span> <span class="s1">&#39;event&#39;</span> <span class="ow">in</span> <span class="n">se_keys</span> <span class="ow">and</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="kc">True</span><span class="p">;</span> <span class="k">break</span>
+        <span class="k">return</span> <span class="n">retval</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return contents formatted for printing.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowPart): current TuflowPart in PartHolder parts list.</span>
+<span class="sd">            out(list): list to update.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">force</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;force&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTopClause</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="p">[],</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+    
+<div class="viewcode-block" id="TuflowLogic.getTopClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getTopClause">[docs]</a>    <span class="k">def</span> <span class="nf">getTopClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">force</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the top clause command and terms formatted for printing.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">force</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="k">return</span> <span class="n">out</span>
+        <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">part</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_top_written</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getContentsLine</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">getTopClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="TuflowLogic.getEndClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.TuflowLogic.getEndClause">[docs]</a>    <span class="k">def</span> <span class="nf">getEndClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the end clause formatted for printing.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">part</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_top_written</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">END_CLAUSE</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+        
+    <span class="k">def</span> <span class="nf">_getContentsLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a clause line formatted for printing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">group</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Group </span><span class="si">%s</span><span class="s1"> does not exist&#39;</span> <span class="o">%</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span><span class="c1"># is not None:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="s1">&#39; | &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; == &#39;</span> <span class="o">+</span> <span class="n">t</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="n">group</span><span class="p">]:</span> <span class="n">line</span> <span class="o">+=</span> <span class="s1">&#39; ! &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+
+<div class="viewcode-block" id="IfLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.IfLogic">[docs]</a><span class="k">class</span> <span class="nc">IfLogic</span><span class="p">(</span><span class="n">TuflowLogic</span><span class="p">):</span> 
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;command(str)&#39;: the command (e.g. If Scenario) for the opening clause.</span>
+<span class="sd">            &#39;terms&#39;(list): list of terms for the first clause </span>
+<span class="sd">                (e.g. [&#39;scen1&#39;, &#39;scen2&#39;, &#39;scenN&#39;].</span>
+<span class="sd">            &#39;comment&#39;(str): any comment next to the first clause.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            parent(ModelFile): that contains this TuflowLogic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TuflowLogic</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;iflogic&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_terms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]]]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_terms</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_sevals</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">END_CLAUSE</span> <span class="o">=</span> <span class="s1">&#39;End If&#39;</span>
+    
+<div class="viewcode-block" id="IfLogic.getPrintableContents"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.IfLogic.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the printable contents for this TuflowLogic.&quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">TuflowLogic</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getMiddleClause</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="IfLogic.getMiddleClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.IfLogic.getMiddleClause">[docs]</a>    <span class="k">def</span> <span class="nf">getMiddleClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check to see if there&#39;s any middle clause.</span>
+<span class="sd">        </span>
+<span class="sd">        Used for writing out the clauses when printing to file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">part</span><span class="p">:</span>
+                    
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_top_written</span><span class="p">:</span>
+                        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTopClause</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+                        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getContentsLine</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="IfLogic.addClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.IfLogic.addClause">[docs]</a>    <span class="k">def</span> <span class="nf">addClause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">terms</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new clause to this TuflowLogic.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            command(str): the command part of the clause (e.g. &#39;Else if Event ==&#39;)</span>
+<span class="sd">            terms(list): str&#39;s of terms for clause (e.g. [&#39;evt1&#39;, &#39;evt2&#39;, &#39;evtN&#39;].</span>
+<span class="sd">            comment=&#39;&#39;(str): any comment for the clause line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">terms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_parts</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span></div></div>
+    
+        
+<div class="viewcode-block" id="BlockLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.BlockLogic">[docs]</a><span class="k">class</span> <span class="nc">BlockLogic</span><span class="p">(</span><span class="n">TuflowLogic</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;For any logic that uses a &#39;Define something&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    I can only think of &#39;Define Event == term1 | term2 | termN&#39;, but maybe</span>
+<span class="sd">    there are others?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;command(str)&#39;: the command (e.g. If Scenario) for the opening clause.</span>
+<span class="sd">            &#39;terms&#39;(list): list of terms for the first clause </span>
+<span class="sd">                (e.g. [&#39;scen1&#39;, &#39;scen2&#39;, &#39;scenN&#39;].</span>
+<span class="sd">            &#39;comment&#39;(str): any comment next to the first clause.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            parent(ModelFile): that contains this TuflowLogic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TuflowLogic</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;blocklogic&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_sevals</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">END_CLAUSE</span> <span class="o">=</span> <span class="s1">&#39;End Define&#39;</span>
+    
+<div class="viewcode-block" id="BlockLogic.addClause"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.BlockLogic.addClause">[docs]</a>    <span class="k">def</span> <span class="nf">addClause</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Only one clause allowed in this type.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Not supported for this TuflowLogic type&#39;</span><span class="p">)</span></div></div>
+    
+    
+<div class="viewcode-block" id="SectionLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfilepart.SectionLogic">[docs]</a><span class="k">class</span> <span class="nc">SectionLogic</span><span class="p">(</span><span class="n">BlockLogic</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Used for all other types of scoping logic.</span>
+<span class="sd">    </span>
+<span class="sd">    This includes things like &#39;Define Output Zone ==&#39; etc. The only real </span>
+<span class="sd">    difference between this and BlockLogic is that BlockLogic sets</span>
+<span class="sd">    check_sevals = True. It kind of makes sense to treat them slightly </span>
+<span class="sd">    differently though as the BlockLogic and IfLogic are used with scenario</span>
+<span class="sd">    and event logic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;command(str)&#39;: the command (e.g. If Scenario) for the opening clause.</span>
+<span class="sd">            &#39;terms&#39;(list): list of terms for the first clause </span>
+<span class="sd">                (e.g. [&#39;scen1&#39;, &#39;scen2&#39;, &#39;scenN&#39;].</span>
+<span class="sd">            &#39;comment&#39;(str): any comment next to the first clause.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            parent(ModelFile): that contains this TuflowLogic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TuflowLogic</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;sectionlogic&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">=</span> <span class="p">[[]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comments</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_sevals</span> <span class="o">=</span> <span class="kc">False</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">END_CLAUSE</span> <span class="o">=</span> <span class="s1">&#39;End Define&#39;</span></div>
+    
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

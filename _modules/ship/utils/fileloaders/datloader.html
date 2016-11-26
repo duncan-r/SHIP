@@ -1,0 +1,491 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.fileloaders.datloader &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.fileloaders.datloader</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.fileloaders.datloader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Factory class for building the AUnits from an ISIS data file.</span>
+<span class="sd">    This is used to read and build the parts of the ISIS dat file.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+<span class="sd">    There are a few functions in here that should be made protected. This</span>
+<span class="sd">    doesn&#39;t really make much difference in Python in terms of encapsulation,</span>
+<span class="sd">    but it makes it a bit clearer to any calling scripts that they might be</span>
+<span class="sd">    messing with something that they probablly shouldn&#39;t be messing with.</span>
+<span class="sd">    </span>
+<span class="sd">    Comments are a bit over the top in this file. Need to go through and</span>
+<span class="sd">    decide what is helpful and what is just getting in the way.</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">ship.utils.atool</span> <span class="k">import</span> <span class="n">ATool</span>
+<span class="kn">from</span> <span class="nn">ship.utils.fileloaders.loader</span> <span class="k">import</span> <span class="n">ALoader</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ftools</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.isisunitfactory</span> <span class="k">import</span> <span class="n">IsisUnitFactory</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">UnknownUnit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datcollection</span> <span class="k">import</span> <span class="n">DatCollection</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="DatLoader"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader">[docs]</a><span class="k">class</span> <span class="nc">DatLoader</span><span class="p">(</span><span class="n">ATool</span><span class="p">,</span> <span class="n">ALoader</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Isis data file (.DAT) I/O methods.</span>
+
+<span class="sd">    Factory for creating the .DAT file objects.</span>
+<span class="sd">    Identifies different section of the .DAT file and creates objects of</span>
+<span class="sd">    the different units. Also saves updated file.</span>
+
+<span class="sd">    All unknown data within the file is contained within UnkownSection units. </span>
+<span class="sd">    These read in the text as found and write out as found, with no knowledge </span>
+<span class="sd">    of the contents. Effectively bypassing the need to worry about parts that </span>
+<span class="sd">    aren&#39;t being used yet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span> <span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+        
+        <span class="n">ATool</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ALoader</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Instantiating DatLoader&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cur_no_of_units</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="p">[]</span>          <span class="c1"># Contents of dat file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span> <span class="o">=</span> <span class="kc">None</span>       <span class="c1"># AUnit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_ied</span> <span class="o">=</span> <span class="kc">False</span>         <span class="c1"># If used to load an .ied file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c1"># reach_info dictionary. Keeps track of the information needed to identify</span>
+        <span class="c1"># reach status. Contains:</span>
+        <span class="c1"># [0] = counter - iterated every time a new reach is started.</span>
+        <span class="c1"># [1] = same reach status - keeps track of whether it&#39;s in an existing</span>
+        <span class="c1">#       reach or starting a new one.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reach_info</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;reach_number&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;same_reach&#39;</span><span class="p">:</span> <span class="kc">False</span> <span class="p">}</span>      
+    
+
+<div class="viewcode-block" id="DatLoader.loadFile"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">arg_dict</span><span class="o">=</span><span class="p">{}):</span> 
+        <span class="sd">&quot;&quot;&quot;Loads the ISIS .DAT file.</span>
+
+<span class="sd">        Splits it into objects for each unit type, initial conditions etc.</span>
+
+<span class="sd">        This is an epic if-else section for each unit type currently </span>
+<span class="sd">        represented.</span>
+
+<span class="sd">        Needs cleaning up and writing with a bit more style.</span>
+
+<span class="sd">        Easy to add another unit type, if it&#39;s not currently covered then it </span>
+<span class="sd">        will just be collected in the universal &#39;UnknownUnit&#39; and printed </span>
+<span class="sd">        back out the same as it came in.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str): path to the .dat file to load.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            units - UnitCollection containing the dat file units or False if </span>
+<span class="sd">                they couldn&#39;t be loaded.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IOError: If the file cannot be loaded or is empty.</span>
+<span class="sd">            AttributeError: if the file is not of an expected type (.dat/.ief).</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            IsisUnitCollection</span>
+<span class="sd">            FactoryClasses</span>
+<span class="sd">        </span>
+<span class="sd">        TODO: Decide if the observer style calls are ever going to be needed.</span>
+<span class="sd">                If they aren&#39;t then remove them rather than have them</span>
+<span class="sd">                cluttering up the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  
+        <span class="c1"># Used to populate the data for the UnknownUnit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span> <span class="o">=</span> <span class="p">[]</span>        
+        <span class="c1"># Composite for all dat units</span>
+        <span class="n">path_holder</span> <span class="o">=</span> <span class="n">ftools</span><span class="o">.</span><span class="n">PathHolder</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">DatCollection</span><span class="p">(</span><span class="n">path_holder</span><span class="p">)</span> 
+<span class="c1">#         self.units.file_dir, self.units.filename = os.path.split(file_path)</span>
+<span class="c1">#         self.units.filename = os.path.splitext(self.units.filename)[0]</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uf</span><span class="o">.</span><span class="n">checkFileType</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;.DAT&#39;</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">uf</span><span class="o">.</span><span class="n">checkFileType</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;.ied&#39;</span><span class="p">,</span> <span class="s1">&#39;.IED&#39;</span><span class="p">]):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Illegal File Error: &#39;</span> <span class="o">+</span> <span class="n">file_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Does not have extension (.dat, .DAT, .ied, .IED)&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span> <span class="p">(</span><span class="s1">&#39;Illegal File Error: &#39;</span> <span class="o">+</span> <span class="n">file_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Does not have extension (.dat, .DAT, .ied, .IED)&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">is_ied</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__loadFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">contents</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span> <span class="p">(</span><span class="s1">&#39;Unable to load file at: &#39;</span> <span class="o">+</span> <span class="n">file_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buildDat</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="DatLoader.buildDat"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.buildDat">[docs]</a>    <span class="k">def</span> <span class="nf">buildDat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">arg_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="n">contents</span>
+                
+        <span class="c1"># Counter for the number of rows that have been read from the </span>
+        <span class="c1"># file contents list.</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Get an instance of the unit factory with the number of nodes in the file.</span>
+        <span class="n">unit_factory</span> <span class="o">=</span> <span class="n">IsisUnitFactory</span><span class="p">()</span>
+
+        <span class="c1"># Dictionary containing the keys to identify units in the dat file </span>
+        <span class="n">unit_vars</span> <span class="o">=</span> <span class="n">unit_factory</span><span class="o">.</span><span class="n">getUnitIdentifiers</span><span class="p">()</span>
+
+        <span class="c1"># Create a unit from the header data in the first few lines of the dat file.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_ied</span><span class="p">:</span>
+            <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span> <span class="o">=</span> <span class="n">unit_factory</span><span class="o">.</span><span class="n">createUnitFromFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;HEADER&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">in_unknown_section</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="c1"># Now we can update the HeaderUnit subContents </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updateSubContents</span><span class="p">()</span>  
+        
+        <span class="n">in_unknown_section</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">):</span>
+            
+            <span class="c1"># Get the line and then split it to retrieve the first word. </span>
+            <span class="c1"># Check this word against the # unit_type keys we set above to see </span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">temp_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">temp_line</span><span class="p">:</span> 
+                <span class="n">first_word</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">first_word</span> <span class="o">=</span> <span class="s1">&#39;Nothing&#39;</span>
+
+            <span class="k">if</span> <span class="n">first_word</span> <span class="ow">in</span> <span class="n">unit_vars</span><span class="p">:</span>               
+                
+                <span class="c1"># If building an UnknownUnit then create and reset</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">in_unknown_section</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">createUnknownSection</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">updateSubContents</span><span class="p">()</span>
+                    
+                    <span class="c1"># Reset the reach for the UnknownUnit</span>
+                    <span class="n">unit_factory</span><span class="o">.</span><span class="n">same_reach</span> <span class="o">=</span> <span class="kc">False</span>
+                
+                <span class="sd">&#39;&#39;&#39;Call the unit creator function and get back the unit and the</span>
+<span class="sd">                updated contents list index.</span>
+<span class="sd">                Most of these variables are self explanatory, but </span>
+<span class="sd">                unit_vars[first_word] is the key for the unit type to make.</span>
+<span class="sd">                &#39;&#39;&#39;</span>
+<span class="c1">#                 i, self.temp_unit = unit_factory.createUnit(self.contents, i, </span>
+<span class="c1">#                         unit_vars[first_word], self.cur_no_of_units)</span>
+                <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span> <span class="o">=</span> <span class="n">unit_factory</span><span class="o">.</span><span class="n">createUnitFromFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> 
+                                                            <span class="n">first_word</span><span class="p">,</span> 
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">cur_no_of_units</span><span class="p">)</span>
+                
+                <span class="sd">&#39;&#39;&#39;In case we got in but found something wasn&#39;t supported.</span>
+<span class="sd">                it&#39;s i-1 because we can&#39;t return onto the same line that was</span>
+<span class="sd">                read or it will loop forever, so store it here and move on</span>
+<span class="sd">                &#39;&#39;&#39;</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+                    <span class="n">in_unknown_section</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">updateSubContents</span><span class="p">()</span>
+                    <span class="n">in_unknown_section</span> <span class="o">=</span> <span class="kc">False</span>       
+             
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="n">in_unknown_section</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span> </div>
+    
+    
+    
+
+
+<div class="viewcode-block" id="DatLoader.createUnknownSection"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.createUnknownSection">[docs]</a>    <span class="k">def</span> <span class="nf">createUnknownSection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Builds unidentified sections from the .DAT file.</span>
+
+<span class="sd">        All currently un-dealt-with sections of the .DAT file are</span>
+<span class="sd">        incorporated into this.</span>
+<span class="sd">        Loads in chunks of the file &#39;as-is&#39; and prints them out the same way.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c1">#         logger.debug(&#39;Creating UnknownUnit - Unit No:  &#39; + str(self.cur_no_of_units))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span> <span class="o">=</span> <span class="n">UnknownUnit</span><span class="p">()</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span><span class="o">.</span><span class="n">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span><span class="p">)</span></div>
+        
+     
+<div class="viewcode-block" id="DatLoader.getUnits"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.getUnits">[docs]</a>    <span class="k">def</span> <span class="nf">getUnits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Getter for imported units</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Deprecated: Will be removed. Please use self.units directly.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            IsisUnitCollection - The units loaded from the dat file. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span></div>
+    
+    
+<div class="viewcode-block" id="DatLoader.updateSubContents"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.updateSubContents">[docs]</a>    <span class="k">def</span> <span class="nf">updateSubContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Updates the self.units.</span>
+<span class="sd">        </span>
+<span class="sd">        Appends the new temp_unit to list of units and resets all the </span>
+<span class="sd">        variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#logger.debug(&#39;In updateSubContents&#39;)</span>
+        <span class="c1"># Don&#39;t update node count here as we aren&#39;t adding any &#39;new&#39; nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1">#         self.findIcLabels(self.temp_unit)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cur_no_of_units</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span> <span class="o">=</span> <span class="p">[]</span></div>
+        
+    
+<span class="c1">#     def findIcLabels(self, unit):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         if not unit.has_ics: return</span>
+<span class="c1"># </span>
+<span class="c1">#         ic_labels = unit.ic_labels</span>
+<span class="c1">#         for l in ic_labels:</span>
+<span class="c1">#             if not l in self._ic_name_types.keys():</span>
+<span class="c1">#                 self._ic_name_types[l] = [unit._unit_type]</span>
+<span class="c1">#             elif not unit._unit_type in self._ic_name_types[l]:</span>
+<span class="c1">#                 self._ic_name_types[l].append(unit._unit_type) </span>
+    
+
+    <span class="k">def</span> <span class="nf">__loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Load the .dat file into the contents list.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath: Path to the required DAT file.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if loaded ok, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;loading File: &#39;</span> <span class="o">+</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">ftools</span><span class="o">.</span><span class="n">getFile</span><span class="p">(</span><span class="n">filepath</span><span class="p">);</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;IOError - Unable to load file&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+        <span class="k">if</span><span class="p">(</span><span class="n">contents</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;.DAT file is empty at: &#39;</span> <span class="o">+</span> <span class="n">filepath</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+        <span class="k">return</span> <span class="n">contents</span></div>
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

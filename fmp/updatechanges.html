@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API Changes &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>API Changes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/updatechanges.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-changes">
+<span id="updatechanges-top"></span><h1>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h1>
+<p>There have a been a lot of changes to method names and a few classes when
+finalising the updates from version 0.2.5 to 0.3.0. This are fixed now and
+and further changes will be subject to deprecation.</p>
+<p><strong>A major change to all TuflowFile and PathHolder classes is that the member</strong>
+<strong>*file_name* is now called *filename*</strong>. This has been bugging me for a long
+time and it was also inconsistent throughout the API.</p>
+<p>Most of the functions and methods in the filetools.py module have had the &#8216;get&#8217;
+removed from the front of the method name (e.g. getAbsolutePath is now just
+&#8216;absolutePath&#8217;.</p>
+<p>The changes to the tuflow package are too extensive to sum up in a short
+changes summary. To see how it now works you should look at the docs. The ethos
+for accessing data is still quite similar, it is just set out in a slightly
+different way.</p>
+<p>Below is a list of the main changes to the isis (now fmp) package to ease the
+transition of existing code. They are ordered by module.</p>
+<p><strong>The biggest change for the isis package is the package name change from*
+***isis* to *fmp*. Although it&#8217;s probably the easiest to deal with.</strong></p>
+<div class="section" id="aisisunit-aunit">
+<h2>AIsisUnit/AUnit<a class="headerlink" href="#aisisunit-aunit" title="Permalink to this headline">¶</a></h2>
+<p>The abstract base class for all units in the fmp/isis package</p>
+<blockquote>
+<div><ul class="simple">
+<li>Name changed from AIsisUnit to AUnit. The software name has changed and it
+seemed like now was a good time to get this update done.</li>
+<li>Unit name is now exclusively stored in the AUnit.name member. Before it
+was in name and in head_data[&#8216;section_label&#8217;]. This was hard to keep in
+sync.</li>
+<li>Downstream label is now exclusively stored in the AUnit._name_ds member.
+Before it was stored in head_data[&#8216;lable_downstream&#8217;].</li>
+<li>AUnit.has_data_rows member is no longer available. This value is not stored
+anymore, only calculated. There is a prooperty available called has_row_data.</li>
+<li>row_collections and additional_row_collections no longer exist. All row
+data is now stored in a dict called row_data. All AUnit&#8217;s that contain
+row data will definitely have the key &#8216;main&#8217;, which is usually geometry
+data. If there are other RowDataCollections they will be stored in this
+dict under a different name (e.g. &#8216;opening&#8217; for BridgeUnitArch).</li>
+</ul>
+</div></blockquote>
+<p>In order to make the API a little bit more pythonic and make the method/function
+names a bit clearer (in some cases they had even shifted from oler functionality
+and the names had not been updated!) some names have changed or been shifted to
+property&#8217;s. Pretty much any function/method with &#8216;get&#8217; at the start has had the
+&#8216;get&#8217; removed. This was a legacy from the initial Java implementation and is
+not used in Python. These include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>getUnitVars: these are not longer used, so this is gone.</li>
+<li>getName, getUnitType, getUnitCategory. These are either variables or
+properties. To call them just use the variable name (e.g. .name,
+.unit_type, .unit_category).</li>
+<li>getDeepCopy: now called copy.</li>
+<li>getRowDataType: now called rowDataType.</li>
+<li>getRow: now called row.</li>
+<li>getHeadData: no longer used. Use the dict variable .head_data instead.</li>
+<li>deleteDataRow: now called deleteRow.</li>
+<li>updateDataRow: now called updateRow.</li>
+<li>_checkChainageIncreaseNotNegative: now called check increases. This is
+mostly only used internally anyway. Note that the args list for this is
+different. It takes any series rather than just chainage.</li>
+</ul>
+</div></blockquote>
+<p>The AUnit.head_data is now no longer a simple dict with values assigned. It is
+a dict with ship.fmp.headdata.HeadDataItem&#8217;s. This allows value to checked when
+added and better constraints and error messages. It means that instead of
+accessing values as a normal dict you will need to do this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># assume we have a RiverUnit called river</span>
+<span class="c1"># old way - this no longer works</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+
+<span class="c1"># new way</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># same with setting</span>
+<span class="n">river</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">12.5</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="datcollection">
+<h2>DatCollection<a class="headerlink" href="#datcollection" title="Permalink to this headline">¶</a></h2>
+<p>Not as much changed in here:</p>
+<blockquote>
+<div><ul class="simple">
+<li>getIndex: changed to index.</li>
+<li>getUnitsByCategory: changed to unitsByCategory.</li>
+<li>getUnitsByType: changed unitsByType.</li>
+<li>getUnit: changed to unit. Note that this also accepts an optional
+unit_category arg now, as well as the optional unit_type arg.</li>
+<li>getNumberOfUnits: changed to numberOfUnits.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="rowdatacollection">
+<h2>RowDataCollection<a class="headerlink" href="#rowdatacollection" title="Permalink to this headline">¶</a></h2>
+<p>Note that a bulkInitCollection classmethod has been added which takes a list of
+DataObject&#8217;s, rather than having to add each one separately.</p>
+<p>Most of the changes in here are actually additions of new methods to make
+accessing different types of data a little easier (see the docs for more info
+on that). There are a few existing changes though.
+Changes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>rowDataAsList: changed to toList.</li>
+<li>addValue and setValue: changed to _addValue and _setValue. You probably
+shouldn&#8217;t be calling these anyway (use addRow and setRow instead).</li>
+<li>addNewRow: changed to addRow.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

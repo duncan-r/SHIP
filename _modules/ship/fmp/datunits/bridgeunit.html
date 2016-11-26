@@ -1,0 +1,1006 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.datunits.bridgeunit &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.datunits.bridgeunit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.datunits.bridgeunit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the BridgeUnit, BridgeUspbrUnit and BridgeArchUnit classed.</span>
+<span class="sd">    The BridgeUnit is a superclass to the other containing default shared</span>
+<span class="sd">    behaviour and content.</span>
+<span class="sd">    These hold all of the data read in from the bridge units in the dat file.</span>
+<span class="sd">    Can be called to load in the data and read and update the contents </span>
+<span class="sd">    held in the object.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
+<span class="kn">from</span> <span class="nn">ship.utils.tools</span> <span class="k">import</span> <span class="n">geometry</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+
+
+
+<div class="viewcode-block" id="BridgeUnit"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit">[docs]</a><span class="k">class</span> <span class="nc">BridgeUnit</span> <span class="p">(</span><span class="n">AUnit</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Subclass of AUnit storing Isis Bridge Unit data.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This really an abstract class for any bridge unit and is not really</span>
+<span class="sd">        intended to be used directly.</span>
+
+<span class="sd">    Contains a reference to a rowdatacollection for storing and</span>
+<span class="sd">    accessing all the row data. i.e. the geometry data for the section,</span>
+<span class="sd">    containing the chainage, elevation, roughness, etc values.</span>
+<span class="sd">    Methods for accessing the data in these objects and adding removing rows</span>
+<span class="sd">    are available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;bridge&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;bridge&#39;</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="kc">None</span>
+    
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;BrgUS&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span> <span class="o">=</span> <span class="s1">&#39;BrgDS&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setupRowData</span><span class="p">()</span>
+        
+        
+
+<div class="viewcode-block" id="BridgeUnit.setupRowData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.setupRowData">[docs]</a>    <span class="k">def</span> <span class="nf">setupRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup the main geometry and opening RowCollection&#39;s. </span>
+<span class="sd">        </span>
+<span class="sd">        These are used by all BridgeUnits, but they&#39;re added to a method called</span>
+<span class="sd">        by the constructor in cases anyone need to override them.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">main_dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkIncreases</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.039</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">ConstantData</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">EMBANKMENT</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;R&#39;</span><span class="p">),</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;11}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">main_dobjs</span><span class="p">)</span> 
+        
+        <span class="n">open_dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkOpening</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkOpening</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SPRINGING_LEVEL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT_LEVEL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">open_dobjs</span><span class="p">)</span> </div>
+        
+    
+<div class="viewcode-block" id="BridgeUnit.icLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.icLabels">[docs]</a>    <span class="k">def</span> <span class="nf">icLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span><span class="p">]</span></div>
+
+        
+<div class="viewcode-block" id="BridgeUnit.numberOfOpenings"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.numberOfOpenings">[docs]</a>    <span class="k">def</span> <span class="nf">numberOfOpenings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span></div>
+    
+    
+<div class="viewcode-block" id="BridgeUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the unit data into the geometry objects.</span>
+<span class="sd">         </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            AUnit</span>
+<span class="sd">             </span>
+<span class="sd">        Args: </span>
+<span class="sd">            unit_data (list): The section of the isis dat file pertaining to </span>
+<span class="sd">                this section. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readHeadData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readMainRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readAdditionalRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">file_line</span></div>
+        
+
+    <span class="k">def</span> <span class="nf">_readHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>            
+        <span class="sd">&quot;&quot;&quot;Format the header data for writing to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Must be implemented by subclass</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: if not overriden by sub class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+    <span class="k">def</span> <span class="nf">_readMainRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the units rows into the row collection.</span>
+
+<span class="sd">        This is all the geometry data that occurs after the no of rows variable in</span>
+<span class="sd">        the Bridge Units of the dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): the data pertaining to this unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">no_of_chainage_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">file_line</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">no_of_chainage_rows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+
+                <span class="n">chain</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">elev</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">rough</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">bank</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">40</span><span class="p">:</span><span class="mi">51</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">bank</span> <span class="o">=</span> <span class="kc">None</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="n">chain</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elev</span><span class="p">,</span> 
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">:</span> <span class="n">rough</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">EMBANKMENT</span><span class="p">:</span> <span class="n">bank</span>
+                <span class="p">})</span>
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+        <span class="k">return</span> <span class="n">out_line</span>
+    
+
+<div class="viewcode-block" id="BridgeUnit.getData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Retrieve the data in this unit.</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            AUnit - getData()</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String list - output data formated the same as in the .DAT file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getHeadData</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getRowData</span><span class="p">())</span> 
+        <span class="n">out_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getAdditionalRowData</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">out_data</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_formatDataItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">col_width</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                    <span class="n">is_head_item</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">align_right</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format the given head data item for printing to file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">is_head_item</span><span class="p">:</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">no_of_dps</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">form</span> <span class="o">=</span> <span class="s1">&#39;%0.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">no_of_dps</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f&#39;</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">form</span> <span class="o">%</span> <span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">align_right</span><span class="p">:</span>
+            <span class="n">final_str</span> <span class="o">=</span> <span class="s1">&#39;{:&gt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">col_width</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">final_str</span> <span class="o">=</span> <span class="s1">&#39;{:&lt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">col_width</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+        <span class="k">return</span> <span class="n">final_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+  
+  
+    <span class="k">def</span> <span class="nf">_getRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;For all the rows in the river geometry section get the data from</span>
+<span class="sd">        the rowdatacollection class.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list - containing the formatted unit rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatDataItem</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">is_head_item</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span> 
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_data</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_getAdditionalRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the formatted row data for any additional row data objects.</span>
+<span class="sd">         </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list - containing additional row data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+   
+  
+    <span class="k">def</span> <span class="nf">_getHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the header data formatted for printing out</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Must be implemented by concrete subclass.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: if not overridden by sub class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+   
+<div class="viewcode-block" id="BridgeUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">collection_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the row at the given index in the river units row_collection.</span>
+<span class="sd">        </span>
+<span class="sd">        The row will be updated at the given index. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            index: the row to update. </span>
+<span class="sd">            collection_name=None(str): If None the self.row_collection</span>
+<span class="sd">                with the bridges geometry data will be updated. If a string it</span>
+<span class="sd">                will be looked for in the self.additional_row_collections</span>
+<span class="sd">                dictionary or raise an AttributeError if it doesn&#39;t exist.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If collection_name key does not exist.</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">collection_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">collection_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_row_collections</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;collection_name </span><span class="si">%s</span><span class="s1"> does not exist in row collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">collection_name</span><span class="p">))</span>
+        
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">)</span></div>
+    
+   
+<div class="viewcode-block" id="BridgeUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Adds a new row to one of this bridge units row_collection&#39;s.</span>
+<span class="sd">        </span>
+<span class="sd">        The new row will be added at the given index. If no index is given it</span>
+<span class="sd">        will be appended to the end of the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        If no chainage or elevation values are given an AttributeError will be </span>
+<span class="sd">        raised as they cannot have default values. All other values can be</span>
+<span class="sd">        ommitted. If they are they will be given defaults.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; import ship.fmp.datunits.rdt as rdt</span>
+<span class="sd">            &gt;&gt;&gt; unit.addRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.rdt with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            index=None(int): the row to insert into. The existing row at the</span>
+<span class="sd">                given index will be moved up by one.</span>
+<span class="sd">            collection_name=None(str): If None the self.row_collection</span>
+<span class="sd">                with the bridges geometry data will be updated. If a string it</span>
+<span class="sd">                will be looked for in the self.additional_row_collections</span>
+<span class="sd">                dictionary or raise an AttributeError if it doesn&#39;t exist.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: If required values are not given for the rowdata_key</span>
+<span class="sd">                collection. See _checkRowKeys().</span>
+<span class="sd">            KeyError: if the collection_name does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkRowKeys</span><span class="p">(</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="p">)</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="n">rowdata_key</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_checkRowKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensure certain values exist and are sane when updating a row.</span>
+<span class="sd">        </span>
+<span class="sd">        if rowdata_key == opening checks on the values will be made.</span>
+<span class="sd">        SOFFIT_LEVEL must be &gt;= SPRINGING_LEVEL.</span>
+<span class="sd">        OPEN_END must be &gt; OPEN_START.</span>
+<span class="sd">        </span>
+<span class="sd">        if rowdata_type == &#39;main&#39; rdt.CHAINAGE and rdt.ELEVATION must be </span>
+<span class="sd">        given. if rowdata_type == &#39;opening&#39; rdt.OPEN_START and rdt.OPEN_END</span>
+<span class="sd">        must be given.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(dict): {ROW_DATA_TYPE: value} to update with.</span>
+<span class="sd">            rowdata_key(str): the self.row_data dict key to update.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: if the required row_vals are not provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rowdata_key</span> <span class="o">==</span> <span class="s1">&#39;main&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Bridge: Required values of CHAINAGE and ELEVATION not given&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Bridge: row_vals must include CHAINAGE and ELEVATION.&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">rowdata_key</span> <span class="o">==</span> <span class="s1">&#39;opening&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Bridge: Required values of OPEN_START and OPEN_END not given&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Bridge: row_vals must include OPEN_START and OPEN_END.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_END must be &gt; than OPEN_START&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_END must be &gt; than OPEN_START&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT_LEVEL</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">and</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SPRINGING_LEVEL</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT_LEVEL</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">SPRINGING_LEVEL</span><span class="p">]:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Bridge: SOFFIT_LEVEL must be &gt;= SPRINGING_LEVEL&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Bridge: SOFFIT_LEVEL must be &gt;= SPRINGING_LEVEL&#39;</span><span class="p">)</span>
+                
+ 
+    
+<div class="viewcode-block" id="BridgeUnit.checkOpening"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.checkOpening">[docs]</a>    <span class="k">def</span> <span class="nf">checkOpening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_obj</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensures that the bridge opening values are ok.</span>
+<span class="sd">        </span>
+<span class="sd">        OPEN_END must be &gt; OPEN_START on the same row.</span>
+<span class="sd">        OPEN_START must be &gt; than OPEN_END on a previous row.</span>
+<span class="sd">        OPEN_END must be &gt; OPEN_START on a previous row.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data_obj(RowDataObj): to check the values for.</span>
+<span class="sd">            value(float): the new value to check.</span>
+<span class="sd">            index(int): the index the value will be inserted or updated at.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError - if value failes tests at index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAdjacentDataObjDetails</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_START must be &gt; than previous value&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">)[</span><span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_index&#39;</span><span class="p">]]:</span><span class="c1">#.getValue(details[&#39;prev_index&#39;]):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_START must be &gt; than previous OPEN_END value&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_START must be &lt; than next OPEN_START value&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_END must be &gt; than previous OPEN_END value&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">)[</span><span class="n">details</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]:</span><span class="c1">#.getValue(details[&#39;index&#39;]):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_END must be &gt; than OPEN_START value&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;OBridge: PEN_END must be &lt; than next OPEN_END value&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">)[</span><span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_index&#39;</span><span class="p">]]:</span><span class="c1">#.getValue(details[&#39;next_index&#39;]):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge: OPEN_END must be &lt; than next OPEN_START value&#39;</span><span class="p">)</span></div>
+            
+        
+<div class="viewcode-block" id="BridgeUnit.area"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnit.area">[docs]</a>    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the cross sectional area of the bridge openings.    </span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            Dict - containing the area of the opening(s). keys = &#39;total&#39;, then</span>
+<span class="sd">                &#39;1&#39;, &#39;2&#39;, &#39;n&#39; for all openings found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span></div></div>
+<span class="c1">#         areas = []</span>
+<span class="c1">#         opening_data = self.additional_row_collections[&#39;Opening&#39;]</span>
+<span class="c1">#         x_vals = self.row_collection.getRowDataAsList(rdt.CHAINAGE)</span>
+<span class="c1">#         y_vals = self.row_collection.getRowDataAsList(rdt.ELEVATION)</span>
+<span class="c1">#         </span>
+<span class="c1">#         start_vals = opening_data.getRowDataAsList(rdt.OPEN_START)</span>
+<span class="c1">#         end_vals = opening_data.getRowDataAsList(rdt.OPEN_END)</span>
+<span class="c1">#         soffit_vals = opening_data.getRowDataAsList(rdt.SOFFIT_LEVEL)</span>
+<span class="c1">#         springing_vals = opening_data.getRowDataAsList(rdt.SPRINGING_LEVEL)</span>
+<span class="c1">#         openings = zip(start_vals, end_vals, soffit_vals, springing_vals)</span>
+<span class="c1">#         </span>
+<span class="c1">#         for i, x in enumerate(x_vals):</span>
+<span class="c1">#             </span>
+<span class="c1">#             if math.fabs(x - ) </span>
+<span class="c1">#         </span>
+<span class="c1">#         </span>
+<span class="c1">#         i=0</span>
+
+
+<div class="viewcode-block" id="BridgeUnitUsbpr"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr">[docs]</a><span class="k">class</span> <span class="nc">BridgeUnitUsbpr</span> <span class="p">(</span><span class="n">BridgeUnit</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Concrete implementation of BridgeUnit for USBPR type bridges.</span>
+<span class="sd">    </span>
+<span class="sd">    Contains methods that override superclass with USBPR specific variables</span>
+<span class="sd">    and file read/write behaviour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;usbpr&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;bridge&#39;</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="s1">&#39;BRIDGE&#39;</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="s1">&#39;USBPR1978&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">BridgeUnitUsbpr</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+
+        <span class="c1"># Fill in the header values these contain the data at the top of the</span>
+        <span class="c1"># section</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;remote_us&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;remote_ds&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;roughness_type&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;MANNING&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;7}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MANNING&#39;</span><span class="p">,)),</span>
+            <span class="s1">&#39;calibration_coef&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">1.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;skew_angle&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;dual_distance&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;num_of_orifices&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span>
+            <span class="s1">&#39;orifice_flag&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;ORIFICE&#39;</span><span class="p">)),</span>
+            <span class="s1">&#39;op_lower&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;op_upper&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;op_cd&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;abutment_type&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">)),</span>
+            <span class="s1">&#39;num_of_piers&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span>
+            <span class="s1">&#39;pier_shape&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;FLAT&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;FLAT&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCH&#39;</span><span class="p">)),</span>
+            <span class="s1">&#39;pier_shape_2&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;FLAT&#39;</span><span class="p">,</span> <span class="s1">&#39;ARCH&#39;</span><span class="p">),</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s1">&#39;pier_calibration_coef&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s1">&#39;abutment_align&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;ALIGNED&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;ALIGNED&#39;</span><span class="p">,</span> <span class="s1">&#39;SKEW&#39;</span><span class="p">)),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Add an culvert RowCollection to self.row_data dict</span>
+        <span class="n">dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">INVERT</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CD_PART</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CD_FULL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">DROWNING</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">dobjs</span><span class="p">)</span> 
+
+    
+    
+    <span class="k">def</span> <span class="nf">_readHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>            
+        <span class="sd">&quot;&quot;&quot;Format the header data for writing to file.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">][</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">24</span><span class="p">:</span><span class="mi">36</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_ds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">36</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;calibration_coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;skew_angle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;dual_distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;num_of_orifices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">40</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;orifice_flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">60</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">60</span><span class="p">:</span><span class="mi">70</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">70</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_cd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">80</span><span class="p">:</span><span class="mi">90</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;abutment_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;num_of_piers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;pier_shape&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;pier_shape_2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;pier_calibration_coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">6</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;abutment_align&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">7</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+       
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">+</span> <span class="mi">8</span>
+
+
+    <span class="k">def</span> <span class="nf">_readAdditionalRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get any additional data rows.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readArchRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readCulvertRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_line</span> 
+    
+
+    <span class="k">def</span> <span class="nf">_readArchRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the data defining the openings in the bridge.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): the data pertaining to this unit.</span>
+<span class="sd">            </span>
+<span class="sd">        TODO:</span>
+<span class="sd">            Change the name of this function to _readOpeningRowData.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">no_of_opening_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">file_line</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">no_of_opening_rows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+                
+                <span class="n">ostart</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">oend</span>     <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">spring</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">soffit</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="n">ostart</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="n">oend</span><span class="p">,</span> 
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">SPRINGING_LEVEL</span><span class="p">:</span> <span class="n">spring</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT_LEVEL</span><span class="p">:</span> <span class="n">soffit</span>
+                <span class="p">})</span>
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        
+        <span class="k">return</span> <span class="n">out_line</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_readCulvertRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the data defining the culvert openings in the bridge.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): the data pertaining to this unit.</span>
+<span class="sd">        </span>
+<span class="sd">        TODO:</span>
+<span class="sd">            These errors are cryptic here as they&#39;re very specific to the</span>
+<span class="sd">            RowDataCollections being accessed. Perhaps these should be made a</span>
+<span class="sd">            little more relevant by raising a different error. Or they could</span>
+<span class="sd">            be dealt with better here.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">no_of_culvert_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">file_line</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">no_of_culvert_rows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+                
+                <span class="n">invert</span>      <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">soffit</span>      <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">area</span>        <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">cd_part</span>     <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">cd_full</span>     <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">40</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">drowning</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">60</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">INVERT</span><span class="p">:</span> <span class="n">invert</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT</span><span class="p">:</span> <span class="n">soffit</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">AREA</span><span class="p">:</span> <span class="n">area</span><span class="p">,</span> 
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">CD_PART</span><span class="p">:</span> <span class="n">cd_part</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CD_FULL</span><span class="p">:</span> <span class="n">cd_full</span><span class="p">,</span> 
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">DROWNING</span><span class="p">:</span> <span class="n">drowning</span>
+                <span class="p">})</span>
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        
+        <span class="k">return</span> <span class="n">out_line</span>
+    
+        
+    <span class="k">def</span> <span class="nf">_getHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the extracted header data.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;BRIDGE &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">USBPR1978&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_ds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">key_order</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;roughness_type&#39;</span><span class="p">,</span> <span class="s1">&#39;calibration_coef&#39;</span><span class="p">,</span> <span class="s1">&#39;skew_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;dual_distance&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_orifices&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;orifice_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;op_lower&#39;</span><span class="p">,</span> <span class="s1">&#39;op_upper&#39;</span><span class="p">,</span> <span class="s1">&#39;op_cd&#39;</span><span class="p">,</span> <span class="s1">&#39;abutment_type&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;num_of_piers&#39;</span><span class="p">,</span> <span class="s1">&#39;pier_shape&#39;</span><span class="p">,</span> <span class="s1">&#39;pier_shape_2&#39;</span><span class="p">,</span> <span class="s1">&#39;pier_calibration_coef&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;abutment_align&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key_order</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">final_out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">final_out</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_getAdditionalRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the formatted row data for any additional row data objects.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list - containing additional row data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatDataItem</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">is_head_item</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatDataItem</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">is_head_item</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_data</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_checkRowKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overriddes superclass method.</span>
+<span class="sd">        </span>
+<span class="sd">        Checks culvert keys as well.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">_checkRowKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="p">)</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rowdata_key</span> <span class="o">==</span> <span class="s1">&#39;culvert&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">INVERT</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Required values of INVERT, SOFFIT and AREA not given&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Required values of INVERT, SOFFIT and AREA not given&#39;</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">INVERT</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bridge culvert: SOFFIT must be &gt; INVERT&#39;</span><span class="p">)</span>
+        
+        
+<div class="viewcode-block" id="BridgeUnitUsbpr.checkOrifice"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.checkOrifice">[docs]</a>    <span class="k">def</span> <span class="nf">checkOrifice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_obj</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+        
+
+<div class="viewcode-block" id="BridgeUnitArch"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.bridgeunit.BridgeUnitArch">[docs]</a><span class="k">class</span> <span class="nc">BridgeUnitArch</span> <span class="p">(</span><span class="n">BridgeUnit</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Concrete implementation of BridgeUnit for USBPR type bridges.</span>
+<span class="sd">    </span>
+<span class="sd">    Contains methods that override superclass with USBPR specific variables</span>
+<span class="sd">    and file read/write behaviour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Additional values to add to the constants list</span>
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;arch&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="s1">&#39;BRIDGE&#39;</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="s1">&#39;ARCH&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">BridgeUnitArch</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">BridgeUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;remote_us&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;remote_ds&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;roughness_type&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;MANNING&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;8}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;MANNING&#39;</span><span class="p">,)),</span>
+            <span class="s1">&#39;calibration_coef&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">1.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;skew_angle&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;dual_distance&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;num_of_orifices&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span>
+            <span class="s1">&#39;orifice_flag&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;ORIFICE&#39;</span><span class="p">)),</span>
+            <span class="s1">&#39;op_lower&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;op_upper&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;op_cd&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+        <span class="p">}</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_getHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the extracted header data.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;BRIDGE &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ARCH&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_ds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;roughness_type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">key_order</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;calibration_coef&#39;</span><span class="p">,</span> <span class="s1">&#39;skew_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="s1">&#39;dual_distance&#39;</span><span class="p">,</span> <span class="s1">&#39;num_of_orifices&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;orifice_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;op_lower&#39;</span><span class="p">,</span> <span class="s1">&#39;op_upper&#39;</span><span class="p">,</span> <span class="s1">&#39;op_cd&#39;</span>
+        <span class="p">]</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key_order</span><span class="p">:</span>
+            <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">out</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_readHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>            
+        <span class="sd">&quot;&quot;&quot;Format the header data for writing to file.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            BridgeUnit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">][</span><span class="mi">6</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">24</span><span class="p">:</span><span class="mi">36</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_ds&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">36</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;calibration_coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;skew_angle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;dual_distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+        <span class="c1"># This doesn&#39;t get set by default in fmp so turn a blank str into 0</span>
+        <span class="n">orif</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">40</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">orif</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">orif</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="n">orif</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;num_of_orifices&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">orif</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;orifice_flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">60</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_lower&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">60</span><span class="p">:</span><span class="mi">70</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_upper&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">70</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;op_cd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">][</span><span class="mi">80</span><span class="p">:</span><span class="mi">90</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+       
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">+</span> <span class="mi">5</span>
+
+
+    <span class="k">def</span> <span class="nf">_readAdditionalRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the data defining the openings in the bridge.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): the data pertaining to this unit.</span>
+<span class="sd">            </span>
+<span class="sd">        TODO:</span>
+<span class="sd">            Change the name of this function to _readOpeningRowData.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">no_of_opening_rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">file_line</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">no_of_opening_rows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+
+                <span class="n">ostart</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">oend</span>     <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">spring</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">soffit</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="n">ostart</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="n">oend</span><span class="p">,</span> 
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">SPRINGING_LEVEL</span><span class="p">:</span> <span class="n">spring</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SOFFIT_LEVEL</span><span class="p">:</span> <span class="n">soffit</span>
+                <span class="p">})</span>
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        
+        <span class="k">return</span> <span class="n">out_line</span>
+        
+
+    <span class="k">def</span> <span class="nf">_getAdditionalRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the formatted row data for any additional row data objects.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list - containing additional row data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatDataItem</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">is_head_item</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_data</span></div>
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

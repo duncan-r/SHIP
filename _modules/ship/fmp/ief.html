@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.ief &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.ief</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.ief</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Ief file data holder.</span>
+<span class="sd">    </span>
+<span class="sd">    Contains the functionality for loading ISIS .ief files from disk.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ft</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="IefDataTypes"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.IefDataTypes">[docs]</a><span class="k">class</span> <span class="nc">IefDataTypes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for the different data types within the Ief class.</span>
+<span class="sd">    </span>
+<span class="sd">    Use these for easy access of the Ief class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">HEADER</span><span class="p">,</span> <span class="n">DETAILS</span><span class="p">,</span> <span class="n">IED_DATA</span><span class="p">,</span> <span class="n">SNAPSHOTS</span><span class="p">,</span> <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="Ief"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief">[docs]</a><span class="k">class</span> <span class="nc">Ief</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains the details in the in the IEF file.</span>
+
+<span class="sd">    Class data and a methods for accessing and upating the .ief file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_holder</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="n">snapshots</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                                    <span class="n">ied_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path_holder (PathHolder): Object containing the file path to this</span>
+<span class="sd">                ief file.</span>
+<span class="sd">            header: The [Event header] section of th ief file. It contains</span>
+<span class="sd">                data like the title and main filepaths.</span>
+<span class="sd">            details: The [Event Details] section of the ief file. It</span>
+<span class="sd">                contains almost all the other data in the ief file, including</span>
+<span class="sd">                all the flags for the run.</span>
+<span class="sd">            snapshots: List containing a dictionary in each element that</span>
+<span class="sd">                has the snapshot time and filepath.</span>
+<span class="sd">            ied_data: List containing a dictionary in each element that</span>
+<span class="sd">                contains the title and file path for every ied file referenced</span>
+<span class="sd">                in the ief file.</span>
+<span class="sd">            description: List containing the line of the description </span>
+<span class="sd">                section of the file.   </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_details</span> <span class="o">=</span> <span class="n">details</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">=</span> <span class="n">snapshots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="o">=</span> <span class="n">ied_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span> <span class="o">=</span> <span class="n">path_holder</span>
+        
+        
+<div class="viewcode-block" id="Ief.getFilePaths"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getFilePaths">[docs]</a>    <span class="k">def</span> <span class="nf">getFilePaths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all the file paths that occur in the ief file.</span>
+
+<span class="sd">        Most paths are extracted from the head and details data, when they </span>
+<span class="sd">        exist, and are added to paths_dict. If any ied data or snapshot data</span>
+<span class="sd">        exists it will be added as a list to the dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">        If a particular path is not found the value will be set to None, unless,</span>
+<span class="sd">        it&#39;s ied or snapshot data in which case it will be an empty list.</span>
+<span class="sd">        </span>
+<span class="sd">        Dict keys are: Datafile, Results, InitialConditions, 2DFile, ied,</span>
+<span class="sd">        and snapshots.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict - containing all of the path data stored by this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">paths_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;Datafile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="p">,</span> <span class="s1">&#39;Datafile&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;Datafile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;Results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="p">,</span> <span class="s1">&#39;Results&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;Results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;InitialConditions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="p">,</span> <span class="s1">&#39;InitialConditions&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;InitialConditions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;2DFile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="p">,</span> <span class="s1">&#39;2DFile&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;2DFile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">ied_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">ied</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ied</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span><span class="p">]</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;ieds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ied_paths</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;ieds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">snapshot_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">snap</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">snap</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">]</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;snapshots&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">snapshot_paths</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paths_dict</span><span class="p">[</span><span class="s1">&#39;snapshots&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">return</span> <span class="n">paths_dict</span></div>
+    
+    
+<div class="viewcode-block" id="Ief.getValue"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getValue">[docs]</a>    <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a value from one of the variables dictionaries.</span>
+<span class="sd">        </span>
+<span class="sd">        All single variables (i.e. not lists like ied data) are stored in two</span>
+<span class="sd">        main dictionaries. This method will return the value associated with</span>
+<span class="sd">        the given key from whichever dictionary it is stored in.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(str): dict key for value. For a list of available keys use the</span>
+<span class="sd">                getAvailableKeys method.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            string: value referenced by the given key, in the ief file.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if the given key does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="Ief.getIedData"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getIedData">[docs]</a>    <span class="k">def</span> <span class="nf">getIedData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all of the ied data stored in this object.</span>
+<span class="sd">        </span>
+<span class="sd">        There can be multiple ied files referenced by an ief. This will return</span>
+<span class="sd">        a dictionary containing all of them.</span>
+<span class="sd">        </span>
+<span class="sd">        If no ied files are included in the ief file the returned list will</span>
+<span class="sd">        be empty.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict - containing {ied_name: ied_path} for all ied files referenced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span></div>
+    
+    
+<div class="viewcode-block" id="Ief.getSnapshots"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getSnapshots">[docs]</a>    <span class="k">def</span> <span class="nf">getSnapshots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all of the snapshot data stored in this object.</span>
+<span class="sd">        </span>
+<span class="sd">        There can be multiple snapshot files referenced by an ief. This will return</span>
+<span class="sd">        a dictionary containing all of them.</span>
+<span class="sd">        </span>
+<span class="sd">        If no snapshots are included in the ief file the returned list will</span>
+<span class="sd">        be empty.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict - containing {snapshot_time: snapshot_path} for all snapshot </span>
+<span class="sd">                files referenced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span></div>
+    
+    
+<div class="viewcode-block" id="Ief.getDescription"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getDescription">[docs]</a>    <span class="k">def</span> <span class="nf">getDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the description component of the ief.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span></div>
+
+    
+<div class="viewcode-block" id="Ief.setValue"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Set the value of one of dictionary entries in the ief.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(str): The key of the value to update.</span>
+<span class="sd">            value(str(: the value to update.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if given key is not recongised.</span>
+<span class="sd">        </span>
+<span class="sd">        Warning:</span>
+<span class="sd">            Currently no checks are made on the validity of the the key given</span>
+<span class="sd">            this is because it may be a legal key, but not yet exist in the</span>
+<span class="sd">            dictionary. To fix this a list of all valid keys should be created</span>
+<span class="sd">            and checked here before setting the value. These are the keys used</span>
+<span class="sd">            in the ief file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;Path&#39;</span><span class="p">,</span> <span class="s1">&#39;Datafile&#39;</span><span class="p">,</span> <span class="s1">&#39;Results&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">headlist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+            
+    
+<div class="viewcode-block" id="Ief.addIedFile"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.addIedFile">[docs]</a>    <span class="k">def</span> <span class="nf">addIedFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ied_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new ied file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            ied_path(str): path to an ied file.</span>
+<span class="sd">            name=&#39;&#39;(str): name for the ied file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">ied_path</span><span class="p">})</span></div>
+    
+    
+<div class="viewcode-block" id="Ief.addSnapshot"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.addSnapshot">[docs]</a>    <span class="k">def</span> <span class="nf">addSnapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot_path</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new snapshot.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            snapshot_path(str): the path for the snapshot.</span>
+<span class="sd">            time(float): the time to assign to the snapshot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uf</span><span class="o">.</span><span class="n">isNumeric</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;time is not a numeric value&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">snapshot_path</span><span class="p">})</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">the_dict</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the variable in a dictionary.</span>
+<span class="sd"> </span>
+<span class="sd">        Tests to see if a variables exists under the given key in the given</span>
+<span class="sd">        dictionary. If it does it will return it.</span>
+<span class="sd"> </span>
+<span class="sd">        Args:</span>
+<span class="sd">            the_dict (Dict): Dictionary in which to check the keys existence.</span>
+<span class="sd">            key (str): Key to look for in the dictionary.</span>
+<span class="sd">         </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The requested variable if it exists or False if not. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="n">the_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No &#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; key found in ief&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+         
+        <span class="k">return</span> <span class="n">variable</span>
+        
+    
+<div class="viewcode-block" id="Ief.getPrintableContents"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.getPrintableContents">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the contents of the file for printing.</span>
+<span class="sd">        </span>
+<span class="sd">        Formats the contents of this Ief instance ready to be written back</span>
+<span class="sd">        to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List of the formatted lines for printing to file.</span>
+
+<span class="sd">        TODO:</span>
+<span class="sd">              This function is a bit long and messy at the moment. Could do</span>
+<span class="sd">              with a good refactoring.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Add the header data in a specific order</span>
+        <span class="n">headlist</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;Path&#39;</span><span class="p">,</span> <span class="s1">&#39;Datafile&#39;</span><span class="p">,</span> <span class="s1">&#39;Results&#39;</span><span class="p">]</span>
+        <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;[ISIS Event Header]&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headlist</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_header</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">var</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">var</span><span class="p">)</span>
+        
+        <span class="c1"># Add the top of the event list</span>
+        <span class="n">event_start</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RunType&#39;</span><span class="p">,</span> <span class="s1">&#39;InitialConditions&#39;</span><span class="p">,</span> <span class="s1">&#39;Start&#39;</span><span class="p">,</span> <span class="s1">&#39;Finish&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;Timestep&#39;</span><span class="p">,</span> <span class="s1">&#39;SaveInterval&#39;</span><span class="p">]</span>
+        <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;[ISIS Event Details]&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">event_start</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_findVarInDictionary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">var</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">var</span><span class="p">)</span>
+                
+        <span class="c1"># Add snapshot stuff</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">:</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SnapshotTime=&#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;SnapshotFile=&#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">])</span>
+                
+        <span class="c1"># Add ied stuff</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ied_data</span><span class="p">:</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;;&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;EventData=&#39;</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Now throw in everything else</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_details</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">event_start</span><span class="p">:</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span> <span class="o">+</span> <span class="n">value</span><span class="p">)</span>
+        
+        <span class="c1"># Finally, if there&#39;s a description add it on.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> \
+                                        <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            
+            <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;[Description]&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">):</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">contents</span></div>
+
+    
+<div class="viewcode-block" id="Ief.write"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.ief.Ief.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the contents of this file to disk.</span>
+<span class="sd">        </span>
+<span class="sd">        Writes out to file in the format required for reading by ISIS/FMP.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            If a filepath is not provided and the settings in this objects</span>
+<span class="sd">            PathHolder class have not been updated you will write over the</span>
+<span class="sd">            file that was loaded.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath=None(str): if a filename is provided it the file will be</span>
+<span class="sd">                written to that location. If not, the current settings in this</span>
+<span class="sd">                object path_holder object will be used.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IOError - If unable to write to file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filepath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+            
+        <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">()</span>
+        <span class="n">ft</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span></div></div>
+
+
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

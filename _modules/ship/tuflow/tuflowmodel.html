@@ -1,0 +1,665 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.tuflow.tuflowmodel &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.tuflow.tuflowmodel</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.tuflow.tuflowmodel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">     Container and main interface for accessing the Tuflow model and a class</span>
+<span class="sd">     for containing the main tuflow model files (Tcf, Tgc, etc). </span>
+<span class="sd">     </span>
+<span class="sd">     There are several other classes in here that are used to determine the</span>
+<span class="sd">     order of the files in the model and key words for reading in the files.</span>
+<span class="sd">     </span>
+<span class="sd">     </span>
+<span class="sd">     </span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd"> Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+<span class="sd">    </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">TuflowFile</span><span class="p">,</span> <span class="n">TuflowKeyValue</span><span class="p">,</span> <span class="n">TuflowUserVariable</span><span class="p">,</span> <span class="n">TuflowModelVariable</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+    
+<div class="viewcode-block" id="TuflowModel"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel">[docs]</a><span class="k">class</span> <span class="nc">TuflowModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Container for the entire loaded tuflow model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialise constants and dictionaries.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="sd">&quot;&quot;&quot;Tuflow Control File objects.</span>
+<span class="sd">        </span>
+<span class="sd">        All types of Tuflow Control file are stored here under the type header.</span>
+<span class="sd">        Types are: TCF, TGC, TBC, ECF, TEF.  </span>
+<span class="sd">        TCF is slightly different to the others as it contains an additional</span>
+<span class="sd">        member variable &#39;main_file_hash&#39; to identify the main tcf file that</span>
+<span class="sd">        was called to load the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;The current directory path used to reach the run files in the model&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_model_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot;Contains any tcf, tgs, etc files that could not be loaded.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">bc_event</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="sd">&quot;&quot;&quot;Contains the currently acitve BC Event variables.&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;Class containing the scenario/event/variable keys and values.&quot;&quot;&quot;</span>
+        
+            
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span>
+    
+    <span class="nd">@root</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateRoot</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TuflowModel.checkPathsExist"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.checkPathsExist">[docs]</a>    <span class="k">def</span> <span class="nf">checkPathsExist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test that all of the filepaths in the TuflowModel exist.&quot;&quot;&quot;</span>
+        <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">checkPathsExist</span><span class="p">())</span> 
+        <span class="k">return</span> <span class="n">failed</span></div>
+
+<div class="viewcode-block" id="TuflowModel.updateRoot"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.updateRoot">[docs]</a>    <span class="k">def</span> <span class="nf">updateRoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the root variable in all TuflowFile&#39;s in the model.</span>
+<span class="sd">        </span>
+<span class="sd">        The root variable (TuflowModel.root) is the directory that the main</span>
+<span class="sd">        .tcf file is in. This is used to define the location of all other files</span>
+<span class="sd">        which are usually referenced relative to each other.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            This method will be called automatically when setting the </span>
+<span class="sd">                TuflowModel.root variable.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            root(str): the new root to set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">updateRoot</span><span class="p">(</span><span class="n">root</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="TuflowModel.removeTcfModelFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.removeTcfModelFile">[docs]</a>    <span class="k">def</span> <span class="nf">removeTcfModelFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove an existing ModelFile from &#39;TCF&#39; and update ControlFile.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            You can call this function directly if you want to, but it is also</span>
+<span class="sd">            hooked into a callback in the TCF ControlFile. This means that when</span>
+<span class="sd">            you use the standard ControlFile add/remove/replaceControlFile()</span>
+<span class="sd">            methods these will be called automatically.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            model_files(ModelFile): the ModelFile being removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;model_file doesn&#39;t exists in </span><span class="si">%s</span><span class="s2"> control_files&quot;</span> <span class="o">%</span> <span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">removeControlFile</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="TuflowModel.replaceTcfModelFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.replaceTcfModelFile">[docs]</a>    <span class="k">def</span> <span class="nf">replaceTcfModelFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">,</span> <span class="n">control_file</span><span class="p">,</span> <span class="n">replace_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace an existing ModelFile in &#39;TCF&#39; and update ControlFile.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            You can call this function directly if you want to, but it is also</span>
+<span class="sd">            hooked into a callback in the TCF ControlFile. This means that when</span>
+<span class="sd">            you use the standard ControlFile add/remove/replaceControlFile()</span>
+<span class="sd">            methods these will be called automatically.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            model_file(ModelFile): the replacement TuflowPart.</span>
+<span class="sd">            control_file(ControlFile): containing the contents to replace the</span>
+<span class="sd">                existing ControlFile.</span>
+<span class="sd">            replace_file(ModelFile): the TuflowPart to be replaced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;model_file already exists in this ControlFile&#39;</span><span class="p">)</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">replace_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">replaceControlFile</span><span class="p">(</span>
+                                    <span class="n">model_file</span><span class="p">,</span> <span class="n">control_file</span><span class="p">,</span> <span class="n">replace_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="n">replace_file</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="TuflowModel.addTcfModelFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.addTcfModelFile">[docs]</a>    <span class="k">def</span> <span class="nf">addTcfModelFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">,</span> <span class="n">control_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new ModelFile instance to a TCF type ControlFile.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            You can call this function directly if you want to, but it is also</span>
+<span class="sd">            hooked into a callback in the TCF ControlFile. This means that when</span>
+<span class="sd">            you use the standard ControlFile add/remove/replaceControlFile()</span>
+<span class="sd">            methods these will be called automatically.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            after(TuflowPart): the part to add the new ModelFile after.</span>
+<span class="sd">            before(TuflowPart): the part to add the new ModelFile before.</span>
+<span class="sd">        </span>
+<span class="sd">        Either after or before kwargs must be given. If both are provided after</span>
+<span class="sd">        will take precedence.</span>
+
+<span class="sd">         Args:</span>
+<span class="sd">            model_file(ModelFile): the replacement ModelFile TuflowPart.</span>
+<span class="sd">            control_file(ControlFile): containing the contents to replace the</span>
+<span class="sd">                existing ControlFile.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;after&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;before&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Either &#39;before&#39; or &#39;after&#39; TuflowPart kwarg must be given&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">model_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;model_file already exists in this ControlFile&#39;</span><span class="p">)</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">addControlFile</span><span class="p">(</span>
+                                        <span class="n">model_file</span><span class="p">,</span> <span class="n">control_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+    
+
+
+<div class="viewcode-block" id="UserVariables"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables">[docs]</a><span class="k">class</span> <span class="nc">UserVariables</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Container for all user defined variables.</span>
+<span class="sd">    </span>
+<span class="sd">    Includes variable set in the control files with &#39;Set somevar ==&#39; and the</span>
+<span class="sd">    scenario and event variables.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Only the currently active scenario and event variables will be stored</span>
+<span class="sd">        in this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_cmd_args</span> <span class="o">=</span> <span class="kc">False</span>
+    
+<div class="viewcode-block" id="UserVariables.add"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepart</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new variables to the class.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepart(TuflowModelVariables or TuflowUserVariable):  </span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.</span>
+<span class="sd">            ValueError - if filepart already exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;variable already exists with that name - use replace instead&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepart</span><span class="p">,</span> <span class="n">TuflowUserVariable</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">filepart</span><span class="o">.</span><span class="n">variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepart</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filepart</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepart</span><span class="p">,</span> <span class="n">TuflowModelVariable</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_type</span> <span class="o">==</span> <span class="s1">&#39;scenario&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">==</span> <span class="s1">&#39;s1&#39;</span> <span class="ow">or</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="ow">or</span> <span class="s1">&#39;s1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;variable already exists with that &quot;</span> <span class="o">+</span>
+                                         <span class="s2">&quot;name - use replace instead</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> 
+                                         <span class="s2">&quot;note &#39;s&#39; and &#39;s1&#39; are treated the same.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepart</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepart</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filepart</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">==</span> <span class="s1">&#39;e1&#39;</span> <span class="ow">or</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s1">&#39;e&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="ow">or</span> <span class="s1">&#39;e1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;variable already exists with that &quot;</span> <span class="o">+</span>
+                                         <span class="s2">&quot;name - use replace instead</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> 
+                                         <span class="s2">&quot;note &#39;e&#39; and &#39;e1&#39; are treated the same.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepart</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">filepart</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filepart</span><span class="o">.</span><span class="n">variable_name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;filepart must be of type TuflowUserVariable or TuflowModelVariable&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="UserVariables.replace"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace an existing variable.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepart(TuflowModelVariables or TuflowUserVariable):  </span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.</span>
+<span class="sd">            ValueError - if filepart doesn&#39;t already exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Make sure it actually already exists.</span>
+        <span class="c1"># s &amp; s1 and e &amp; e1 are treated as the same name - same as tuflow</span>
+        <span class="n">temp_name</span> <span class="o">=</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span>
+        <span class="k">if</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span> <span class="ow">or</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;s1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;s1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;filepart doesn&#39;t seem to exist in UserVariables.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span> <span class="ow">or</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;e1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;e&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;e1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;filepart doesn&#39;t seem to exist in UserVariables.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">filepart</span><span class="o">.</span><span class="n">_variable_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;filepart doesn&#39;t seem to exist in UserVariables.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Delete the old one and call add() with the new one</span>
+        <span class="k">if</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span> <span class="ow">or</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;s1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;s&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">]</span> 
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;s1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="s1">&#39;s1&#39;</span><span class="p">]</span> 
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="s1">&#39;e1&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filepart</span><span class="p">,</span> <span class="s1">&#39;scenario&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span> <span class="ow">or</span> <span class="n">temp_name</span> <span class="o">==</span> <span class="s1">&#39;e1&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;e&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span> 
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="s1">&#39;e&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;e1&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="s1">&#39;e1&#39;</span><span class="p">]</span> 
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="s1">&#39;e1&#39;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filepart</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">temp_name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filepart</span><span class="p">)</span></div>
+            
+        
+<div class="viewcode-block" id="UserVariables.variablesToDict"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.variablesToDict">[docs]</a>    <span class="k">def</span> <span class="nf">variablesToDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the values of the variables.</span>
+<span class="sd">        </span>
+<span class="sd">        Note that, like tuflow, scenario and event values will be includes in</span>
+<span class="sd">        the variables dict returned.</span>
+
+<span class="sd">            {&#39;name1&#39;: var1, &#39;name2&#39;: var2, &#39;nameN&#39;: name2}</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - with variables names as key and values as values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">vkey</span><span class="p">,</span> <span class="n">vval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">vkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">vval</span><span class="o">.</span><span class="n">variable</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+        
+<div class="viewcode-block" id="UserVariables.seValsToDict"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.seValsToDict">[docs]</a>    <span class="k">def</span> <span class="nf">seValsToDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the values of the scenario and event variables.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns the currently active scenario and event values only - not the</span>
+<span class="sd">        placeholder keys - in a dictionary in the format::  </span>
+<span class="sd">            {&#39;scenario&#39;: [val1, val2, valN], &#39;event&#39;: [val1, val2, valN]}</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - of scenario and event values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scenario</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">variable</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">variable</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="n">scenario</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="n">event</span><span class="p">}</span></div>
+    
+<div class="viewcode-block" id="UserVariables.remove"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove the variable stored at the given key.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(str): key for either the scenario, event, or variables dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">_variable_name</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+    
+<div class="viewcode-block" id="UserVariables.get"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the TuflowPart at the given key.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(str): the key associated with the required TuflowPart.</span>
+<span class="sd">            vtype=None(str): the type of part to return. If None it will return</span>
+<span class="sd">                a &#39;variable&#39; type. Other options are &#39;scenario&#39; and &#39;event&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            TuflowPart - TuflowModelVariable or TuflowUserVariable type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vtype</span> <span class="o">==</span> <span class="s1">&#39;scenario&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;key </span><span class="si">%s</span><span class="s1"> is not in scenario keys&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">vtype</span> <span class="o">==</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;key </span><span class="si">%s</span><span class="s1"> is not in event keys&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">event</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;key </span><span class="si">%s</span><span class="s1"> is not in variable keys&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="TuflowTypes"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowTypes">[docs]</a><span class="k">class</span> <span class="nc">TuflowTypes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains key words from Tuflow files for lookup.</span>
+<span class="sd">    </span>
+<span class="sd">    This acts as a lookup table for the TuflowLoader class more than anything</span>
+<span class="sd">    else. It is kept here as that seems to be most sensible.</span>
+<span class="sd">    </span>
+<span class="sd">    Contains methods for identifying whether a command given to it is known</span>
+<span class="sd">    to the library and what type it is. i.e. what UNIT_CATEGORY it falls into.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialise the categories and known keywords&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ambiguous</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;WRITE CHECK FILES&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;WRITE CHECK FILES INCLUDE&#39;</span><span class="p">,</span> <span class="n">fpt</span><span class="o">.</span><span class="n">VARIABLE</span><span class="p">],</span>
+            <span class="s1">&#39;WRITE CHECK FILES INCLUDE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;WRITE CHECK FILES&#39;</span><span class="p">,</span> <span class="n">fpt</span><span class="o">.</span><span class="n">RESULT</span><span class="p">],</span>
+            <span class="s1">&#39;DEFINE EVENT&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;DEFINE OUTPUT ZONE&#39;</span><span class="p">,</span> <span class="n">fpt</span><span class="o">.</span><span class="n">SECTION_LOGIC</span><span class="p">],</span>
+            <span class="s1">&#39;DEFINE OUTPUT ZONE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;DEFINE EVENT&#39;</span><span class="p">,</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_LOGIC</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ambiguous_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ambiguous</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">MODEL</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GEOMETRY CONTROL FILE&#39;</span><span class="p">,</span> <span class="s1">&#39;BC CONTROL FILE&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;READ FILE&#39;</span><span class="p">,</span> <span class="s1">&#39;ESTRY CONTROL FILE&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;EVENT FILE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">RESULT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OUTPUT FOLDER&#39;</span><span class="p">,</span> <span class="s1">&#39;WRITE CHECK FILES&#39;</span><span class="p">,</span>
+                                 <span class="s1">&#39;LOG FOLDER&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;READ MI&#39;</span><span class="p">,</span> <span class="s1">&#39;READ GIS&#39;</span><span class="p">,</span> <span class="s1">&#39;READ GRID&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;SHP PROJECTION&#39;</span><span class="p">,</span> <span class="s1">&#39;MI PROJECTION&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">DATA</span><span class="p">]</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;READ MATERIALS FILE&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;BC DATABASE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">VARIABLE</span><span class="p">]</span> <span class="o">=</span>  <span class="p">[</span><span class="s1">&#39;START TIME&#39;</span><span class="p">,</span> <span class="s1">&#39;END TIME&#39;</span><span class="p">,</span> <span class="s1">&#39;TIMESTEP&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;SET IWL&#39;</span><span class="p">,</span> <span class="s1">&#39;MAP OUTPUT INTERVAL&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;MAP OUTPUT DATA TYPES&#39;</span><span class="p">,</span> <span class="s1">&#39;CELL WET/DRY DEPTH&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;CELL SIDE WET/DRY DEPTH&#39;</span><span class="p">,</span> <span class="s1">&#39;SET IWL&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;TIME SERIES OUTPUT INTERVAL&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;SCREEN/LOG DISPLAY INTERVAL&#39;</span><span class="p">,</span> <span class="s1">&#39;CSV TIME&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;START OUTPUT&#39;</span><span class="p">,</span> <span class="s1">&#39;OUTPUT INTERVAL&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;STRUCTURE LOSSES&#39;</span><span class="p">,</span> <span class="s1">&#39;WLL APPROACH&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;WLL ADJUST XS WIDTH&#39;</span><span class="p">,</span> <span class="s1">&#39;WLL ADDITIONAL POINTS&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;DEPTH LIMIT FACTOR&#39;</span><span class="p">,</span> <span class="s1">&#39;CELL SIZE&#39;</span><span class="p">,</span> <span class="s1">&#39;SET CODE&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;GRID SIZE (X,Y)&#39;</span><span class="p">,</span> <span class="s1">&#39;SET ZPTS&#39;</span><span class="p">,</span> <span class="s1">&#39;SET MAT&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;MASS BALANCE OUTPUT&#39;</span><span class="p">,</span> <span class="s1">&#39;GIS FORMAT&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;MAP OUTPUT FORMATS&#39;</span><span class="p">,</span> <span class="s1">&#39;END MAT OUTPUT&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;ASC START MAP OUTPUT&#39;</span><span class="p">,</span> <span class="s1">&#39;ASC END MAP OUTPUT&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;XMDF MAP OUTPUT DATA TYPES&#39;</span><span class="p">,</span> <span class="s1">&#39;WRITE PO ONLINE&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;ASC MAP OUTPUT DATA TYPES&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;WRITE CHECK FILES INCLUDE&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;STORE MAXIMUMS AND MINIMUMS&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">IF_LOGIC</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;IF SCENARIO&#39;</span><span class="p">,</span> <span class="s1">&#39;ELSE IF SCENARIO&#39;</span><span class="p">,</span> <span class="s1">&#39;IF EVENT&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;ELSE IF EVENT&#39;</span><span class="p">,</span> <span class="s1">&#39;END IF&#39;</span><span class="p">,</span> <span class="s1">&#39;ELSE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_LOGIC</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEFINE EVENT&#39;</span><span class="p">,</span> <span class="s1">&#39;END DEFINE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">SECTION_LOGIC</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEFINE OUTPUT ZONE&#39;</span><span class="p">,</span> <span class="s1">&#39;END DEFINE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">USER_VARIABLE</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SET VARIABLE&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_VARIABLE</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BC EVENT TEXT&#39;</span><span class="p">,</span> <span class="s1">&#39;BC EVENT NAME&#39;</span><span class="p">,</span> 
+                                           <span class="s1">&#39;BC EVENT SOURCE&#39;</span><span class="p">,]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MODEL SCENARIOS&#39;</span><span class="p">,</span> <span class="s1">&#39;MODEL EVENTS&#39;</span><span class="p">,]</span>
+        
+        
+<div class="viewcode-block" id="TuflowTypes.find"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowTypes.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">find_val</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks if the given value is known or not.</span>
+<span class="sd">        </span>
+<span class="sd">        The word to look for doesn&#39;t have to be an exact match to the given</span>
+<span class="sd">        value, it only has to start with it. This means that we don&#39;t need to</span>
+<span class="sd">        know whether it is a &#39;command == something&#39; or just &#39;command something&#39;</span>
+<span class="sd">        (like: &#39;Estry Control File Auto&#39;) at this point.</span>
+<span class="sd">        </span>
+<span class="sd">        This helps to avoid unnecessary repitition. i.e. many files are like:</span>
+<span class="sd">        &#39;READ GIS&#39; + another word. All of them are GIS type files so they all</span>
+<span class="sd">        get dealt with in the same way.</span>
+<span class="sd">        </span>
+<span class="sd">        In some edge cases there are command that start the same. These are</span>
+<span class="sd">        dealt with by secondary check to see if the next character is &#39;=&#39; or</span>
+<span class="sd">        not.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            find_val (str): the value attempt to find in the lookup table.</span>
+<span class="sd">            file_type (int): Optional - reduce the lookup time by providing </span>
+<span class="sd">                the type (catgory) to look for the value in. These are the</span>
+<span class="sd">                constants (MODEL, GIS, etc).</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple (Bool, int) True if found. Int is the class constant </span>
+<span class="sd">                indicating what type the value was found under.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">find_val</span> <span class="o">=</span> <span class="n">find_val</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">part_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">part_type</span> <span class="k">if</span> <span class="n">find_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="n">key</span>
+                    <span class="k">if</span> <span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ambiguous_keys</span><span class="p">:</span>
+                        <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkAmbiguity</span><span class="p">(</span><span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">find_val</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">retval</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span> <span class="k">if</span> <span class="n">find_val</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">file_type</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+        
+    
+    <span class="k">def</span> <span class="nf">_checkAmbiguity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">found</span><span class="p">,</span> <span class="n">find_val</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resolves any ambiguity in the keys.&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">find_val</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="n">found</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">f2</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">key</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ambiguous</span><span class="p">[</span><span class="n">found</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span></div>
+
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

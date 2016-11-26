@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.dbversions &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.dbversions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.dbversions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Based on the list found here:</span>
+
+<span class="sd">http://www.dbf2002.com/dbf-file-format.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">DBVERSION_STRINGS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x02</span> <span class="p">:</span> <span class="s1">&#39;FoxBASE&#39;</span><span class="p">,</span>
+    <span class="mh">0x03</span> <span class="p">:</span> <span class="s1">&#39;FoxBASE+/Dbase III plus, no memory&#39;</span><span class="p">,</span>
+    <span class="mh">0x30</span> <span class="p">:</span> <span class="s1">&#39;Visual FoxPro&#39;</span><span class="p">,</span>
+    <span class="mh">0x31</span> <span class="p">:</span> <span class="s1">&#39;Visual FoxPro, autoincrement enabled&#39;</span><span class="p">,</span>
+    <span class="mh">0x32</span> <span class="p">:</span> <span class="s1">&#39;Visual FoxPro with field type Varchar or Varbinary&#39;</span><span class="p">,</span>
+    <span class="mh">0x43</span> <span class="p">:</span> <span class="s1">&#39;dBASE IV SQL table files, no memo&#39;</span><span class="p">,</span>
+    <span class="mh">0x63</span> <span class="p">:</span> <span class="s1">&#39;dBASE IV SQL system files, no memo&#39;</span><span class="p">,</span>
+    <span class="mh">0x83</span> <span class="p">:</span> <span class="s1">&#39;FoxBASE+/dBASE III PLUS, with memo&#39;</span><span class="p">,</span>
+    <span class="mh">0x8B</span> <span class="p">:</span> <span class="s1">&#39;dBASE IV with memo&#39;</span><span class="p">,</span>
+    <span class="mh">0xCB</span> <span class="p">:</span> <span class="s1">&#39;dBASE IV SQL table files, with memo&#39;</span><span class="p">,</span>
+    <span class="mh">0xF5</span> <span class="p">:</span> <span class="s1">&#39;FoxPro 2.x (or earlier) with memo&#39;</span><span class="p">,</span>
+    <span class="mh">0xE5</span> <span class="p">:</span> <span class="s1">&#39;HiPer-Six format with SMT memo file&#39;</span><span class="p">,</span>
+    <span class="mh">0xFB</span> <span class="p">:</span> <span class="s1">&#39;FoxBASE&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<div class="viewcode-block" id="get_dbversion_string"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbversions.get_dbversion_string">[docs]</a><span class="k">def</span> <span class="nf">get_dbversion_string</span><span class="p">(</span><span class="n">dbversion</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DBVERSION_STRINGS</span><span class="p">[</span><span class="n">dbversion</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Unknown (0x</span><span class="si">{:02x}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dbversion</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

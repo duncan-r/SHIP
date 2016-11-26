@@ -1,0 +1,1128 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship package" href="ship.html"/>
+        <link rel="next" title="ship.fmp.datunits package" href="ship.fmp.datunits.html"/>
+        <link rel="prev" title="ship.data_structures package" href="ship.data_structures.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ship.fmp package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.datcollection">ship.fmp.datcollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.ief">ship.fmp.ief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.isisunitfactory">ship.fmp.isisunitfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+    <li>ship.fmp package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.fmp.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-fmp-package">
+<h1>ship.fmp package<a class="headerlink" href="#ship-fmp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ship.fmp.datunits.html">ship.fmp.datunits package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.bridgeunit">ship.fmp.datunits.bridgeunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.culvertunit">ship.fmp.datunits.culvertunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.gisinfounit">ship.fmp.datunits.gisinfounit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.htbdyunit">ship.fmp.datunits.htbdyunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.initialconditionsunit">ship.fmp.datunits.initialconditionsunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.interpolateunit">ship.fmp.datunits.interpolateunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.isisunit">ship.fmp.datunits.isisunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.junctionunit">ship.fmp.datunits.junctionunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.orificeunit">ship.fmp.datunits.orificeunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.refhunit">ship.fmp.datunits.refhunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.riverunit">ship.fmp.datunits.riverunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits.spillunit">ship.fmp.datunits.spillunit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.fmp.datunits.html#module-ship.fmp.datunits">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.fmp.datcollection">
+<span id="ship-fmp-datcollection-module"></span><h2>ship.fmp.datcollection module<a class="headerlink" href="#module-ship.fmp.datcollection" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the convenience collection pattern UnitCollection.
+This is used to hold all of the isisunit objects loaded from the dat
+file.
+Provides convenience methods for retrieving units and getting key
+meta-data on the units held in this collection.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datcollection.DatCollection">
+<em class="property">class </em><code class="descname">DatCollection</code><span class="sig-paren">(</span><em>path_holder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Collection of isisunit type classes.</p>
+<p>This is a sort of composite/facade for all of the isisunit concrete
+classes loaded.</p>
+<p>Each unit that is loaded is added to this class. They can then be accessed
+through the convenience methods outlined here.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datcollection.DatCollection.DIRECTORY">
+<code class="descname">DIRECTORY</code><em class="property"> = 1</em><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.DIRECTORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datcollection.DatCollection.FILENAME">
+<code class="descname">FILENAME</code><em class="property"> = 2</em><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.FILENAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datcollection.DatCollection.FILENAME_AND_EXTENSION">
+<code class="descname">FILENAME_AND_EXTENSION</code><em class="property"> = 3</em><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.FILENAME_AND_EXTENSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datcollection.DatCollection.FULL_PATH">
+<code class="descname">FULL_PATH</code><em class="property"> = 0</em><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.FULL_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.addUnit">
+<code class="descname">addUnit</code><span class="sig-paren">(</span><em>unit</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.addUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.addUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new isisunit type to the collection.</p>
+<p>If the index value provided is greater than the index of the
+InitialConditions unit the unit will be added before the IC unit. This
+is the last slot in the ordering of the units in the dat file.</p>
+<p>Accepts <code class="docutils literal"><span class="pre">**kwargs</span></code>:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>update_node_count(bool): if True will update the node count</dt>
+<dd>value at the top of the .dat file. You probably want to do this.
+if missing it will default to True</dd>
+<dt>ics(dict): inital conditions to add for the unit being put in the</dt>
+<dd>collection. If missing the default values will be applied.
+These will only be applied if the unit supports initial conditions.</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>unit</strong> (<em>AIsisInit</em>) &#8211; The instance to add to the collection.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; Index to insert the unit at.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; When a non-isisunit type is given.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.allUnits">
+<code class="descname">allUnits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.allUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.allUnits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the isisunit in the collection</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<dl class="last docutils">
+<dt>Don&#8217;t use this it is being deprecated and will probably be</dt>
+<dd>removed in a later release.</dd>
+</dl>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of isisunit objects</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Remove this function it can be accessed through the variables or
+by setting up a property if needed.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the formatted contents of each isisunit in the collection.</p>
+<p>Iterates through each of the units in the collection and
+calls their getData() method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>List containing all lines for each unit formatted for printing</dt>
+<dd>out to the dat file.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>unit</em>, <em>unit_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the index a particular AUnit in the collection.</p>
+<p>Either the unit itself or its name can be provided as the argument.</p>
+<p>If a name is supplied a unit_type should also be given. This is because
+some units can have the same name (e.g. river and refh) and it is not
+possible to know which one to return with the name alone. If no unit_type
+is given the first unit with the matching name will be returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>unit</strong> (<em>AUnit or str</em>) &#8211; the AUnit or the name of the AUnit
+to find the index for.</li>
+<li><strong>unit_type=None</strong> (<em>str</em>) &#8211; the unit_type member of the AUnit (e.g.
+for a USBPR bridge the unit_category == Bridge and unit_type == &#8216;Usbpr&#8217;).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">int - the index of the given unit, or -1 if it could not be found.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="ship.fmp.datcollection.DatCollection.initialisedDat">
+<em class="property">classmethod </em><code class="descname">initialisedDat</code><span class="sig-paren">(</span><em>dat_path</em>, <em>units=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.initialisedDat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.initialisedDat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new ISIS .dat file with basic header info and no units.</p>
+<p>Creates the equivelant of generating a new .dat unit in the software. The
+DatCollection returned can then be manipulated in the same way that any
+other one loaded from file would be.</p>
+<p>A single comment unit will be be added to the file stating that it was
+created by the SHIP library at timestamp.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dat_path</strong> (<em>str</em>) &#8211; the path to set for the newly created .dat file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">DatCollection - setup as an empty ISIS .dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.numberOfUnits">
+<code class="descname">numberOfUnits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.numberOfUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.numberOfUnits" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of units currently held in the collection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Int Units in the collection.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.removeUnit">
+<code class="descname">removeUnit</code><span class="sig-paren">(</span><em>unit</em>, <em>unit_type=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.removeUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.removeUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove one of the units previously added to the list.</p>
+<p>Accepts <code class="docutils literal"><span class="pre">**kwargs</span></code>:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>update_node_count(bool): if True will update the node count</dt>
+<dd>value at the top of the .dat file. You probably want to do this.
+if missing it will default to True</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>unit</strong> (<em>str | AUnit</em>) &#8211; Can either be the AUnit.name or the
+AUnit.</li>
+<li><strong>unit_type=None</strong> (<em>str</em>) &#8211; If unit is a name str this must be provided to
+ensure that the correct unit is removed. E.g. a RiverUnit and
+an RefhUnit can both have the same AUnit.name value, but
+different .unit_type&#8217;s.
+If unit is an AUnit this will be ignored.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if the name doesn&#8217;t exist.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.setUnit">
+<code class="descname">setUnit</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.setUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.setUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace the contents of a certain unit with the given one.</p>
+<p>Each isisunit have a .name and .unit_type variable. The .nane and
+.unit_type will be checked against the collection. If the name and
+matching unit_type is found within thecollection that unit will be
+replaced with the given one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unit</strong> (<a class="reference internal" href="ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><em>AUnit</em></a>) &#8211; the unit to replace.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li>NameError, AttributeError - if the .name or .unit_type could not</li>
+<li>be found.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.unit">
+<code class="descname">unit</code><span class="sig-paren">(</span><em>key</em>, <em>unit_type=None</em>, <em>unit_category=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch a unit from the collection by name.</p>
+<p>Each isisunit in the collection is guaranteed to have a unique id.
+You can access the unit if you know it&#8217;s ID. The ID is the
+AUnit.name variable.</p>
+<p>Sometimes different units can have the same name (e.g. RefhUnit and
+RiverUnit). This function will always return the first unit it finds.
+To avoid this you can specifiy an AUnit.UNIT_TYPE to retrieve:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">getUnit</span><span class="p">(</span><span class="n">river</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">river</span><span class="o">.</span><span class="n">UNIT_TYPE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that if both unit_type and unit_category are given whichever is
+found to match against the unit.name first will be returned. This
+shouldn&#8217;t make any difference in practise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name_key</strong> (<em>str</em>) &#8211; name of the unit.</li>
+<li><strong>unit_type=None</strong> (<em>str</em>) &#8211; the AUnit.TYPE to find.</li>
+<li><strong>unit_category=None</strong> (<em>str</em>) &#8211; the AUnit.CATEGORY to find.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>isisunit object corresponding to the given name, or False</dt>
+<dd><p class="first last">if the name doesn&#8217;t exist.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.unitsByCategory">
+<code class="descname">unitsByCategory</code><span class="sig-paren">(</span><em>unit_keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.unitsByCategory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.unitsByCategory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all the units in the requested unit(s).</p>
+<p>Iterate through the collection and get all of the different categories
+within the model.</p>
+<p>Categories are defined by the AUnits. For example:
+USBPR and Arch bridge units are different, but both will be
+categorised as &#8216;bridge&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_keys</strong> (<em>str | []</em>) &#8211; The unit variables defined in
+the unit. Can be either a string representing a single CATEGORY
+of AUnit or a list of strings for multiple types.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>List containing all the specified CATEGORY of unit in the model or</dt>
+<dd>False if there are none of the CATEGORY in the
+collection.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.unitsByType">
+<code class="descname">unitsByType</code><span class="sig-paren">(</span><em>type_keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.unitsByType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.unitsByType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all of the units of the requested type.</p>
+<p>Iterate through the collection and get all of the different unit types
+within the model.</p>
+<p>Types are set by the isisunit subclasses. They differentiate the
+from categories by providing further definition. For example:
+USBPR and ARCH bridges would both be returned in the same UNIT_CATEGORY,
+but on ARCH bridges would be return using the ArchBridgeUnit.TYPE.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Use the class constants in the isisunit classes as the type key</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>type_keys</strong> (<em>str | []</em>) &#8211; The unit_type variables defined in
+the unit. Can be either a string representing a single type
+of AUnit or a list of strings for multiple types.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of the specified unit type.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the contents of this file to disk.</p>
+<p>Writes out to file in the format required for reading by ISIS/FMP.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a filepath is not provided and the settings in this objects
+PathHolder class have not been updated you will write over the
+file that was loaded.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
+written to that location. If not, the current settings in this
+object path_holder object will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">IOError - If unable to write to file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datcollection.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x048A1510&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.headdata">
+<span id="ship-fmp-headdata-module"></span><h2>ship.fmp.headdata module<a class="headerlink" href="#module-ship.fmp.headdata" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the RiverUnit class.
+This holds all of the data read in from the river units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.headdata.HeadDataItem">
+<em class="property">class </em><code class="descname">HeadDataItem</code><span class="sig-paren">(</span><em>value</em>, <em>format_str</em>, <em>line_no</em>, <em>col_no</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/headdata.html#HeadDataItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Objects stored in the head_data dict in AUnit&#8217;s.</p>
+<p>Allow for formatting variables and value checks to be encapsulated in one
+place rather than littered around all subclasses of AUnit.</p>
+<dl class="method">
+<dt id="ship.fmp.headdata.HeadDataItem.compare">
+<code class="descname">compare</code><span class="sig-paren">(</span><em>compare_val</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/headdata.html#HeadDataItem.compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check equality of given value against self.value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>compare_val</strong> &#8211; value to compare with self.value.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool - true if equal, false if not.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.headdata.HeadDataItem.format">
+<code class="descname">format</code><span class="sig-paren">(</span><em>auto_newline=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/headdata.html#HeadDataItem.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value converted to unicode str and formatted.</p>
+<blockquote>
+<div><p>Formatting uses the self.format_str variable.</p>
+<p>A newline char &#8216;</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>&#8216; will be appended to the start of the returned</dt>
+<dd>string if it&#8217;s col_no == 0 and auto_newline == True.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.headdata.HeadDataItem.value">
+<code class="descname">value</code><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.headdata.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10610&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.ief">
+<span id="ship-fmp-ief-module"></span><h2>ship.fmp.ief module<a class="headerlink" href="#module-ship.fmp.ief" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Ief file data holder.</p>
+<p class="last">Contains the functionality for loading ISIS .ief files from disk.</p>
+</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.ief.Ief">
+<em class="property">class </em><code class="descname">Ief</code><span class="sig-paren">(</span><em>path_holder</em>, <em>header</em>, <em>details</em>, <em>snapshots=None</em>, <em>ied_data=None</em>, <em>description=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains the details in the in the IEF file.</p>
+<p>Class data and a methods for accessing and upating the .ief file.</p>
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.addIedFile">
+<code class="descname">addIedFile</code><span class="sig-paren">(</span><em>ied_path</em>, <em>name=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.addIedFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.addIedFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new ied file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ied_path</strong> (<em>str</em>) &#8211; path to an ied file.</li>
+<li><strong>name=''</strong> (<em>str</em>) &#8211; name for the ied file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.addSnapshot">
+<code class="descname">addSnapshot</code><span class="sig-paren">(</span><em>snapshot_path</em>, <em>time</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.addSnapshot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.addSnapshot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new snapshot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>snapshot_path</strong> (<em>str</em>) &#8211; the path for the snapshot.</li>
+<li><strong>time</strong> (<em>float</em>) &#8211; the time to assign to the snapshot.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getDescription">
+<code class="descname">getDescription</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getDescription"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the description component of the ief.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getFilePaths">
+<code class="descname">getFilePaths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getFilePaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getFilePaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the file paths that occur in the ief file.</p>
+<p>Most paths are extracted from the head and details data, when they
+exist, and are added to paths_dict. If any ied data or snapshot data
+exists it will be added as a list to the dictionary.</p>
+<p>If a particular path is not found the value will be set to None, unless,
+it&#8217;s ied or snapshot data in which case it will be an empty list.</p>
+<p>Dict keys are: Datafile, Results, InitialConditions, 2DFile, ied,
+and snapshots.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict - containing all of the path data stored by this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getIedData">
+<code class="descname">getIedData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getIedData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getIedData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the ied data stored in this object.</p>
+<p>There can be multiple ied files referenced by an ief. This will return
+a dictionary containing all of them.</p>
+<p>If no ied files are included in the ief file the returned list will
+be empty.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ied_path} for all ied files referenced.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict - containing {ied_name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the contents of the file for printing.</p>
+<p>Formats the contents of this Ief instance ready to be written back
+to file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of the formatted lines for printing to file.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">This function is a bit long and messy at the moment. Could do
+with a good refactoring.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getSnapshots">
+<code class="descname">getSnapshots</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getSnapshots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getSnapshots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the snapshot data stored in this object.</p>
+<p>There can be multiple snapshot files referenced by an ief. This will return
+a dictionary containing all of them.</p>
+<p>If no snapshots are included in the ief file the returned list will
+be empty.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>snapshot_path} for all snapshot</dt>
+<dd>files referenced.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict - containing {snapshot_time</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.getValue">
+<code class="descname">getValue</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.getValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.getValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a value from one of the variables dictionaries.</p>
+<p>All single variables (i.e. not lists like ied data) are stored in two
+main dictionaries. This method will return the value associated with
+the given key from whichever dictionary it is stored in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; dict key for value. For a list of available keys use the
+getAvailableKeys method.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">value referenced by the given key, in the ief file.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if the given key does not exist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.setValue">
+<code class="descname">setValue</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.setValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.setValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of one of dictionary entries in the ief.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>str</em>) &#8211; The key of the value to update.</li>
+<li><strong>value(str(</strong> &#8211; the value to update.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if given key is not recongised.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Currently no checks are made on the validity of the the key given
+this is because it may be a legal key, but not yet exist in the
+dictionary. To fix this a list of all valid keys should be created
+and checked here before setting the value. These are the keys used
+in the ief file.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.ief.Ief.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the contents of this file to disk.</p>
+<p>Writes out to file in the format required for reading by ISIS/FMP.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a filepath is not provided and the settings in this objects
+PathHolder class have not been updated you will write over the
+file that was loaded.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
+written to that location. If not, the current settings in this
+object path_holder object will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">IOError - If unable to write to file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.ief.IefDataTypes">
+<em class="property">class </em><code class="descname">IefDataTypes</code><a class="reference internal" href="_modules/ship/fmp/ief.html#IefDataTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.IefDataTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Enum for the different data types within the Ief class.</p>
+<p>Use these for easy access of the Ief class.</p>
+<dl class="attribute">
+<dt id="ship.fmp.ief.IefDataTypes.DESCRIPTION">
+<code class="descname">DESCRIPTION</code><em class="property"> = 4</em><a class="headerlink" href="#ship.fmp.ief.IefDataTypes.DESCRIPTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.ief.IefDataTypes.DETAILS">
+<code class="descname">DETAILS</code><em class="property"> = 1</em><a class="headerlink" href="#ship.fmp.ief.IefDataTypes.DETAILS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.ief.IefDataTypes.HEADER">
+<code class="descname">HEADER</code><em class="property"> = 0</em><a class="headerlink" href="#ship.fmp.ief.IefDataTypes.HEADER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.ief.IefDataTypes.IED_DATA">
+<code class="descname">IED_DATA</code><em class="property"> = 2</em><a class="headerlink" href="#ship.fmp.ief.IefDataTypes.IED_DATA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.ief.IefDataTypes.SNAPSHOTS">
+<code class="descname">SNAPSHOTS</code><em class="property"> = 3</em><a class="headerlink" href="#ship.fmp.ief.IefDataTypes.SNAPSHOTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.ief.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0401F510&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.isisunitfactory">
+<span id="ship-fmp-isisunitfactory-module"></span><h2>ship.fmp.isisunitfactory module<a class="headerlink" href="#module-ship.fmp.isisunitfactory" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains factory classes that are used in the library.
+At the moment the only factory in here is the IsisFactory. This is used
+to build the isisunit types.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<dl class="docutils">
+<dt>Updates:</dt>
+<dd>DR - 21/02/16: Major change to the setup of the factory. It no longer
+scans the .dat file contents to identify the extent of the section and
+passes only that to the unit. It now identifies the unit type to create
+and hands the entire contents list to the new unit which extracts the
+data required.</dd>
+</dl>
+<dl class="class">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory">
+<em class="property">class </em><code class="descname">IsisUnitFactory</code><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Builds isisunit type objects.</p>
+<p>This is a Factory pattern object for the creation of isisunit subclasses.</p>
+<dl class="attribute">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.available_units">
+<code class="descname">available_units</code><em class="property"> = (&lt;class 'ship.fmp.datunits.isisunit.HeaderUnit'&gt;, &lt;class 'ship.fmp.datunits.riverunit.RiverUnit'&gt;, &lt;class 'ship.fmp.datunits.refhunit.RefhUnit'&gt;, &lt;class 'ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit'&gt;, &lt;class 'ship.fmp.datunits.gisinfounit.GisInfoUnit'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitArch'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr'&gt;, &lt;class 'ship.fmp.datunits.spillunit.SpillUnit'&gt;, &lt;class 'ship.fmp.datunits.htbdyunit.HtbdyUnit'&gt;, &lt;class 'ship.fmp.datunits.junctionunit.JunctionUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OrificeUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.FloodReliefUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OutfallUnit'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitInlet'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitOutlet'&gt;, &lt;class 'ship.fmp.datunits.interpolateunit.InterpolateUnit'&gt;)</em><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.available_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.createUnit">
+<em class="property">static </em><code class="descname">createUnit</code><span class="sig-paren">(</span><em>unit_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.createUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.createUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new AUnit.</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
+<dd><dl class="first docutils">
+<dt>&#8216;name&#8217;: the name variable to apply to the unit. If not found</dt>
+<dd>&#8216;unknown&#8217; will be set.</dd>
+<dt>&#8216;name_ds&#8217;: the name_ds variable to apply to the unit. If not found</dt>
+<dd>&#8216;unknown&#8217; will be set.</dd>
+</dl>
+<p>head_data: dict of head_data values to set in the AUnit.
+row_data: dict of row_data keys containing lists of row data to</p>
+<blockquote class="last">
+<div>set in the unit.</div></blockquote>
+</dd>
+</dl>
+<p>The row_data kwarg is expected to be set out like the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">brg_rowdata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;main&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;opening&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>I.e. dict&#8217;s of row_data types to update, containing a list of row_vals
+data to set. These will be used to call the addRow() method in the
+AUnit. The contents of the list entries will be specific to the
+unit_type. For more information see the addRow() method and row_data
+setup of specific AUnit&#8217;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_type</strong> (<em>str</em>) &#8211; the AUnit.UNIT_TYPE to create.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">AUnit - the newly created unit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.createUnitFromFile">
+<code class="descname">createUnitFromFile</code><span class="sig-paren">(</span><em>contents</em>, <em>file_line</em>, <em>file_key</em>, <em>file_order</em>, <em>reach_number=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.createUnitFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.createUnitFromFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.findIcLabels">
+<code class="descname">findIcLabels</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.findIcLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.findIcLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.getUnitIdentifiers">
+<code class="descname">getUnitIdentifiers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.getUnitIdentifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.getUnitIdentifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the unit identifiers that the object holds.</p>
+<p>Getter for obtaining the identifier strings needed to find the units
+that have been defined, when loading the dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>- unit_identifers dictionary.</strong> (<em>Dict</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.isisunitfactory.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10890&gt;</em><a class="headerlink" href="#ship.fmp.isisunitfactory.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.fmp" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.fmp.datunits.html" class="btn btn-neutral float-right" title="ship.fmp.datunits package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.data_structures.html" class="btn btn-neutral" title="ship.data_structures package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

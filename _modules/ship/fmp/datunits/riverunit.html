@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.datunits.riverunit &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.datunits.riverunit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.datunits.riverunit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the RiverUnit class.</span>
+<span class="sd">    This holds all of the data read in from the river units in the dat file.</span>
+<span class="sd">    Can be called to load in the data and read and update the contents </span>
+<span class="sd">    held in the object.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+<span class="sd">     </span>
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd"> </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span> 
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="RiverUnit"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit">[docs]</a><span class="k">class</span> <span class="nc">RiverUnit</span> <span class="p">(</span><span class="n">AUnit</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Concrete implementation of AUnit storing Isis River Unit</span>
+<span class="sd">    data.</span>
+
+<span class="sd">    Contains a reference to a rowdatacollection for storing and</span>
+<span class="sd">    accessing all the row data. i.e. the geometry data for the section,</span>
+<span class="sd">    containing the chainage, elevation, roughness, etc values.</span>
+
+<span class="sd">    Methods for accessing the data in these objects and adding removing rows</span>
+<span class="sd">    are available.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        AUnit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;river&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;river&#39;</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="s1">&#39;RIVER&#39;</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fileOrder (int): The location of this unit in the file.</span>
+<span class="sd">            reach_number (int): The reach ID for this unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">RiverUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">RiverUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;RivUS&#39;</span>
+<span class="c1">#         self.ic_labels.append(self._name)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;reach_number&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;spill1&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;spill2&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;spill2&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;lateral1&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;lateral2&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;lateral3&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;lateral4&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;slope&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.0000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;20}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+            <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">INT</span><span class="p">),</span>
+        <span class="p">}</span>
+        
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Add the new row data types to the object collection</span>
+<span class="sd">            All of them must have type, output format, and position</span>
+<span class="sd">            in the row all other arguments are excepted as **kwargs.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1"># update_callback is called every time a value is added or updated</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkIncreases</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.039</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">SymbolData</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">PANEL_MARKER</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;5}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">RPL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;5}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">ConstantData</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">BANKMARKER</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;LEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;RIGHT&#39;</span><span class="p">,</span> <span class="s1">&#39;BED&#39;</span><span class="p">),</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">EASTING</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">NORTHING</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">ConstantData</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">DEACTIVATION</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;LEFT&#39;</span><span class="p">,</span> <span class="s1">&#39;RIGHT&#39;</span><span class="p">),</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="c1"># Default == &#39;~&#39; means to ignore formatting and apply &#39;&#39; when value is None</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">StringData</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SPECIAL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">dobjs</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="RiverUnit.icLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit.icLabels">[docs]</a>    <span class="k">def</span> <span class="nf">icLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overriddes superclass method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span></div>
+
+        
+<div class="viewcode-block" id="RiverUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the unit data into the geometry objects.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            AUnit - readUnitData for more information.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): The section of the isis dat file pertaining </span>
+<span class="sd">                to this section </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_line</span><span class="p">,</span> <span class="n">unit_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readHeadData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="p">(</span><span class="n">file_line</span> <span class="o">+</span> <span class="n">unit_length</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">-</span> <span class="mi">1</span></div>
+        
+
+    <span class="k">def</span> <span class="nf">_readHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>            
+        <span class="sd">&quot;&quot;&quot;Format the header data for writing to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): containing the data to read.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">0</span><span class="p">][</span><span class="mi">5</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;spill1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;spill2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">24</span><span class="p">:</span><span class="mi">36</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;lateral1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">36</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;lateral2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">48</span><span class="p">:</span><span class="mi">60</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;lateral3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">60</span><span class="p">:</span><span class="mi">72</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;lateral4&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="mi">72</span><span class="p">:</span><span class="mi">84</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;density&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">unit_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">+</span> <span class="mi">5</span><span class="p">,</span> <span class="n">unit_length</span>
+
+    <span class="k">def</span> <span class="nf">_readRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="n">end_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the units rows into the row collection.</span>
+
+<span class="sd">        This is all the geometry data that occurs after the no of rows variable in</span>
+<span class="sd">        the River Units of the dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): the data pertaining to this unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">end_line</span><span class="p">):</span>
+                <span class="n">chain</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">elev</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">rough</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">20</span><span class="p">:</span><span class="mi">30</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">panel</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">30</span><span class="p">:</span><span class="mi">35</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">rpl</span>     <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">35</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">bank</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">40</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">east</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">50</span><span class="p">:</span><span class="mi">60</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">north</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">60</span><span class="p">:</span><span class="mi">70</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">deact</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">70</span><span class="p">:</span><span class="mi">80</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">special</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">80</span><span class="p">:</span><span class="mi">90</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="k">if</span> <span class="n">east</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="n">east</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">north</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="n">north</span> <span class="o">=</span> <span class="kc">None</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span>
+                    <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="n">chain</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elev</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">:</span> <span class="n">rough</span><span class="p">,</span>
+                     <span class="n">rdt</span><span class="o">.</span><span class="n">RPL</span><span class="p">:</span> <span class="n">rpl</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">PANEL_MARKER</span><span class="p">:</span> <span class="n">panel</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">BANKMARKER</span><span class="p">:</span> <span class="n">bank</span><span class="p">,</span> 
+                     <span class="n">rdt</span><span class="o">.</span><span class="n">EASTING</span><span class="p">:</span> <span class="n">east</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">NORTHING</span><span class="p">:</span> <span class="n">north</span><span class="p">,</span> 
+                     <span class="n">rdt</span><span class="o">.</span><span class="n">DEACTIVATION</span><span class="p">:</span> <span class="n">deact</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">SPECIAL</span><span class="p">:</span> <span class="n">special</span>
+                <span class="p">})</span> 
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">ERROR</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+            
+        <span class="k">return</span> <span class="n">end_line</span>
+
+<div class="viewcode-block" id="RiverUnit.getData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Retrieve the data in this unit.</span>
+
+<span class="sd">        The String[] returned is formatted for printing in the fashion</span>
+<span class="sd">        of the .dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            List of strings formated for writing to .dat file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getHeadData</span><span class="p">(</span><span class="n">row_count</span><span class="p">)</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getRowData</span><span class="p">(</span><span class="n">row_count</span><span class="p">))</span> 
+        
+        <span class="k">return</span> <span class="n">out_data</span></div>
+  
+  
+    <span class="k">def</span> <span class="nf">_getRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_count</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the row data in this class.</span>
+<span class="sd">        </span>
+<span class="sd">        For all the rows in the river geometry section get the data from</span>
+<span class="sd">        the rowdatacollection class.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list = containing the formatted unit rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">row_count</span><span class="p">):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out_data</span>
+   
+  
+    <span class="k">def</span> <span class="nf">_getHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_count</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the header data formatted for printing out to file.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List of strings - The formatted header list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">key_order</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="s1">&#39;slope&#39;</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key_order</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">row_count</span><span class="p">))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;RIVER &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+   
+    
+    <span class="c1"># updateDataRow</span>
+<div class="viewcode-block" id="RiverUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the row at the given index in the river units row_data.</span>
+<span class="sd">        </span>
+<span class="sd">        The row will be updated at the given index. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            index: the row to update. </span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: If CHAINAGE or ELEVATION are not given.</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+        
+    
+    <span class="c1"># addDataRow</span>
+<div class="viewcode-block" id="RiverUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.riverunit.RiverUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Adds a new row to the river units row_data.</span>
+<span class="sd">        </span>
+<span class="sd">        The new row will be added at the given index. If no index is given it</span>
+<span class="sd">        will be appended to the end of the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        If no chainage or elevation values are given a AttributeError will be </span>
+<span class="sd">        raised as they cannot have default values. All other values can be</span>
+<span class="sd">        ommitted. If they are they will be given defaults.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; import ship.fmp.datunits.ROW_DATA_TYPES as rdt</span>
+<span class="sd">            &gt;&gt;&gt; river_unit.addDataRow({rdt.CHAINAGE:5.0, rdt.ELEVATION:36.2}, index=4)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            index=None(int): the row to insert into. The existing row at the</span>
+<span class="sd">                given index will be moved up by one.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: If CHAINAGE or ELEVATION are not given.</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span> <span class="ow">in</span> <span class="n">keys</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;row_vals must include CHAINAGE and ELEVATION.&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div></div>
+            
+
+        
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

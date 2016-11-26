@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.field_parser &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.field_parser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.field_parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Parser for DBF fields.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="k">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">.memo</span> <span class="k">import</span> <span class="n">BinaryMemo</span>
+
+<span class="n">PY2</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+
+<span class="k">if</span> <span class="n">PY2</span><span class="p">:</span>
+    <span class="n">decode_text</span> <span class="o">=</span> <span class="n">unicode</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">decode_text</span> <span class="o">=</span> <span class="nb">str</span>
+
+
+<div class="viewcode-block" id="InvalidValue"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.InvalidValue">[docs]</a><span class="k">class</span> <span class="nc">InvalidValue</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">PY2</span><span class="p">:</span>
+            <span class="c1"># Make sure the string starts with &quot;b&#39;&quot; in</span>
+            <span class="c1"># &quot;InvalidValue(b&#39;value here&#39;)&quot;.</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span> <span class="o">+</span> <span class="n">text</span>
+            
+        <span class="k">return</span> <span class="s1">&#39;InvalidValue(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FieldParser"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser">[docs]</a><span class="k">class</span> <span class="nc">FieldParser</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">memofile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new field parser</span>
+
+<span class="sd">        encoding is the character encoding to use when parsing</span>
+<span class="sd">        strings.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dbversion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">dbversion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">encoding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_lookup_table</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">memofile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span> <span class="o">=</span> <span class="n">memofile</span><span class="o">.</span><span class="n">__getitem__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_create_lookup_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a lookup table for field types.&quot;&quot;&quot;</span>
+        <span class="n">lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;parse&#39;</span><span class="p">):</span>
+                <span class="n">field_type</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">lookup</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_type</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1"># Hexadecimal ASCII code for field name.</span>
+                    <span class="c1"># Example: parse2B() (&#39;+&#39; field)</span>
+                    <span class="n">field_type</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">field_type</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+                    <span class="n">lookup</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lookup</span>
+
+<div class="viewcode-block" id="FieldParser.field_type_supported"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.field_type_supported">[docs]</a>    <span class="k">def</span> <span class="nf">field_type_supported</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks if the field_type is supported by the parser</span>
+
+<span class="sd">        field_type should be a one-character string like &#39;C&#39; and &#39;N&#39;.</span>
+<span class="sd">        Returns a boolen which is True if the field type is supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span></div>
+
+<div class="viewcode-block" id="FieldParser.parse"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse field and return value&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown field type: </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FieldParser.parse0"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parse0">[docs]</a>    <span class="k">def</span> <span class="nf">parse0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse flags field and return as byte string&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseC"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseC">[docs]</a>    <span class="k">def</span> <span class="nf">parseC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse char field and return unicode string&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">decode_text</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1"> &#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseD"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseD">[docs]</a>    <span class="k">def</span> <span class="nf">parseD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse date field and return datetime.date or None&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; 0&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="c1"># A record containing only spaces and/or zeros is</span>
+                <span class="c1"># a NULL value.</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;invalid date </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="FieldParser.parseF"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseF">[docs]</a>    <span class="k">def</span> <span class="nf">parseF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse float field and return float or None&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseI"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseI">[docs]</a>    <span class="k">def</span> <span class="nf">parseI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse integer or autoincrement field and return int.&quot;&quot;&quot;</span>
+        <span class="c1"># Todo: is this 4 bytes on every platform?</span>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseL"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseL">[docs]</a>    <span class="k">def</span> <span class="nf">parseL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse logical field and return True, False or None&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;TtYy&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;FfNn&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;? &#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Todo: return something? (But that would be misleading!)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Illegal value for logical field: </span><span class="si">{!r}</span><span class="s1">&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_parse_memo_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;I&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; </span><span class="se">\x00</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Memo index is not an integer: </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+<div class="viewcode-block" id="FieldParser.parseM"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseM">[docs]</a>    <span class="k">def</span> <span class="nf">parseM</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse memo field (M, G, B or P)</span>
+
+<span class="sd">        Returns memo index (an integer), which can be used to look up</span>
+<span class="sd">        the corresponding memo in the memo file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">memo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_memo_index</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="c1"># Visual FoxPro allows binary data in memo fields.</span>
+        <span class="c1"># These should not be decoded as string.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">memo</span><span class="p">,</span> <span class="n">BinaryMemo</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">memo</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">memo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">memo</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseN"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseN">[docs]</a>    <span class="k">def</span> <span class="nf">parseN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse numeric field (N)</span>
+
+<span class="sd">        Returns int, float or None if the field is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Account for , in numeric fields</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;.&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseO"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseO">[docs]</a>    <span class="k">def</span> <span class="nf">parseO</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse long field (O) and return float.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseT"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseT">[docs]</a>    <span class="k">def</span> <span class="nf">parseT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse time field (T)</span>
+
+<span class="sd">        Returns datetime.datetime or None&quot;&quot;&quot;</span>
+        <span class="c1"># Julian day (32-bit little endian)</span>
+        <span class="c1"># Milliseconds since midnight (32-bit little endian)</span>
+        <span class="c1">#</span>
+        <span class="c1"># &quot;The Julian day or Julian day number (JDN) is the number of days</span>
+        <span class="c1"># that have elapsed since 12 noon Greenwich Mean Time (UT or TT) on</span>
+        <span class="c1"># Monday, January 1, 4713 BC in the proleptic Julian calendar</span>
+        <span class="c1"># 1. That day is counted as Julian day zero. The Julian day system</span>
+        <span class="c1"># was intended to provide astronomers with a single system of dates</span>
+        <span class="c1"># that could be used when working with different calendars and to</span>
+        <span class="c1"># unify different historical chronologies.&quot; - wikipedia.org</span>
+
+        <span class="c1"># Offset from julian days (used in the file) to proleptic Gregorian</span>
+        <span class="c1"># ordinals (used by the datetime module)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">1721425</span>  <span class="c1"># Todo: will this work?</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="c1"># Note: if the day number is 0, we return None</span>
+            <span class="c1"># I&#39;ve seen data where the day number is 0 and</span>
+            <span class="c1"># msec is 2 or 4. I think we can safely return None for those.</span>
+            <span class="c1"># (At least I hope so.)</span>
+            <span class="c1">#</span>
+            <span class="n">day</span><span class="p">,</span> <span class="n">msec</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;LL&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">day</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromordinal</span><span class="p">(</span><span class="n">day</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">msec</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">delta</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+            
+<div class="viewcode-block" id="FieldParser.parseY"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseY">[docs]</a>    <span class="k">def</span> <span class="nf">parseY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse currency field (Y) and return decimal.Decimal.</span>
+
+<span class="sd">        The field is encoded as a 8-byte little endian integer</span>
+<span class="sd">        with 4 digits of precision.&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;q&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Currency fields are stored with 4 points of precision</span>
+        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10000</span></div>
+
+
+<div class="viewcode-block" id="FieldParser.parseB"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseB">[docs]</a>    <span class="k">def</span> <span class="nf">parseB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Binary memo field or double precision floating point number</span>
+
+<span class="sd">        dBase uses B to represent a memo index (10 bytes), while</span>
+<span class="sd">        Visual FoxPro uses it to store a double precision floating</span>
+<span class="sd">        point number (8 bytes).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbversion</span> <span class="ow">in</span> <span class="p">[</span><span class="mh">0x30</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_memo_index</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseG"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseG">[docs]</a>    <span class="k">def</span> <span class="nf">parseG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;OLE Object stored in memofile.</span>
+
+<span class="sd">        The raw data is returned as a binary string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_memo_index</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FieldParser.parseP"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.field_parser.FieldParser.parseP">[docs]</a>    <span class="k">def</span> <span class="nf">parseP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Picture stored in memofile.</span>
+
+<span class="sd">        The raw data is returned as a binary string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_memo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_memo_index</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+
+    <span class="c1"># Autoincrement field (&#39;+&#39;)</span>
+    <span class="n">parse2B</span> <span class="o">=</span> <span class="n">parseI</span>
+
+    <span class="c1"># Timestamp field (&#39;@&#39;)</span>
+    <span class="n">parse40</span> <span class="o">=</span> <span class="n">parseT</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

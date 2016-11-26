@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.dbf &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.dbf</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.dbf</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Class to read DBF files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">.ifiles</span> <span class="k">import</span> <span class="n">ifind</span>
+<span class="kn">from</span> <span class="nn">.struct_parser</span> <span class="k">import</span> <span class="n">StructParser</span>
+<span class="kn">from</span> <span class="nn">.field_parser</span> <span class="k">import</span> <span class="n">FieldParser</span>
+<span class="kn">from</span> <span class="nn">.memo</span> <span class="k">import</span> <span class="n">find_memofile</span><span class="p">,</span> <span class="n">open_memofile</span><span class="p">,</span> <span class="n">FakeMemoFile</span><span class="p">,</span> <span class="n">BinaryMemo</span>
+<span class="kn">from</span> <span class="nn">.codepages</span> <span class="k">import</span> <span class="n">guess_encoding</span>
+<span class="kn">from</span> <span class="nn">.dbversions</span> <span class="k">import</span> <span class="n">get_dbversion_string</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">DBFHeader</span> <span class="o">=</span> <span class="n">StructParser</span><span class="p">(</span>
+    <span class="s1">&#39;DBFHeader&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&lt;BBBBLHHHBBLLLBBH&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;dbversion&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;year&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;month&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;day&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;numrecords&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;headerlen&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;recordlen&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved1&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;incomplete_transaction&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;encryption_flag&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;free_record_thread&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved3&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;mdx_flag&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;language_driver&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved4&#39;</span><span class="p">,</span>
+     <span class="p">])</span>
+
+<span class="n">DBFField</span> <span class="o">=</span> <span class="n">StructParser</span><span class="p">(</span>
+    <span class="s1">&#39;DBFField&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&lt;11scLBBHBBBB7sB&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;type&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;address&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;length&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;decimal_count&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved1&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;workarea_id&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved2&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved3&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;set_fields_flag&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved4&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;index_field_flag&#39;</span><span class="p">,</span>
+     <span class="p">])</span>
+
+
+<div class="viewcode-block" id="expand_year"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbf.expand_year">[docs]</a><span class="k">def</span> <span class="nf">expand_year</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert 2-digit year to 4-digit year.&quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">year</span> <span class="o">&lt;</span> <span class="mi">80</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">2000</span> <span class="o">+</span> <span class="n">year</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1900</span> <span class="o">+</span> <span class="n">year</span></div>
+
+
+<div class="viewcode-block" id="RecordIterator"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbf.RecordIterator">[docs]</a><span class="k">class</span> <span class="nc">RecordIterator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">record_type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record_type</span> <span class="o">=</span> <span class="n">record_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">table</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">_iter_records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_record_type</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="o">.</span><span class="n">_count_records</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_record_type</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DBF"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbf.DBF">[docs]</a><span class="k">class</span> <span class="nc">DBF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DBF table.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignorecase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">lowernames</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">parserclass</span><span class="o">=</span><span class="n">FieldParser</span><span class="p">,</span>
+                 <span class="n">recfactory</span><span class="o">=</span><span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">,</span>
+                 <span class="n">load</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">ignore_missing_memofile</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignorecase</span> <span class="o">=</span> <span class="n">ignorecase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lowernames</span> <span class="o">=</span> <span class="n">lowernames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parserclass</span> <span class="o">=</span> <span class="n">parserclass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_missing_memofile</span> <span class="o">=</span> <span class="n">ignore_missing_memofile</span>
+
+        <span class="k">if</span> <span class="n">recfactory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recfactory</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">items</span><span class="p">:</span> <span class="n">items</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recfactory</span> <span class="o">=</span> <span class="n">recfactory</span>
+
+        <span class="c1"># Name part before .dbf is the table name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_records</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deleted</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">ignorecase</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">ifind</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DBFNotFound</span><span class="p">(</span><span class="s1">&#39;could not find file </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="c1"># Filled in by self._read_headers()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memofilename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>       <span class="c1"># namedtuples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># strings</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_header</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_field_headers</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_headers</span><span class="p">()</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">expand_year</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">year</span><span class="p">),</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># Invalid date or &#39;\x00\x00\x00&#39;.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="kc">None</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">memofilename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_memofilename</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">load</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dbversion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_dbversion_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">dbversion</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_memofilename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Does the table have a memo field?</span>
+        <span class="n">field_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">field_types</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;MGPB&#39;</span><span class="p">):</span>
+            <span class="c1"># No memo fields.</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">find_memofile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_missing_memofile</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="n">MissingMemoFile</span><span class="p">(</span><span class="s1">&#39;missing memo file for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;``True`` if records are loaded into memory.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_records</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="DBF.load"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbf.DBF.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load records into memory.</span>
+
+<span class="sd">        This loads both records and deleted records. The ``records``</span>
+<span class="sd">        and ``deleted`` attributes will now be lists of records.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_records</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_records</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deleted</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_records</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;*&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="DBF.unload"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.dbf.DBF.unload">[docs]</a>    <span class="k">def</span> <span class="nf">unload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Unload records from memory.</span>
+
+<span class="sd">        The records and deleted attributes will now be instances of</span>
+<span class="sd">        ``RecordIterator``, which streams records from disk.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_records</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deleted</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Records (not included deleted ones). When loaded a list of records,</span>
+<span class="sd">        when not loaded a new ``RecordIterator`` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_records</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">RecordIterator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deleted records. When loaded a list of records, when not loaded a</span>
+<span class="sd">        new ``RecordIterator`` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deleted</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">RecordIterator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;*&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+        <span class="c1"># Todo: more checks?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">DBFHeader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">guess_encoding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">language_driver</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">LookupError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;ascii&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_read_field_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">sep</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sep</span> <span class="ow">in</span> <span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+                <span class="c1"># End of field headers</span>
+                <span class="k">break</span>
+
+            <span class="n">field</span> <span class="o">=</span> <span class="n">DBFField</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">sep</span> <span class="o">+</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">DBFField</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+            <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+
+            <span class="c1"># Field name is b&#39;\0&#39; terminated.</span>
+            <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lowernames</span><span class="p">:</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_open_memofile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memofilename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">open_memofile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memofilename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">dbversion</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">FakeMemoFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memofilename</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">field_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parserclass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="sd">&quot;&quot;&quot;Check headers for possible format errors.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">length</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Field type I must have length 4 (was </span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">length</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;L&#39;</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">length</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Field type L must have length 1 (was </span><span class="si">{}</span><span class="s1">)&#39;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">length</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">field_parser</span><span class="o">.</span><span class="n">field_type_supported</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+                <span class="c1"># Todo: return as byte string?</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown field type: </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_skip_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infile</span><span class="p">):</span>
+        <span class="c1"># -1 for the record separator which was already read.</span>
+        <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">recordlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_count_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_type</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="c1"># Skip to first record.</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">headerlen</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sep</span> <span class="o">==</span> <span class="n">record_type</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_skip_record</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">sep</span> <span class="ow">in</span> <span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x1a</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+                    <span class="c1"># End of records.</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_skip_record</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">count</span>
+
+    <span class="k">def</span> <span class="nf">_iter_records</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record_type</span><span class="o">=</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">,</span> \
+             <span class="bp">self</span><span class="o">.</span><span class="n">_open_memofile</span><span class="p">()</span> <span class="k">as</span> <span class="n">memofile</span><span class="p">:</span>
+
+            <span class="c1"># Skip to first record.</span>
+            <span class="n">infile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">headerlen</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">:</span>
+                <span class="n">field_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parserclass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memofile</span><span class="p">)</span>
+                <span class="n">parse</span> <span class="o">=</span> <span class="n">field_parser</span><span class="o">.</span><span class="n">parse</span>
+
+            <span class="c1"># Shortcuts for speed.</span>
+            <span class="n">skip_record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_record</span>
+            <span class="n">read</span> <span class="o">=</span> <span class="n">infile</span><span class="o">.</span><span class="n">read</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">sep</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">sep</span> <span class="o">==</span> <span class="n">record_type</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">:</span>
+                        <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">read</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">length</span><span class="p">))</span> \
+                                 <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                  <span class="n">parse</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">read</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">length</span><span class="p">)))</span> \
+                                 <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">]</span>
+
+                    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">recfactory</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="n">sep</span> <span class="ow">in</span> <span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x1a</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+                    <span class="c1"># End of records.</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">skip_record</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="o">.</span><span class="n">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_records</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_records</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;loaded&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;unloaded&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1"> DBF table </span><span class="si">{!r}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unload</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

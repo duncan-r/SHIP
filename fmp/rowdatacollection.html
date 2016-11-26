@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RowDataCollection &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>RowDataCollection</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/rowdatacollection.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rowdatacollection">
+<span id="rowdatacollection-top"></span><h1>RowDataCollection<a class="headerlink" href="#rowdatacollection" title="Permalink to this headline">¶</a></h1>
+<p>The RowDataCollection class is used to store variable length data. Primarily
+this is used for the fmp package AUnit classes (although it is used in some
+sections of the tuflow package as well).</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>RowDataCollection is essentially a container for DataObject&#8217;s. Primarily the
+difference between these two is:</p>
+<blockquote>
+<div><ul class="simple">
+<li>RowDataCollection is used to access and update data within rows.</li>
+<li>DataObject is used to access, update and store data of the same type,
+i.e. columns.</li>
+</ul>
+</div></blockquote>
+<p>For example if we have the following (slightly shortened) RiverUnit setup:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Chainage</th>
+<th class="head">Elevation</th>
+<th class="head">Roughness</th>
+<th class="head">Panel Marker</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0.00</td>
+<td>10.0</td>
+<td>0.04</td>
+<td>True</td>
+</tr>
+<tr class="row-odd"><td>3.00</td>
+<td>5.0</td>
+<td>0.04</td>
+<td>False</td>
+</tr>
+<tr class="row-even"><td>5.00</td>
+<td>5.0</td>
+<td>0.04</td>
+<td>False</td>
+</tr>
+<tr class="row-odd"><td>6.00</td>
+<td>10.0</td>
+<td>0.04</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<p>There will be four DataObject&#8217;s in this case, one for each of the coumns. These
+will have four entries in each, one for each row. The RowDataCollection will
+store these four DataObject&#8217;s and provide methods for accessing the data by
+row rather than column.</p>
+</div>
+<div class="section" id="data-access">
+<h2>Data Access<a class="headerlink" href="#data-access" title="Permalink to this headline">¶</a></h2>
+<p><strong>IMPORTANT</strong>
+<em>You should never try and add a new item to one of the DataObject&#8217;s manually. It</em>
+<em>is fundamental that the DataObject stay the same length as each other. If you</em>
+<em>added a new row the the Chainage column, in the table above, but not the others</em>
+<em>it wouldn&#8217;t make any sense and FMP wouldn&#8217;t load it. RowDataCollection checks</em>
+<em>for this, amoungst other things, and will raise an error at some point if the</em>
+<em>lengths get out of sync.</em>
+<strong>Always use the RowDataCollection methods to add or remove rows.</strong></p>
+<p><strong>Note</strong>
+You will want to import the following for working with RowDataCollections:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Used to sprecify the data_type in DataObjects</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+</pre></div>
+</div>
+<div class="section" id="reading">
+<h3>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h3>
+<p>There are some functions for accessing the DataObject data, but to be honest if
+you&#8217;re going to update any of the values in them it&#8217;s easier to retrieve the
+specific DataObject from the RowDataCollection and use it directly.</p>
+<p>The main method for accessing data in a RowDataCollection is row(). It returns
+a dict containing all values in a row at the given index. Usually you will
+probably want to access the DataObject&#8217;s rather than row data - if so, see
+the next paragraph. If you do want to access data by row you can use the
+following methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>row(int)</strong>: returns the row at the given index.</li>
+<li><strong>rowAsDict(int)</strong>: returns the data in the row at the given index as a
+dict, where the keys are ROW_DATA_TYPES and the values are the values for
+that type in that row.</li>
+<li><strong>iterateRows()</strong>: returns a generator that can be used to iterate through
+the rows in the RowDataCollection.</li>
+</ul>
+</div></blockquote>
+<p>For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># assume we have already obtained a RiverUnit from the DatCollection</span>
+<span class="c1"># Also assume the RowDataCollection holds the data in the exammple table</span>
+<span class="c1"># above</span>
+
+<span class="c1"># Iterate through each of the rows</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterateRows</span><span class="p">():</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="c1"># Get a row as a dict</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rowAsDict</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">])</span>     <span class="c1"># prints 0.0</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">])</span>    <span class="c1"># prints 10.0</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">])</span>    <span class="c1"># prints 0.04</span>
+
+<span class="n">row</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rowAsList</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">)</span>  <span class="c1"># prints True</span>
+</pre></div>
+</div>
+<p>Most of the time you are more likely to want to group the data by a particular
+DataObject type. This can be done in several ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>toDict</strong>: return a dict with ROW_DATA_TYPES as key and list of the values
+in the associated DataObject as the item.</li>
+<li><strong>dataObj</strong>: returns the dataObj at the given ROW_DATA_TYPE.</li>
+<li><strong>dataObjAsList</strong>: returns the values in the dataObject at the given index
+as a list.</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># returns a dict</span>
+<span class="n">rdc</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
+
+<span class="n">eq</span> <span class="o">=</span> <span class="p">(</span><span class="n">rdc</span> <span class="o">==</span> <span class="p">{</span>
+         <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span>     <span class="p">[</span><span class="mf">0.00</span><span class="p">,</span> <span class="mf">3.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">6.00</span><span class="p">],</span>
+         <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span>    <span class="p">[</span><span class="mf">10.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">10.00</span><span class="p">],</span>
+         <span class="n">rdt</span><span class="o">.</span><span class="n">ROUHNESS</span><span class="p">:</span>     <span class="p">[</span><span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">],</span>
+         <span class="n">rdt</span><span class="o">.</span><span class="n">PANEL_MARKER</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+     <span class="p">})</span>
+<span class="c1"># prints True</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">eq</span><span class="p">)</span>
+
+<span class="n">chainage</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">)</span>
+
+<span class="c1"># prints True</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">chainage</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.00</span><span class="p">,</span> <span class="mf">3.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">6.00</span><span class="p">])</span>
+
+<span class="c1"># Fetch the actual DataObject itself under the ROUGHNESS key</span>
+<span class="n">dataobj</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
+
+<span class="c1"># Can now access the DataObject directly</span>
+<span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataobj</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="c1"># prints the value at the current index</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating">
+<h3>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h3>
+<p>There are very few occassions where you would want to use these directly in
+this class. All fmp package AUnit classes provide methods for adding and
+updating row data. These will also do further checks and any errors will be
+more specific. So use those. This is also the case for most other users of
+RowDataCollection.</p>
+<p>There are a number of methods for updating the contents of a RowDataCollection.
+Most of the methods that update or add a single value are mainly available for
+internal use. It&#8217;s easy to end up with unsynced DataObjects and you should
+avoid it.</p>
+<dl class="docutils">
+<dt>The two methods that should be used are:</dt>
+<dd><ul class="first last simple">
+<li><strong>addRow</strong>: add a new row to the collection.</li>
+<li><strong>updateRow</strong>: set the values at a given index.</li>
+</ul>
+</dd>
+</dl>
+<p>Both of these methods take two arguments: a dict of row values and an index to
+add the row / update an existing row.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

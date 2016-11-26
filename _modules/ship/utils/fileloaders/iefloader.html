@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.fileloaders.iefloader &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.fileloaders.iefloader</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.fileloaders.iefloader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the Factory class for loading and building the Ief object from</span>
+<span class="sd">    an ief file at a given path.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd">     </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">ship.utils.atool</span> <span class="k">import</span> <span class="n">ATool</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>
+<span class="kn">from</span> <span class="nn">ship.utils.fileloaders.loader</span> <span class="k">import</span> <span class="n">ALoader</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.ief</span> <span class="k">import</span> <span class="n">Ief</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="IefLoader"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.iefloader.IefLoader">[docs]</a><span class="k">class</span> <span class="nc">IefLoader</span><span class="p">(</span><span class="n">ATool</span><span class="p">,</span> <span class="n">ALoader</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Builds an Ief object.</span>
+<span class="sd">    </span>
+<span class="sd">    Contains the details of the ISIS ief file located at the given file path.</span>
+
+<span class="sd">    Factory class for reading the ISIS ief file into an Ief object that allows</span>
+<span class="sd">    for simple access and updating of the ief file.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        atool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.&quot;&quot;&quot;</span>
+        <span class="n">ATool</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ALoader</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Initialising IEFLoader&#39;</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="IefLoader.loadFile"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.iefloader.IefLoader.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">arg_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Loads the ief file at the given path.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str): The path to the ief file.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Ief file object containing the contents loaded from file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">uf</span><span class="o">.</span><span class="n">checkFileType</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;.ief&#39;</span><span class="p">,</span> <span class="s1">&#39;.IEF&#39;</span><span class="p">]):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;File: &#39;</span> <span class="o">+</span> <span class="n">file_path</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Does not match ief extension (*.ief or *.IEF)&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Illegal File Error: </span><span class="si">%s</span><span class="s1"> is not of type ief&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span> <span class="p">(</span><span class="s1">&#39;Illegal File Error: </span><span class="si">%s</span><span class="s1"> is not of type ief&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
+        
+        <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loadFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="c1"># if we couldn&#39;t load the file let them know.</span>
+        <span class="k">if</span> <span class="n">contents</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span> <span class="p">(</span><span class="s1">&#39;Unable to load file at: &#39;</span> <span class="o">+</span> <span class="n">file_path</span><span class="p">)</span>
+        
+        <span class="n">event_header</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">event_details</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ied_data</span><span class="o">=</span> <span class="p">[]</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">in_event_details</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">contents</span><span class="p">)):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+            <span class="c1"># If we&#39;re moving into the event details then mark it and skip the</span>
+            <span class="c1"># next line, which tells us so.</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;[ISIS Event Details]&#39;</span><span class="p">:</span>
+                <span class="n">in_event_details</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Collect the header data with the name as the key and the variable</span>
+            <span class="c1"># as the value.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_event_details</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;[ISIS Event Header]&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_addHeaderLine</span><span class="p">(</span><span class="n">event_header</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+                               
+            <span class="k">else</span><span class="p">:</span>
+                
+                <span class="c1"># If it&#39;s a snapshot then get the time. We know that the next</span>
+                <span class="c1"># line is a file reference so get that too then skip ahead by</span>
+                <span class="c1"># one line in the contents.</span>
+                <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SnapshotTime&#39;</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addSnapshotLine</span><span class="p">(</span><span class="n">snapshot</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                    
+                
+                <span class="c1"># If the line starts with a &#39;;&#39; then it&#39;s an IED file so grab</span>
+                <span class="c1"># the name and get the file file reference from the next line</span>
+                <span class="c1"># and skip ahead.</span>
+                <span class="k">elif</span> <span class="n">c</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;;&#39;</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addIedLine</span><span class="p">(</span><span class="n">ied_data</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                
+                <span class="c1"># Otherwise just populate the event_details.</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># If the description bit is included its at the end so just grab the</span>
+                    <span class="c1"># last few line and put them in it.</span>
+                    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;[Description]&#39;</span><span class="p">:</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loadDescription</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_addDetailsLine</span><span class="p">(</span><span class="n">event_details</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+        <span class="n">path_holder</span> <span class="o">=</span> <span class="n">filetools</span><span class="o">.</span><span class="n">PathHolder</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">ief_file</span> <span class="o">=</span> <span class="n">Ief</span><span class="p">(</span><span class="n">path_holder</span><span class="p">,</span> <span class="n">event_header</span><span class="p">,</span> <span class="n">event_details</span><span class="p">,</span> <span class="n">snapshot</span><span class="p">,</span> <span class="n">ied_data</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ief_file</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_addHeaderLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_header</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a line from the ief file to the event_header dictionary.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            event_header (Dict): The header details.</span>
+<span class="sd">            value(str): contents of the .ief file line</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">splitvals</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">event_header</span><span class="p">[</span><span class="n">splitvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">splitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_addDetailsLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_details</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a line from the ief file to the event_details dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event_details (Dict): The event details.</span>
+<span class="sd">            contents (List): the lines from the ief file.</span>
+<span class="sd">            index (int): The current index in the contents list. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">splitvals</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">event_details</span><span class="p">[</span><span class="n">splitvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">splitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_addSnapshotLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a line from the ief file to the snapshot list.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            snapshot (List): contains dictionaries with the name and filepath</span>
+<span class="sd">                of all the snapshot files in the ief.</span>
+<span class="sd">            contents (List): The list containing the lines from the ief file.</span>
+<span class="sd">            index (int): The current index in the contents list. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">snaptime</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="n">snapfile</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">snapshot</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">snaptime</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">snapfile</span><span class="p">})</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">index</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_addIedLine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ied_data</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a line from the ief file to the ied_data list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ied_data (List): dictionaries with the name and filepath of all </span>
+<span class="sd">                the ied files in the ief.</span>
+<span class="sd">            contents (List): containing the lines from the ief file.</span>
+<span class="sd">            index (int): The current index in the contents list. </span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Int - updated index value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event_name</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">event_path</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ied_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">event_name</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">event_path</span><span class="p">})</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">index</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_loadDescription</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds the description line from the ief file into a description list.</span>
+
+<span class="sd">        The description is the last section of the ief file so at this point</span>
+<span class="sd">        grab everything left in the file and return.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            description (List): list to append description lines to.</span>
+<span class="sd">            contents (List): containing the lines from the ief file.</span>
+<span class="sd">            index (int): The current index in the contents list.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int - updated list index value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
+            <span class="n">description</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">index</span>
+
+    
+    <span class="k">def</span> <span class="nf">_loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Load the .ief file into the contents list.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath (str): Path to the required IEF file. </span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The file contents as a list if loaded ok; False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;loading File: &#39;</span> <span class="o">+</span> <span class="n">filepath</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">contents</span> <span class="o">=</span> <span class="n">filetools</span><span class="o">.</span><span class="n">getFile</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">contents</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;IOError - Unable to load file&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+        <span class="k">if</span><span class="p">(</span><span class="n">contents</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">contents</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">):</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;.ief file is empty at: &#39;</span> <span class="o">+</span> <span class="n">filepath</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+        <span class="k">return</span> <span class="n">contents</span></div>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

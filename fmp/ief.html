@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Ief &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Ief</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/ief.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ief">
+<span id="ief-top"></span><h1>Ief<a class="headerlink" href="#ief" title="Permalink to this headline">¶</a></h1>
+<p>In Flood Modeller .ief files are the run forms used to pull together and run
+the different components of a model. The SHIP library contains the Ief class
+for dealing with these files. It allows for accessing and/or updating the
+different variables and file paths within the .ief file.</p>
+<div class="section" id="loading-an-ief-file">
+<h2>Loading an ief file<a class="headerlink" href="#loading-an-ief-file" title="Permalink to this headline">¶</a></h2>
+<p>.ief files can be loaded like all other files, with the FileLoader class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.utils.fileloaders.fileloader</span> <span class="k">import</span> <span class="n">FileLoader</span>
+
+<span class="n">ief_path</span> <span class="o">=</span> <span class="s2">&quot;C:/path/to/ieffile.ief&quot;</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">FileLoader</span><span class="p">()</span>
+<span class="n">ief</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">ief_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ief-overview">
+<h2>Ief Overview<a class="headerlink" href="#ief-overview" title="Permalink to this headline">¶</a></h2>
+<p>The Ief object is fairly simple, mostly because .ief files themselves are
+fairly simple. Like most components of the SHIP library the Ief class tries
+to keep names and setups similar to those used in Flood Modeller (If you aren&#8217;t
+familiar with .ief files you might want to open one up in a text editor and
+have a quick look to familiarise yourself with the contents). An Ief object
+contains the following main components:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>path_holder</strong>: a PathHolder object that contains all the path variables and
+methods.</li>
+<li><strong>event_header</strong>: everything that falls within the &#8216;[ISIS Event Header]&#8217;
+section of the .ief file.</li>
+<li><strong>event_details</strong>: everything that falls within the &#8216;[ISIS Event Details]&#8217;
+section of the .ief file.</li>
+<li><strong>ied_data</strong>: a list of all of the ied data in the .ief file.</li>
+<li><strong>snapshots</strong>: a list of the the snapshot data in the .ief file.</li>
+</ul>
+</div></blockquote>
+<p>That&#8217;s it. Everything else in the Ief class is simply methods to allow easier
+access and updating of these components.</p>
+<p>Note that the Ief class stores all data (ied_data and snapshots are a little
+different and will be covered below) in dicts. The keys for these items are
+always the same as the keys in the .ief file (e.g. 2D file path has the key
+&#8216;2DFile&#8217; and the .dat file path has the key &#8216;Datafile&#8217;).</p>
+</div>
+<div class="section" id="accessing-data">
+<h2>Accessing Data<a class="headerlink" href="#accessing-data" title="Permalink to this headline">¶</a></h2>
+<p>All data in the Ief class is accessed through the following three methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>getIedData</strong>: for accessing the ied data, obviously.</li>
+<li><strong>getSnapshots</strong>: for accessing snapshot data, obviously.</li>
+<li><strong>getValue</strong>: for accessing everything else.</li>
+</ul>
+</div></blockquote>
+<p>For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ief</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">ief_path</span><span class="p">)</span>
+
+<span class="c1"># Returns a list of all the ied data in the Ief.</span>
+<span class="n">ied_data</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getIedData</span><span class="p">()</span>
+
+<span class="c1"># If we loop the list</span>
+<span class="k">for</span> <span class="n">ied</span> <span class="ow">in</span> <span class="n">ied_data</span><span class="p">:</span>
+
+   <span class="c1"># Each element in the list is a dict with the &#39;name&#39; and &#39;file&#39; found in</span>
+   <span class="c1"># the .ief file</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="o">+</span> <span class="n">ied</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;file&#39;</span> <span class="o">+</span> <span class="n">ied</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">])</span>
+
+<span class="c1"># Return a list of all of the snapshot data in the Ief.</span>
+<span class="n">snapshots</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getSnapshots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">snapshot</span> <span class="ow">in</span> <span class="n">snapshots</span><span class="p">:</span>
+
+   <span class="c1"># Again each element is a dict, this time with &#39;time&#39; and &#39;file&#39;</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span> <span class="o">+</span> <span class="n">snapshot</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;file&#39;</span> <span class="o">+</span> <span class="n">snapshot</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">])</span>
+
+
+<span class="c1"># Accessing all the other data</span>
+<span class="n">tcf_file</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="s1">&#39;2DFile&#39;</span><span class="p">)</span>
+<span class="n">dat_file</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="s1">&#39;Datafile&#39;</span><span class="p">)</span>
+<span class="n">timestep</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="s1">&#39;Timestep&#39;</span><span class="p">)</span>
+<span class="n">finish</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="s1">&#39;Finish&#39;</span><span class="p">)</span>
+
+<span class="c1"># ... you get the idea</span>
+</pre></div>
+</div>
+<p>There is actually one other method that can be really useful at times,
+getFilePaths(). This will return a dict containing all of the filepath
+data in the Ief. Note that a path will be set to None if it is not currently set:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Returns a dict with all of the paths</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="n">ief</span><span class="o">.</span><span class="n">getFilePaths</span><span class="p">()</span>
+
+<span class="n">dat_file</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;Datafile&#39;</span><span class="p">]</span>
+<span class="n">tcf_file</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;2DFile&#39;</span><span class="p">]</span>    <span class="c1"># Will be None if there is no 2DFile</span>
+
+<span class="c1"># This will return a list of all ied paths (no name included)</span>
+<span class="n">ieds</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;ieds&#39;</span><span class="p">]</span>
+
+<span class="c1"># Same for this - no time includes</span>
+<span class="n">snapshots</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;snapshots&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-data">
+<h2>Updating Data<a class="headerlink" href="#updating-data" title="Permalink to this headline">¶</a></h2>
+<p>Updating the data in the Ief works in pretty much the same way. There are also
+three methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>addIedFile(ied_path, name=&#8217;&#8216;)</strong>: for adding a new ied file.</li>
+<li><strong>addSnapshotFile(snapshot_path, time)</strong>: for adding a new snapshot file.</li>
+<li><strong>setValue(key, value)</strong>: for everything else.</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ief</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;Finish&#39;</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">)</span>
+<span class="n">ief</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;2DFile&#39;</span><span class="p">,</span> <span class="s1">&#39;c:/path/to/tcffile.tcf&#39;</span><span class="p">)</span>
+<span class="n">ief</span><span class="o">.</span><span class="n">addIedFile</span><span class="p">(</span><span class="s1">&#39;c:/some/iedfile.ied&#39;</span><span class="p">,</span> <span class="s1">&#39;someiedname&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="saving">
+<h2>Saving<a class="headerlink" href="#saving" title="Permalink to this headline">¶</a></h2>
+<p>If you have updated the Ief object you will probably want to save your
+changes to file. If you just want to overwrite the file that you loaded you
+can call the write() method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ief</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you want to save your changes to a new file you have two options. You can
+either update the &#8216;filename&#8217; variable (and directory etc too) in the
+&#8216;path_holder&#8217; member of the Ief, or you can pass an absolute path to the write()
+method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Change the path_holder variables</span>
+<span class="c1"># Note that no extension is given. This is stored in path_holder.extension</span>
+<span class="n">ief</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;something_else&#39;</span>
+
+<span class="c1"># or just give a new path to write</span>
+<span class="n">ief</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;C:/spangly/new/ieffile.ief&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

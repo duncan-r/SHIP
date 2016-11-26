@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.atool &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.atool</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.atool</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the ATool class an interface that all tools (i.e. file loaders, </span>
+<span class="sd">    etc) should inherit.</span>
+
+<span class="sd">    This was a integral part of these tools when they were written in Java</span>
+<span class="sd">    as they allowed the user interface to communicate with the tools through</span>
+<span class="sd">    an observer. In Python it&#39;s not needed because of the signal slot</span>
+<span class="sd">    mechanism making everything a lot easier.</span>
+
+<span class="sd">    The interface is kept partly because it may still be useful and partly</span>
+<span class="sd">    because I&#39;m sure there will be a need to have all similar tools grouped</span>
+<span class="sd">    at some point.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ATool"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool">[docs]</a><span class="k">class</span> <span class="nc">ATool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract base class for all tools.</span>
+<span class="sd">    </span>
+<span class="sd">    Any class that functions as a tool for processing the files etc should</span>
+<span class="sd">    implement this.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is not currently used in any part of the software at the moment.</span>
+<span class="sd">        It was needed in the original Java implementation in order to allow</span>
+<span class="sd">        tools to talk to the Gui through an aobserver interface.</span>
+
+<span class="sd">        It is here in case it&#39;s needed but it is probably unnecessary because</span>
+<span class="sd">        of the signal-slot mechanism of the Qt library which makes this kind</span>
+<span class="sd">        of thing very simple.</span>
+
+<span class="sd">        Re-visit whether an Observer pattern is required once we have some</span>
+<span class="sd">        threading setup. Although Qt does that all so well I very much </span>
+<span class="sd">        doubt that this interface is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    
+<div class="viewcode-block" id="ATool.init"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Takes in an instance of an observer to register it. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            observer(object): the class that want to be notified.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="c1"># A collection of the Observer object passed to the </span>
+        <span class="c1"># concrete class.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerObserver</span><span class="p">(</span><span class="n">observer</span><span class="p">);</span></div>
+     
+
+<div class="viewcode-block" id="ATool.registerObserver"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.registerObserver">[docs]</a>    <span class="k">def</span> <span class="nf">registerObserver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Add an observer to the collection of observers in the list.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            observer(object): object to add to the observer list </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observer</span><span class="p">);</span></div>
+    
+    
+<div class="viewcode-block" id="ATool.unregisterObserver"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.unregisterObserver">[docs]</a>    <span class="k">def</span> <span class="nf">unregisterObserver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Remove an observer from the list of observers.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            o (object): an object that no longer wants to be notified. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="ATool.notifyObserversProgress"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.notifyObserversProgress">[docs]</a>    <span class="k">def</span> <span class="nf">notifyObserversProgress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Notify all the current observers of a progress update&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span> 
+            <span class="n">o</span><span class="o">.</span><span class="n">updateObserver</span><span class="p">(</span><span class="n">progress</span><span class="p">)</span></div>
+        
+
+<div class="viewcode-block" id="ATool.updateObserversTotal"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.updateObserversTotal">[docs]</a>    <span class="k">def</span> <span class="nf">updateObserversTotal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">progress</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Notify all of the current observers of what we expect the total</span>
+<span class="sd">        progress to be.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            progress (int): The total progress expected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">updateObserverTotal</span><span class="p">(</span><span class="n">progress</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="ATool.notifyObserversProgressName"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.atool.ATool.notifyObserversProgressName">[docs]</a>    <span class="k">def</span> <span class="nf">notifyObserversProgressName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Notify all Observers of the name of the current progress.</span>
+
+<span class="sd">        This name may also be a description. It is used to display on the </span>
+<span class="sd">        user interface to tell users what is happening when this tools is</span>
+<span class="sd">        called.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): the name of the progress.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observers</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">updateObserverProcessName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div></div>
+        
+        
+ 
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.memo &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.memo</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.memo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Reads data from FPT (memo) files.</span>
+
+<span class="sd">FPT files are used to varying lenght text or binary data which is too</span>
+<span class="sd">large to fit in a DBF field.</span>
+
+<span class="sd">VFP == Visual FoxPro</span>
+<span class="sd">DB3 == dBase III</span>
+<span class="sd">DB4 == dBase IV</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">.ifiles</span> <span class="k">import</span> <span class="n">ifind</span>
+<span class="kn">from</span> <span class="nn">.struct_parser</span> <span class="k">import</span> <span class="n">StructParser</span>
+
+
+
+<span class="n">VFPFileHeader</span> <span class="o">=</span> <span class="n">StructParser</span><span class="p">(</span>
+    <span class="s1">&#39;FPTHeader&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&gt;LHH504s&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;nextblock&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved1&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;blocksize&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;reserved2&#39;</span><span class="p">])</span>
+
+<span class="n">VFPMemoHeader</span> <span class="o">=</span> <span class="n">StructParser</span><span class="p">(</span>
+    <span class="s1">&#39;FoxProMemoHeader&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&gt;LL&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;length&#39;</span><span class="p">])</span>
+
+<span class="n">DB4MemoHeader</span> <span class="o">=</span> <span class="n">StructParser</span><span class="p">(</span>
+    <span class="s1">&#39;DBase4MemoHeader&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;&lt;LL&#39;</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">&#39;reserved&#39;</span><span class="p">,</span>  <span class="c1"># Always 0xff 0xff 0x08 0x08.</span>
+     <span class="s1">&#39;length&#39;</span><span class="p">])</span>
+
+<span class="c1"># Used for Visual FoxPro memos to distinguish binary from text memos.</span>
+
+<div class="viewcode-block" id="VFPMemo"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.VFPMemo">[docs]</a><span class="k">class</span> <span class="nc">VFPMemo</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BinaryMemo"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.BinaryMemo">[docs]</a><span class="k">class</span> <span class="nc">BinaryMemo</span><span class="p">(</span><span class="n">VFPMemo</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PictureMemo"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.PictureMemo">[docs]</a><span class="k">class</span> <span class="nc">PictureMemo</span><span class="p">(</span><span class="n">BinaryMemo</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ObjectMemo"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.ObjectMemo">[docs]</a><span class="k">class</span> <span class="nc">ObjectMemo</span><span class="p">(</span><span class="n">BinaryMemo</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="TextMemo"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.TextMemo">[docs]</a><span class="k">class</span> <span class="nc">TextMemo</span><span class="p">(</span><span class="n">VFPMemo</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">VFP_TYPE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x0</span><span class="p">:</span> <span class="n">PictureMemo</span><span class="p">,</span>
+    <span class="mh">0x1</span><span class="p">:</span> <span class="n">TextMemo</span><span class="p">,</span>
+    <span class="mh">0x2</span><span class="p">:</span> <span class="n">ObjectMemo</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="MemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.MemoFile">[docs]</a><span class="k">class</span> <span class="nc">MemoFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="c1"># Shortcuts for speed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">read</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seek</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">seek</span>
+
+    <span class="k">def</span> <span class="nf">_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="FakeMemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.FakeMemoFile">[docs]</a><span class="k">class</span> <span class="nc">FakeMemoFile</span><span class="p">(</span><span class="n">MemoFile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="n">_init</span> <span class="o">=</span> <span class="n">_close</span> <span class="o">=</span> <span class="n">_open</span></div>
+
+
+<div class="viewcode-block" id="VFPMemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.VFPMemoFile">[docs]</a><span class="k">class</span> <span class="nc">VFPMemoFile</span><span class="p">(</span><span class="n">MemoFile</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">VFPFileHeader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a memo from the file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seek</span><span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">blocksize</span><span class="p">)</span>
+        <span class="n">memo_header</span> <span class="o">=</span> <span class="n">VFPMemoHeader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">memo_header</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="n">memo_header</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;EOF reached while reading memo&#39;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">VFP_TYPE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">memo_header</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BinaryMemo</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DB3MemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.DB3MemoFile">[docs]</a><span class="k">class</span> <span class="nc">DB3MemoFile</span><span class="p">(</span><span class="n">MemoFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;dBase III memo file.&quot;&quot;&quot;</span>
+    <span class="c1"># Code from dbf.py</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">block_size</span> <span class="o">=</span> <span class="mi">512</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seek</span><span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="n">block_size</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">newdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">newdata</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">data</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">newdata</span>
+
+            <span class="c1"># Todo: some files (help.dbt) has only one field separator.</span>
+            <span class="c1"># Is this enough for all file though?</span>
+            <span class="n">end_of_memo</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x1a</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end_of_memo</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[:</span><span class="n">end_of_memo</span><span class="p">]</span>
+
+            <span class="c1"># Alternative end of memo markers:</span>
+            <span class="c1"># \x1a\x1a</span>
+            <span class="c1"># \x0d\x0a</span>
+
+        <span class="k">return</span> <span class="n">data</span><span class="p">[:</span><span class="n">eom</span><span class="p">]</span>        </div>
+
+<div class="viewcode-block" id="DB4MemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.DB4MemoFile">[docs]</a><span class="k">class</span> <span class="nc">DB4MemoFile</span><span class="p">(</span><span class="n">MemoFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;dBase IV memo file&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Todo: read this from the file header.</span>
+        <span class="n">block_size</span> <span class="o">=</span> <span class="mi">512</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seek</span><span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="n">block_size</span><span class="p">)</span>
+        <span class="n">memo_header</span> <span class="o">=</span> <span class="n">DB4MemoHeader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read</span><span class="p">(</span><span class="n">memo_header</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="c1"># Todo: fields are terminated in different ways.</span>
+        <span class="c1"># \x1a is one of them</span>
+        <span class="c1"># \x1f seems to be another (dbase_8b.dbt)</span>
+        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x1f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="find_memofile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.find_memofile">[docs]</a><span class="k">def</span> <span class="nf">find_memofile</span><span class="p">(</span><span class="n">dbf_filename</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.fpt&#39;</span><span class="p">,</span> <span class="s1">&#39;.dbt&#39;</span><span class="p">]:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ifind</span><span class="p">(</span><span class="n">dbf_filename</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="open_memofile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.memo.open_memofile">[docs]</a><span class="k">def</span> <span class="nf">open_memofile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dbversion</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.fpt&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">VFPMemoFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># print(&#39;######&#39;, dbversion)</span>
+        <span class="k">if</span> <span class="n">dbversion</span> <span class="o">==</span> <span class="mh">0x83</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DB3MemoFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DB4MemoFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,542 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TuflowPart &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>TuflowPart</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tuflow/tuflowpart.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tuflowpart">
+<span id="tuflowpart-top"></span><h1>TuflowPart<a class="headerlink" href="#tuflowpart" title="Permalink to this headline">¶</a></h1>
+<p>The TuflowPart interface is an abstract base class that must be inherited by
+all classes storing data in tuflow control files (i.e. those held by the
+<a class="reference internal" href="controlfile.html#controlfile-partholder"><span class="std std-ref">PartHolder</span></a> class in <a class="reference internal" href="controlfile.html#controlfile-top"><span class="std std-ref">ControlFile</span></a>).</p>
+<p>With the exception of TuflowLogic derived classes, which are slightly different,
+all TuflowPart&#8217;s hold information pertaining to a single line (or part of a
+line when dealing with piped commands) in a tuflow control file.</p>
+<p>All the actual data loaded or added is stored in TuflowPart&#8217;s. There are
+currently three main types of TuflowPart:</p>
+<blockquote>
+<div><ul class="simple">
+<li>ATuflowVariable: for all types of variables.</li>
+<li>TuflowFile: for all types of filepath.</li>
+<li>TuflowLogic: for all if-else and define logic.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>TuflowPart defines a few standard members and methods required by all subclasses.
+These members and methods include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>hash(uuid4)</strong>: uuid hash code unique to every part.</li>
+<li><strong>obj_type(str)</strong>: subclass specific str (e.g. &#8216;model&#8217;, &#8216;gis&#8217;, &#8216;variable&#8217;, etc)</li>
+<li><strong>tpart_type(int)</strong>: FILEPART_TYPE value from the tuflow.__init__.py module.</li>
+<li><strong>active(bool)</strong>: status flag on whether the part is currently in use or not.
+This can be set to False which will have the same effect as deleting it in
+most methods.</li>
+<li><strong>associates(AssociatedParts)</strong>: stores a reference to associated TuflowPart&#8217;s
+like parent, siblings and logic.</li>
+</ul>
+</div></blockquote>
+<p>Currently the following subclasses of TuflowPart exist (Note that the
+TuflowLogic derived class deal with things a bit differently, so they will be
+discussed later).:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>UnknownPart</strong>: stores any data (can be multiple lines) that the loader doesn&#8217;t
+understand.</li>
+<li><strong>TuflowVariable</strong>: standard variable store. Contains most variables decalred in
+control files. Has two members for storing the variable part of the
+command line: &#8216;variable&#8217; and &#8216;split_variable&#8217;. variable is the value as
+read, split_variable is a list containing the variable separated by spaces.</li>
+<li><strong>TuflowModelVariable</strong>: for scenario and event values when either passes in
+from the runform/batch file, or read from the control files. Note if they
+are passed in the associates.parent == None.</li>
+<li><strong>TuflowUserVariable</strong>: for user defined variables set in the control files
+with the &#8216;Set myvarname == 2&#8217; style syntax.</li>
+<li><strong>TuflowKeyValue</strong>: for key-value variable pairs, such as:
+&#8216;BC Event Source == varname | Q100&#8217;.</li>
+<li><strong>TuflowFile</strong>: standard file store. This is subclasses by all other file types.
+Also inherits from the PathHolder class.</li>
+<li><strong>ModelFile</strong>: used for commands that contain refernce to control files.</li>
+<li><strong>GisFile</strong>: used for any command that points to a gis file.</li>
+<li><strong>ResultFile</strong>: used for any commands that point to files/folders to write
+out to.</li>
+<li><strong>DataFile</strong>: used for any command that points to a file that contains other
+readable data and possible other files with additional data, like
+BC Database, Materials.csv and Materials.tmf.</li>
+</ul>
+</div></blockquote>
+<p>All includes variables of &#8216;command&#8217;, the section of a command line before the
+&#8216;==&#8217;, and &#8216;comment&#8217;, anything after a &#8216;!&#8217; on the line. The part of the line
+after the &#8216;==&#8217; is referred to by different variable names dending on the class.
+In general though if it&#8217;s a variable type it will have one called &#8216;variable&#8217;.
+If it is a file it will populate the PathHolder superclass with the path it
+reads in and will have the standard members and functions available in there:</p>
+<dl class="docutils">
+<dt>Main members:</dt>
+<dd><ul class="first last simple">
+<li>filename</li>
+<li>extension</li>
+<li>root</li>
+<li>relative_root</li>
+</ul>
+</dd>
+<dt>Main methods:</dt>
+<dd><ul class="first last simple">
+<li>getAbsolutePath()</li>
+<li>getFileName()</li>
+<li>getRelativePath()</li>
+</ul>
+</dd>
+</dl>
+<p>See :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>pathholder-top`for more information.</p>
+</div>
+<div class="section" id="accessing-data">
+<h2>Accessing Data<a class="headerlink" href="#accessing-data" title="Permalink to this headline">¶</a></h2>
+<p>When you have accessed a TuflowPart, probably through a ControlFile, you can
+access the data it contains in the following way:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># If we have any type of TuflowFile, let&#39;s assume it&#39;s called fpart</span>
+
+<span class="c1"># These are true of all TuflowParts</span>
+<span class="c1"># Any of these may == None (although most should have a parent)</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
+
+<span class="n">sibnext</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span>
+<span class="n">sibprev</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span>
+<span class="c1"># Normally used for piped file commands, for example this line:</span>
+<span class="c1"># Read GIS Z Line == afile_R.shp | afile_L.shp | afile_P.shp</span>
+<span class="c1"># would be put into 3 separate TuflowFile&#39;s and afile_L would have</span>
+<span class="c1"># sibline_prev equal to part holding afile_R and sibling_nexxt to afile_P.shp</span>
+
+<span class="c1"># Accessing file variables</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">filename</span>
+<span class="n">extension</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">extension</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">root</span>
+
+<span class="c1"># Note this one is relative directory noted in the control file, for example;</span>
+<span class="c1"># Read GIS Z Line == ..\gis\somefile.shp</span>
+<span class="c1"># the relative_root would be &#39;..\gis\&#39;</span>
+<span class="n">rel_root</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">relative_root</span>
+
+<span class="c1"># Get difffernt filepaths</span>
+<span class="n">abspath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="p">()</span>
+<span class="n">relpath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">getRelativePath</span><span class="p">()</span>
+
+<span class="c1"># TODO</span>
+<span class="c1"># ... Put stuff about different functions here</span>
+
+
+<span class="c1"># If we have any type of TuflowVariable, let&#39;s assume it&#39;s called vpart</span>
+<span class="c1"># All the associates stuff will be the same</span>
+
+<span class="c1"># accessing variables</span>
+
+<span class="c1"># This would be the whole variable like &#39;2&#39; in &#39;Set IWL == 2&#39; or &#39;h q v MB2&#39;</span>
+<span class="c1"># in &#39;Map Output Data Types == h q v MB2&#39;</span>
+<span class="n">var</span> <span class="o">=</span> <span class="n">vpart</span><span class="o">.</span><span class="n">variable</span>
+
+<span class="c1"># [2] in the IWL example or [h, q, v, MB2] in the second one</span>
+<span class="n">svar</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">split_variable</span>
+</pre></div>
+</div>
+<p>For additional information see the docstrings for the class you need in the
+tuflowfilepart.py module.</p>
+<div class="section" id="user-set-variables">
+<h3>User set variables<a class="headerlink" href="#user-set-variables" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to set variables within the control file of a Tuflow model, or
+in fact hand them in on the command line as scenario/event values. when you
+request a TuflowVariable.variable or TuflowFile.filename/absolutePath/etc it
+will return the value as-read from the control file. Put another way, the SHIP
+library doesn&#8217;t automatically resolve these variables and placeholders when
+reading in the data. This might seem like a limitation, but it&#8217;s actually quite
+powerfull as it lets you change the variable setup in a loaded model and be
+able to see the impacts without saving and reloading the model.</p>
+<p>The variables are stored in the UserVariables class in ship.tuflow.tuflowmodel.py.
+To get a dict of all of the currently set variables in a TuflowModel you call
+the variablesToDict() method of UserVariables. It will return a dict like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">user_vars</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="s1">&#39;scen1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">:</span> <span class="s1">&#39;scen2&#39;</span><span class="p">,</span> <span class="s1">&#39;e1&#39;</span><span class="p">:</span> <span class="s1">&#39;event1&#39;</span><span class="p">,</span> <span class="s1">&#39;myvar1&#39;</span><span class="p">:</span> <span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;myvar2&#39;</span><span class="p">:</span> <span class="s1">&#39;1.5&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that this is a mix of all the currently set scenario and event variables
+and the user set variable (i.e. using &#8216;Set variable myvar == 10&#8217; in a control
+file).</p>
+<p>There are a couple of ways that you can retrieve te resolved value rather than
+the one with the placeholder in:</p>
+<blockquote>
+<div><ul class="simple">
+<li>You could, of course, just get the value and replace it yourself.</li>
+<li>Some methods in TuflowPart take a user_vars argument. If you give the dict
+discussed above it will resolve any placeholders for you.</li>
+<li>There is a staticmethod in TuflowPart that you can call and it will
+resolve the value.</li>
+</ul>
+</div></blockquote>
+<p>The first one is self explanatory. The second one can be found in methods like
+TuflowFile.absolutePath and TuflowVariable.resolveVariable. The third approach
+is great if you have a TuflowPart and want to resolve one of it&#8217;s values:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume that we have ControlFile called tgc already</span>
+<span class="c1"># Also assume we are using the user_vars dict from above</span>
+<span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+
+   <span class="c1"># Note: TOP_CLASS is set in the main superclasses to save having to</span>
+   <span class="c1"># import the different TuflowPart&#39;s and use isinstance all over the place.</span>
+   <span class="c1"># They are &#39;part&#39; = TuflowPart, &#39;unknown&#39; == UnknownPart,</span>
+   <span class="c1"># &#39;avariable&#39; == ATuflowVariable, &#39;file&#39; == TuflowFile, &#39;logic&#39; == TuflowLogic</span>
+   <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">==</span> <span class="s1">&#39;avariable&#39;</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">variable</span><span class="p">)</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">))</span>
+
+   <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">TOP_CLASS</span> <span class="o">==</span> <span class="s1">&#39;file&#39;</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">user_vars</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The resolvePlaceholder method is also a staticmethod which means that you can
+check any value with it if you want:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">TuflowPart</span>
+
+<span class="c1"># Prints &quot;_2.5_&quot;</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">TuflowPart</span><span class="o">.</span><span class="n">resolvePlaceholder</span><span class="p">(</span><span class="s2">&quot;_&lt;&lt;myvar&gt;&gt;_&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;myvar&quot;</span><span class="p">:</span> <span class="s2">&quot;2.5&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="additional-tuflowfile-stuff">
+<h2>Additional TuflowFile stuff<a class="headerlink" href="#additional-tuflowfile-stuff" title="Permalink to this headline">¶</a></h2>
+<p>TuflowFile overrides some of the methods of the <a class="reference internal" href="../utils/pathholder.html#pathholder-top"><span class="std std-ref">PathHolder</span></a> class to
+account for Tuflow specific behaviour. The main ones include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>all_types(list)</strong>: some files can actually require mutliple files with
+different extension (think mif/mid or shp/shx/dbf). This store a list of
+those file extensions.</li>
+<li><strong>has_own_root(str)</strong>: most file references in Tuflow use a relative path, but
+absolute paths can be used (and are quite common with results files). If
+this is the case has_own_root will be set to True. This is so it will be
+ignored when a global root update occurs.</li>
+<li>Some subclasses of TuflowFile have their own &#8216;type&#8217; variable (model_type,
+result_type, gis_type). This is a simple look up to help filter different
+forms. For example gis_type may be &#8216;mi&#8217; or &#8216;shape&#8217;, result_type may be
+&#8216;output&#8217;, &#8216;check&#8217;, or &#8216;log&#8217;.</li>
+</ul>
+</div></blockquote>
+<p>Some of the main methods that are overriden are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>absolutePathAll()</strong>: overides the absolutePath function to return the paths
+of all the types specified in all_types. Returns a list of strings.</li>
+<li><strong>relativePathAll()</strong>: same as absolute, but with relative path.</li>
+<li><strong>filenameAll(extension=False)</strong>: same as absolute, but for file names. If
+extension arg == True the file name will be returned with the extension.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="tuflowlogic">
+<h2>TuflowLogic<a class="headerlink" href="#tuflowlogic" title="Permalink to this headline">¶</a></h2>
+<p>The TuflowLogic type of TuflowPart is different to the other implementations
+discussed so far. First of all it will not be added to the PartHolder in the
+ControlFile, it will be added to the LogicHolder. Secondly it doesn&#8217;t hold just
+the information about a particular line in a control file, it stores information
+about everything within the scope of a particular if-else-end or define section.</p>
+<p>Currently there are three subclasses of TuflowLogic:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>IfLogic</strong>: for if-elseif-else-endif logic. Used by scenario and event.</li>
+<li><strong>EventLogic</strong>: for &#8216;Define Event&#8217; blocks.</li>
+<li><strong>SectionLogic</strong>: captures all the other stuff, like defining output zones.</li>
+</ul>
+</div></blockquote>
+<p>EventLogic and SectionLogic are almost the same except EventLogic is checked
+when looking up scenario and event logic, while SectionLogic isn&#8217;t.</p>
+<p>All of the logic classes contain the following member variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>parts(list)</strong>: all of the TuflowParts between the opening &#8216;clause&#8217; and
+closing clause.</li>
+<li><strong>group_parts(list[list])</strong>: stores the hash codes (TuflowPart.hash) of the
+parts in a list based on which section, or clause, it is in. EventLogic
+and SectionLogic will always only have one inner list. IfLogic may have any
+number of inner lists.</li>
+<li><strong>terms(list[list])</strong>: terms of the if-else/define/etc statement. Note there
+can be multiple terms so this, like above, is a list of lists.</li>
+<li><strong>commands(list)</strong>: part of line before the terms (e.g. &#8216;If Scenario&#8217;).</li>
+<li><strong>check_sevals(bool)</strong>: flag for whether scenario and event values should be
+evaluated on this. This is setup in the constructor, it just states whether
+the terms should be evaluated for scenario and event values.</li>
+</ul>
+</div></blockquote>
+<p><strong>IMPORTANT</strong>
+<em>When adding or removing TuflowParts from TuflowLogic, as described below, you</em>
+<em>shoud use the provided methods, rather than just adding and removing from the</em>
+<em>part lists. The methods will ensure that other places where the TuflowPart is</em>
+<em>used are kept sane when adding or removing. For example, if you remove a</em>
+<em>part from a logic clause the callback function will let the ControlFile know</em>
+<em>(if one is assigned - it should be) and it will move the part from it&#8217;s curren</em>
+<em>location in the PartHolder list to a location after the logic clause has</em>
+<em>closed. This is because the PartHolder maintains the order of the components.</em>
+For more information see <a class="reference internal" href="addingparts.html#addingtuflowparts-top"><span class="std std-ref">Adding TuflowPart&#8217;s</span></a>.</p>
+<p>All TuflowLogic supports the same main interfaces for accessing, adding and
+removing items. Accessing parts is generally done in the following way:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># You can obtain a TuflowLogic instance from an associates reference or</span>
+<span class="c1"># from the LogicHolder in ControlFile, depending on what you need. Either</span>
+<span class="c1"># way you will be returned the same thing.</span>
+<span class="c1"># Approach 1</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">logic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># say tgc is a ControlFile instance</span>
+<span class="c1"># or: Approach 2</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>  <span class="s1">&#39; say part is a TuflowPart instance</span>
+
+<span class="c1"># You can access the components directly</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>
+   <span class="c1"># Will print a list of hash codes for the different part in each clause</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+   <span class="c1"># Prints a list of terms for each group. This is the bit after the &#39;==&#39;</span>
+   <span class="c1"># in, for example: If Event == evt1 | evt2 | evt3. The terms would be</span>
+   <span class="c1"># [evt1, evt2, evt3]</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+   <span class="c1"># This command for the clause (e.g. If Scenario, Else If Scenario,</span>
+   <span class="c1"># If Event, Define Event, etc</span>
+   <span class="nb">print</span> <span class="n">logic</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+   <span class="c1"># Any comment that appears on the command/terms line</span>
+   <span class="nb">print</span> <span class="n">logic</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="c1"># Generally you only want to know which group a particular part is in, so</span>
+<span class="c1"># that you can then check the terms of the clause or something like that</span>
+<span class="c1"># Following approach 2 above</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
+
+<span class="c1"># Check that the part does actually have logic (i.e. is inside a clause)</span>
+<span class="k">if</span> <span class="n">logic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+   <span class="c1"># Get the group index and use it to find the logic terms etc for the part</span>
+   <span class="n">group_index</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+   <span class="n">part_command</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">group_index</span><span class="p">]</span>
+   <span class="n">part_terms</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">terms</span><span class="p">[</span><span class="n">group_index</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Adding TuflowParts to a TuflowLogic clause generally uses two functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li>addPart(): for adding a part to a group</li>
+<li>insertPart(): for adding a part next to an existing part.</li>
+</ul>
+</div></blockquote>
+<p>These work like so:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># we have a new/existing/whatever TuflowPart and we want to add it to a</span>
+<span class="c1"># TuflowLogic object</span>
+<span class="c1"># Note that if the group doesn&#39;t exist it wil raise an IndexError. If you</span>
+<span class="c1"># don&#39;t supply a group it will be appended to the last group.</span>
+<span class="n">logic</span><span class="o">.</span><span class="n">addPart</span><span class="p">(</span><span class="n">new_part</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># new _part will be added to the same group as existing_part and</span>
+<span class="c1"># immediately after it in the group order.</span>
+<span class="n">existing_part</span> <span class="o">=</span> <span class="n">apart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
+<span class="k">if</span> <span class="n">logic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+   <span class="n">logic</span><span class="o">.</span><span class="n">insertPart</span><span class="p">(</span><span class="n">new_part</span><span class="p">,</span> <span class="n">existing_part</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Removing a TuflowPart is easy:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># You can either provide a TuflowPart or a TuflowPart.hash.</span>
+
+<span class="n">logic</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
+<span class="n">logic</span><span class="o">.</span><span class="n">removePart</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+<span class="c1"># or logic.removePart(part.hash)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

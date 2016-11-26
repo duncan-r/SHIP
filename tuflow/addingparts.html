@@ -1,0 +1,643 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Adding TuflowPart’s &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Adding TuflowPart&#8217;s</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tuflow/addingparts.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="adding-tuflowpart-s">
+<span id="addingtuflowparts-top"></span><h1>Adding TuflowPart&#8217;s<a class="headerlink" href="#adding-tuflowpart-s" title="Permalink to this headline">¶</a></h1>
+<p>If you are not yet familiar with <a class="reference internal" href="tuflowmodel.html#tuflowmodel-top"><span class="std std-ref">TuflowModel</span></a>, <a class="reference internal" href="controlfile.html#controlfile-top"><span class="std std-ref">ControlFile</span></a>
+and <a class="reference internal" href="tuflowpart.html#tuflowpart-top"><span class="std std-ref">TuflowPart</span></a> you should look through those sections. They will
+give a reasonable overview of how the different components of the tuflow
+package interact and the data structures involved. Once you understand that
+the process of adding (or removing) TuflowPart&#8217;s from the model will be a lot
+easier to get.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>There are a lot of ways that you <em>could</em> add and remove different components
+from a TuflowModel instance. Python, without the provision of private variables,
+gives a lot of power to the end user of an API. However if you don&#8217;t follow
+certain, simple, steps when adding or removing components from a loaded
+TuflowModel you will almost certainly end up with something that doesn&#8217;t make
+a lot of sense (or crashes).</p>
+<p>It helps to do a quick review of the main components:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>TuflowModel</dt>
+<dd><ul class="first last simple">
+<li>control_files</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>ControlFile</dt>
+<dd><ul class="first last simple">
+<li>PartHolder</li>
+<li>LogicHolder</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">TuflowPart</p>
+</li>
+</ul>
+</div></blockquote>
+<p>TuflowModel is the main &#8216;glue&#8217; that pulls all of the other components together.
+ControlFile is the main container for the data. It stores all of the parts of
+control files in two iterator classes: PartHolder and LogicHolder. The actual
+data is all stored in classes that extend the TuflowPart interface.</p>
+<p>It all looks a little bit like this slightly simplified diagram:</p>
+<img alt="../_images/Tuflow_Design_Simple.png" src="../_images/Tuflow_Design_Simple.png" />
+</div>
+<div class="section" id="how-it-all-works">
+<h2>How it all works<a class="headerlink" href="#how-it-all-works" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dealing-with-control-files">
+<h3>Dealing with control files<a class="headerlink" href="#dealing-with-control-files" title="Permalink to this headline">¶</a></h3>
+<p>Now we need to consider a bit about how Tuflow control files are setup and
+compare that to what the SHIP library does.</p>
+<p>In Tuflow you have a .tcf file as the main entry point for a model. Perhaps
+something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># this might be called myrun.tcf</span>
+
+<span class="c1"># ... some other commands above</span>
+
+<span class="n">Set</span> <span class="n">Variable</span> <span class="n">MyTcfVariable</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">GIS</span> <span class="n">Format</span> <span class="o">==</span> <span class="n">SHP</span>
+<span class="n">Read</span> <span class="n">Materials</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">materials</span><span class="o">.</span><span class="n">csv</span>
+<span class="n">Geometry</span> <span class="n">Control</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tgcfile</span><span class="o">.</span><span class="n">tgc</span>
+<span class="n">BC</span> <span class="n">ControlFile</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tbcfile</span><span class="o">.</span><span class="n">tbc</span>
+
+<span class="c1"># Some other command below ...</span>
+</pre></div>
+</div>
+<p>And then tgcfile.tgc might look something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Read</span> <span class="n">GIS</span> <span class="n">Location</span> <span class="o">==</span> <span class="n">gis</span>\<span class="mi">2</span><span class="n">d_loc_L</span><span class="o">.</span><span class="n">shp</span>
+<span class="n">Grid</span> <span class="n">Size</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5000</span><span class="p">,</span><span class="mi">4500</span>
+<span class="n">Cell</span> <span class="n">Size</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="n">Set</span> <span class="n">Code</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="n">Read</span> <span class="n">GIS</span> <span class="n">Code</span> <span class="o">==</span> <span class="n">gis</span>\<span class="mi">2</span><span class="n">d_code_R</span><span class="o">.</span><span class="n">shp</span>
+<span class="n">Read</span> <span class="n">GIS</span> <span class="n">Z</span> <span class="n">Line</span> <span class="o">==</span> <span class="n">gis</span>\<span class="mi">2</span><span class="n">d_zln_L</span><span class="o">.</span><span class="n">shp</span> <span class="o">|</span> <span class="n">gis</span>\<span class="mi">2</span><span class="n">d_zln_P</span><span class="o">.</span><span class="n">shp</span>
+</pre></div>
+</div>
+<p>When loading the model with the FileLoader it will return a TuflowModel
+setup like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
+
+<span class="c1"># prints [&#39;TCF&#39;, &#39;TGC&#39;, &#39;TBC&#39;]</span>
+<span class="nb">print</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>And the &#8216;TCF&#8217; ControlFile&#8217;s PartHolder will have a reference to the tgcfile.tgc
+ModelFile instance and the tbcfile.tbc ModelFileInstance. The &#8216;TGC&#8217; ControlFile
+will have a reference to the tgcfile.tgc ModelFile in it&#8217;s control_files list.</p>
+<p>Bearing this in mind, what will happen if we delete the tgcfile.tgc TuflowPart
+(ModelFile) from the &#8216;TCF&#8217; ControlFile?</p>
+<p>It will not longer be in the list of TuflowPart&#8217;s in the &#8216;TCF&#8217; PartHolder.
+However it will still be in the &#8216;TGC&#8217; ControlFile&#8217;s control_files list and all
+of the components of the tgcfile.tgc will still be in the &#8216;TGC&#8217; ControlFile&#8217;s
+PartHolder! So if you were to just remove the tgcfile.tgc part from the &#8216;TCF&#8217;
+ControlFile it would only affect that one object. If you use the SHIP methods
+for this stuff it makes sure that everything gets updated and kept in sync.</p>
+<p><strong>Side Note</strong>
+<em>You don&#8217;t actually need to delete an item to hide from most of the querying</em>
+<em>methods and the write and getPrintableContents methods. You can simply set</em>
+<em>the &#8216;active&#8217; member of any TuflowPart to False. This part will then notify</em>
+<em>all the other TuflowPart&#8217;s that are beneath them (and they the same) and they</em>
+<em>will all have active set to False as well. This impact of this is that you</em>
+<em>effectively remove a part and anything under it, but still have access to it</em>
+<em>if you need. You can also turn a part off, do something and then reactivate it.</em></p>
+</div>
+<div class="section" id="dealing-with-logic">
+<h3>Dealing with logic<a class="headerlink" href="#dealing-with-logic" title="Permalink to this headline">¶</a></h3>
+<p>Similar considerations are needed for TuflowLogic. If we have the following
+section in tgcfile.tgc:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>IF SCENARIO == scen1 | scen1more
+   Set Cell Size == 10
+   Read GIS Whatevs == gis\2d_whatevs_P.shp
+   Read File == test_trd1.trd
+ELSE
+   Set Cell Size == 5
+   Read File == test_trd3.trd ! trd3
+END IF
+
+Set Mat == 5
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>The &#8216;TGC&#8217; ControlFile PartHolder would store it all in this order:</dt>
+<dd><ul class="first last simple">
+<li>Set Cell Size == 10</li>
+<li>Read GIS Whatevs == gis2d_whatevs_P.shp</li>
+<li>Read File == test_trd1.trd</li>
+<li>Set Cell Size == 5</li>
+<li>Read File == test_trd3.trd ! trd3</li>
+<li>Set Mat == 5</li>
+</ul>
+</dd>
+</dl>
+<p>And it would store on IfLogic object in the Logic holder with two clauses
+(If Scenario and Else). All pretty obvious so far.</p>
+<p>Now what happens if you want to remove &#8216;Read GIS Whatevs&#8217; from the If logic?
+You could do this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># DON&#39;T DO THIS!</span>
+
+<span class="c1"># Say &#39;tgc&#39; is the &#39;TGC&#39; ControlFile that we grabbed from a TuflowModel</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">logic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Find the part we want and remove it</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">parts</span><span class="p">):</span>
+   <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;read gis whatevs&#39;</span><span class="p">:</span>
+      <span class="n">gindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+      <span class="n">pindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">gindex</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+      <span class="k">del</span> <span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">gindex</span><span class="p">][</span><span class="n">pindex</span><span class="p">]</span>
+      <span class="k">del</span> <span class="n">logic</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="k">break</span>
+</pre></div>
+</div>
+<p>Apart from being a little verbose and awkward it&#8217;s also not very effective. If
+you went to save the tgcfile.tgc now you would get this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>IF SCENARIO == scen1 | scen1more
+   Set Cell Size == 10
+Read GIS Whatevs == gis\2d_whatevs_P.shp     # &lt;&lt;&lt; Here&#39;s where it gets weird
+END IF                                       # &lt;&lt;&lt;
+IF SCENARIO == scen1 | scen1more             # &lt;&lt;&lt;
+   Read File == test_trd1.trd
+ELSE
+   Set Cell Size == 5
+   Read File == test_trd3.trd ! trd3
+END IF
+
+Set Mat == 5
+</pre></div>
+</div>
+<p>The nuances of why this happens is out of the scope of this section, but it&#8217;s
+basically because the IfLogic thinks that the TuflowPart has been removed from
+it&#8217;s scope, but neither the ControlFile, PartHolder or TuflowPart itself know
+that!</p>
+</div>
+</div>
+<div class="section" id="what-you-should-do">
+<h2>What you should do<a class="headerlink" href="#what-you-should-do" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="logic-continued">
+<h3>Logic continued<a class="headerlink" href="#logic-continued" title="Permalink to this headline">¶</a></h3>
+<p>So what should happen? You can do this using the TuflowLogic removePart method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">logic</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">logic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">logic</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+   <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;read gis whatevs&#39;</span><span class="p">:</span>
+      <span class="n">logic</span><span class="o">.</span><span class="n">removePart</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+      <span class="k">break</span>
+</pre></div>
+</div>
+<p>When TuflowLogic objects are created they get given a callback function that
+is called when TuflowParts are added or removed from them. This lets the
+ControlFile know that it&#8217;s happend and, following the setup above, it will:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Remove all references of the TuflowPart from the IfLogic object.</li>
+<li>Move the &#8216;Read GIS Whatevs&#8217; line to immediately above the &#8216;Set MAT&#8217;
+line in the PartHolder.</li>
+<li>Remove the associates.logic reference pointing to the IfLogic from the
+TUflowPart. <strong>And</strong> if the logic is embedded in another TuflowLogic it
+will set the associates.logic to that one instead. I.e. it will only move
+it out one level at a time. If you want it completely out you will have
+to remove it from multiple embedded TuflowLogic&#8217;s.</li>
+</ul>
+</div></blockquote>
+<p>So now it looks like this, which is hopefully what you expected:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>IF SCENARIO == scen1 | scen1more
+   Set Cell Size == 10
+   Read File == test_trd1.trd
+ELSE
+   Set Cell Size == 5
+   Read File == test_trd3.trd ! trd3
+END IF
+
+Read GIS Whatevs == gis\2d_whatevs_P.shp     # &lt;&lt;&lt; Here it is now
+Set Mat == 5
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-non-modelfile-parts">
+<h3>Adding non-ModelFile parts<a class="headerlink" href="#adding-non-modelfile-parts" title="Permalink to this headline">¶</a></h3>
+<p>We&#8217;ll deal with ModelFile types in a bit because they can be a little
+different depending on the circumstances.</p>
+<p>It&#8217;s pretty simple to add TuflowPart&#8217;s to a control file really. You just need
+to think a little about where you are trying to add it. PartHolder has three
+methods:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><strong>add(filepart, kwargs)</strong>: add a new TuflowPart. Takes some keyword args:</dt>
+<dd><ul class="first last simple">
+<li><strong>after</strong> - the TuflowPart in the list to put it after.</li>
+<li><strong>before</strong> - the TuflowPart in the list to put it before. Note that if
+neither &#8216;before&#8217; or &#8216;after&#8217; are given it will be appened to the end of
+the list.</li>
+<li><strong>take_logic</strong> - bool value, whether to take the logic from the adjacent
+part. Defaults to True and to take the logic of the part below. If
+&#8216;before&#8217; is given as a kwarg it will take the logic from that. If
+False and it&#8217;s placed in between two parts with the same logic clause
+it will be set to True (otherwise it would break the file setup).</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>move(filepart, kwargs)</strong>: moves a TuflowPart to another part of the list.
+kwargs are the same as for add, but you must supply either a &#8216;before&#8217; or
+&#8216;after&#8217; part.</p>
+</li>
+<li><p class="first"><strong>remove(filepart)</strong>: removed the TuflowPart from the list. It will also
+return the removed part. Note it is usually better to call the deactivate
+method instead.</p>
+</li>
+<li><p class="first"><strong>deactivate(filepart)</strong>: sets the &#8216;active&#8217; flag for this part to False.
+Essentially stops it from being used in anything, but keeps it in the list.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="adding-modelfile-parts">
+<h3>Adding ModelFile parts<a class="headerlink" href="#adding-modelfile-parts" title="Permalink to this headline">¶</a></h3>
+<p>So what about ModelFile and why are they different? Well, sometime they&#8217;re not.
+If you just want to change the .tgc file being pointed to by a .tcf and then
+write the updated .tcf file to disk, it doesn&#8217;t matter. Let&#8217;s revisit the
+previous .tcf example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># this might be called myrun.tcf</span>
+
+<span class="c1"># ... some other commands above</span>
+
+<span class="n">Set</span> <span class="n">Variable</span> <span class="n">MyTcfVariable</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">GIS</span> <span class="n">Format</span> <span class="o">==</span> <span class="n">SHP</span>
+<span class="n">Read</span> <span class="n">Materials</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">materials</span><span class="o">.</span><span class="n">csv</span>
+<span class="n">Geometry</span> <span class="n">Control</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tgcfile</span><span class="o">.</span><span class="n">tgc</span>
+<span class="n">BC</span> <span class="n">ControlFile</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tbcfile</span><span class="o">.</span><span class="n">tbc</span>
+
+<span class="c1"># Some other command below ...</span>
+</pre></div>
+</div>
+<p>If you wanted to change the Geometry Control File to be tgcfile2.tgc you could
+just do this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tcf</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">tcf</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+   <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">geometry</span> <span class="n">control</span> <span class="n">file</span><span class="p">:</span>
+      <span class="n">part</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">u&quot;tgcfile2&quot;</span>
+      <span class="k">break</span>
+
+<span class="n">contents</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+<span class="c1"># The above will print...</span>
+<span class="c1"># ... some other commands above</span>
+<span class="n">Read</span> <span class="n">Materials</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">materials</span><span class="o">.</span><span class="n">csv</span>
+<span class="n">Geometry</span> <span class="n">Control</span> <span class="n">File</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tgcfile2</span><span class="o">.</span><span class="n">tgc</span>
+<span class="n">BC</span> <span class="n">ControlFile</span> <span class="o">==</span> <span class="o">..</span>\<span class="n">model</span>\<span class="n">tbcfile</span><span class="o">.</span><span class="n">tbc</span>
+<span class="c1"># Some other command below ...</span>
+</pre></div>
+</div>
+<p>Problems come in when you might want to do something with the new control file.
+With the above approach all you do is change the name of a ModelFile (TUflowPart)
+instance. Now any other TuflowPart that has that ModelFile as a parent - in this
+example it will be all of the parts in the &#8216;TGC&#8217; ControlFile. will have that new
+filename for their parent. This is possibly what you want? Or possibly not?</p>
+<p>If you are changing the name to another existing .tgc file, but you want to
+amend it slightly you will want to load the contents into the &#8216;TGC&#8217; ControlFile.</p>
+<p>Or maybe you want to change the reference in the tcf, like above, but keep the
+reference to the original in the &#8216;TGC&#8217; ControlFile? For many reasons you will
+probably want to do it a different way.</p>
+<p><strong>SIDENOTE</strong>
+<em>The one occasion that you may just want to do it that way is actually probably</em>
+<em>quite a common reason. You load an existing .tgc file (or whatever) and you</em>
+<em>want to change a couple of gis files or variables and save it as a new .tgc</em>
+<em>file. In that case it is best to just make whatever changes and then change the</em>
+<em>filename variables, as above. This change will be replicated wherever it&#8217;s</em>
+<em>referenced and you can save it under the new name.</em></p>
+<p>Other than the reason in SIDENOTE you will want to use either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>the addModelFile method in TuflowModel.</li>
+<li>the addControlFile method in ControlFile.</li>
+</ul>
+</div></blockquote>
+<p>Long story short, don&#8217;t use the addModelFile method in TuflowModel. You can if
+you want and it will work the same, but there is a clause in the TcfControlFile
+that will call that method anyway. It&#8217;s probably easier to remember to use the
+addControlFile method in ControlFile all of the time.</p>
+<p>The only reason that it needs to the TuflowModel methods is because changes in
+the &#8216;TCF&#8217; ControlFile will need to notify another ControlFile, say &#8216;TGC&#8217; if the
+ModelFile being added will need to update contents in there.</p>
+<dl class="docutils">
+<dt>The addControlFile method takes three arguments:</dt>
+<dd><ul class="first last simple">
+<li><strong>filepart(ModelFile)</strong>: the new ModelFile to add.</li>
+<li><strong>control(ControlFile)</strong>: the newly loaded ControlFile to update the
+existing one with.</li>
+<li><strong>adjacent_part(ModelFile)</strong>: an existing ModelFile to use as an indicator
+of where the contents should go.</li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the tuflowloader</span>
+<span class="c1"># I might change this so you can use the FileLoader, like the others, at</span>
+<span class="c1"># some point, but this will always work</span>
+<span class="kn">from</span> <span class="nn">ship.utils.fileloaders.tuflowloader</span> <span class="k">import</span> <span class="n">TuflowLoader</span>
+
+<span class="c1"># Assume that we already have a loaded TuflowModel called tuflow</span>
+<span class="n">tcf</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span>
+
+<span class="c1"># Get the existing tgc file to use as a location reference in the tcf</span>
+<span class="c1"># Remember that contains returns a list. We know there&#39;s only 1 so grab it</span>
+<span class="n">existing_tgc</span> <span class="o">=</span> <span class="n">tcf</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;Geometry Control&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Create a new ModelFile with the TuflowFactory</span>
+<span class="c1"># Note that tcf is given as the parent file</span>
+<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;Geometry Control File == ..</span><span class="se">\\</span><span class="s2">model</span><span class="se">\\</span><span class="s2">test_tgc2.tgc&quot;</span>
+<span class="n">tgc_part</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">getTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">tcf</span><span class="o">.</span><span class="n">mainfile</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Load the contents of the new tgc ModelFile</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">TuflowLoader</span><span class="p">()</span>
+<span class="n">tgc_control</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadControlFile</span><span class="p">(</span><span class="n">tgc_part</span><span class="p">)</span>
+
+<span class="c1"># Add the ModelFile and ControlFile contents to the TuflowModel</span>
+<span class="n">tcf</span><span class="o">.</span><span class="n">addControlFile</span><span class="p">(</span><span class="n">tgc_part</span><span class="p">,</span> <span class="n">tgc_control</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">existing_tgc</span><span class="p">)</span>
+
+<span class="c1"># passes</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">tgc_part</span> <span class="ow">in</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="p">)</span>
+
+<span class="c1"># passes</span>
+<span class="n">test_part</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;shiptest_tgc2_v1_DTM_2m&#39;</span><span class="p">)</span>
+<span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_part</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-tuflowpart-s">
+<h2>Creating TuflowPart&#8217;s<a class="headerlink" href="#creating-tuflowpart-s" title="Permalink to this headline">¶</a></h2>
+<p>In order to add a new part to the model you will obviously need to create it
+first. There, as always it seems, are a couple of ways that you can do this.
+The first, and probably easiest, way is to copy an existing TuflowPart:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># assume we have an existing part called oldfile that is the kind of</span>
+<span class="c1"># TuflwoPart we want, say a &#39;gis&#39; type</span>
+
+<span class="c1"># Performs a deep copy, so that we can change newfile and not effect oldfile.</span>
+<span class="c1"># This method actually takes a coupe of kwargs:</span>
+<span class="c1"># strip_unique (bool) - default True, and keep_logic(bool) - default False</span>
+<span class="n">newfile</span> <span class="o">=</span> <span class="n">myfile</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># You can then change what you want</span>
+<span class="n">newfile</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;Read GIS Z Line THIN&quot;</span>
+<span class="n">newfile</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;2d_zln_wallorsomething_L&quot;</span>
+
+<span class="c1"># and then maybe we want to add it to the ControlFile after oldfile</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">newfile</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">oldfile</span><span class="p">)</span>
+
+<span class="c1"># Done. If you write the .tgc file it will be included.</span>
+</pre></div>
+</div>
+<p>Doing it this way you get a lot for free (but some of it you want to think
+about!). If you leave the defaults it will keep the associates.parent, but remove
+the .logic and .sibling_prev/next. It will also set the .comment to &#8216;&#8217;. If you
+want to keep the .logic you can set the keep_logic kwarg to True.</p>
+<p>You can also create a new TuflowPart afresh. Either just call the contructor
+of one of them:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">GisFile</span>
+
+<span class="c1"># you have to add these</span>
+<span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">root</span><span class="o">=</span><span class="n">tuflow</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;Read GIS Z Line&#39;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s1">&#39;..\gis</span><span class="se">\2</span><span class="s1">d zln_something_L.shp&#39;</span><span class="p">}</span>
+
+<span class="c1"># add logic and/or a comment if you want</span>
+<span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logic</span> <span class="c1"># assume some TuflowLogic you retrieved before</span>
+<span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;A comment about the part I&#39;</span><span class="n">m</span> <span class="n">making</span><span class="s1">&#39;</span>
+
+<span class="c1"># here &#39;parent&#39; is a ModelFile instance representing the control file that</span>
+<span class="c1"># the file will be put in</span>
+<span class="n">tfile</span> <span class="o">=</span> <span class="n">GisFile</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or if you prefer you can use one of the static methods in the TuflowFactory. If
+you do this you can either call the method that builds that specific part, or
+make life easier and just call getTuflowPart:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">tuflowfactory</span> <span class="k">as</span> <span class="n">tf</span>
+
+<span class="c1"># again, we got a parent before</span>
+
+<span class="c1"># This is the Tuflow command we are going to use</span>
+<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;Read GIS Z Line == 2d_zln_athing_L.shp ! I added this comment too&quot;</span>
+
+<span class="c1"># Like before you can add logic to kwargs if you want</span>
+<span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;logic&#39;</span><span class="p">:</span> <span class="n">logic</span><span class="p">}</span>
+
+<span class="c1"># either call a specific staticmethod</span>
+<span class="n">gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createGisType</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<span class="c1"># or the classmethod</span>
+<span class="n">gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">getTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="n">logic</span><span class="p">)</span>
+
+<span class="c1"># Note both of the above return a list. In this case with only a single</span>
+<span class="c1"># entry in it. If it was a piped command you would get multiple items</span>
+<span class="c1"># in the list:</span>
+<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;Read GIS Z Line == 2d_zln_athing_L.shp | 2d_zln_athing_P.shp</span>
+<span class="n">new_gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createGisType</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gisfile_list</span><span class="p">))</span>   <span class="c1"># prints &#39;1&#39;</span>
+<span class="nb">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_gisfile_list</span><span class="p">))</span>   <span class="c1"># prints &#39;2&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,691 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.utilfunctions &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.utilfunctions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.utilfunctions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Utility Functions that could be helpful in any part of the API.</span>
+
+<span class="sd">    All functions that are likely to be called across a number of classes</span>
+<span class="sd">    and Functions in the API should be grouped here for convenience.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+<span class="sd">     </span>
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd"> </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO: This module, like a lot of other probably, needs reviewing for how</span>
+<span class="sd">         &#39;Pythonic&#39; t is. There are a lot of places where generators,</span>
+<span class="sd">         comprehensions, maps, etc should be used to speed things up and make</span>
+<span class="sd">         them a bit clearer.</span>
+<span class="sd">         </span>
+<span class="sd">         More importantly there are a lot of places using &#39;==&#39; compare that</span>
+<span class="sd">         should be using &#39;in&#39; etc. This could cause bugs and must be fixed</span>
+<span class="sd">         soon.</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<span class="c1"># def resolveSeDecorator(se_vals, path):</span>
+<span class="c1">#     &quot;&quot;&quot;Decorator function for replacing Scen/Evt placholders.</span>
+<span class="c1">#     </span>
+<span class="c1">#     Checks fro scenario and event placeholders in the return value of a </span>
+<span class="c1">#     function and replaces them with corresponding values if found.</span>
+<span class="c1">#     </span>
+<span class="c1">#     Args:</span>
+<span class="c1">#         se_vals(dict): standard scenario/event dictionary in the format:  </span>
+<span class="c1">#             {&#39;scenario&#39;: {</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def seDecorator(func):</span>
+<span class="c1">#         def seWrapper(*args, **kwargs):</span>
+<span class="c1">#             result = func(*args, **kwargs)</span>
+<span class="c1"># </span>
+<span class="c1">#             if &#39;~&#39; in result:</span>
+<span class="c1">#                 # Check for scenarion stuff</span>
+<span class="c1">#                 for key, val in self.se_vals[&#39;scenario&#39;].items():</span>
+<span class="c1">#                     temp = &#39;~&#39; + key + &#39;~&#39;</span>
+<span class="c1">#                     if temp in result:</span>
+<span class="c1">#                         result = result.replace(temp, val)</span>
+<span class="c1">#                 # Check for event stuff</span>
+<span class="c1">#                 for key, val in self.se_vals[&#39;event&#39;].items():</span>
+<span class="c1">#                     temp = &#39;~&#39; + key + &#39;~&#39;</span>
+<span class="c1">#                     if temp in result:</span>
+<span class="c1">#                         result = result.replace(temp, val)</span>
+<span class="c1">#             return result</span>
+<span class="c1">#         return seWrapper</span>
+<span class="c1">#     return seDecorator</span>
+
+
+<div class="viewcode-block" id="formatFloat"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.formatFloat">[docs]</a><span class="k">def</span> <span class="nf">formatFloat</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="p">,</span> <span class="n">ignore_empty_str</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Format a float as a string to given number of decimal places.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        value(float): the value to format.</span>
+<span class="sd">        no_of_dps(int): number of decimal places to format to.</span>
+<span class="sd">        ignore_empty_str(True): return a stripped blank string if set to True.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        str - the formatted float.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError - if value param is not type float.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ignore_empty_str</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">isNumeric</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isNumeric</span><span class="p">(</span><span class="n">value</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="n">decimal_format</span> <span class="o">=</span> <span class="s1">&#39;%0.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">no_of_dps</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f&#39;</span>
+    <span class="n">value</span> <span class="o">=</span>  <span class="n">decimal_format</span> <span class="o">%</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span></div>
+    
+
+<div class="viewcode-block" id="checkFileType"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.checkFileType">[docs]</a><span class="k">def</span> <span class="nf">checkFileType</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">ext</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks a file to see that it has the right extension.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        file_path (str): The file path to check.</span>
+<span class="sd">        ext (List): list containing the extension types to match the file </span>
+<span class="sd">            against.   </span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the extension matches the ext variable given or False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;File ext = &#39;</span> <span class="o">+</span> <span class="n">file_ext</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">ext</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">e</span> <span class="o">==</span> <span class="n">file_ext</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="isNumeric"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.isNumeric">[docs]</a><span class="k">def</span> <span class="nf">isNumeric</span><span class="p">(</span><span class="n">s</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Tests if string is a number or not.</span>
+<span class="sd">    </span>
+<span class="sd">    Simply tries to convert it and catches the error if launched.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        s (str): string to test number compatibility.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool - True if number. False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="encodeStr"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.encodeStr">[docs]</a><span class="k">def</span> <span class="nf">encodeStr</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">NameError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="isString"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.isString">[docs]</a><span class="k">def</span> <span class="nf">isString</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests a given value to see if it is an instance of basestring or not.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function should be used whenever testing this as it accounts for</span>
+<span class="sd">        both Python 2.7+ and 3.2+ variations of string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        value: the variable to test.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Bool - True if value is a unicode str (basestring type) </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
+<span class="c1">#     if not isinstance(value, basestring):</span>
+<span class="c1">#         return False</span>
+<span class="c1">#     </span>
+<span class="c1">#     return True</span>
+
+
+<div class="viewcode-block" id="isList"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.isList">[docs]</a><span class="k">def</span> <span class="nf">isList</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test a given value to see if it is a list or not.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        value: the variable to test for list type.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if value is of type list; False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="k">return</span> <span class="kc">True</span></div>
+    
+            
+<div class="viewcode-block" id="arrayToString"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.arrayToString">[docs]</a><span class="k">def</span> <span class="nf">arrayToString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a list to a String</span>
+
+<span class="sd">    Creates one string by adding each part of the array to one string using </span>
+<span class="sd">    &#39;, &#39;.join()</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        str_array (List): to convert into single string.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str - representaion of the array joined together.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if not contents of list are instances of basestring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">str_array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Array values are not strings&#39;</span><span class="p">)</span>
+    
+    <span class="n">out_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">out_string</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_array</span><span class="p">)</span>        
+
+    <span class="k">return</span> <span class="n">out_string</span></div>
+
+
+<div class="viewcode-block" id="findSubstringInList"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.findSubstringInList">[docs]</a><span class="k">def</span> <span class="nf">findSubstringInList</span><span class="p">(</span><span class="n">substr</span><span class="p">,</span> <span class="n">the_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list containing the indices that a substring was found at.</span>
+<span class="sd">    </span>
+<span class="sd">    Uses a generator to quickly find all indices that str appears in.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        substr (str): the sub string to search for.</span>
+<span class="sd">        the_list (List): a list containing the strings to search.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple - containing:</span>
+<span class="sd">            * a list with the indices that the substring was found in </span>
+<span class="sd">                (this list can be empty if no matches were found).</span>
+<span class="sd">            * an integer containing the number of elements it was found in.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">the_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">substr</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]</span> 
+    <span class="k">return</span> <span class="n">indices</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="findMax"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.findMax">[docs]</a><span class="k">def</span> <span class="nf">findMax</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns tuple containing min, max of two values</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        val1: first integer or float.</span>
+<span class="sd">        val2: second integer or float.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple - containing: </span>
+<span class="sd">            * lower value</span>
+<span class="sd">            * higher value </span>
+<span class="sd">            * False if not same or True if the same.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val1</span> <span class="o">==</span> <span class="n">val2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">val1</span> <span class="o">&gt;</span> <span class="n">val2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val2</span><span class="p">,</span> <span class="n">val1</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="fileExtensionWithoutPeriod"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.fileExtensionWithoutPeriod">[docs]</a><span class="k">def</span> <span class="nf">fileExtensionWithoutPeriod</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extracts the extension without &#39;.&#39; from filepath.</span>
+<span class="sd">    </span>
+<span class="sd">    The extension will always be converted to lower case before returning.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filepath (str): A full filepath if name_only=False. Otherwise a file</span>
+<span class="sd">            name with extension if name_only=True.</span>
+<span class="sd">        name_only (bool): True if filepath is only filename.extension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name_only</span><span class="p">:</span>
+        <span class="n">file</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">file</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="findWholeWord"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.findWholeWord">[docs]</a><span class="k">def</span> <span class="nf">findWholeWord</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find a whole word amoungst a string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;\b(</span><span class="si">{0}</span><span class="s1">)\b&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span><span class="o">.</span><span class="n">search</span></div>
+
+
+<div class="viewcode-block" id="convertRunOptionsToSEDict"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.convertRunOptionsToSEDict">[docs]</a><span class="k">def</span> <span class="nf">convertRunOptionsToSEDict</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts tuflow command line options to scenario/event dict.</span>
+<span class="sd">    </span>
+<span class="sd">    Tuflow uses command line option (e.g. -s1 blah -e1 blah) to set scenario</span>
+<span class="sd">    values which can either be provided on the command line or through the</span>
+<span class="sd">    FMP run form. The TuflowLoader can use these arguments but requires a </span>
+<span class="sd">    slightly different setup.</span>
+<span class="sd">    </span>
+<span class="sd">    This function converts the command line string into the scenarion and</span>
+<span class="sd">    event dictionary expected by the TuflowLoader.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        options(str): command line options.</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        dict - {&#39;scenario&#39;: {&#39;s1&#39;: blah}, &#39;event&#39;: {&#39;e1&#39;: blah}}</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AttributeError: if both -s and -s1 or -e and -e1 occurr in the options</span>
+<span class="sd">            string. -x and -x1 are treated as the same variable by tuflow and</span>
+<span class="sd">            one of the values would be ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="s1">&#39; -s &#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="s1">&#39; -s1 &#39;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span>
+    <span class="k">if</span> <span class="s1">&#39; -e &#39;</span> <span class="ow">in</span> <span class="n">options</span> <span class="ow">and</span> <span class="s1">&#39; -e2 &#39;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span>
+    
+    <span class="n">outvals</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">):</span>
+            <span class="n">outvals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">][</span><span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">):</span>
+            <span class="n">outvals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">][</span><span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">outvals</span></div>
+
+
+<div class="viewcode-block" id="getSEResolvedFilename"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.getSEResolvedFilename">[docs]</a><span class="k">def</span> <span class="nf">getSEResolvedFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Replace a tuflow placeholder filename with the scenario/event values.</span>
+<span class="sd">        </span>
+<span class="sd">    Replaces all of the placholder values (e.g. ~s1~_~e1~) in a tuflow </span>
+<span class="sd">    filename with the corresponding values provided in the run options string.</span>
+<span class="sd">    If the run options flags are not found in the filename their values will</span>
+<span class="sd">    be appended to the end of the string.</span>
+<span class="sd">    </span>
+<span class="sd">    The setup of the returned filename is always the same:  </span>
+<span class="sd">        - First replace all placeholders with corresponding flag values.</span>
+<span class="sd">        - s1 == s and e1 == e.</span>
+<span class="sd">        - Append additional e values to end with &#39;_&#39; before first and &#39;+&#39; before others.</span>
+<span class="sd">        - Append additional s values to end with &#39;_&#39; before first and &#39;+&#39; before others.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filename(str): the filename to update.</span>
+<span class="sd">        se_vals(str): the run options string containing the &#39;s&#39; and </span>
+<span class="sd">            &#39;e&#39; flags and their corresponding values. </span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        str - the updated filename.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;scenario&#39;</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;event&#39;</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="c1"># Format the key value pairs into a list and combine the scenario and</span>
+    <span class="c1"># event list together and sort them into e, e1, e2, s, s1, s2 order.</span>
+    <span class="n">scen_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">scen_vals</span> <span class="o">=</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">event_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">event_vals</span> <span class="o">=</span> <span class="n">se_vals</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">scen</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scen_keys</span><span class="p">,</span> <span class="n">scen_vals</span><span class="p">)]</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">event_keys</span><span class="p">,</span> <span class="n">event_vals</span><span class="p">)]</span>
+    <span class="n">se_vals</span> <span class="o">=</span> <span class="n">scen</span> <span class="o">+</span> <span class="n">event</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">se_vals</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        
+    <span class="c1"># Build a new filename by replacing or adding the flag values</span>
+    <span class="n">outname</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="n">in_e</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
+        <span class="n">placeholder</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span> <span class="s1">&#39;~&#39;</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">placeholder</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">outname</span> <span class="o">=</span> <span class="n">outname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-e1&#39;</span> <span class="ow">and</span> <span class="s1">&#39;~e~&#39;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;-e&#39;</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">:</span>
+            <span class="n">outname</span> <span class="o">=</span> <span class="n">outname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~e~&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-s1&#39;</span> <span class="ow">and</span> <span class="s1">&#39;~s~&#39;</span> <span class="ow">in</span> <span class="n">filename</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;-s&#39;</span> <span class="ow">in</span> <span class="n">se_vals</span><span class="p">:</span>
+            <span class="n">outname</span> <span class="o">=</span> <span class="n">outname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~s~&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1">#DEBUG - CHECK THIS IS TRUE!</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-e&#39;</span> <span class="ow">and</span> <span class="s1">&#39;~e1~&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">outname</span> <span class="o">=</span> <span class="n">outname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~e1~&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-s&#39;</span> <span class="ow">and</span> <span class="s1">&#39;~s1~&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">outname</span> <span class="o">=</span> <span class="n">outname</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;~s1~&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-e&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">in_e</span><span class="p">:</span> 
+                    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span>
+                <span class="n">in_e</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">in_e</span><span class="p">:</span> 
+                    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span>
+                <span class="n">in_e</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">outname</span> <span class="o">+=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+    <span class="k">return</span> <span class="n">outname</span></div>
+    
+
+<div class="viewcode-block" id="enum"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.enum">[docs]</a><span class="k">def</span> <span class="nf">enum</span><span class="p">(</span><span class="o">*</span><span class="n">sequential</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a new enum using the values handed to it.</span>
+<span class="sd">    </span>
+<span class="sd">    Taken from Alec Thomas on StackOverflow:</span>
+<span class="sd">    http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python </span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Can be created and accessed using:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; Numbers = enum(&#39;ZERO&#39;, &#39;ONE&#39;, &#39;TWO&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; Numbers.ZERO</span>
+<span class="sd">        0</span>
+<span class="sd">        &gt;&gt;&gt; Numbers.ONE</span>
+<span class="sd">        1</span>
+<span class="sd">        </span>
+<span class="sd">        Or reverse the process o get the name from the value:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; Numbers.reverse_mapping[&#39;three&#39;]</span>
+<span class="sd">        &#39;THREE&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">enums</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sequential</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sequential</span><span class="p">))),</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">enums</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="n">enums</span><span class="p">[</span><span class="s1">&#39;reverse_mapping&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;Enum&#39;</span><span class="p">),</span> <span class="p">(),</span> <span class="n">enums</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="FileQueue"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.FileQueue">[docs]</a><span class="k">class</span> <span class="nc">FileQueue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Queueing class for storing data to go into the database</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="FileQueue.isEmpty"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.FileQueue.isEmpty">[docs]</a>    <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if list is empty</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">==</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="FileQueue.enqueue"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.FileQueue.enqueue">[docs]</a>    <span class="k">def</span> <span class="nf">enqueue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an item to the queue</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">item</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FileQueue.dequeue"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.FileQueue.dequeue">[docs]</a>    <span class="k">def</span> <span class="nf">dequeue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop an item from the front of the queue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="FileQueue.size"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.FileQueue.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the size of the queue</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="LoadStack"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack">[docs]</a><span class="k">class</span> <span class="nc">LoadStack</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stack class for loading logic.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="n">max_size</span>
+        
+    
+<div class="viewcode-block" id="LoadStack.isEmpty"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack.isEmpty">[docs]</a>    <span class="k">def</span> <span class="nf">isEmpty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if stack is empty.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">==</span> <span class="p">[]</span></div>
+    
+    
+<div class="viewcode-block" id="LoadStack.add"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an item to the stack.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            item: the item to add to the stack.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: if max_size has been set and adding another item would</span>
+<span class="sd">                make the stack bigger than max size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="LoadStack.pop"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an item From the stack.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            item from the top of the stack.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: if the stack is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+        
+    
+<div class="viewcode-block" id="LoadStack.peek"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack.peek">[docs]</a>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;See what the next item on the stack is, but don&#39;t remove it.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            item from the top of the stack.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: if the stack is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+    
+    
+<div class="viewcode-block" id="LoadStack.size"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.utilfunctions.LoadStack.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of items in the stack.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span></div></div>
+    
+    
+    
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

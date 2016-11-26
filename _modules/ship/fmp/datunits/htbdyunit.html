@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.datunits.htbdyunit &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.datunits.htbdyunit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.datunits.htbdyunit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the HtbdyUnit class.</span>
+<span class="sd">    This holds all of the data read in from the HTBDY units in the dat file.</span>
+<span class="sd">    Can be called to load in the data and read and update the contents </span>
+<span class="sd">    held in the object.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan R.</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span> 
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="HtbdyUnit"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit">[docs]</a><span class="k">class</span> <span class="nc">HtbdyUnit</span> <span class="p">(</span><span class="n">AUnit</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Concrete implementation of AUnit storing Isis HTBDY Unit data.</span>
+
+<span class="sd">    Contains a reference to a rowdatacollection for storing and</span>
+<span class="sd">    accessing all the row data. i.e. the stage-time data for the section.</span>
+<span class="sd">    Methods for accessing the data in these objects and adding removing rows</span>
+<span class="sd">    are available.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        AUnit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;htbdy&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;boundary_ds&#39;</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="s1">&#39;HTBDY&#39;</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fileOrder (int): The location of this unit in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">HtbdyUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">HtbdyUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;Htbd&#39;</span>
+        
+        <span class="n">time_units</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;SECONDS&#39;</span><span class="p">,</span> <span class="s1">&#39;MINUTES&#39;</span><span class="p">,</span> <span class="s1">&#39;HOURS&#39;</span><span class="p">,</span> <span class="s1">&#39;DAYS&#39;</span><span class="p">,</span> <span class="s1">&#39;WEEKS&#39;</span><span class="p">,</span> <span class="s1">&#39;FORTNIGHTS&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;LUNAR MONTHS&#39;</span><span class="p">,</span> <span class="s1">&#39;MONTHS&#39;</span><span class="p">,</span> <span class="s1">&#39;QUARTERS&#39;</span><span class="p">,</span> <span class="s1">&#39;YEARS&#39;</span><span class="p">,</span> <span class="s1">&#39;DECADES&#39;</span><span class="p">,</span> <span class="s1">&#39;USER SET&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
+            <span class="s1">&#39;multiplier&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">1.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="s1">&#39;time_units&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;HOURS&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">time_units</span><span class="p">),</span>
+            <span class="s1">&#39;extending_method&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;EXTEND&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;EXTEND&#39;</span><span class="p">,</span> <span class="s1">&#39;NOEXTEND&#39;</span><span class="p">,</span> <span class="s1">&#39;REPEAT&#39;</span><span class="p">)),</span>
+            <span class="s1">&#39;interpolation&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;LINEAR&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;LINEAR&#39;</span><span class="p">,</span> <span class="s1">&#39;SPLINE&#39;</span><span class="p">)),</span>
+        <span class="p">}</span>
+        
+        <span class="n">dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">update_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkIncreases</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">dobjs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HtbdyUnit.icLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.icLabels">[docs]</a>    <span class="k">def</span> <span class="nf">icLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span> <span class="c1">#[self._name]</span></div>
+    
+<div class="viewcode-block" id="HtbdyUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the unit data into the geometry objects.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): The part of the isis dat file pertaining to </span>
+<span class="sd">                this section </span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            AUnit - readUnitData()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_line</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readHeadData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readRowData</span><span class="p">(</span><span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+    <span class="k">def</span> <span class="nf">_readHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>            
+        <span class="sd">&quot;&quot;&quot;Reads the data in the file header section into the class.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data (list): contains data for this unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="p">][</span><span class="mi">5</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">l</span> <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">file_line</span><span class="o">+</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="s1">&#39;LUNAR MONTHS&#39;</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;LUNAR MONTHS&#39;</span><span class="p">,</span> <span class="s1">&#39;LUNAR-MONTHS&#39;</span><span class="p">)</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="nb">vars</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;LUNAR MONTHS&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">l</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="nb">vars</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">vars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">uf</span><span class="o">.</span><span class="n">isNumeric</span><span class="p">(</span><span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;time_units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;USER SET&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;multiplier&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;time_units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;extending_method&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;interpolation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> 
+
+        <span class="k">return</span> <span class="n">file_line</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">rows</span>
+
+
+    <span class="k">def</span> <span class="nf">_readRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads the units rows into the row collection.</span>
+
+<span class="sd">        This is all the geometry data that occurs after the no of rows variable in</span>
+<span class="sd">        the Spill Units of the dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_data: the data pertaining to this unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">rows</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Load the geometry data</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+                <span class="n">elev</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">time</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                
+                <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                    <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elev</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span>
+                <span class="p">})</span>
+                
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">ERROR</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+            
+        <span class="k">return</span> <span class="n">out_line</span>
+    
+
+<div class="viewcode-block" id="HtbdyUnit.getData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Retrieve the data in this unit.</span>
+
+<span class="sd">        The String[] returned is formatted for printing in the fashion</span>
+<span class="sd">        of the .dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list of output data formated the same as in the .DAT file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getHeadData</span><span class="p">()</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getRowData</span><span class="p">())</span> 
+        <span class="k">return</span> <span class="n">out_data</span></div>
+  
+  
+    <span class="k">def</span> <span class="nf">_getRowData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the data in the row collection.</span>
+<span class="sd">        </span>
+<span class="sd">        For all the rows in the spill geometry section get the data from</span>
+<span class="sd">        the rowdatacollection class.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list containing the formatted unit rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()):</span> 
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_data</span>
+   
+  
+    <span class="k">def</span> <span class="nf">_getHeadData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the header data formatted for printing out.</span>
+<span class="sd">        </span>
+<span class="sd">        This is a bit messy because the formatting changes depending on what</span>
+<span class="sd">        the setting of &#39;time_units&#39; is. If it LUNAR MONTHS it takes 12 spaces,</span>
+<span class="sd">        while all others take 10. It can also be the float value in &#39;multiplier&#39;</span>
+<span class="sd">        if &#39;time_units&#39; is set to USER SET....gaaarrrggghhhhhh.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list - contining the formatted head data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;HTBDY &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()))</span>
+
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&lt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="c1"># There&#39;s a weired blank column</span>
+
+        <span class="n">units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;time_units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">==</span> <span class="s1">&#39;USER SET&#39;</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;multiplier&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">units</span> <span class="o">==</span> <span class="s1">&#39;LUNAR MONTHS&#39;</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;12}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;time_units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;time_units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;extending_method&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;interpolation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        
+        <span class="n">final_out</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">final_out</span>
+            
+   
+<span class="c1">#     def addDataRow(elevation, time=None, index=None): </span>
+<div class="viewcode-block" id="HtbdyUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">data_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObjects. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span> <span class="ow">in</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;row_vals must contain an ELEVATION value&#39;</span><span class="p">)</span>
+        
+        <span class="n">elevation</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Index value cannot be less than zero&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot determine timestep with only 1 previous value&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># If it&#39;s the same as the record length then we can set index to None</span>
+        <span class="c1"># type and it will be appended instead of inserted.</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+        <span class="n">orig_index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">num_rows</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">num_rows</span>
+        
+        <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="n">num_rows</span><span class="p">:</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataValue</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">,</span> <span class="n">temp</span><span class="p">)</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataValue</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">,</span> <span class="n">temp</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">+</span> <span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t2</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">orig_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> 
+                                          <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> 
+                                             <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">},</span> <span class="n">index</span><span class="p">)</span></div></div>
+    
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

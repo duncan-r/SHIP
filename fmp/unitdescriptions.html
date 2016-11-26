@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Unit Descriptions &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Unit Descriptions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/unitdescriptions.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="unit-descriptions">
+<span id="unitdescriptions-top"></span><h1>Unit Descriptions<a class="headerlink" href="#unit-descriptions" title="Permalink to this headline">¶</a></h1>
+<p>An overview of the standard data in the AUnit type classes is put here for
+reference. It includes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a summary of the head_data keys and input types.</li>
+<li>a list of row_data keys.</li>
+</ul>
+</div></blockquote>
+<p>There is support for RefhUnit in the library. However the head_data entires are
+so numerous that it would take for ever to put them all down here. For more
+information on what is available in the RefhUnit please see
+ship.fmp.datunits.refhunit</p>
+<p><strong>Note</strong>
+Where types are specified in head_data, prefaced with dt, dt means:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ship</span><span class="o">.</span><span class="n">data_structures</span><span class="o">.</span><span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+</pre></div>
+</div>
+<p>Where types are specified in row_data, prefaced with rdt, rdt means:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ship</span><span class="o">.</span><span class="n">fmp</span><span class="o">.</span><span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+</pre></div>
+</div>
+<div class="section" id="riverunit">
+<h2>RiverUnit<a class="headerlink" href="#riverunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="type-and-category">
+<h3>Type and Category<a class="headerlink" href="#type-and-category" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;river&#8217;
+unit_category = &#8216;river&#8217;</p>
+</div>
+<div class="section" id="ic-labels">
+<h3>ic_labels<a class="headerlink" href="#ic-labels" title="Permalink to this headline">¶</a></h3>
+<p>self.name</p>
+</div>
+<div class="section" id="head-data-contents">
+<h3>head_data contents<a class="headerlink" href="#head-data-contents" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;spill1&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;spill2&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;spill2&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral1&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral2&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral3&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral4&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;distance&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;slope&#8217;, data_type=dt.FLOAT, dps=4</li>
+<li>key=&#8217;density&#8217;, data_type=dt.INT</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="row-data">
+<h3>Row Data<a class="headerlink" href="#row-data" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)</li>
+<li>DataObject=FloatData, key=rdt.ROUGHNESS, default=0.039, no_of_dps=3</li>
+<li>DataObject=SymbolData, symbol=*, key=rdt.PANEL_MARKER, default=False</li>
+<li>DataObject=FloatData, key=rdt.RPL, default=1.000, no_of_dps=3</li>
+<li>DataObject=do.ConstantData, rdt.BANKMARKER, choices=(&#8216;LEFT&#8217;, &#8216;RIGHT&#8217;, &#8216;BED&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=FloatData, key=rdt.EASTING, default=0.0, no_of_dps=2</li>
+<li>DataObject=FloatData, key=rdt.NORTHING, default=0.0, no_of_dps=2</li>
+<li>DataObject=ConstantData, rdt.DEACTIVATION, choices=(&#8216;LEFT&#8217;, &#8216;RIGHT&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=StringData, key=rdt.SPECIAL, default=&#8217;~&#8217;
+# Default == &#8216;~&#8217; means to ignore formatting and apply &#8216;&#8217; when value is None</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="bridgeunitarch">
+<h2>BridgeUnitArch<a class="headerlink" href="#bridgeunitarch" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Type and Category<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;bridge&#8217;
+unit_category = &#8216;arch&#8217;</p>
+</div>
+<div class="section" id="id2">
+<h3>ic_labels<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>self.name, self.name_ds</p>
+</div>
+<div class="section" id="id3">
+<h3>head_data contents<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;remote_us&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;remote_ds&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;roughness_type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;MANNING&#8217;,)</li>
+<li>key=&#8217;calibration_coef&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;skew_angle&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;width&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;dual_distance&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;num_of_orifices&#8217;, data_type=dt.INT</li>
+<li>key=&#8217;orifice_flag&#8217;, data_type=dt.CONSTANT, choices=(&#8216;&#8217;, &#8216;ORIFICE&#8217;)</li>
+<li>key=&#8217;op_lower&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;op_upper&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;op_cd&#8217;, data_type=dt.FLOAT, dps=3</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id4">
+<h3>Row Data<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)</li>
+<li>DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3</li>
+<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
+</ul>
+</dd>
+<dt><strong>row_data[&#8216;opening&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.OPEN_START, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.OPEN_END, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.SPRINGING_LEVEL, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.SOFFIT_LEVEL, no_of_dps=3</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="bridgeunitusbpr">
+<h2>BridgeUnitUsbpr<a class="headerlink" href="#bridgeunitusbpr" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>Type and Category<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;bridge&#8217;
+unit_category = &#8216;usbpr&#8217;</p>
+</div>
+<div class="section" id="id6">
+<h3>ic_labels<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>self.name, self.name_ds</p>
+</div>
+<div class="section" id="id7">
+<h3>head_data contents<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;remote_us&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;remote_ds&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;roughness_type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;MANNING&#8217;,)</li>
+<li>key=&#8217;calibration_coef&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;skew_angle&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;width&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;dual_distance&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;num_of_orifices&#8217;, data_type=dt.INT</li>
+<li>key=&#8217;orifice_flag&#8217;, data_type=dt.CONSTANT, choices=(&#8216;&#8217;, &#8216;ORIFICE&#8217;)</li>
+<li>key=&#8217;op_lower&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;op_upper&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;op_cd&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;abutment_type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;1&#8217;, &#8216;2&#8217;, &#8216;3&#8217;)</li>
+<li>key=&#8217;num_of_piers&#8217;, data_type=dt.INT</li>
+<li>key=&#8217;pier_shape&#8217;, data_type=dt.CONSTANT, choices=(&#8216;FLAT&#8217;, &#8216;ARCH&#8217;)</li>
+<li>key=&#8217;pier_shape_2&#8217;, data_type=dt.CONSTANT, choices=(&#8216;FLAT&#8217;, &#8216;ARCH&#8217;)allow_blank=True),</li>
+<li>key=&#8217;pier_calibration_coef&#8217;, data_type=dt.FLOAT, dps=3, allow_blank=True</li>
+<li>key=&#8217;abutment_align&#8217;, data_type=dt.CONSTANT, choices=(&#8216;ALIGNED&#8217;, &#8216;SKEW&#8217;)</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id8">
+<h3>Row Data<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)</li>
+<li>DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3</li>
+<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
+</ul>
+</dd>
+<dt><strong>row_data[&#8216;opening&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.OPEN_START, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.OPEN_END, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.SPRINGING_LEVEL, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.SOFFIT_LEVEL, no_of_dps=3</li>
+</ul>
+</dd>
+<dt><strong>row_data[&#8216;culvert&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.INVERT, no_of_dps=3)</li>
+<li>DataObject=FloatData, key=rdt.SOFFIT, no_of_dps=3)</li>
+<li>DataObject=FloatData, key=rdt.AREA, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.CD_PART, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.CD_FULL, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.DROWNING, no_of_dps=3</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="initialconditionsunit">
+<h2>InitialConditionsUnit<a class="headerlink" href="#initialconditionsunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h3>Type and Category<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;initial_conditions&#8217;
+unit_category = &#8216;initial_conditions&#8217;</p>
+</div>
+<div class="section" id="id10">
+<h3>head_data contents<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<p>None</p>
+</div>
+<div class="section" id="id11">
+<h3>Row Data<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=StringData, key=rdt.LABEL</li>
+<li>DataObject=StringData, key=rdt.QMARK, default=&#8217;y&#8217;</li>
+<li>DataObject=FloatData, key=rdt.FLOW, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.STAGE, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.FROUDE_NO, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.VELOCITY, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.UMODE, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.USTATE, default=0.000, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.ELEVATION, default=0.000, no_of_dps=3</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="spillunit">
+<h2>SpillUnit<a class="headerlink" href="#spillunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id12">
+<h3>Type and Category<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;spill&#8217;
+unit_category = &#8216;spill&#8217;</p>
+</div>
+<div class="section" id="id13">
+<h3>ic_labels<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<p>self.name, self.name_ds</p>
+</div>
+<div class="section" id="id14">
+<h3>head_data contents<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;weir_coef&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;modular_limit&#8217;, data_type=dt.FLOAT, dps=3</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id15">
+<h3>Row Data<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><a href="#id16"><span class="problematic" id="id17">**</span></a>row_data[&#8216;main&#8217;] - rdt.CHAINAGE must increase*</dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.EASTING, no_of_dps=2, default=0.00</li>
+<li>DataObject=FloatData, key=rdt.NORTHING, no_of_dps=2, default=0.00</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="orificeunit">
+<h2>OrificeUnit<a class="headerlink" href="#orificeunit" title="Permalink to this headline">¶</a></h2>
+<p>FloodReliefUnit and OutfallUnit have the same setup as OrificeUnit, including
+the same unit_category (orifice). Although they differ in unit_type:</p>
+<blockquote>
+<div><ul class="simple">
+<li>FloodReliefUnit unit_type == &#8216;flood_relief&#8217;</li>
+<li>OutfallUnit unit_type == &#8216;outfall&#8217;</li>
+</ul>
+</div></blockquote>
+<div class="section" id="id18">
+<h3>Type and Category<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;orifice&#8217;
+unit_category = &#8216;orifice&#8217;</p>
+</div>
+<div class="section" id="id19">
+<h3>ic_labels<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<p>self.name, self.name_ds</p>
+</div>
+<div class="section" id="id20">
+<h3>head_data contents<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;OPEN&#8217;, &#8216;FLAPPED&#8217;,</li>
+<li>key=&#8217;invert_level&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;soffit_level&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;bore_area&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;us_sill_level&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;ds_sill_level&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;shape&#8217;, data_type=dt.CONSTANT, choices=(&#8216;RECTANGLE&#8217;, &#8216;CIRCULAR&#8217;,</li>
+<li>key=&#8217;weir_flow&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;surcharged_flow&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;modular_limit&#8217;, data_type=dt.FLOAT, dps=3</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id21">
+<h3>Row Data<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<p>None</p>
+</div>
+</div>
+<div class="section" id="junctionunit">
+<h2>JunctionUnit<a class="headerlink" href="#junctionunit" title="Permalink to this headline">¶</a></h2>
+<p>Note that JunctionUnit.head_data containes one non-HeadDataItem entry for names.
+I may update this to use HeadDataItem in the future, but for now, just to be
+confusing the value is a list.</p>
+<div class="section" id="id22">
+<h3>Type and Category<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;junction&#8217;
+unit_category = &#8216;junction&#8217;</p>
+</div>
+<div class="section" id="id23">
+<h3>head_data contents<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;OPEN&#8217;, &#8216;ENERGY&#8217;)</li>
+<li>key=&#8217;names&#8217;: []</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id24">
+<h3>Row Data<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+<p>None</p>
+</div>
+</div>
+<div class="section" id="interpolateunit">
+<h2>InterpolateUnit<a class="headerlink" href="#interpolateunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id25">
+<h3>Type and Category<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;interpolate&#8217;
+unit_category = &#8216;interpolate&#8217;</p>
+</div>
+<div class="section" id="id26">
+<h3>ic_labels<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<p>self.name</p>
+</div>
+<div class="section" id="id27">
+<h3>head_data contents<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;spill1&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;spill2&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral1&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral2&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral3&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;lateral4&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;distance&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;easting&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;northing&#8217;, data_type=dt.FLOAT, dps=3</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id28">
+<h3>Row Data<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<p>None</p>
+</div>
+</div>
+<div class="section" id="htbdyunit">
+<h2>HtbdyUnit<a class="headerlink" href="#htbdyunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id29">
+<h3>Type and Category<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;htbdy&#8217;
+unit_category = &#8216;boundary_ds&#8217;</p>
+</div>
+<div class="section" id="id30">
+<h3>ic_labels<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+<p>self.name</p>
+</div>
+<div class="section" id="id31">
+<h3>head_data contents<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;multiplier&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;time_units&#8217;, data_type=dt.CONSTANT, choices=time_units</li>
+<li>key=&#8217;extending_method&#8217;, data_type=dt.CONSTANT, choices=(&#8216;EXTEND&#8217;, &#8216;NOEXTEND&#8217;, &#8216;REPEAT&#8217;,</li>
+<li>key=&#8217;interpolation&#8217;, data_type=dt.CONSTANT, choices=(&#8216;LINEAR&#8217;, &#8216;SPLINE&#8217;,</li>
+</ul>
+</div></blockquote>
+<p>Where time_units are:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">time_units</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;SECONDS&#39;</span><span class="p">,</span> <span class="s1">&#39;MINUTES&#39;</span><span class="p">,</span> <span class="s1">&#39;HOURS&#39;</span><span class="p">,</span> <span class="s1">&#39;DAYS&#39;</span><span class="p">,</span> <span class="s1">&#39;WEEKS&#39;</span><span class="p">,</span> <span class="s1">&#39;FORTNIGHTS&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;LUNAR MONTHS&#39;</span><span class="p">,</span> <span class="s1">&#39;MONTHS&#39;</span><span class="p">,</span> <span class="s1">&#39;QUARTERS&#39;</span><span class="p">,</span> <span class="s1">&#39;YEARS&#39;</span><span class="p">,</span> <span class="s1">&#39;DECADES&#39;</span><span class="p">,</span> <span class="s1">&#39;USER SET&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id32">
+<h3>Row Data<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
+<dd><ul class="first last simple">
+<li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3</li>
+<li>DataObject=FloatData, key=rdt.TIME, no_of_dps=3</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="culvertinletunit">
+<h2>CulvertInletUnit<a class="headerlink" href="#culvertinletunit" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id33">
+<h3>Type and Category<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+<p>unit_type = &#8216;culvert_inlet&#8217;
+unit_category = &#8216;culvert&#8217;</p>
+</div>
+<div class="section" id="id34">
+<h3>ic_labels<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
+<p>self.name</p>
+</div>
+<div class="section" id="id35">
+<h3>head_data contents<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
+<li>key=&#8217;k&#8217;, data_type=dt.FLOAT, dps=4</li>
+<li>key=&#8217;m&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;c&#8217;, data_type=dt.FLOAT, dps=4</li>
+<li>key=&#8217;y&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;ki&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;conduit_type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;A&#8217;, &#8216;B&#8217;, &#8216;C&#8217;)</li>
+<li>key=&#8217;screen_width&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;bar_proportion&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;debris_proportion&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;loss_coef&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;trashscreen_height&#8217;, data_type=dt.FLOAT, dps=3</li>
+<li>key=&#8217;headloss_type&#8217;, data_type=dt.CONSTANT, choices=(&#8216;STATIC&#8217;, &#8216;TOTAL&#8217;)</li>
+<li>key=&#8217;reverse_flow_model&#8217;, data_type=dt.CONSTANT, choices=(&#8216;CALCULATED&#8217;, &#8216;ZERO&#8217;)</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id36">
+<h3>Row Data<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h3>
+<p>None</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

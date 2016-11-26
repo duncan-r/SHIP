@@ -1,0 +1,1462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship package" href="ship.html"/>
+        <link rel="next" title="ship.utils.dbfread package" href="ship.utils.dbfread.html"/>
+        <link rel="prev" title="ship.tuflow.data_files package" href="ship.tuflow.data_files.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ship.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.utils.atool">ship.utils.atool module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.utils.filetools">ship.utils.filetools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.utils.log">ship.utils.log module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ship-utils-qtclasses-module">ship.utils.qtclasses module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.utils.utilfunctions">ship.utils.utilfunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+    <li>ship.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-utils-package">
+<h1>ship.utils package<a class="headerlink" href="#ship-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ship.utils.dbfread.html">ship.utils.dbfread package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.codepages">ship.utils.dbfread.codepages module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.dbf">ship.utils.dbfread.dbf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.dbversions">ship.utils.dbfread.dbversions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.deprecated_dbf">ship.utils.dbfread.deprecated_dbf module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.exceptions">ship.utils.dbfread.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.field_parser">ship.utils.dbfread.field_parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.ifiles">ship.utils.dbfread.ifiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.memo">ship.utils.dbfread.memo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.struct_parser">ship.utils.dbfread.struct_parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.test_field_parser">ship.utils.dbfread.test_field_parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.test_ifiles">ship.utils.dbfread.test_ifiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.test_invalid_value">ship.utils.dbfread.test_invalid_value module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.test_memo">ship.utils.dbfread.test_memo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread.test_read_and_length">ship.utils.dbfread.test_read_and_length module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.dbfread.html#module-ship.utils.dbfread">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ship.utils.fileloaders.html">ship.utils.fileloaders package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders.datloader">ship.utils.fileloaders.datloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders.fileloader">ship.utils.fileloaders.fileloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders.iefloader">ship.utils.fileloaders.iefloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders.loader">ship.utils.fileloaders.loader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders.tuflowloader">ship.utils.fileloaders.tuflowloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.fileloaders.html#module-ship.utils.fileloaders">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ship.utils.tools.html">ship.utils.tools package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.tools.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.tools.html#module-ship.utils.tools.geometry">ship.utils.tools.geometry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.tools.html#module-ship.utils.tools.openchannel">ship.utils.tools.openchannel module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.utils.tools.html#module-ship.utils.tools">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.utils.atool">
+<span id="ship-utils-atool-module"></span><h2>ship.utils.atool module<a class="headerlink" href="#module-ship.utils.atool" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Contains the ATool class an interface that all tools (i.e. file loaders,
+etc) should inherit.</p>
+<p>This was a integral part of these tools when they were written in Java
+as they allowed the user interface to communicate with the tools through
+an observer. In Python it&#8217;s not needed because of the signal slot
+mechanism making everything a lot easier.</p>
+<p class="last">The interface is kept partly because it may still be useful and partly
+because I&#8217;m sure there will be a need to have all similar tools grouped
+at some point.</p>
+</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.atool.ATool">
+<em class="property">class </em><code class="descname">ATool</code><a class="reference internal" href="_modules/ship/utils/atool.html#ATool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Abstract base class for all tools.</p>
+<p>Any class that functions as a tool for processing the files etc should
+implement this.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This is not currently used in any part of the software at the moment.
+It was needed in the original Java implementation in order to allow
+tools to talk to the Gui through an aobserver interface.</p>
+<p>It is here in case it&#8217;s needed but it is probably unnecessary because
+of the signal-slot mechanism of the Qt library which makes this kind
+of thing very simple.</p>
+<p class="last">Re-visit whether an Observer pattern is required once we have some
+threading setup. Although Qt does that all so well I very much
+doubt that this interface is required.</p>
+</div>
+<dl class="method">
+<dt id="ship.utils.atool.ATool.init">
+<code class="descname">init</code><span class="sig-paren">(</span><em>observer=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor.</p>
+<p>Takes in an instance of an observer to register it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observer</strong> (<em>object</em>) &#8211; the class that want to be notified.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.atool.ATool.notifyObserversProgress">
+<code class="descname">notifyObserversProgress</code><span class="sig-paren">(</span><em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.notifyObserversProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.notifyObserversProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notify all the current observers of a progress update</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.atool.ATool.notifyObserversProgressName">
+<code class="descname">notifyObserversProgressName</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.notifyObserversProgressName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.notifyObserversProgressName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notify all Observers of the name of the current progress.</p>
+<p>This name may also be a description. It is used to display on the
+user interface to tell users what is happening when this tools is
+called.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; the name of the progress.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.atool.ATool.registerObserver">
+<code class="descname">registerObserver</code><span class="sig-paren">(</span><em>observer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.registerObserver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.registerObserver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an observer to the collection of observers in the list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observer</strong> (<em>object</em>) &#8211; object to add to the observer list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.atool.ATool.unregisterObserver">
+<code class="descname">unregisterObserver</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.unregisterObserver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.unregisterObserver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an observer from the list of observers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>o</strong> (<em>object</em>) &#8211; an object that no longer wants to be notified.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.atool.ATool.updateObserversTotal">
+<code class="descname">updateObserversTotal</code><span class="sig-paren">(</span><em>progress</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/atool.html#ATool.updateObserversTotal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.atool.ATool.updateObserversTotal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notify all of the current observers of what we expect the total
+progress to be.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>progress</strong> (<em>int</em>) &#8211; The total progress expected.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.atool.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05A18690&gt;</em><a class="headerlink" href="#ship.utils.atool.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.filetools">
+<span id="ship-utils-filetools-module"></span><h2>ship.utils.filetools module<a class="headerlink" href="#module-ship.utils.filetools" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Contains file access functions and classes.</p>
+<p>This module contains convenience functions and classes for reading and
+writing files and launching different types of File dialogue.</p>
+<p>Some of the functionality needed in this class is provided by the PyQt
+framework. When this module is loaded it tries to import the PyQt module.
+If it fails it sets a HAS_QT flag to False.</p>
+<p class="last">Before any attempts to use the PyQt functions are made the HAS_QT flag
+is checked. If it&#8217;s false the function will react.</p>
+</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+<dt>TODO: This module, like a lot of other probably, needs reviewing for how</dt>
+<dd><p class="first">&#8216;Pythonic&#8217; t is. There are a lot of places where generators,
+comprehensions, maps, etc should be used to speed things up and make
+them a bit clearer.</p>
+<p class="last">More importantly there are a lot of places using &#8216;==&#8217; compare that
+should be using &#8216;in&#8217; etc. This could cause bugs and must be fixed
+soon.</p>
+</dd>
+</dl>
+<p>Updates:</p>
+<dl class="data">
+<dt id="ship.utils.filetools.HAS_QT">
+<code class="descname">HAS_QT</code><em class="property"> = False</em><a class="headerlink" href="#ship.utils.filetools.HAS_QT" title="Permalink to this definition">¶</a></dt>
+<dd><p>If Qt is not installed on the machine running the library we can&#8217;t use any
+of the GUI related code, such as file dialogs. This flag informs the code in
+the module about the load status.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.filetools.PathHolder">
+<em class="property">class </em><code class="descname">PathHolder</code><span class="sig-paren">(</span><em>path</em>, <em>root=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for storing file paths.</p>
+<p>This holds a range of useful path variables, such as:
+# file name
+# directory
+# full path
+# extension
+#etc</p>
+<p>Contains functions useful for extracting and updating parts of a file path.</p>
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.ABSOLUTE">
+<code class="descname">ABSOLUTE</code><em class="property"> = 0</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.ABSOLUTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.DIRECTORY">
+<code class="descname">DIRECTORY</code><em class="property"> = 2</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.DIRECTORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.EXTENSION">
+<code class="descname">EXTENSION</code><em class="property"> = 4</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.EXTENSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.NAME">
+<code class="descname">NAME</code><em class="property"> = 3</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.NAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.NAME_AND_EXTENSION">
+<code class="descname">NAME_AND_EXTENSION</code><em class="property"> = 5</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.NAME_AND_EXTENSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.filetools.PathHolder.RELATIVE">
+<code class="descname">RELATIVE</code><em class="property"> = 1</em><a class="headerlink" href="#ship.utils.filetools.PathHolder.RELATIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.absolutePath">
+<code class="descname">absolutePath</code><span class="sig-paren">(</span><em>filename=None</em>, <em>relative_roots=[]</em>, <em>normalize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.absolutePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.absolutePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the absolute path of the file path stored in this object.</p>
+<p>If there is no root variables set it will return False because there
+is no way of knowing what the absolute path will be.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> &#8211; Optional - if a different file name to the one
+currently stored in this object is required it can be
+specified with this variable.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str - absolute path of this object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.directory">
+<code class="descname">directory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the directory of the file path stored in this object.</p>
+<p>This makes sure that the correct path, taking into consideration any
+relative path links to the main root, is returned.</p>
+<p>If there is no root variable set it will return False because there
+is no way of knowing what the absolute path should be.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>str - absolute path of this object without the file name, or</dt>
+<dd>False if no root variables have been set.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.filenameAndExtension">
+<code class="descname">filenameAndExtension</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.filenameAndExtension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.filenameAndExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file name with the file extension appended.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>str - file name with the extension appended or a blank string if</dt>
+<dd>the file name does not exist.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.finalFolder">
+<code class="descname">finalFolder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.finalFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.finalFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the last folder in the path.</p>
+<p>If the relative_root variable is set it will be taken from that.
+Otherwise if it is not and the root variable is set it will be taken
+from that. If nether are set it will return False.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>tuple - the first part of the directory path and the final</dt>
+<dd>folder in the directory path for this file, or False if the
+variable has not been set.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.pathExists">
+<code class="descname">pathExists</code><span class="sig-paren">(</span><em>ext=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.pathExists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.pathExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether the path exists..</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If not self.root variable is set for this object then it is
+impossible to know if the path exists or not, so it will always
+return False.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>True if the path exists or False if it cannot be found or there</dt>
+<dd>has not been a root variable set for this object.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.relativePath">
+<code class="descname">relativePath</code><span class="sig-paren">(</span><em>with_extension=True</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.relativePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.relativePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full relative root with filename for this object.</p>
+<p>If a relative root was given to the constructor or set later this will
+return it, otherwise it will return False.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>with_extension=True</strong> (<em>bool</em>) &#8211; append the extension to the end of the
+path if True.</li>
+<li><strong>filename=None</strong> (<em>str</em>) &#8211; if a different file name to the one
+currently stored in this object is required it can be
+specified with this variable.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>str - relative path of this object or False if there is no</dt>
+<dd><p class="first last">relative path set.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.setAbsolutePath">
+<code class="descname">setAbsolutePath</code><span class="sig-paren">(</span><em>absolute_path</em>, <em>keep_relative_root=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.setAbsolutePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.setAbsolutePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the absolute path of this object.</p>
+<p>Takes an absolute path and set the file variables in this object with
+it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function WILL NOT check that the path exists. If the path used
+to call this function must exist it is the responsibility of the
+caller to check this.</p>
+</div>
+<p>keep_relative_root variable information:</p>
+<p>If a relative root is not set to None it will be included in any path
+that is returned by this object. i.e. when an absolute path is
+returned by this object it will return:</p>
+<p>path + relativepath + filename + extension</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>absolute_path</strong> (<em>str</em>) &#8211; the new absolute path to use to set the file
+variables in this object.</li>
+<li><strong>keep_relative_root=False</strong> (<em>Bool</em>) &#8211; if a relative root exists for
+this object it will be set to None unless this variable is
+set to True.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.setFilename">
+<code class="descname">setFilename</code><span class="sig-paren">(</span><em>filename</em>, <em>has_extension=False</em>, <em>keep_extension=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.setFilename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.setFilename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the filename variables with the given file name.</p>
+<p>The caller can provide a filename with or without an extension and choose
+whether to keep the extension on the file or not.</p>
+<p>has_extension will only be checked if keep_extension == False.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>str</em>) &#8211; the new filename to set.</li>
+<li><strong>has_extension=False</strong> (<em>Bool</em>) &#8211; whether the filename has a file
+extension or not. This should be set to True if an extension
+exists. Otherwise the filename will be corrupted.</li>
+<li><strong>keep_extension</strong> &#8211; if the caller want to keep the extension on the
+given filename this should be True. Otherwise the file extension
+on the new filename will be discarded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.filetools.PathHolder.setFinalFolder">
+<code class="descname">setFinalFolder</code><span class="sig-paren">(</span><em>folder_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#PathHolder.setFinalFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.PathHolder.setFinalFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the final folder in the directory path to the given name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folder_name</strong> (<em>str</em>) &#8211; the new name for the final folder in the path.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.directory">
+<code class="descname">directory</code><span class="sig-paren">(</span><em>in_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the directory component of the given path.</p>
+<p>Checks the given path to see if it has a file or not.</p>
+<p>If there is no file component in the path it will return the path as-is.</p>
+<p>If there is no directory component in the file it will return a
+blank string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>in_path</strong> (<em>str</em>) &#8211; the path to extract the directory from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Str - directory component of the given file path.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Is there any way to tell if it&#8217;s only a directory without being able to
+check that it exists and it doesn&#8217;t end in a slash?</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.directoryDialog">
+<code class="descname">directoryDialog</code><span class="sig-paren">(</span><em>path=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#directoryDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.directoryDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch a file dialog and return the user selected directory.</p>
+<p>If PyQt libraries are not available (HAS_QT == False) this function will
+raise an ImportError.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; Optional -  directory to open the dialog in.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Str containing path is successful or False if not.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ImportError</span></code> &#8211; if PyQt libraries are not available.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.directoryFileNames">
+<code class="descname">directoryFileNames</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#directoryFileNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.directoryFileNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of filenames in a directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>path</strong> (<em>str</em>) &#8211; </p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List - filenames in directory.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code> &#8211; If there&#8217;s a problem with the read/write or the directory
+doesn&#8217;t exist</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; if string not given for file_path.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.finalFolder">
+<code class="descname">finalFolder</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#finalFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.finalFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the last folder in the path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; the path to extract the final folder from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str containing the name of the final folder in the path.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.getFile">
+<code class="descname">getFile</code><span class="sig-paren">(</span><em>file_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#getFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.getFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Text file reader.</p>
+<p>Reads a text file, appending each new line to a list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filePath</strong> (<em>str</em>) &#8211; File path for text file to load.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List - contents of text file split by new lines.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code> &#8211; if problem in reading file.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211; if string not given for file_path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.getFileName">
+<code class="descname">getFileName</code><span class="sig-paren">(</span><em>in_path</em>, <em>with_extension=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#getFileName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.getFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file name with the file extension appended.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_path</strong> (<em>str</em>) &#8211; the file path to extract the filename from.</li>
+<li><strong>with_extension=False</strong> (<em>Bool</em>) &#8211; flag denoting whether to return
+the filename with or without the extension.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>Str - file name, with or without the extension appended or a</dt>
+<dd><p class="first last">blank string if there is no file name in the path.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.getOpenFileDialog">
+<code class="descname">getOpenFileDialog</code><span class="sig-paren">(</span><em>path=''</em>, <em>types='All (*.*)'</em>, <em>multi_file=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#getOpenFileDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.getOpenFileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch an open  file dialog and return the user selected path.</p>
+<dl class="docutils">
+<dt>The file types should follow the format:</dt>
+<dd>&#8216;DAT (<em>.DAT);;TXT (</em>.txt);;IEF (<a href="#id1"><span class="problematic" id="id2">*</span></a>.IEF)&#8217;</dd>
+</dl>
+<p>If PyQt libraries are not available (HAS_QT == False) this function will
+raise an ImportError.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Optional -  directory to open the dialog in.</li>
+<li><strong>types</strong> (<em>str</em>) &#8211; Optional - file types to restrict to.</li>
+<li><strong>multi_file=True</strong> (<em>bool</em>) &#8211; If False user can only select a single file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Str containing path is successful or False if not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ImportError</span></code> &#8211; if PyQt libraries are not available.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.getSaveFileDialog">
+<code class="descname">getSaveFileDialog</code><span class="sig-paren">(</span><em>path=''</em>, <em>types='All (*.*)'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#getSaveFileDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.getSaveFileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch a save file dialog and return the user selected path.</p>
+<dl class="docutils">
+<dt>The file types should follow the format:</dt>
+<dd>&#8220;DAT (<em>.DAT);;TXT (</em>.txt);;IEF (<a href="#id3"><span class="problematic" id="id4">*</span></a>.IEF)&#8221;</dd>
+</dl>
+<p>If PyQt libraries are not available (HAS_QT == False) this function will
+raise an ImportError.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; Optional -  directory to open the dialog in.</li>
+<li><strong>types</strong> (<em>str</em>) &#8211; Optional - file types to restrict to.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Str containing path is successful or False if not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ImportError</span></code> &#8211; if PyQt libraries are not available.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.filetools.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10790&gt;</em><a class="headerlink" href="#ship.utils.filetools.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.pathExists">
+<code class="descname">pathExists</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#pathExists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.pathExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether a path exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<em>str</em>) &#8211; the path to test.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if the path exists or False if it doesn&#8217;t.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.setFinalFolder">
+<code class="descname">setFinalFolder</code><span class="sig-paren">(</span><em>path</em>, <em>folder_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#setFinalFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.setFinalFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the final folder in the directory path to the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>str</em>) &#8211; the path to update.</li>
+<li><strong>folder_name</strong> (<em>str</em>) &#8211; the new name for the final folder in the path.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str containing the updated path.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.filetools.writeFile">
+<code class="descname">writeFile</code><span class="sig-paren">(</span><em>contents</em>, <em>file_path</em>, <em>add_newline=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/filetools.html#writeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.filetools.writeFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Text file writer</p>
+<blockquote>
+<div><p>Writes a list to file, adding a new-line add the end of each list item.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>contents (List) - lines to be written.
+filename (str) - Name of file to create.
+add_newline=True (Bool): adds a &#8216;</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>&#8216; to the end of each line written</dt>
+<dd><blockquote class="first">
+<div>if set to True.</div></blockquote>
+<dl class="last docutils">
+<dt>Raises:</dt>
+<dd>IOError: if problem in reading file.
+TypeError: if string not given for file_path</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.log">
+<span id="ship-utils-log-module"></span><h2>ship.utils.log module<a class="headerlink" href="#module-ship.utils.log" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Central logging setup for the whole library.
+At the moment this is pretty simplistic. It just contains a simple
+formatter and allows for setting a global library debug level.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="function">
+<dt id="ship.utils.log.setup_custom_logger">
+<code class="descname">setup_custom_logger</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/log.html#setup_custom_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.log.setup_custom_logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="ship-utils-qtclasses-module">
+<h2>ship.utils.qtclasses module<a class="headerlink" href="#ship-utils-qtclasses-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.utils.utilfunctions">
+<span id="ship-utils-utilfunctions-module"></span><h2>ship.utils.utilfunctions module<a class="headerlink" href="#module-ship.utils.utilfunctions" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Utility Functions that could be helpful in any part of the API.</p>
+<p class="last">All functions that are likely to be called across a number of classes
+and Functions in the API should be grouped here for convenience.</p>
+</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+<dt>TODO: This module, like a lot of other probably, needs reviewing for how</dt>
+<dd><p class="first">&#8216;Pythonic&#8217; t is. There are a lot of places where generators,
+comprehensions, maps, etc should be used to speed things up and make
+them a bit clearer.</p>
+<p class="last">More importantly there are a lot of places using &#8216;==&#8217; compare that
+should be using &#8216;in&#8217; etc. This could cause bugs and must be fixed
+soon.</p>
+</dd>
+</dl>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.utilfunctions.FileQueue">
+<em class="property">class </em><code class="descname">FileQueue</code><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#FileQueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.FileQueue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Queueing class for storing data to go into the database</p>
+<dl class="method">
+<dt id="ship.utils.utilfunctions.FileQueue.dequeue">
+<code class="descname">dequeue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#FileQueue.dequeue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.FileQueue.dequeue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop an item from the front of the queue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.FileQueue.enqueue">
+<code class="descname">enqueue</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#FileQueue.enqueue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.FileQueue.enqueue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an item to the queue</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.FileQueue.isEmpty">
+<code class="descname">isEmpty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#FileQueue.isEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.FileQueue.isEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if list is empty</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.FileQueue.size">
+<code class="descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#FileQueue.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.FileQueue.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the size of the queue</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.utilfunctions.LoadStack">
+<em class="property">class </em><code class="descname">LoadStack</code><span class="sig-paren">(</span><em>max_size=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stack class for loading logic.</p>
+<dl class="method">
+<dt id="ship.utils.utilfunctions.LoadStack.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>item</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an item to the stack.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> &#8211; the item to add to the stack.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; if max_size has been set and adding another item would
+make the stack bigger than max size.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.LoadStack.isEmpty">
+<code class="descname">isEmpty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack.isEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack.isEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if stack is empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.LoadStack.peek">
+<code class="descname">peek</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack.peek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>See what the next item on the stack is, but don&#8217;t remove it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">item from the top of the stack.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; if the stack is empty.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.LoadStack.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack.pop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an item From the stack.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">item from the top of the stack.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; if the stack is empty.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.utilfunctions.LoadStack.size">
+<code class="descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#LoadStack.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.LoadStack.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of items in the stack.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.arrayToString">
+<code class="descname">arrayToString</code><span class="sig-paren">(</span><em>self</em>, <em>str_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#arrayToString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.arrayToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a list to a String</p>
+<p>Creates one string by adding each part of the array to one string using
+&#8216;, &#8216;.join()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>str_array</strong> (<em>List</em>) &#8211; to convert into single string.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">str - representaion of the array joined together.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if not contents of list are instances of basestring.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.checkFileType">
+<code class="descname">checkFileType</code><span class="sig-paren">(</span><em>file_path</em>, <em>ext</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#checkFileType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.checkFileType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks a file to see that it has the right extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> (<em>str</em>) &#8211; The file path to check.</li>
+<li><strong>ext</strong> (<em>List</em>) &#8211; list containing the extension types to match the file
+against.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the extension matches the ext variable given or False if not.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.convertRunOptionsToSEDict">
+<code class="descname">convertRunOptionsToSEDict</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#convertRunOptionsToSEDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.convertRunOptionsToSEDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts tuflow command line options to scenario/event dict.</p>
+<p>Tuflow uses command line option (e.g. -s1 blah -e1 blah) to set scenario
+values which can either be provided on the command line or through the
+FMP run form. The TuflowLoader can use these arguments but requires a
+slightly different setup.</p>
+<p>This function converts the command line string into the scenarion and
+event dictionary expected by the TuflowLoader.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<em>str</em>) &#8211; command line options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">{&#8216;s1&#8217;: blah}, &#8216;event&#8217;: {&#8216;e1&#8217;: blah}}</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict - {&#8216;scenario&#8217;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; if both -s and -s1 or -e and -e1 occurr in the options
+string. -x and -x1 are treated as the same variable by tuflow and
+one of the values would be ignored.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.encodeStr">
+<code class="descname">encodeStr</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#encodeStr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.encodeStr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.enum">
+<code class="descname">enum</code><span class="sig-paren">(</span><em>*sequential</em>, <em>**named</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new enum using the values handed to it.</p>
+<p>Taken from Alec Thomas on StackOverflow:
+<a class="reference external" href="http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python">http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python</a></p>
+<p class="rubric">Examples</p>
+<p>Can be created and accessed using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Numbers</span> <span class="o">=</span> <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;ZERO&#39;</span><span class="p">,</span> <span class="s1">&#39;ONE&#39;</span><span class="p">,</span> <span class="s1">&#39;TWO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Numbers</span><span class="o">.</span><span class="n">ZERO</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Numbers</span><span class="o">.</span><span class="n">ONE</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>Or reverse the process o get the name from the value:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Numbers</span><span class="o">.</span><span class="n">reverse_mapping</span><span class="p">[</span><span class="s1">&#39;three&#39;</span><span class="p">]</span>
+<span class="go">&#39;THREE&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.fileExtensionWithoutPeriod">
+<code class="descname">fileExtensionWithoutPeriod</code><span class="sig-paren">(</span><em>filepath</em>, <em>name_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#fileExtensionWithoutPeriod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.fileExtensionWithoutPeriod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the extension without &#8216;.&#8217; from filepath.</p>
+<p>The extension will always be converted to lower case before returning.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) &#8211; A full filepath if name_only=False. Otherwise a file
+name with extension if name_only=True.</li>
+<li><strong>name_only</strong> (<em>bool</em>) &#8211; True if filepath is only filename.extension.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.findMax">
+<code class="descname">findMax</code><span class="sig-paren">(</span><em>val1</em>, <em>val2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#findMax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.findMax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns tuple containing min, max of two values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>val1</strong> &#8211; first integer or float.</li>
+<li><strong>val2</strong> &#8211; second integer or float.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li>lower value</li>
+<li>higher value</li>
+<li>False if not same or True if the same.</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple - containing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.findSubstringInList">
+<code class="descname">findSubstringInList</code><span class="sig-paren">(</span><em>substr</em>, <em>the_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#findSubstringInList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.findSubstringInList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list containing the indices that a substring was found at.</p>
+<p>Uses a generator to quickly find all indices that str appears in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>substr</strong> (<em>str</em>) &#8211; the sub string to search for.</li>
+<li><strong>the_list</strong> (<em>List</em>) &#8211; a list containing the strings to search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul>
+<li><dl class="first docutils">
+<dt>a list with the indices that the substring was found in</dt>
+<dd><p class="first last">(this list can be empty if no matches were found).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">an integer containing the number of elements it was found in.</p>
+</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple - containing</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.findWholeWord">
+<code class="descname">findWholeWord</code><span class="sig-paren">(</span><em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#findWholeWord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.findWholeWord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a whole word amoungst a string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.formatFloat">
+<code class="descname">formatFloat</code><span class="sig-paren">(</span><em>value</em>, <em>no_of_dps</em>, <em>ignore_empty_str=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#formatFloat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.formatFloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format a float as a string to given number of decimal places.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> (<em>float</em>) &#8211; the value to format.</li>
+<li><strong>no_of_dps</strong> (<em>int</em>) &#8211; number of decimal places to format to.</li>
+<li><strong>ignore_empty_str</strong> (<em>True</em>) &#8211; return a stripped blank string if set to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">str - the formatted float.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError - if value param is not type float.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.getSEResolvedFilename">
+<code class="descname">getSEResolvedFilename</code><span class="sig-paren">(</span><em>filename</em>, <em>se_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#getSEResolvedFilename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.getSEResolvedFilename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace a tuflow placeholder filename with the scenario/event values.</p>
+<p>Replaces all of the placholder values (e.g. ~s1~_~e1~) in a tuflow
+filename with the corresponding values provided in the run options string.
+If the run options flags are not found in the filename their values will
+be appended to the end of the string.</p>
+<dl class="docutils">
+<dt>The setup of the returned filename is always the same:</dt>
+<dd><ul class="first last simple">
+<li>First replace all placeholders with corresponding flag values.</li>
+<li>s1 == s and e1 == e.</li>
+<li>Append additional e values to end with &#8216;_&#8217; before first and &#8216;+&#8217; before others.</li>
+<li>Append additional s values to end with &#8216;_&#8217; before first and &#8216;+&#8217; before others.</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>str</em>) &#8211; the filename to update.</li>
+<li><strong>se_vals</strong> (<em>str</em>) &#8211; the run options string containing the &#8216;s&#8217; and
+&#8216;e&#8217; flags and their corresponding values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">str - the updated filename.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.isList">
+<code class="descname">isList</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#isList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.isList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a given value to see if it is a list or not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; the variable to test for list type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if value is of type list; False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.isNumeric">
+<code class="descname">isNumeric</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#isNumeric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.isNumeric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if string is a number or not.</p>
+<p>Simply tries to convert it and catches the error if launched.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> (<em>str</em>) &#8211; string to test number compatibility.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool - True if number. False if not.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.utilfunctions.isString">
+<code class="descname">isString</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/utilfunctions.html#isString"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.utilfunctions.isString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests a given value to see if it is an instance of basestring or not.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function should be used whenever testing this as it accounts for
+both Python 2.7+ and 3.2+ variations of string.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> &#8211; the variable to test.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Bool - True if value is a unicode str (basestring type)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.utilfunctions.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x048FC0F0&gt;</em><a class="headerlink" href="#ship.utils.utilfunctions.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.utils.dbfread.html" class="btn btn-neutral float-right" title="ship.utils.dbfread package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.tuflow.data_files.html" class="btn btn-neutral" title="ship.tuflow.data_files package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

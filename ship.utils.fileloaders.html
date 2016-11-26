@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.fileloaders package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship.utils package" href="ship.utils.html"/>
+        <link rel="next" title="ship.utils.tools package" href="ship.utils.tools.html"/>
+        <link rel="prev" title="ship.utils.dbfread package" href="ship.utils.dbfread.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ship.utils.html">ship.utils package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ship.utils.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.atool">ship.utils.atool module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.filetools">ship.utils.filetools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.log">ship.utils.log module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#ship-utils-qtclasses-module">ship.utils.qtclasses module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.utilfunctions">ship.utils.utilfunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+          <li><a href="ship.utils.html">ship.utils package</a> &raquo;</li>
+      
+    <li>ship.utils.fileloaders package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.utils.fileloaders.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-utils-fileloaders-package">
+<h1>ship.utils.fileloaders package<a class="headerlink" href="#ship-utils-fileloaders-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.utils.fileloaders.datloader">
+<span id="ship-utils-fileloaders-datloader-module"></span><h2>ship.utils.fileloaders.datloader module<a class="headerlink" href="#module-ship.utils.fileloaders.datloader" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Factory class for building the AUnits from an ISIS data file.
+This is used to read and build the parts of the ISIS dat file.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p>There are a few functions in here that should be made protected. This
+doesn&#8217;t really make much difference in Python in terms of encapsulation,
+but it makes it a bit clearer to any calling scripts that they might be
+messing with something that they probablly shouldn&#8217;t be messing with.</p>
+<p class="last">Comments are a bit over the top in this file. Need to go through and
+decide what is helpful and what is just getting in the way.</p>
+</div>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.fileloaders.datloader.DatLoader">
+<em class="property">class </em><code class="descname">DatLoader</code><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ship.utils.html#ship.utils.atool.ATool" title="ship.utils.atool.ATool"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.atool.ATool</span></code></a>, <a class="reference internal" href="#ship.utils.fileloaders.loader.ALoader" title="ship.utils.fileloaders.loader.ALoader"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.fileloaders.loader.ALoader</span></code></a></p>
+<p>Isis data file (.DAT) I/O methods.</p>
+<p>Factory for creating the .DAT file objects.
+Identifies different section of the .DAT file and creates objects of
+the different units. Also saves updated file.</p>
+<p>All unknown data within the file is contained within UnkownSection units.
+These read in the text as found and write out as found, with no knowledge
+of the contents. Effectively bypassing the need to worry about parts that
+aren&#8217;t being used yet.</p>
+<dl class="method">
+<dt id="ship.utils.fileloaders.datloader.DatLoader.buildDat">
+<code class="descname">buildDat</code><span class="sig-paren">(</span><em>contents</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader.buildDat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader.buildDat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.datloader.DatLoader.createUnknownSection">
+<code class="descname">createUnknownSection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader.createUnknownSection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader.createUnknownSection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Builds unidentified sections from the .DAT file.</p>
+<p>All currently un-dealt-with sections of the .DAT file are
+incorporated into this.
+Loads in chunks of the file &#8216;as-is&#8217; and prints them out the same way.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.datloader.DatLoader.getUnits">
+<code class="descname">getUnits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader.getUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader.getUnits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for imported units</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Deprecated: Will be removed. Please use self.units directly.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">IsisUnitCollection - The units loaded from the dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.datloader.DatLoader.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the ISIS .DAT file.</p>
+<p>Splits it into objects for each unit type, initial conditions etc.</p>
+<p>This is an epic if-else section for each unit type currently
+represented.</p>
+<p>Needs cleaning up and writing with a bit more style.</p>
+<p>Easy to add another unit type, if it&#8217;s not currently covered then it
+will just be collected in the universal &#8216;UnknownUnit&#8217; and printed
+back out the same as it came in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>file_path</strong> (<em>str</em>) &#8211; path to the .dat file to load.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>units - UnitCollection containing the dat file units or False if</dt>
+<dd><p class="first last">they couldn&#8217;t be loaded.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IOError</span></code> &#8211; If the file cannot be loaded or is empty.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; if the file is not of an expected type (.dat/.ief).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">IsisUnitCollection
+FactoryClasses</p>
+</div>
+<dl class="docutils">
+<dt>TODO: Decide if the observer style calls are ever going to be needed.</dt>
+<dd>If they aren&#8217;t then remove them rather than have them
+cluttering up the file.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.datloader.DatLoader.updateSubContents">
+<code class="descname">updateSubContents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/datloader.html#DatLoader.updateSubContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.datloader.DatLoader.updateSubContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the self.units.</p>
+<p>Appends the new temp_unit to list of units and resets all the
+variables.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.fileloaders.datloader.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05D92730&gt;</em><a class="headerlink" href="#ship.utils.fileloaders.datloader.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.fileloaders.fileloader">
+<span id="ship-utils-fileloaders-fileloader-module"></span><h2>ship.utils.fileloaders.fileloader module<a class="headerlink" href="#module-ship.utils.fileloaders.fileloader" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Main file loader for the API. This offers convenience methods to make it
+simple to load any type of file from one place.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.fileloaders.fileloader.FileLoader">
+<em class="property">class </em><code class="descname">FileLoader</code><a class="reference internal" href="_modules/ship/utils/fileloaders/fileloader.html#FileLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.fileloader.FileLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.utils.fileloaders.fileloader.FileLoader.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>filepath</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/fileloader.html#FileLoader.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.fileloader.FileLoader.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a file from disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepath</strong> (<em>str</em>) &#8211; the path to the file to load.</li>
+<li><strong>arg_dict={}</strong> (<em>Dict</em>) &#8211; contains keyword referenced arguments needed by
+any of the loaders. E.g. the TuflowLoader can take some
+scenario values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The object created by the individual file loaders. E.g. for .dat
+files this will be an IsisUnitCollection. See the individual
+ALoader implementations for details of return types.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; if the file type is not tcf/dat/ief/ied.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">:class:&#8217;ALoader&#8217;
+:class:&#8217;IefLoader&#8217;
+:class:&#8217;TuflowLoader&#8217;
+:class:&#8217;DatLoader&#8217;</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.fileloaders.fileloader.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05DCF5D0&gt;</em><a class="headerlink" href="#ship.utils.fileloaders.fileloader.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.fileloaders.iefloader">
+<span id="ship-utils-fileloaders-iefloader-module"></span><h2>ship.utils.fileloaders.iefloader module<a class="headerlink" href="#module-ship.utils.fileloaders.iefloader" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the Factory class for loading and building the Ief object from
+an ief file at a given path.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.fileloaders.iefloader.IefLoader">
+<em class="property">class </em><code class="descname">IefLoader</code><a class="reference internal" href="_modules/ship/utils/fileloaders/iefloader.html#IefLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.iefloader.IefLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ship.utils.html#ship.utils.atool.ATool" title="ship.utils.atool.ATool"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.atool.ATool</span></code></a>, <a class="reference internal" href="#ship.utils.fileloaders.loader.ALoader" title="ship.utils.fileloaders.loader.ALoader"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.fileloaders.loader.ALoader</span></code></a></p>
+<p>Builds an Ief object.</p>
+<p>Contains the details of the ISIS ief file located at the given file path.</p>
+<p>Factory class for reading the ISIS ief file into an Ief object that allows
+for simple access and updating of the ief file.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">atool</p>
+</div>
+<dl class="method">
+<dt id="ship.utils.fileloaders.iefloader.IefLoader.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>file_path</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/iefloader.html#IefLoader.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.iefloader.IefLoader.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the ief file at the given path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_path</strong> (<em>str</em>) &#8211; The path to the ief file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Ief file object containing the contents loaded from file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.fileloaders.iefloader.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05D489D0&gt;</em><a class="headerlink" href="#ship.utils.fileloaders.iefloader.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.fileloaders.loader">
+<span id="ship-utils-fileloaders-loader-module"></span><h2>ship.utils.fileloaders.loader module<a class="headerlink" href="#module-ship.utils.fileloaders.loader" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Abstract base class that should be implemented by all file loading
+classes in the API.</p>
+<p class="last">Contains methods that help file loaders play nicely with the file loading
+factory and other parts of the API.</p>
+</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.utils.fileloaders.loader.ALoader">
+<em class="property">class </em><code class="descname">ALoader</code><a class="reference internal" href="_modules/ship/utils/fileloaders/loader.html#ALoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.loader.ALoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.utils.fileloaders.loader.ALoader.addWarning">
+<code class="descname">addWarning</code><span class="sig-paren">(</span><em>title</em>, <em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/loader.html#ALoader.addWarning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.loader.ALoader.addWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Can be used to store non-deadly errors during load for easy lookup.</p>
+<p>The errors/warnings will be added to the warning_store list so that
+they can be passed on or interogated after the file has been loaded.</p>
+<p>This does not take the place of raising actual errors, it&#8217;s just for
+noting anything that might be useful for the caller to know after
+loading the file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>title</strong> (<em>str</em>) &#8211; the title of the warning.</li>
+<li><strong>msg</strong> (<em>str</em>) &#8211; the message body of the warning.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.loader.ALoader.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>filepath</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/loader.html#ALoader.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.loader.ALoader.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the file at the given path</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filepath</strong> (<em>str</em>) &#8211; the file path to load.</li>
+<li><strong>arg_dict={}</strong> (<em>Dict</em>) &#8211; contains keyword referenced arguments needed by
+any of the loaders. E.g. the TuflowLoader can take some
+scenario values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Return:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code> &#8211; if subclass does not override this method.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.fileloaders.tuflowloader">
+<span id="ship-utils-fileloaders-tuflowloader-module"></span><h2>ship.utils.fileloaders.tuflowloader module<a class="headerlink" href="#module-ship.utils.fileloaders.tuflowloader" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader">
+<em class="property">class </em><code class="descname">TuflowLoader</code><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.fileloaders.loader.ALoader" title="ship.utils.fileloaders.loader.ALoader"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.fileloaders.loader.ALoader</span></code></a></p>
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.buildControlFiles">
+<code class="descname">buildControlFiles</code><span class="sig-paren">(</span><em>_load_list</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.buildControlFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.buildControlFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add TuflowFilepart&#8217;s to the correct ControlFile&#8217;s.</p>
+<p>Loops through the list of TuflowFilePart&#8217;s created when parsing the
+tuflow input files. When it finds a TuflowFilepart containing a
+reference to a tuflow control file it will recursively call itself and
+start adding parts to the ControlFile for that type instead. It will
+either find another control file and, again, make a recursive call, or
+will finish adding the TuflowFileparts to the ControlFile and drop back
+into the previous function call (recursive) to continue reading the
+previous list of TuflowFilepart&#8217;s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.getFile">
+<code class="descname">getFile</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.getFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.getFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the file into the contents list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_path</strong> (<em>str</em>) &#8211; path to the required file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True if loaded ok, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.loadControlFile">
+<code class="descname">loadControlFile</code><span class="sig-paren">(</span><em>model_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.loadControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadControlFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.loadFile">
+<code class="descname">loadFile</code><span class="sig-paren">(</span><em>tcf_path</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.loadFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main loader function defined by the ALoader interface.</p>
+<p>The presumption with this loader is that a .tcf file (i.e. the root of
+all tuflow models will be given as a starting point. The rest of the
+model can then be accessed from there.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.loadModel">
+<code class="descname">loadModel</code><span class="sig-paren">(</span><em>tcf_path</em>, <em>arg_dict={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.loadModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a full tuflow model from the given tcf path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.parseDefineLogic">
+<code class="descname">parseDefineLogic</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.parseDefineLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.parseDefineLogic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.parseIfLogic">
+<code class="descname">parseIfLogic</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>root</em>, <em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/fileloaders/tuflowloader.html#TuflowLoader.parseIfLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.parseIfLogic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.tuflow_model">
+<code class="descname">tuflow_model</code><em class="property"> = None</em><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.tuflow_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>TuflowModel class instance</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.fileloaders.tuflowloader.TuflowLoader.user_variables">
+<code class="descname">user_variables</code><em class="property"> = None</em><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.TuflowLoader.user_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any event values that are passed through.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.utils.fileloaders.tuflowloader.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05D48A30&gt;</em><a class="headerlink" href="#ship.utils.fileloaders.tuflowloader.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.fileloaders">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.utils.fileloaders" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.utils.tools.html" class="btn btn-neutral float-right" title="ship.utils.tools package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.utils.dbfread.html" class="btn btn-neutral" title="ship.utils.dbfread package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

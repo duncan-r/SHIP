@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Feature Requests &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Feature Requests</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/contributing.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="feature-requests">
+<span id="id1"></span><h1>Feature Requests<a class="headerlink" href="#feature-requests" title="Permalink to this headline">¶</a></h1>
+<p>All feature requests are considered. So please feel free to offer any that you
+have. However, please be aware that this library is generally maintained to
+help reduce that amount of repetative code that we write for our software.
+Therefore things are normally prioritised based on what we need at the time.
+If you would like to <a class="reference internal" href="#contributing"><span class="std std-ref">Contribute</span></a> something you have added please do
+so. I&#8217;d recommend letting me know if you plan to work on something though, to
+avoid conflicting additions.</p>
+</div>
+<div class="section" id="contribute">
+<span id="contributing"></span><h1>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h1>
+<p>If you use (or are thinking of using) this library and believe there are some
+things that you would like to add to it, please do! If you have any questions
+I&#8217;m more than happy to discuss how aspects of it work. Over time I plan to
+add more details on the design here as well.</p>
+<p>If you plan to work on something perhaps let me know so we don&#8217;t have repeated
+effort, or overlapping work. If you&#8217;d like to contribute something, but
+you don&#8217;t know what I have a long list of things like I&#8217;d like to get done.</p>
+<div class="section" id="main-requirements">
+<span id="contributing-stuff"></span><h2>Main Requirements<a class="headerlink" href="#main-requirements" title="Permalink to this headline">¶</a></h2>
+<p>The most obvious missing feature at the moment is FMP unit coverage. Focus up
+to this point has been getting the API reasonably solid and making sure that
+the foundations are in place. The amount of FMP units currently included is
+therefore a bit limited (partly by design and not wanting to re-write them
+all after changes). Normally we will add new units when they are needed for
+a script or a tool. If there is one that you need it is probably a good place
+to start with contributions.</p>
+<p>The best approach is to have a look at the RiverUnit. It&#8217;s reasonably simple,
+but includes everything that is supported in some way. The basic process is:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Create a new module for the new unit.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Add the basic requirements:</dt>
+<dd><ul class="first last simple">
+<li>Set the UNIT_TYPE and UNIT_CATEGORY static class constants and set
+the member variables to the same.</li>
+<li>Create the standard setup and instantiate HeadDataItem dict and
+required RowDataCollections in the constructor.</li>
+<li>readUnitData() method. This is called by the UnitFactory and is given
+the current .dat/.ied file line and the contents list.</li>
+<li>Add the import for the unit to the UnitFactory and add the class to
+the &#8216;available_units&#8217; list in UnitFactory.</li>
+<li>Write the code to parse the file contents in readUnitData.</li>
+<li>Write the code to return the formatted contents in getData().</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>and that&#8217;s it. It doesn&#8217;t normally take very long to put a unit together. Once
+you&#8217;ve made one please add a module to the tests package and try and get some
+decent test coverage for it.</p>
+<p>It would also be great if you could let me know if you&#8217;re planning on working
+on anything. Then we can try and avoid duplicated effort.</p>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>The API has a suite of unit tests for all of its components. These use the
+Python UnitTest Framework. Unit tests allow for the software to be fully
+checked to make sure that it operates as intended by ensuring all behaviour is
+reviewed for a range of circumstances.</p>
+<p>If you want to better understand the API the tests are a good place to start.
+The tests show how the functions should be working. They should also help
+to better understand some of the data structures.</p>
+<p>There is a folder within the library called “tests” that contains the
+UnitTestSuite.py file. This file calls all of the individual tests. All new
+functionality should have unit tests written and stored in this package.</p>
+<p>Whenever any changes are made to the code base in the API the full suite of unit
+tests should be run to check that the changes have not broken any other part of
+the code base. These should be done with &#8220;tox&#8221; to ensure that a clean
+environment is used and it is checked against both python 2.7 and 3.5. There
+is a &#8220;tox.ini&#8221; file in the main folder. If you do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd SHIP
+$ tox
+</pre></div>
+</div>
+<p>the tox.ini file should take care of the rest.</p>
+<p>There is also a set of integration tests in the &#8216;integration_tests&#8217; folder.
+These deal with more realistic use of the API (loading actual model data and
+changing some stuff to see what happens). They don&#8217;t use the UnitTest
+framework, they&#8217;re just a few modules with a __main__ module. When you update
+the library they will almost certainly fail until updated themselves. Probably
+don&#8217;t worry too much about them when you add content; I&#8217;ll have a look at them
+later.</p>
+</div>
+<div class="section" id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h2>
+<p>All logging is done through the use of the Python built in logging API. “print”
+statements should not be used for debugging.</p>
+<p>Where output is needed use: <code class="docutils literal"><span class="pre">logger.mychosenlogginglevel(‘mydebugmessage’)</span></code></p>
+<dl class="docutils">
+<dt>Where mychosenlogginglevel (in order from top down) is:</dt>
+<dd><ul class="first last simple">
+<li>error</li>
+<li>warning</li>
+<li>info</li>
+<li>debug</li>
+</ul>
+</dd>
+</dl>
+<p>Normal outputs will probably be set to info, so anything for developer only purposes
+should be set to debug. Anything the user might find helpful should be set to info
+and any problems should be set to warning or error.</p>
+<p>The logger should be requested at the top of every module using:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">utils</span> <span class="n">Import</span> <span class="n">log</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">setup_custom_logger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using logging in this way means that there won’t be print statements littered
+throughout the code and it’s easy to change the output formatting, logging level
+etc in the master log file in utils.log, which will have a global effect.</p>
+</div>
+<div class="section" id="api-architecture">
+<h2>API Architecture<a class="headerlink" href="#api-architecture" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

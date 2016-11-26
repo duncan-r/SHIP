@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.isisunitfactory &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.isisunitfactory</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.isisunitfactory</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains factory classes that are used in the library.</span>
+<span class="sd">    At the moment the only factory in here is the IsisFactory. This is used</span>
+<span class="sd">    to build the isisunit types.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+<span class="sd">     DR - 21/02/16: Major change to the setup of the factory. It no longer </span>
+<span class="sd">     scans the .dat file contents to identify the extent of the section and </span>
+<span class="sd">     passes only that to the unit. It now identifies the unit type to create </span>
+<span class="sd">     and hands the entire contents list to the new unit which extracts the </span>
+<span class="sd">     data required.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">spillunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">riverunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">junctionunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">initialconditionsunit</span> <span class="k">as</span> <span class="n">icu</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">gisinfounit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">bridgeunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">isisunit</span> 
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">refhunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">orificeunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">culvertunit</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">htbdyunit</span> 
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">interpolateunit</span> 
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="IsisUnitFactory"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.isisunitfactory.IsisUnitFactory">[docs]</a><span class="k">class</span> <span class="nc">IsisUnitFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Builds isisunit type objects.</span>
+<span class="sd">    </span>
+<span class="sd">    This is a Factory pattern object for the creation of isisunit subclasses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">available_units</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">isisunit</span><span class="o">.</span><span class="n">HeaderUnit</span><span class="p">,</span>
+        <span class="n">riverunit</span><span class="o">.</span><span class="n">RiverUnit</span><span class="p">,</span> 
+        <span class="n">refhunit</span><span class="o">.</span><span class="n">RefhUnit</span><span class="p">,</span>
+        <span class="n">icu</span><span class="o">.</span><span class="n">InitialConditionsUnit</span><span class="p">,</span>
+        <span class="n">gisinfounit</span><span class="o">.</span><span class="n">GisInfoUnit</span><span class="p">,</span>
+        <span class="n">bridgeunit</span><span class="o">.</span><span class="n">BridgeUnitArch</span><span class="p">,</span>
+        <span class="n">bridgeunit</span><span class="o">.</span><span class="n">BridgeUnitUsbpr</span><span class="p">,</span>
+        <span class="n">spillunit</span><span class="o">.</span><span class="n">SpillUnit</span><span class="p">,</span>
+        <span class="n">htbdyunit</span><span class="o">.</span><span class="n">HtbdyUnit</span><span class="p">,</span>
+        <span class="n">junctionunit</span><span class="o">.</span><span class="n">JunctionUnit</span><span class="p">,</span>
+        <span class="n">orificeunit</span><span class="o">.</span><span class="n">OrificeUnit</span><span class="p">,</span>
+        <span class="n">orificeunit</span><span class="o">.</span><span class="n">FloodReliefUnit</span><span class="p">,</span>
+        <span class="n">orificeunit</span><span class="o">.</span><span class="n">OutfallUnit</span><span class="p">,</span>
+        <span class="n">culvertunit</span><span class="o">.</span><span class="n">CulvertUnitInlet</span><span class="p">,</span>
+        <span class="n">culvertunit</span><span class="o">.</span><span class="n">CulvertUnitOutlet</span><span class="p">,</span>
+        <span class="n">interpolateunit</span><span class="o">.</span><span class="n">InterpolateUnit</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Sets up the unit_ids. This is fetched by the DatLoader class to</span>
+<span class="sd">        identify lines where the unit starts. It should be the first word on the </span>
+<span class="sd">        line where the unit data begins.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">same_reach</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_getFileKeys</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;UNIT_VARS incorrectly set in some classes&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="s1">&#39;UNIT_KEYS incorrectly set in some classes&#39;</span><span class="p">)</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_getFileKeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the file keys for the available units.</span>
+<span class="sd">        </span>
+<span class="sd">        Every AUnit type class must declare a static variable that </span>
+<span class="sd">        defines the key word used in the .dat file. This is then used to</span>
+<span class="sd">        recognise when a unit of that type has been found.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unit_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">FILE_KEY</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">IsisUnitFactory</span><span class="o">.</span><span class="n">available_units</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">FILE_KEY</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">IsisUnitFactory</span><span class="o">.</span><span class="n">available_units</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">FILE_KEY</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">u</span><span class="o">.</span><span class="n">FILE_KEY</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">FILE_KEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">FILE_KEY</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="o">.</span><span class="n">FILE_KEY2</span><span class="p">,</span> <span class="n">u</span><span class="p">))</span>
+            
+    
+<div class="viewcode-block" id="IsisUnitFactory.createUnitFromFile"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.isisunitfactory.IsisUnitFactory.createUnitFromFile">[docs]</a>    <span class="k">def</span> <span class="nf">createUnitFromFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contents</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="n">file_key</span><span class="p">,</span> <span class="n">file_order</span><span class="p">,</span> <span class="n">reach_number</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Update reach number info</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_key</span> <span class="o">==</span> <span class="s1">&#39;RIVER&#39;</span> <span class="ow">or</span> <span class="n">file_key</span> <span class="o">==</span> <span class="s1">&#39;COMMENT&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">same_reach</span> <span class="o">=</span> <span class="kc">False</span>
+            
+        <span class="sd">&#39;&#39;&#39;Need to deal with RiverUnit slightly differently because it records</span>
+<span class="sd">        information about the reach number.</span>
+<span class="sd">        Same is true for the InitialConditionsUnit as it can only know how </span>
+<span class="sd">        long it is by taking the number of units from the HeaderUnit.</span>
+
+<span class="sd">        TODO: This needs looking into, perhaps either apply a reach number to</span>
+<span class="sd">              all units or create a seperate lookup in the collection.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+            
+        <span class="c1"># Check if we know what the unit is. If we do, instantiate it, if not</span>
+        <span class="c1"># return the current line number and False to let the loader know</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># Make sure the given FILE_KEY is found (it should be if we&#39;re here)</span>
+        <span class="k">if</span> <span class="n">file_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">file_key</span><span class="p">]</span>
+            
+            <span class="c1"># If FILE_KEY2 is none there&#39;s only a single type of this unit so</span>
+            <span class="c1"># grab it</span>
+            <span class="k">if</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">unit_type</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                
+                <span class="c1"># If not then find which one it is and  grab that</span>
+                <span class="n">key2</span> <span class="o">=</span> <span class="n">contents</span><span class="p">[</span><span class="n">file_line</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">key2</span><span class="p">:</span>
+                        <span class="n">unit_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="c1"># If something went wrong send back as part of UnknownUnit instead</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">file_line</span><span class="p">,</span> <span class="kc">False</span>
+
+        <span class="n">read_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">constructor_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">file_key</span> <span class="o">==</span> <span class="s1">&#39;INITIAL&#39;</span><span class="p">:</span>
+            <span class="n">read_kwargs</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit_count</span>
+            <span class="n">read_kwargs</span><span class="p">[</span><span class="s1">&#39;name_types&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span>
+        <span class="k">elif</span> <span class="n">file_key</span> <span class="o">==</span> <span class="s1">&#39;RIVER&#39;</span><span class="p">:</span>
+            <span class="n">constructor_kwargs</span><span class="p">[</span><span class="s1">&#39;reach_number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span>
+
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">unit_type</span><span class="p">(</span><span class="o">**</span><span class="n">constructor_kwargs</span><span class="p">)</span>
+        <span class="n">file_line</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">readUnitData</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="o">**</span><span class="n">read_kwargs</span><span class="p">)</span>
+        
+        <span class="sd">&#39;&#39;&#39;Need to grab the number of units in the initial conditions from the</span>
+<span class="sd">        header unit because there&#39;s no way to know how long it is otherwise.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">file_key</span> <span class="o">==</span> <span class="s1">&#39;HEADER&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit_count</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">file_key</span> <span class="o">!=</span> <span class="s1">&#39;INITIAL&#39;</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">findIcLabels</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">file_line</span><span class="p">,</span> <span class="n">unit</span></div>
+    
+    
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="IsisUnitFactory.createUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.isisunitfactory.IsisUnitFactory.createUnit">[docs]</a>    <span class="k">def</span> <span class="nf">createUnit</span><span class="p">(</span><span class="n">unit_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new AUnit.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;name&#39;: the name variable to apply to the unit. If not found</span>
+<span class="sd">                &#39;unknown&#39; will be set.</span>
+<span class="sd">            &#39;name_ds&#39;: the name_ds variable to apply to the unit. If not found</span>
+<span class="sd">                &#39;unknown&#39; will be set.</span>
+<span class="sd">            head_data: dict of head_data values to set in the AUnit.</span>
+<span class="sd">            row_data: dict of row_data keys containing lists of row data to</span>
+<span class="sd">                set in the unit.</span>
+<span class="sd">        </span>
+<span class="sd">        The row_data kwarg is expected to be set out like the following::</span>
+<span class="sd">        </span>
+<span class="sd">            self.brg_rowdata = {</span>
+<span class="sd">                &#39;main&#39;: [</span>
+<span class="sd">                    {rdt.CHAINAGE: 0.0, rdt.ELEVATION: 20.0},</span>
+<span class="sd">                    {rdt.CHAINAGE: 2.0, rdt.ELEVATION: 10.0},</span>
+<span class="sd">                    {rdt.CHAINAGE: 4.0, rdt.ELEVATION: 10.0},</span>
+<span class="sd">                    {rdt.CHAINAGE: 6.0, rdt.ELEVATION: 20.0},</span>
+<span class="sd">                ],</span>
+<span class="sd">                &#39;opening&#39;: [</span>
+<span class="sd">                    {rdt.OPEN_START: 0.0, rdt.OPEN_END: 2.0},</span>
+<span class="sd">                    {rdt.OPEN_START: 4.0, rdt.OPEN_END: 6.0}</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">        I.e. dict&#39;s of row_data types to update, containing a list of row_vals</span>
+<span class="sd">        data to set. These will be used to call the addRow() method in the</span>
+<span class="sd">        AUnit. The contents of the list entries will be specific to the</span>
+<span class="sd">        unit_type. For more information see the addRow() method and row_data</span>
+<span class="sd">        setup of specific AUnit&#39;s.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit_type(str): the AUnit.UNIT_TYPE to create.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            AUnit - the newly created unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">IsisUnitFactory</span><span class="o">.</span><span class="n">available_units</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">UNIT_TYPE</span> <span class="o">==</span> <span class="n">unit_type</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">i</span>
+        
+        <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unit type &#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unit_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39; is not supported&quot;</span><span class="p">)</span>
+        
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="p">()</span>
+        <span class="n">head_data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;head_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">row_data</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;row_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">name_ds</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name_ds&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">unit_category</span> <span class="o">==</span> <span class="s1">&#39;river&#39;</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">reach_number</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;reach_number&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># Update any head_data values given</span>
+        <span class="k">if</span> <span class="n">head_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">head_keys</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">head_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">head_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">head_keys</span><span class="p">:</span>
+                    <span class="n">unit</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
+        
+        <span class="c1"># Update any row_data entries given</span>
+        <span class="k">if</span> <span class="n">row_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rowdata_keys</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">row_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="c1"># For different RowDataCollections</span>
+            <span class="k">for</span> <span class="n">row_key</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">row_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">row_key</span> <span class="ow">in</span> <span class="n">rowdata_keys</span><span class="p">:</span>
+                    <span class="c1"># For different rows to add</span>
+                    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">row_data</span><span class="p">:</span>
+                        <span class="n">unit</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">row_key</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">unit</span></div>
+    
+
+<div class="viewcode-block" id="IsisUnitFactory.findIcLabels"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.isisunitfactory.IsisUnitFactory.findIcLabels">[docs]</a>    <span class="k">def</span> <span class="nf">findIcLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span><span class="o">.</span><span class="n">has_ics</span><span class="p">:</span> <span class="k">return</span>
+
+        <span class="n">ic_labels</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">icLabels</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ic_labels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">unit</span><span class="o">.</span><span class="n">_unit_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span><span class="p">[</span><span class="n">l</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ic_name_types</span><span class="p">[</span><span class="n">l</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">)</span> </div>
+    
+     
+    <span class="k">def</span> <span class="nf">_getReachNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reach_number</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find whether we need to increase the reach number or not.</span>
+
+<span class="sd">        Checks if the previous section created was a river or not. If it</span>
+<span class="sd">        wasn&#39;t the reach number is increased by 1. Otherwise if a reach</span>
+<span class="sd">        number is supplied use that instead.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            reach_number (int): The reach number that this unit should be </span>
+<span class="sd">                created with.         </span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int - reach number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If we&#39;ve been given a reach number use that.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">reach_number</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reach_number</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_reach</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">same_reach</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reach_number</span>
+
+        
+<div class="viewcode-block" id="IsisUnitFactory.getUnitIdentifiers"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.isisunitfactory.IsisUnitFactory.getUnitIdentifiers">[docs]</a>    <span class="k">def</span> <span class="nf">getUnitIdentifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all the unit identifiers that the object holds.</span>
+<span class="sd">        </span>
+<span class="sd">        Getter for obtaining the identifier strings needed to find the units </span>
+<span class="sd">        that have been defined, when loading the dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            Dict - unit_identifers dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit_keys</span></div></div>
+    
+    
+
+
+        
+        
+        
+        
+        
+        
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

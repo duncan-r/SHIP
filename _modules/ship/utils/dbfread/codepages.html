@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.codepages &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.codepages</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.codepages</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Table from dbf.py by Ethan Furman</span>
+<span class="n">codepages</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x00</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s2">&quot;plain ol&#39; ascii&quot;</span><span class="p">),</span>
+    <span class="mh">0x01</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;U.S. MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x02</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;International MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x03</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1252&#39;</span><span class="p">,</span> <span class="s1">&#39;Windows ANSI&#39;</span><span class="p">),</span>
+    <span class="mh">0x04</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;mac_roman&#39;</span><span class="p">,</span> <span class="s1">&#39;Standard Macintosh&#39;</span><span class="p">),</span>
+    <span class="mh">0x08</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp865&#39;</span><span class="p">,</span> <span class="s1">&#39;Danish OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x09</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;Dutch OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x0A</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;Dutch OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x0B</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;Finnish OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x0D</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;French OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x0E</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;French OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x0F</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;German OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x10</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;German OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x11</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;Italian OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x12</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;Italian OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x13</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp932&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese Shift-JIS&#39;</span><span class="p">),</span>
+    <span class="mh">0x14</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;Spanish OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x15</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;Swedish OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x16</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;Swedish OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x17</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp865&#39;</span><span class="p">,</span> <span class="s1">&#39;Norwegian OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x18</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;Spanish OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x19</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;English OEM (Britain)&#39;</span><span class="p">),</span>
+    <span class="mh">0x1A</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;English OEM (Britain) (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x1B</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp437&#39;</span><span class="p">,</span> <span class="s1">&#39;English OEM (U.S.)&#39;</span><span class="p">),</span>
+    <span class="mh">0x1C</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp863&#39;</span><span class="p">,</span> <span class="s1">&#39;French OEM (Canada)&#39;</span><span class="p">),</span>
+    <span class="mh">0x1D</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;French OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x1F</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp852&#39;</span><span class="p">,</span> <span class="s1">&#39;Czech OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x22</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp852&#39;</span><span class="p">,</span> <span class="s1">&#39;Hungarian OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x23</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp852&#39;</span><span class="p">,</span> <span class="s1">&#39;Polish OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x24</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp860&#39;</span><span class="p">,</span> <span class="s1">&#39;Portuguese OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x25</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;Portuguese OEM (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x26</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp866&#39;</span><span class="p">,</span> <span class="s1">&#39;Russian OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x37</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp850&#39;</span><span class="p">,</span> <span class="s1">&#39;English OEM (U.S.) (secondary)&#39;</span><span class="p">),</span>
+    <span class="mh">0x40</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp852&#39;</span><span class="p">,</span> <span class="s1">&#39;Romanian OEM&#39;</span><span class="p">),</span>
+    <span class="mh">0x4D</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp936&#39;</span><span class="p">,</span> <span class="s1">&#39;Chinese GBK (PRC)&#39;</span><span class="p">),</span>
+    <span class="mh">0x4E</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp949&#39;</span><span class="p">,</span> <span class="s1">&#39;Korean (ANSI/OEM)&#39;</span><span class="p">),</span>
+    <span class="mh">0x4F</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp950&#39;</span><span class="p">,</span> <span class="s1">&#39;Chinese Big 5 (Taiwan)&#39;</span><span class="p">),</span>
+    <span class="mh">0x50</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp874&#39;</span><span class="p">,</span> <span class="s1">&#39;Thai (ANSI/OEM)&#39;</span><span class="p">),</span>
+    <span class="mh">0x57</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1252&#39;</span><span class="p">,</span> <span class="s1">&#39;ANSI&#39;</span><span class="p">),</span>
+    <span class="mh">0x58</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1252&#39;</span><span class="p">,</span> <span class="s1">&#39;Western European ANSI&#39;</span><span class="p">),</span>
+    <span class="mh">0x59</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1252&#39;</span><span class="p">,</span> <span class="s1">&#39;Spanish ANSI&#39;</span><span class="p">),</span>
+    <span class="mh">0x64</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp852&#39;</span><span class="p">,</span> <span class="s1">&#39;Eastern European MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x65</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp866&#39;</span><span class="p">,</span> <span class="s1">&#39;Russian MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x66</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp865&#39;</span><span class="p">,</span> <span class="s1">&#39;Nordic MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x67</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp861&#39;</span><span class="p">,</span> <span class="s1">&#39;Icelandic MS-DOS&#39;</span><span class="p">),</span>
+    <span class="c1"># 0x68: (None, &#39;Kamenicky (Czech) MS-DOS&#39;),</span>
+    <span class="c1"># 0x69: (None, &#39;Mazovia (Polish) MS-DOS&#39;),</span>
+    <span class="mh">0x6a</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp737&#39;</span><span class="p">,</span> <span class="s1">&#39;Greek MS-DOS (437G)&#39;</span><span class="p">),</span>
+    <span class="mh">0x6b</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp857&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkish MS-DOS&#39;</span><span class="p">),</span>
+    <span class="mh">0x78</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp950&#39;</span><span class="p">,</span> <span class="s1">&#39;Traditional Chinese &#39;</span>
+                    <span class="s1">&#39;(Hong Kong SAR, Taiwan) Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x79</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp949&#39;</span><span class="p">,</span> <span class="s1">&#39;Korean Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x7a</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp936&#39;</span><span class="p">,</span> <span class="s1">&#39;Chinese Simplified (PRC, Singapore) Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x7b</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp932&#39;</span><span class="p">,</span> <span class="s1">&#39;Japanese Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x7c</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp874&#39;</span><span class="p">,</span> <span class="s1">&#39;Thai Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x7d</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1255&#39;</span><span class="p">,</span> <span class="s1">&#39;Hebrew Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x7e</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1256&#39;</span><span class="p">,</span> <span class="s1">&#39;Arabic Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0xc8</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1250&#39;</span><span class="p">,</span> <span class="s1">&#39;Eastern European Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0xc9</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1251&#39;</span><span class="p">,</span> <span class="s1">&#39;Russian Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0xca</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1254&#39;</span><span class="p">,</span> <span class="s1">&#39;Turkish Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0xcb</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cp1253&#39;</span><span class="p">,</span> <span class="s1">&#39;Greek Windows&#39;</span><span class="p">),</span>
+    <span class="mh">0x96</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;mac_cyrillic&#39;</span><span class="p">,</span> <span class="s1">&#39;Russian Macintosh&#39;</span><span class="p">),</span>
+    <span class="mh">0x97</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;mac_latin2&#39;</span><span class="p">,</span> <span class="s1">&#39;Macintosh EE&#39;</span><span class="p">),</span>
+    <span class="mh">0x98</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;mac_greek&#39;</span><span class="p">,</span> <span class="s1">&#39;Greek Macintosh&#39;</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="guess_encoding"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.codepages.guess_encoding">[docs]</a><span class="k">def</span> <span class="nf">guess_encoding</span><span class="p">(</span><span class="n">language_driver</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">language_driver</span> <span class="ow">in</span> <span class="n">codepages</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">codepages</span><span class="p">[</span><span class="n">language_driver</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">LookupError</span><span class="p">(</span><span class="s1">&#39;Unable to guess encoding &#39;</span>
+                          <span class="s1">&#39;for languager driver byte &#39;</span>
+                          <span class="s1">&#39;0x</span><span class="si">{:x}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">language_driver</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

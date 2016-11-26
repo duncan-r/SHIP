@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship.utils package" href="ship.utils.html"/>
+        <link rel="next" title="ship.utils.fileloaders package" href="ship.utils.fileloaders.html"/>
+        <link rel="prev" title="ship.utils package" href="ship.utils.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ship.utils.html">ship.utils package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ship.utils.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.atool">ship.utils.atool module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.filetools">ship.utils.filetools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.log">ship.utils.log module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#ship-utils-qtclasses-module">ship.utils.qtclasses module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.utilfunctions">ship.utils.utilfunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+          <li><a href="ship.utils.html">ship.utils package</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.utils.dbfread.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-utils-dbfread-package">
+<h1>ship.utils.dbfread package<a class="headerlink" href="#ship-utils-dbfread-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.utils.dbfread.codepages">
+<span id="ship-utils-dbfread-codepages-module"></span><h2>ship.utils.dbfread.codepages module<a class="headerlink" href="#module-ship.utils.dbfread.codepages" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ship.utils.dbfread.codepages.guess_encoding">
+<code class="descname">guess_encoding</code><span class="sig-paren">(</span><em>language_driver</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/codepages.html#guess_encoding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.codepages.guess_encoding" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.dbf">
+<span id="ship-utils-dbfread-dbf-module"></span><h2>ship.utils.dbfread.dbf module<a class="headerlink" href="#module-ship.utils.dbfread.dbf" title="Permalink to this headline">¶</a></h2>
+<p>Class to read DBF files.</p>
+<dl class="class">
+<dt id="ship.utils.dbfread.dbf.DBF">
+<em class="property">class </em><code class="descname">DBF</code><span class="sig-paren">(</span><em>filename</em>, <em>encoding=None</em>, <em>ignorecase=True</em>, <em>lowernames=False</em>, <em>parserclass=&lt;class 'ship.utils.dbfread.field_parser.FieldParser'&gt;</em>, <em>recfactory=&lt;class 'collections.OrderedDict'&gt;</em>, <em>load=False</em>, <em>raw=False</em>, <em>ignore_missing_memofile=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbf.html#DBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>DBF table.</p>
+<dl class="attribute">
+<dt id="ship.utils.dbfread.dbf.DBF.dbversion">
+<code class="descname">dbversion</code><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.dbversion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.dbfread.dbf.DBF.deleted">
+<code class="descname">deleted</code><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deleted records. When loaded a list of records, when not loaded a
+new <code class="docutils literal"><span class="pre">RecordIterator</span></code> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.dbf.DBF.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbf.html#DBF.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load records into memory.</p>
+<p>This loads both records and deleted records. The <code class="docutils literal"><span class="pre">records</span></code>
+and <code class="docutils literal"><span class="pre">deleted</span></code> attributes will now be lists of records.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.dbfread.dbf.DBF.loaded">
+<code class="descname">loaded</code><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.loaded" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal"><span class="pre">True</span></code> if records are loaded into memory.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.dbfread.dbf.DBF.records">
+<code class="descname">records</code><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Records (not included deleted ones). When loaded a list of records,
+when not loaded a new <code class="docutils literal"><span class="pre">RecordIterator</span></code> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.dbf.DBF.unload">
+<code class="descname">unload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbf.html#DBF.unload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbf.DBF.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unload records from memory.</p>
+<p>The records and deleted attributes will now be instances of
+<code class="docutils literal"><span class="pre">RecordIterator</span></code>, which streams records from disk.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.dbf.RecordIterator">
+<em class="property">class </em><code class="descname">RecordIterator</code><span class="sig-paren">(</span><em>table</em>, <em>record_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbf.html#RecordIterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbf.RecordIterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.dbf.expand_year">
+<code class="descname">expand_year</code><span class="sig-paren">(</span><em>year</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbf.html#expand_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbf.expand_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert 2-digit year to 4-digit year.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.dbversions">
+<span id="ship-utils-dbfread-dbversions-module"></span><h2>ship.utils.dbfread.dbversions module<a class="headerlink" href="#module-ship.utils.dbfread.dbversions" title="Permalink to this headline">¶</a></h2>
+<p>Based on the list found here:</p>
+<p><a class="reference external" href="http://www.dbf2002.com/dbf-file-format.html">http://www.dbf2002.com/dbf-file-format.html</a></p>
+<dl class="function">
+<dt id="ship.utils.dbfread.dbversions.get_dbversion_string">
+<code class="descname">get_dbversion_string</code><span class="sig-paren">(</span><em>dbversion</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/dbversions.html#get_dbversion_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.dbversions.get_dbversion_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.deprecated_dbf">
+<span id="ship-utils-dbfread-deprecated-dbf-module"></span><h2>ship.utils.dbfread.deprecated_dbf module<a class="headerlink" href="#module-ship.utils.dbfread.deprecated_dbf" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ship.utils.dbfread.deprecated_dbf.DeprecatedDBF">
+<em class="property">class </em><code class="descname">DeprecatedDBF</code><span class="sig-paren">(</span><em>filename</em>, <em>encoding=None</em>, <em>ignorecase=True</em>, <em>lowernames=False</em>, <em>parserclass=&lt;class 'ship.utils.dbfread.field_parser.FieldParser'&gt;</em>, <em>recfactory=&lt;class 'collections.OrderedDict'&gt;</em>, <em>load=False</em>, <em>raw=False</em>, <em>ignore_missing_memofile=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#DeprecatedDBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.DeprecatedDBF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.dbf.DBF" title="ship.utils.dbfread.dbf.DBF"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.dbf.DBF</span></code></a>, <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<p>This is the old version of the table which is a subclass of list.</p>
+<p>It is included for backwards compatability with 1.0 and older.</p>
+<dl class="method">
+<dt id="ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#DeprecatedDBF.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.load" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.loaded">
+<code class="descname">loaded</code><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.loaded" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.unload">
+<code class="descname">unload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#DeprecatedDBF.unload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.DeprecatedDBF.unload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.deprecated_dbf.open">
+<code class="descname">open</code><span class="sig-paren">(</span><em>filename</em>, <em>load=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.open" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.deprecated_dbf.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>load=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.deprecated_dbf.warn">
+<code class="descname">warn</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/deprecated_dbf.html#warn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.deprecated_dbf.warn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.exceptions">
+<span id="ship-utils-dbfread-exceptions-module"></span><h2>ship.utils.dbfread.exceptions module<a class="headerlink" href="#module-ship.utils.dbfread.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="ship.utils.dbfread.exceptions.DBFNotFound">
+<em class="property">exception </em><code class="descname">DBFNotFound</code><a class="reference internal" href="_modules/ship/utils/dbfread/exceptions.html#DBFNotFound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.exceptions.DBFNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">OSError</span></code></p>
+<p>Raised if the DBF file was not found.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="ship.utils.dbfread.exceptions.MissingMemoFile">
+<em class="property">exception </em><code class="descname">MissingMemoFile</code><a class="reference internal" href="_modules/ship/utils/dbfread/exceptions.html#MissingMemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.exceptions.MissingMemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">OSError</span></code></p>
+<p>Raised if the corresponding memo file was not found.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.field_parser">
+<span id="ship-utils-dbfread-field-parser-module"></span><h2>ship.utils.dbfread.field_parser module<a class="headerlink" href="#module-ship.utils.dbfread.field_parser" title="Permalink to this headline">¶</a></h2>
+<p>Parser for DBF fields.</p>
+<dl class="class">
+<dt id="ship.utils.dbfread.field_parser.FieldParser">
+<em class="property">class </em><code class="descname">FieldParser</code><span class="sig-paren">(</span><em>table</em>, <em>memofile=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.field_type_supported">
+<code class="descname">field_type_supported</code><span class="sig-paren">(</span><em>field_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.field_type_supported"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.field_type_supported" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the field_type is supported by the parser</p>
+<p>field_type should be a one-character string like &#8216;C&#8217; and &#8216;N&#8217;.
+Returns a boolen which is True if the field type is supported.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse field and return value</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parse0">
+<code class="descname">parse0</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parse0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parse0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse flags field and return as byte string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parse2B">
+<code class="descname">parse2B</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parse2B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse integer or autoincrement field and return int.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parse40">
+<code class="descname">parse40</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parse40" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse time field (T)</p>
+<p>Returns datetime.datetime or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseB">
+<code class="descname">parseB</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary memo field or double precision floating point number</p>
+<p>dBase uses B to represent a memo index (10 bytes), while
+Visual FoxPro uses it to store a double precision floating
+point number (8 bytes).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseC">
+<code class="descname">parseC</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse char field and return unicode string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseD">
+<code class="descname">parseD</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse date field and return datetime.date or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseF">
+<code class="descname">parseF</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse float field and return float or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseG">
+<code class="descname">parseG</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseG" title="Permalink to this definition">¶</a></dt>
+<dd><p>OLE Object stored in memofile.</p>
+<p>The raw data is returned as a binary string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseI">
+<code class="descname">parseI</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse integer or autoincrement field and return int.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseL">
+<code class="descname">parseL</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse logical field and return True, False or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseM">
+<code class="descname">parseM</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse memo field (M, G, B or P)</p>
+<p>Returns memo index (an integer), which can be used to look up
+the corresponding memo in the memo file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseN">
+<code class="descname">parseN</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse numeric field (N)</p>
+<p>Returns int, float or None if the field is empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseO">
+<code class="descname">parseO</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseO"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse long field (O) and return float.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseP">
+<code class="descname">parseP</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Picture stored in memofile.</p>
+<p>The raw data is returned as a binary string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseT">
+<code class="descname">parseT</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse time field (T)</p>
+<p>Returns datetime.datetime or None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.field_parser.FieldParser.parseY">
+<code class="descname">parseY</code><span class="sig-paren">(</span><em>field</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#FieldParser.parseY"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.FieldParser.parseY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse currency field (Y) and return decimal.Decimal.</p>
+<p>The field is encoded as a 8-byte little endian integer
+with 4 digits of precision.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.field_parser.InvalidValue">
+<em class="property">class </em><code class="descname">InvalidValue</code><a class="reference internal" href="_modules/ship/utils/dbfread/field_parser.html#InvalidValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.field_parser.InvalidValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.ifiles">
+<span id="ship-utils-dbfread-ifiles-module"></span><h2>ship.utils.dbfread.ifiles module<a class="headerlink" href="#module-ship.utils.dbfread.ifiles" title="Permalink to this headline">¶</a></h2>
+<p>Functions for dealing with mixed-case files from case-preserving file
+systems.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<ul class="last simple">
+<li>handle patterns that already have brackets</li>
+</ul>
+</div>
+<dl class="function">
+<dt id="ship.utils.dbfread.ifiles.ipat">
+<code class="descname">ipat</code><span class="sig-paren">(</span><em>pat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/ifiles.html#ipat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.ifiles.ipat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert glob pattern to case insensitive form.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.ifiles.ifnmatch">
+<code class="descname">ifnmatch</code><span class="sig-paren">(</span><em>name</em>, <em>pat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/ifiles.html#ifnmatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.ifiles.ifnmatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Case insensitive version of fnmatch.fnmatch()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.ifiles.iglob">
+<code class="descname">iglob</code><span class="sig-paren">(</span><em>pat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/ifiles.html#iglob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.ifiles.iglob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Case insensitive version of glob.glob()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.ifiles.ifind">
+<code class="descname">ifind</code><span class="sig-paren">(</span><em>pat</em>, <em>ext=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/ifiles.html#ifind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.ifiles.ifind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look for a file in a case insensitive way.</p>
+<p>Returns filename it a matching file was found, or None if it was not.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.memo">
+<span id="ship-utils-dbfread-memo-module"></span><h2>ship.utils.dbfread.memo module<a class="headerlink" href="#module-ship.utils.dbfread.memo" title="Permalink to this headline">¶</a></h2>
+<p>Reads data from FPT (memo) files.</p>
+<p>FPT files are used to varying lenght text or binary data which is too
+large to fit in a DBF field.</p>
+<p>VFP == Visual FoxPro
+DB3 == dBase III
+DB4 == dBase IV</p>
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.BinaryMemo">
+<em class="property">class </em><code class="descname">BinaryMemo</code><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#BinaryMemo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.BinaryMemo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.VFPMemo" title="ship.utils.dbfread.memo.VFPMemo"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.VFPMemo</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.DB3MemoFile">
+<em class="property">class </em><code class="descname">DB3MemoFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#DB3MemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.DB3MemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.MemoFile" title="ship.utils.dbfread.memo.MemoFile"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.MemoFile</span></code></a></p>
+<p>dBase III memo file.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.DB4MemoFile">
+<em class="property">class </em><code class="descname">DB4MemoFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#DB4MemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.DB4MemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.MemoFile" title="ship.utils.dbfread.memo.MemoFile"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.MemoFile</span></code></a></p>
+<p>dBase IV memo file</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.FakeMemoFile">
+<em class="property">class </em><code class="descname">FakeMemoFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#FakeMemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.FakeMemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.MemoFile" title="ship.utils.dbfread.memo.MemoFile"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.MemoFile</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.MemoFile">
+<em class="property">class </em><code class="descname">MemoFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#MemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.MemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.ObjectMemo">
+<em class="property">class </em><code class="descname">ObjectMemo</code><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#ObjectMemo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.ObjectMemo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.BinaryMemo" title="ship.utils.dbfread.memo.BinaryMemo"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.BinaryMemo</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.PictureMemo">
+<em class="property">class </em><code class="descname">PictureMemo</code><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#PictureMemo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.PictureMemo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.BinaryMemo" title="ship.utils.dbfread.memo.BinaryMemo"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.BinaryMemo</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.TextMemo">
+<em class="property">class </em><code class="descname">TextMemo</code><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#TextMemo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.TextMemo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.VFPMemo" title="ship.utils.dbfread.memo.VFPMemo"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.VFPMemo</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.VFPMemo">
+<em class="property">class </em><code class="descname">VFPMemo</code><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#VFPMemo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.VFPMemo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">bytes</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.memo.VFPMemoFile">
+<em class="property">class </em><code class="descname">VFPMemoFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#VFPMemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.VFPMemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.utils.dbfread.memo.MemoFile" title="ship.utils.dbfread.memo.MemoFile"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.dbfread.memo.MemoFile</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.memo.find_memofile">
+<code class="descname">find_memofile</code><span class="sig-paren">(</span><em>dbf_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#find_memofile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.find_memofile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.memo.open_memofile">
+<code class="descname">open_memofile</code><span class="sig-paren">(</span><em>filename</em>, <em>dbversion</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/memo.html#open_memofile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.memo.open_memofile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.struct_parser">
+<span id="ship-utils-dbfread-struct-parser-module"></span><h2>ship.utils.dbfread.struct_parser module<a class="headerlink" href="#module-ship.utils.dbfread.struct_parser" title="Permalink to this headline">¶</a></h2>
+<p>Parser that converts (C style) binary structs named tuples.</p>
+<p>The struct can be read from a file or a byte string.</p>
+<dl class="class">
+<dt id="ship.utils.dbfread.struct_parser.StructParser">
+<em class="property">class </em><code class="descname">StructParser</code><span class="sig-paren">(</span><em>name</em>, <em>format</em>, <em>names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/struct_parser.html#StructParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.struct_parser.StructParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.utils.dbfread.struct_parser.StructParser.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/struct_parser.html#StructParser.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.struct_parser.StructParser.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read struct from a file-like object (implenting read()).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.utils.dbfread.struct_parser.StructParser.unpack">
+<code class="descname">unpack</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/struct_parser.html#StructParser.unpack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.struct_parser.StructParser.unpack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack struct from binary string and return a named tuple.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.test_field_parser">
+<span id="ship-utils-dbfread-test-field-parser-module"></span><h2>ship.utils.dbfread.test_field_parser module<a class="headerlink" href="#module-ship.utils.dbfread.test_field_parser" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ship.utils.dbfread.test_field_parser.MockDBF">
+<em class="property">class </em><code class="descname">MockDBF</code><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#MockDBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.MockDBF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.test_field_parser.MockField">
+<em class="property">class </em><code class="descname">MockField</code><span class="sig-paren">(</span><em>type=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#MockField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.MockField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.test_field_parser.MockHeader">
+<em class="property">class </em><code class="descname">MockHeader</code><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#MockHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.MockHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="ship.utils.dbfread.test_field_parser.MockHeader.dbversion">
+<code class="descname">dbversion</code><em class="property"> = 2</em><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.MockHeader.dbversion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.utils.dbfread.test_field_parser.MockMemoFile">
+<em class="property">class </em><code class="descname">MockMemoFile</code><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#MockMemoFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.MockMemoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.make_field_parser">
+<code class="descname">make_field_parser</code><span class="sig-paren">(</span><em>field_type</em>, <em>dbversion=2</em>, <em>memofile=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#make_field_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.make_field_parser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_0">
+<code class="descname">test_0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_B">
+<code class="descname">test_B</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_B"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_B" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_C">
+<code class="descname">test_C</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_C"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_C" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_D">
+<code class="descname">test_D</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_D" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_F">
+<code class="descname">test_F</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_F" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_I">
+<code class="descname">test_I</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_I"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_I" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_L">
+<code class="descname">test_L</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_L"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_L" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_M">
+<code class="descname">test_M</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_M"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_N">
+<code class="descname">test_N</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_N" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_O">
+<code class="descname">test_O</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_O"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_O" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test double field.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_T">
+<code class="descname">test_T</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_T"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_T" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_Y">
+<code class="descname">test_Y</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_Y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_Y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_field_parser.test_hex_field">
+<code class="descname">test_hex_field</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_field_parser.html#test_hex_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_field_parser.test_hex_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.test_ifiles">
+<span id="ship-utils-dbfread-test-ifiles-module"></span><h2>ship.utils.dbfread.test_ifiles module<a class="headerlink" href="#module-ship.utils.dbfread.test_ifiles" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.utils.dbfread.test_invalid_value">
+<span id="ship-utils-dbfread-test-invalid-value-module"></span><h2>ship.utils.dbfread.test_invalid_value module<a class="headerlink" href="#module-ship.utils.dbfread.test_invalid_value" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ship.utils.dbfread.test_invalid_value.test_repr">
+<code class="descname">test_repr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_invalid_value.html#test_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_invalid_value.test_repr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_invalid_value.test_type">
+<code class="descname">test_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_invalid_value.html#test_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_invalid_value.test_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.test_memo">
+<span id="ship-utils-dbfread-test-memo-module"></span><h2>ship.utils.dbfread.test_memo module<a class="headerlink" href="#module-ship.utils.dbfread.test_memo" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ship.utils.dbfread.test_memo.test_missing_memofile">
+<code class="descname">test_missing_memofile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_memo.html#test_missing_memofile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_memo.test_missing_memofile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread.test_read_and_length">
+<span id="ship-utils-dbfread-test-read-and-length-module"></span><h2>ship.utils.dbfread.test_read_and_length module<a class="headerlink" href="#module-ship.utils.dbfread.test_read_and_length" title="Permalink to this headline">¶</a></h2>
+<p>Tests reading from database.</p>
+<dl class="function">
+<dt id="ship.utils.dbfread.test_read_and_length.loaded_table">
+<code class="descname">loaded_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_read_and_length.html#loaded_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_read_and_length.loaded_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_read_and_length.table">
+<code class="descname">table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_read_and_length.html#table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_read_and_length.table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_read_and_length.test_len">
+<code class="descname">test_len</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_read_and_length.html#test_len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_read_and_length.test_len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.utils.dbfread.test_read_and_length.test_list">
+<code class="descname">test_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/utils/dbfread/test_read_and_length.html#test_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.utils.dbfread.test_read_and_length.test_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.utils.dbfread">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.utils.dbfread" title="Permalink to this headline">¶</a></h2>
+<p>Read DBF files with Python.</p>
+<p class="rubric">Example</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">dbfread</span> <span class="k">import</span> <span class="n">DBF</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">DBF</span><span class="p">(</span><span class="s1">&#39;people.dbf&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+<span class="go">OrderedDict([(&#39;NAME&#39;, &#39;Alice&#39;), (&#39;BIRTHDATE&#39;, datetime.date(1987, 3, 1))])</span>
+<span class="go">OrderedDict([(&#39;NAME&#39;, &#39;Bob&#39;), (&#39;BIRTHDATE&#39;, datetime.date(1980, 11, 12))])</span>
+</pre></div>
+</div>
+<p>Full documentation at <a class="reference external" href="http://dbfread.readthedocs.org/">http://dbfread.readthedocs.org/</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.utils.fileloaders.html" class="btn btn-neutral float-right" title="ship.utils.fileloaders package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.utils.html" class="btn btn-neutral" title="ship.utils package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

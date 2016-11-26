@@ -1,0 +1,423 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ControlFile &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>ControlFile</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tuflow/controlfile.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="controlfile">
+<span id="controlfile-top"></span><h1>ControlFile<a class="headerlink" href="#controlfile" title="Permalink to this headline">¶</a></h1>
+<p>The ControlFile class is the primary interface for interacting with data in a
+loaded Tuflow model. There is a different ControlFile instantiated for each
+different type of tuflow control filed loaded. This means that if multiple
+.tgc files are loaded (or .trd files within a .tgc) the contents will all be
+loaded into the same ControlFile.</p>
+<p>ControlFile&#8217;s can be of the following types: &#8216;TCF&#8217;, &#8216;TGC&#8217;, &#8216;TBC&#8217;, &#8216;ECF&#8217;, and
+&#8216;TEF&#8217;. However not all are guaranteed to exist, if there are not .tef files
+referenced by a model a ControlFile will not be created with the &#8216;TEF&#8217; key.</p>
+<p>The &#8216;TCF&#8217; ControlFile is slightly different from the others. It is a
+subclass of ControlFile called TcfControlFile. The only difference (currently)
+is the inclusion of a &#8216;main_file&#8217; variable which contains the hash code of the
+main .tcf file for identification. You don&#8217;t really need to worry about this
+difference in general use of the API.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>ControlFile contains four member variables:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>model_type(str)</strong>: &#8216;TCF&#8217; | &#8216;TGC&#8217; | &#8216;TBC&#8217; | &#8216;ECF&#8217; | &#8216;TEF&#8217;.</li>
+<li><strong>parts(PartHolder)</strong>: iterator for storing the TuflowPart&#8217;s in this model_type.</li>
+<li><strong>logic(LogicHolder)</strong>: stores all of the TuflowLogic in this model_type.</li>
+<li><strong>control_files(list)</strong>: The ModelFile&#8217;s that this ControlFile was loaded from.</li>
+</ul>
+</div></blockquote>
+<p>Note that model_type is the value used as the key in TuflowModel.control_files.
+The control_files list member is just a convenience more than anything else.
+For a quick lookup of which files are included in the ControlFile. All of the
+TuflowPart&#8217;s have a reference to their parent (the control file they were read
+in from) as well.</p>
+<p>The two main components are parts and logic. Between them they store all of the
+actual data in the loaded model. Of the two parts is by far the most used and
+is worth focusing on first. The LogicHolder, while at times integral to
+internal operations and useful to see what tuflow logic is used in the model, is
+often not needed. You will find that normally you want to know how it affects
+a TuflowPart and there are easy way to do that.</p>
+<p>Most of the time you won&#8217;t need to access the PartHolder directly, unless
+adding or removing a TuflowPart, as there are methods within the ControlFile that
+provide functionality for common tasks. However it is availabel if you want
+more fine-grained control over what is returned.</p>
+</div>
+<div class="section" id="accessing-data">
+<h2>Accessing Data<a class="headerlink" href="#accessing-data" title="Permalink to this headline">¶</a></h2>
+<p>ControlFile contains a number of methods for making common selections from the
+PartHolder. Usually these involve querying certain types of data. The majority
+of the methods take similar arguments, which we&#8217;ll cover here:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>filepart_type(int)</strong>: this accepts one of the FILEPART_TYPES enum, which can
+be found in the ship.tuflow.__init__.py file. If you want to refine your
+results to, say, only GIS files you&#8217;d use FILEPART_TYPES.GIS.</li>
+<li><strong>no_duplicates(bool)</strong>: sometimes the same file can be references in more than
+one place in a tuflow model. When True this will not return duplicates
+entries. It&#8217;s usually set to True by default.</li>
+<li><strong>se_vals(dict)</strong>: if you would like to restrict the results to a particular
+subset of scenario and event values. You should supply this. For more
+information see <a class="reference internal" href="tuflowmodel.html#tuflowmodel-uservariables"><span class="std std-ref">User Variables</span></a>.</li>
+</ul>
+</div></blockquote>
+<p>Most of the data access methods in ControlFile are simply convenience functions.
+You can obviously directly access the PartHolder if you would prefer. Here&#8217;s a
+few key type of access you might want.</p>
+<div class="section" id="obtaining-specific-tuflowpart-s">
+<h3>Obtaining specific TuflowPart&#8217;s<a class="headerlink" href="#obtaining-specific-tuflowpart-s" title="Permalink to this headline">¶</a></h3>
+<p>If you want to get hold of a subset of TuflowPart&#8217;s there are three main ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>files()</strong>: returns all of the TuflowFile types.</li>
+<li><strong>variables()</strong>: returns of the of ATuflowVariable types</li>
+<li><strong>fetchPartType()</strong>: same as the above two, but will return whatever instance
+you request. More on this below.</li>
+</ul>
+</div></blockquote>
+<p>Fetching types of TuflowFile and ATuflowVariable. These work in essentially the
+same way, they just return different types. Note all of these functions will
+return a list containing subclass&#8217; of TuflowPart:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#</span>
+<span class="c1"># in this example the role of the ControlFile will be played by &#39;tgc&#39;.</span>
+<span class="c1">#</span>
+
+<span class="c1"># import FILEPART_TYPES</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
+
+<span class="c1"># Get all TuflowFile and ATuflowVariable parts.</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">()</span>
+<span class="n">variables</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">variables</span><span class="p">()</span>
+
+<span class="c1"># Get only the GIS files</span>
+<span class="n">gisfiles</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">)</span>
+
+<span class="c1"># Get only the USER_VARIABLE types</span>
+<span class="c1"># (These are variables set in control files with: &#39;Set myvar == 6&#39;</span>
+<span class="n">uservars</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">variables</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">USER_VARIABLE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pretty simple. Now you will probably, at some point, want to filter the returned
+values by the current status of the scenario and event values.</p>
+<p><strong>Sidebar</strong>
+<em>When a tuflow model is loaded, everything in the control files will be loaded</em>
+<em>into memory, even if you supply scenario and event values at the command line.</em>
+<em>This is a design feature, in case you want to change the status of the these</em>
+<em>values later on. If you want to access only the sections of the control files</em>
+<em>within certain scenarios/events you will need to check they&#8217;re logic associate,</em>
+<em>or do the following.</em></p>
+<p>Filtering by senario and/or event is fairly simple. Most of the methods
+accept a scenario/event values dict (see <a class="reference internal" href="tuflowmodel.html#tuflowmodel-uservariables"><span class="std std-ref">User Variables</span></a> for
+info about the setup of this dict). Here&#8217;s an example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># &#39;tuflow&#39; is our loaded TuflowModel</span>
+
+<span class="c1"># Get the &#39;TGC&#39; ControlFile from TuflowModel</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+
+<span class="c1"># Get the currently set scenario and event values from the UserVariables dict.</span>
+<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">scenarioEventValuesToDict</span><span class="p">()</span>
+
+<span class="c1"># Only get the gis files that are in the currently set scenarios/events</span>
+<span class="n">files</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">se_Vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So, to steal from the example given in the introduction section, which for
+reference was this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Set Code == 0
+Read GIS Code == gis\2d_code_shiptest_tgc_v1_R.shp
+Read GIS Code BC == gis\2d_bc_hx_shiptest_tgc_v1_R.shp
+
+! Call another tgc file
+IF SCENARIO == scen1 | scen1more
+   if scenario == scen1more
+      Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v1_P.shp
+   else if scenario == scen1
+      Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v2_P.shp
+   end if
+   Read File == test_trd1.trd
+ELSE ! comment for else
+   Read File == test_trd3.trd ! trd3
+END IF
+</pre></div>
+</div>
+<p>If the scenario values were currently set to &#8216;scen1&#8217; the only files returned
+from the above method call would be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>2d_code_shiptest_tgc_v1_R.shp</li>
+<li>2d_bc_hx_shiptest_tgc_v1_R.shp</li>
+<li>2d_whatevs_shiptest_tgc_v2_P.shp</li>
+<li>test_trd1.trd</li>
+</ul>
+</div></blockquote>
+<p>This works in exactly the same way for the variables method.</p>
+<p>On to fetchPartType. This is actually the method that does all of the work in
+the other two. The other two are basically just hooks that call this. If you
+would rather just use this one you can, but you can probably get whatever you
+need from the others. Essentially it takes the same arguments are the other
+two with the addition of the TuflowPart instance as the first arg:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">TuflowFile</span>
+
+<span class="c1"># This is the same method call as above</span>
+<span class="n">files1</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">se_Vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+
+<span class="c1"># This does the same thing</span>
+<span class="n">files2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetchPartType</span><span class="p">(</span><span class="n">TuflowFile</span><span class="p">,</span> <span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">se_vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+
+<span class="c1"># prints True</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">files1</span> <span class="o">==</span> <span class="n">files2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is actually one other convenience method that is quite useful when all
+you is the file paths or file names: filepaths(). It takes similar arguments
+to the above, with a couple of additionals:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Same search as that in files1 above except it will return filename strings</span>
+<span class="c1"># rather than TuflowFile&#39;s like above</span>
+<span class="n">filenames</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">se_vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+
+<span class="c1"># Same as above but aboslute paths returned instead of file names</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="o">.</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">se_vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is an additional argument available to the filepaths() method, &#8216;no_blanks&#8217;.
+By default it is set to True. There is probably not need to change this most of
+the time. It is there because in Tuflow control files the output paths (results,
+checkfiles, log files, etc) can be a folder with no filename. This means that
+when you search for filename&#8217;s they will return an empty str &#8216;&#8217;. This is usually
+not a lot of use, so it&#8217;s set to ignore these by default.</p>
+</div>
+</div>
+<div class="section" id="partholder">
+<span id="controlfile-partholder"></span><h2>PartHolder<a class="headerlink" href="#partholder" title="Permalink to this headline">¶</a></h2>
+<p>There is a PartHolder class referenced by every ControlFile object, using the
+variable name &#8216;parts&#8217;. It is an iterator for all of the TuflowPart&#8217;s in that
+ControlFile. The PartHolder stores all of the TuflowPart&#8217;s in the order that
+they are read in from the control file(s). Note that if the model contains, say,
+multiple .tgc (or .trd) files it will maintain the order between these files.
+If we have these two files:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># This file: tgcfile.tgc
+#... lots of tgc commands above
+
+Read GIS Z Line == gis\somefile1.shp
+Read File == tgcreadfile.trd  ! Note this is the call to the file below
+Read GIS Z Line == gis\somefile2.shp
+#... other commands below
+
+########################################
+
+# This file: tgcreadfile.trd
+Read GIS Z Shape == gis\anotherfile1.shp
+Read GIS Z Shape == gis\anotherfile2.shp
+</pre></div>
+</div>
+<p>The PartHolder would load these file in this order:</p>
+<blockquote>
+<div><ul class="simple">
+<li>somefile1.shp</li>
+<li>anotherfile1.shp</li>
+<li>anotherfile2.shp</li>
+<li>somefile2.shp</li>
+</ul>
+</div></blockquote>
+<p>(The ControlFile.control_files list would also contain tgcfile.tgc and
+tgcreadfile.trd)</p>
+<p>PartHolder contains a range of methods for accessing, adding, updating and
+removing TuflowPart&#8217;s.</p>
+</div>
+<div class="section" id="logicholder">
+<h2>LogicHolder<a class="headerlink" href="#logicholder" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to SHIP API documentation! &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="#"/>
+        <link rel="next" title="Installing the Library" href="install.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Welcome to SHIP API documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-ship-api-documentation">
+<h1>Welcome to SHIP API documentation!<a class="headerlink" href="#welcome-to-ship-api-documentation" title="Permalink to this headline">¶</a></h1>
+<p>SHIP (Simple Hydraulic model Interface for Python) is a Python library for
+interfacing with Flood Modeller Pro and Tuflow model configuration files.</p>
+<p>For an introduction to using the API and interacting with model files go to
+<a class="reference internal" href="overview.html#overview-top"><span class="std std-ref">Overview</span></a> .</p>
+<p>If you have any feature suggestions or bug reports please add them to the GitHub
+page. We will endevour to fix major bugs as soon as possible and welcome any
+suggestions for consideration. For more information on <a class="reference internal" href="contributing.html#feature-requests"><span class="std std-ref">Feature Requests</span></a>
+following the link.</p>
+<p>If you are interested in contributing to the project please take a look at the
+<a class="reference internal" href="contributing.html#contributing"><span class="std std-ref">Contribute</span></a> page.</p>
+<p>Please note these docs are still being put together and are not complete yet.
+There is also almost certainly many typos/errors and probably some issues with
+the code examples. I will try and get these sorted as soon as possible once
+focused has moved away from actually get the code together.</p>
+<div class="section" id="about-versions">
+<h2>About versions<a class="headerlink" href="#about-versions" title="Permalink to this headline">¶</a></h2>
+<p>From release 0.3.0-Beta there is a significant change in the strucutre of a lot
+of the API. While the tuflow package is most heavily affected, with a complete
+restructure there are a lot of changes in the fmp package too (notably changing
+the name from isis to fmp).</p>
+<p>While it is obviously not ideal to make such sweeping changes, the API up until
+this point was always in an early development stage (as noted in the READ_ME).
+The tuflow package had outgrown it&#8217;s initial, somewhat organic, growth and
+was becoming very hard to maintain and find bugs in. While the changes to the
+fmp package are much less extreme it seemed like a good time to make a clean
+break and fix a lot of things that have been causing issues. Including
+un-pythonic naming conventions, old unused variables, etc. The final push for
+this was the need to update the API from Python 2.7 to Python 2.7 and 3.3+. I
+feel like this was probably the best time to sort all of this out.</p>
+<p>So if you&#8217;ve been using this library, sorry :( . I think though that you will
+find it much improved and it&#8217;s defintiely easier to maintain and improve going
+forward. Not also that &#8220;the possible API break&#8221; stage is through and any
+functionality will be properly deprecated for a reasonable amoutn of time from
+now on. For more info on what&#8217;s changed see <a class="reference internal" href="fmp/updatechanges.html#updatechanges-top"><span class="std std-ref">API Changes</span></a>.</p>
+</div>
+<div class="section" id="python-version">
+<h2>Python version<a class="headerlink" href="#python-version" title="Permalink to this headline">¶</a></h2>
+<p>While originally developed to support Python 2.7, the library has now been
+updated to support both Python 2.7+ and Python 3.3+. In order to do this it
+requires the future package (installable with <cite>pip install future</cite>. There are no
+plans to support other versions of Python, mostly because it involves a lot more
+work and requires further dependencies.</p>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#using-pip">Using Pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#including-an-egg-file">Including an .egg file</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#flood-modeller">Flood Modeller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#tuflow">Tuflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id1">Flood Modeller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#id2">Tuflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ship.html">ship package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html#module-ship.data_structures.dataobject">ship.data_structures.dataobject module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html#module-ship.data_structures.rowdatacollection">ship.data_structures.rowdatacollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html#module-ship.data_structures">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.datcollection">ship.fmp.datcollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.ief">ship.fmp.ief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.isisunitfactory">ship.fmp.isisunitfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#module-ship.tuflow.controlfile">ship.tuflow.controlfile module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#module-ship.tuflow.tuflowfactory">ship.tuflow.tuflowfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#module-ship.tuflow.tuflowfilepart">ship.tuflow.tuflowfilepart module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#module-ship.tuflow.tuflowmodel">ship.tuflow.tuflowmodel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html#module-ship.tuflow">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.utils.html">ship.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.atool">ship.utils.atool module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.filetools">ship.utils.filetools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.log">ship.utils.log module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#ship-utils-qtclasses-module">ship.utils.qtclasses module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils.utilfunctions">ship.utils.utilfunctions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html#module-ship.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html">ship package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="install.html" class="btn btn-neutral float-right" title="Installing the Library" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

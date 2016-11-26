@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.dbfread.test_field_parser &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.dbfread.test_field_parser</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.dbfread.test_field_parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="k">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">pytest</span> <span class="k">import</span> <span class="n">raises</span>
+<span class="kn">from</span> <span class="nn">.field_parser</span> <span class="k">import</span> <span class="n">FieldParser</span>
+
+<div class="viewcode-block" id="MockHeader"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.MockHeader">[docs]</a><span class="k">class</span> <span class="nc">MockHeader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">dbversion</span> <span class="o">=</span> <span class="mh">0x02</span></div>
+
+<div class="viewcode-block" id="MockDBF"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.MockDBF">[docs]</a><span class="k">class</span> <span class="nc">MockDBF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">MockHeader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;ascii&#39;</span></div>
+
+<div class="viewcode-block" id="MockField"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.MockField">[docs]</a><span class="k">class</span> <span class="nc">MockField</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MockMemoFile"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.MockMemoFile">[docs]</a><span class="k">class</span> <span class="nc">MockMemoFile</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="make_field_parser"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.make_field_parser">[docs]</a><span class="k">def</span> <span class="nf">make_field_parser</span><span class="p">(</span><span class="n">field_type</span><span class="p">,</span> <span class="n">dbversion</span><span class="o">=</span><span class="mh">0x02</span><span class="p">,</span> <span class="n">memofile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">dbf</span> <span class="o">=</span> <span class="n">MockDBF</span><span class="p">()</span>
+    <span class="n">dbf</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">dbversion</span> <span class="o">=</span> <span class="n">dbversion</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">FieldParser</span><span class="p">(</span><span class="n">dbf</span><span class="p">,</span> <span class="n">memofile</span><span class="p">)</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">MockField</span><span class="p">(</span><span class="n">field_type</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parse</span></div>
+
+<div class="viewcode-block" id="test_0"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_0">[docs]</a><span class="k">def</span> <span class="nf">test_0</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\xaa\xff</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s1">&#39;</span><span class="se">\xaa\xff</span><span class="s1">&#39;</span></div>
+
+<div class="viewcode-block" id="test_C"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_C">[docs]</a><span class="k">def</span> <span class="nf">test_C</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;test&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s1">u&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_D"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_D">[docs]</a><span class="k">def</span> <span class="nf">test_D</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;D&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;00000000&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;        &#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;19700101&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">epoch</span>
+
+    <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;NotIntgr&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_F"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_F">[docs]</a><span class="k">def</span> <span class="nf">test_F</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;-1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;3.14&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.14</span>
+
+    <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;jsdf&#39;</span><span class="p">)</span></div>
+
+<span class="c1"># This also tests parse2B() (+)</span>
+<div class="viewcode-block" id="test_I"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_I">[docs]</a><span class="k">def</span> <span class="nf">test_I</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Little endian unsigned integer.</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00\x00\x00\x00</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x01\x00\x00\x00</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\xff\xff\xff\xff</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span></div>
+
+<div class="viewcode-block" id="test_L"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_L">[docs]</a><span class="k">def</span> <span class="nf">test_L</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;L&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;TtYy&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;FfNn&#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;? &#39;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+
+    <span class="c1"># Some invalid values.</span>
+    <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">b</span><span class="s1">&#39;!0&#39;</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">parse</span><span class="p">(</span><span class="n">char</span><span class="p">)</span></div>
+
+<span class="c1"># This also tests B, G and P.</span>
+<div class="viewcode-block" id="test_M"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_M">[docs]</a><span class="k">def</span> <span class="nf">test_M</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="n">memofile</span><span class="o">=</span><span class="n">MockMemoFile</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="n">b</span><span class="s1">&#39;test&#39;</span><span class="p">}))</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x01\x00\x00\x00</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">u&#39;test&#39;</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">u&#39;test&#39;</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;NotInteger&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_B"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_B">[docs]</a><span class="k">def</span> <span class="nf">test_B</span><span class="p">():</span>
+    <span class="c1"># In VisualFox the B field is a double precision floating point number.</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">dbversion</span><span class="o">=</span><span class="mh">0x30</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;01abcdef&#39;</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\0</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+    <span class="c1"># Data must be exactly 8 bytes.</span>
+    <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># In other db versions it is a memo index.</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">dbversion</span><span class="o">=</span><span class="mh">0x02</span><span class="p">,</span>
+                              <span class="n">memofile</span><span class="o">=</span><span class="n">MockMemoFile</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="n">b</span><span class="s1">&#39;test&#39;</span><span class="p">}))</span>
+    <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s1">&#39;test&#39;</span>
+    <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="test_N"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_N">[docs]</a><span class="k">def</span> <span class="nf">test_N</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;1&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;-99&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">99</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;3.14&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.14</span>
+
+    <span class="k">with</span> <span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;okasd&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_O"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_O">[docs]</a><span class="k">def</span> <span class="nf">test_O</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test double field.&quot;&quot;&quot;</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;O&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.0</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00\x00\x00\x00\x00\x00\xf0</span><span class="s1">?&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x00\x00\x00\x00\x00\x00</span><span class="s1">Y</span><span class="se">\xc0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">100</span></div>
+
+<span class="c1"># This also tests parse40() (@)</span>
+<div class="viewcode-block" id="test_T"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_T">[docs]</a><span class="k">def</span> <span class="nf">test_T</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+    <span class="c1"># Todo: add more tests.</span>
+
+<div class="viewcode-block" id="test_Y"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_Y">[docs]</a><span class="k">def</span> <span class="nf">test_Y</span><span class="p">():</span>
+    <span class="n">parse</span> <span class="o">=</span> <span class="n">make_field_parser</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\1\0\0\0\0\0\0\0</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;0.0001&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">parse</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\xff\xff\xff\xff\xff\xff\xff\xff</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Decimal</span><span class="p">(</span><span class="s1">&#39;-0.0001&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_hex_field"><a class="viewcode-back" href="../../../../ship.utils.dbfread.html#ship.utils.dbfread.test_field_parser.test_hex_field">[docs]</a><span class="k">def</span> <span class="nf">test_hex_field</span><span class="p">():</span>
+    <span class="k">class</span> <span class="nc">PlusFieldParser</span><span class="p">(</span><span class="n">FieldParser</span><span class="p">):</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;latin1&#39;</span>
+
+        <span class="k">def</span> <span class="nf">parse3F</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Parser for &#39;?&#39; field.&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">PlusFieldParser</span><span class="p">(</span><span class="n">MockDBF</span><span class="p">())</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">MockField</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">b</span><span class="s1">&#39;test&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

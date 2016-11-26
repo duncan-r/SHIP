@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.datunits.initialconditionsunit &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.datunits.initialconditionsunit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.datunits.initialconditionsunit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the InitialConditionsUnit class.</span>
+<span class="sd">    This is a holder for all of the data in the initial conditions section</span>
+<span class="sd">    of the dat file.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd"> Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+<span class="sd">    Not fully implemented at the moment - see class TODO comment for details.</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InitialConditionsUnit"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit">[docs]</a><span class="k">class</span> <span class="nc">InitialConditionsUnit</span> <span class="p">(</span><span class="n">AUnit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;isisunit for storing the initial conditions.</span>
+
+<span class="sd">    Stores the initial conditions data; near the end of the .dat file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Class constants</span>
+    <span class="n">UNIT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;initial_conditions&#39;</span>
+    <span class="n">UNIT_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;initial_conditions&#39;</span>
+    <span class="n">FILE_KEY</span> <span class="o">=</span> <span class="s1">&#39;INITIAL&#39;</span>
+    <span class="n">FILE_KEY2</span> <span class="o">=</span> <span class="kc">None</span>
+    
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node_count (int): The number of nodes in the model. We need this to </span>
+<span class="sd">                know how many lines there are to read from the contents list.</span>
+<span class="sd">            fileOrder (int): The location of the initial conditions in the </span>
+<span class="sd">                .DAT file. This will always be at the end but before the </span>
+<span class="sd">                GISINFO if there is any.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">InitialConditionsUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">InitialConditionsUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;initial_conditions&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="c1">#         self.has_datarows = True</span>
+<span class="c1">#         self.has_ics = False</span>
+        
+        <span class="n">dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">StringData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;12}</span><span class="s1">&#39;</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">StringData</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">QMARK</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;2}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">FLOW</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">STAGE</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">FROUDE_NO</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">VELOCITY</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">UMODE</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">USTATE</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.000</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">dobjs</span><span class="p">)</span>
+     
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">node_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span>
+<span class="c1">#         return self.row_data[&#39;main&#39;].getNumberOfRows()</span>
+
+    
+<div class="viewcode-block" id="InitialConditionsUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name_types&#39;</span><span class="p">]</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="n">file_line</span>
+        <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">file_line</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span> <span class="k">continue</span>  <span class="c1"># Skip the first couple of header lines</span>
+            
+            <span class="n">label</span>       <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">qmark</span>       <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">12</span><span class="p">:</span><span class="mi">14</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">flow</span>        <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">14</span><span class="p">:</span><span class="mi">24</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">stage</span>       <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">24</span><span class="p">:</span><span class="mi">34</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">froude_no</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">34</span><span class="p">:</span><span class="mi">44</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">velocity</span>    <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">44</span><span class="p">:</span><span class="mi">54</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">umode</span>       <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">54</span><span class="p">:</span><span class="mi">64</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">ustate</span>      <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">64</span><span class="p">:</span><span class="mi">74</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">elevation</span>   <span class="o">=</span> <span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">74</span><span class="p">:</span><span class="mi">84</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
+                <span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">QMARK</span><span class="p">:</span> <span class="n">qmark</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">FLOW</span><span class="p">:</span> <span class="n">flow</span><span class="p">,</span>
+                <span class="n">rdt</span><span class="o">.</span><span class="n">STAGE</span><span class="p">:</span> <span class="n">stage</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">FROUDE_NO</span><span class="p">:</span> <span class="n">froude_no</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">VELOCITY</span><span class="p">:</span> <span class="n">velocity</span><span class="p">,</span> 
+                <span class="n">rdt</span><span class="o">.</span><span class="n">UMODE</span><span class="p">:</span> <span class="n">umode</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">USTATE</span><span class="p">:</span> <span class="n">ustate</span><span class="p">,</span> 
+                <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span>
+            <span class="p">})</span> 
+            
+        <span class="k">return</span> <span class="n">out_line</span> <span class="o">-</span> <span class="mi">1</span></div>
+       
+    
+<div class="viewcode-block" id="InitialConditionsUnit.getData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.getData">[docs]</a>    <span class="k">def</span> <span class="nf">getData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;INITIAL CONDITIONS&#39;</span><span class="p">)</span>
+        <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; label   ?      flow     stage froude no  velocity     umode    ustate         z&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span><span class="p">):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_data</span></div>
+    
+    
+<span class="c1">#     def updateDataRow(self, row_vals, index):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the row at the given index in the row_collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Changes the state of the values in the initial conditions list of </span>
+<span class="sd">        the .dat file at the given index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            index: the row to update. </span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+        
+
+<span class="c1">#     def updateDataRowByName(self, row_vals, name):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.updateRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">updateRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the row for the entry with the give name.</span>
+<span class="sd">        </span>
+<span class="sd">        Changes the state of the values in the initial conditions list for the</span>
+<span class="sd">        the .dat file for the unit with the given name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+<span class="sd">            name: the name of the unit who&#39;s ic&#39;s should be updated.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            AttributeError: If the given name doesn&#39;t exists in the collection.</span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Name does not exist in initial conditions: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        
+<span class="c1">#         index = 0</span>
+<span class="c1">#         labels = self.row_data[&#39;main&#39;].dataObAsList(rdt.LABEL)</span>
+<span class="c1">#         index = labels.index(name)</span>
+<span class="c1">#         if index == -1:</span>
+<span class="c1">#             raise AttributeError</span>
+        
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+    
+
+<span class="c1">#     def addDataRow(self, row_vals): </span>
+<div class="viewcode-block" id="InitialConditionsUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Adds a new row to the InitialCondition units row_collection.</span>
+<span class="sd">        </span>
+<span class="sd">        The new row will be added at the given index. If no index is given it</span>
+<span class="sd">        will be appended to the end of the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        If no LABEL value is given a AttributeError will be raised as it </span>
+<span class="sd">        cannot have a default value. All other values can be ommitted. If they </span>
+<span class="sd">        are they will be given defaults.</span>
+<span class="sd">        </span>
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; import ship.fmp.datunits.ROW_DATA_TYPES as rdt</span>
+<span class="sd">            &gt;&gt;&gt; ics.addRow({rdt.LABEL:UNITNAME, rdt.STAGE:10.2}, index=4)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal</span>
+<span class="sd">                value assigned for the DataType. Chainage and Elevation MUST</span>
+<span class="sd">                be included.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: If LABEL is not given.</span>
+<span class="sd">            IndexError: If the index does not exist.</span>
+<span class="sd">            ValueError: If the given value is not accepted by the DataObject&#39;s. </span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataObject and subclasses for information on the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span> <span class="ow">in</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Required values of LABEL not given&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>  <span class="ne">AttributeError</span> <span class="p">(</span><span class="s2">&quot;Required value &#39;LABEL&#39; not given&quot;</span><span class="p">)</span> 
+        
+        <span class="c1"># Keep a record of multiple unit types under the same name</span>
+        <span class="k">if</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit_type</span><span class="p">]</span>
+
+        <span class="c1"># Don&#39;t add the same ic&#39;s in twice</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span>
+
+        <span class="c1"># Call superclass method to add the new row</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span></div>
+    
+
+<span class="c1">#     def deleteDataRowByName(self, section_name):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.deleteRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete one of the RowDataCollection objects in the row_collection.</span>
+<span class="sd">        </span>
+<span class="sd">        This calls the AUnit deleteRow method, but obtains the index</span>
+<span class="sd">        of the row to be deleted from the name first.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            section_name(str): the name of the AUnit to be removed from</span>
+<span class="sd">                the initial conditions.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError - if section_name does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Name does not exist in initial conditions: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unit_name</span><span class="p">))</span>
+<span class="c1">#         if index == -1:</span>
+<span class="c1">#             raise KeyError(&#39;Name does not exist in initial conditions: &#39; + str(unit_name))</span>
+        
+        <span class="c1"># Delete the ic if the unit_name is the only one using it</span>
+        <span class="c1"># Otherwise remove the type and keep the ic&#39;s as they are</span>
+<span class="c1">#         if unit_name in self._name_types.keys():</span>
+<span class="c1">#         if unit_type in self._name_types[unit_name]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">unit_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">]</span></div>
+    
+    
+<span class="c1">#     def getRowByName(self, section_name):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.rowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.rowByName">[docs]</a>    <span class="k">def</span> <span class="nf">rowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the data vals in a particular row by name.</span>
+<span class="sd">        </span>
+<span class="sd">        This is the same functionality as the AUnit&#39;s getRow(int) method</span>
+<span class="sd">        which returns a row in the RowDataCollection by the index value given.</span>
+<span class="sd">        In this case it will find the index based on the section label and </span>
+<span class="sd">        return the same dictionary of row values.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            section_name(str): the name of the AUnit to be removed from</span>
+<span class="sd">                the initial conditions.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - containing the values for the requested row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Name does not exist in initial conditions: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">section_name</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div></div>
+
+        
+        
+        
+        
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

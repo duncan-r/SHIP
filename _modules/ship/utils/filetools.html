@@ -1,0 +1,900 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.filetools &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.filetools</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.filetools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains file access functions and classes.</span>
+
+<span class="sd">    This module contains convenience functions and classes for reading and </span>
+<span class="sd">    writing files and launching different types of File dialogue.</span>
+<span class="sd">    </span>
+<span class="sd">    Some of the functionality needed in this class is provided by the PyQt</span>
+<span class="sd">    framework. When this module is loaded it tries to import the PyQt module.</span>
+<span class="sd">    If it fails it sets a HAS_QT flag to False.</span>
+<span class="sd">    </span>
+<span class="sd">    Before any attempts to use the PyQt functions are made the HAS_QT flag</span>
+<span class="sd">    is checked. If it&#39;s false the function will react.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+<span class="sd">     </span>
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd"> </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO: This module, like a lot of other probably, needs reviewing for how</span>
+<span class="sd">         &#39;Pythonic&#39; t is. There are a lot of places where generators,</span>
+<span class="sd">         comprehensions, maps, etc should be used to speed things up and make</span>
+<span class="sd">         them a bit clearer.</span>
+<span class="sd">         </span>
+<span class="sd">         More importantly there are a lot of places using &#39;==&#39; compare that</span>
+<span class="sd">         should be using &#39;in&#39; etc. This could cause bugs and must be fixed</span>
+<span class="sd">         soon.</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+
+
+<span class="n">HAS_QT</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="sd">&quot;&quot;&quot;If Qt is not installed on the machine running the library we can&#39;t use any </span>
+<span class="sd">of the GUI related code, such as file dialogs. This flag informs the code in</span>
+<span class="sd">the module about the load status.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">ship.utils.qtclasses</span> <span class="k">import</span> <span class="n">MyFileDialogs</span>
+    
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Unable to load Qt modules - cannot launch file dialogues&#39;</span><span class="p">)</span>
+    <span class="n">HAS_QT</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    
+<div class="viewcode-block" id="getFile"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.getFile">[docs]</a><span class="k">def</span> <span class="nf">getFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Text file reader.</span>
+
+<span class="sd">    Reads a text file, appending each new line to a list.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filePath (str): File path for text file to load.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List - contents of text file split by new lines.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        IOError: if problem in reading file.</span>
+<span class="sd">        TypeError: if string not given for file_path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_contents</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;rU&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">file_contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Read file IOError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span> <span class="p">(</span><span class="s1">&#39;Unable to read file at: &#39;</span> <span class="o">+</span> <span class="n">file_path</span><span class="p">)</span> 
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Read file TypeError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span>
+        
+    <span class="k">return</span> <span class="n">file_contents</span></div>
+    
+    
+<div class="viewcode-block" id="writeFile"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.writeFile">[docs]</a><span class="k">def</span> <span class="nf">writeFile</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">add_newline</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Text file writer</span>
+
+<span class="sd">    Writes a list to file, adding a new-line add the end of each list item.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contents (List) - lines to be written.</span>
+<span class="sd">        filename (str) - Name of file to create.</span>
+<span class="sd">        add_newline=True (Bool): adds a &#39;\n&#39; to the end of each line written</span>
+<span class="sd">            if set to True.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        IOError: if problem in reading file.</span>
+<span class="sd">        TypeError: if string not given for file_path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">add_newline</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Write file IOError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Write file TypeError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span></div>
+    
+        
+<div class="viewcode-block" id="directoryFileNames"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.directoryFileNames">[docs]</a><span class="k">def</span> <span class="nf">directoryFileNames</span><span class="p">(</span><span class="n">path</span><span class="p">):</span> 
+    <span class="sd">&quot;&quot;&quot;Get a list of filenames in a directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str) - Path to directory.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List - filenames in directory.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        IOError: If there&#39;s a problem with the read/write or the directory </span>
+<span class="sd">            doesn&#39;t exist</span>
+<span class="sd">        TypeError: if string not given for file_path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Get directory names IOError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IOError</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Get directory names TypeError&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span>
+
+    <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="directoryDialog"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.directoryDialog">[docs]</a><span class="k">def</span> <span class="nf">directoryDialog</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Launch a file dialog and return the user selected directory.</span>
+
+<span class="sd">    If PyQt libraries are not available (HAS_QT == False) this function will</span>
+<span class="sd">    raise an ImportError.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Optional -  directory to open the dialog in.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Str containing path is successful or False if not.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ImportError: if PyQt libraries are not available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_QT</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Qt libraries are not installed  - cannot launch file dialog&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span> <span class="p">(</span><span class="s1">&#39;Qt libraries could not be imported - cannot launch dialogs&#39;</span><span class="p">)</span>
+    
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">MyFileDialogs</span><span class="p">()</span>
+    <span class="n">dir_path</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">dirFileDialog</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_path</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dir_path</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Chosen save path = &#39;</span> <span class="o">+</span> <span class="n">dir_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dir_path</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No save path chosen in dialog&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+    
+
+<div class="viewcode-block" id="getOpenFileDialog"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.getOpenFileDialog">[docs]</a><span class="k">def</span> <span class="nf">getOpenFileDialog</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="s1">&#39;All (*.*)&#39;</span><span class="p">,</span> <span class="n">multi_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Launch an open  file dialog and return the user selected path.</span>
+
+<span class="sd">    The file types should follow the format:</span>
+<span class="sd">        &#39;DAT (*.DAT);;TXT (*.txt);;IEF (*.IEF)&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    If PyQt libraries are not available (HAS_QT == False) this function will</span>
+<span class="sd">    raise an ImportError.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Optional -  directory to open the dialog in.</span>
+<span class="sd">        types (str): Optional - file types to restrict to. </span>
+<span class="sd">        multi_file=True(bool): If False user can only select a single file.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Str containing path is successful or False if not.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ImportError: if PyQt libraries are not available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_QT</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Qt libraries are not installed - cannot launch file dialog&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span> <span class="p">(</span><span class="s1">&#39;Qt libraries could not be imported - cannot launch dialogs&#39;</span><span class="p">)</span>
+    
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">MyFileDialogs</span><span class="p">()</span>
+    <span class="n">open_path</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">openFileDialog</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file_types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span> <span class="n">multi_file</span><span class="o">=</span><span class="n">multi_file</span><span class="p">)</span> 
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">open_path</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">open_path</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Chosen save path = &#39;</span> <span class="o">+</span> <span class="n">open_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">open_path</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No save path chosen in dialog&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="getSaveFileDialog"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.getSaveFileDialog">[docs]</a><span class="k">def</span> <span class="nf">getSaveFileDialog</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="s1">&#39;All (*.*)&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Launch a save file dialog and return the user selected path.</span>
+
+<span class="sd">    The file types should follow the format:</span>
+<span class="sd">        &quot;DAT (*.DAT);;TXT (*.txt);;IEF (*.IEF)&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    If PyQt libraries are not available (HAS_QT == False) this function will</span>
+<span class="sd">    raise an ImportError.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Optional -  directory to open the dialog in.</span>
+<span class="sd">        types (str): Optional - file types to restrict to. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Str containing path is successful or False if not.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ImportError: if PyQt libraries are not available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_QT</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Qt libraries are not installed - cannot launch file dialog&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span> <span class="p">(</span><span class="s1">&#39;Qt libraries could not be imported - cannot launch dialogs&#39;</span><span class="p">)</span>
+    
+    <span class="n">fd</span> <span class="o">=</span> <span class="n">MyFileDialogs</span><span class="p">()</span>
+    <span class="n">save_path</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">saveFileDialog</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file_types</span><span class="o">=</span><span class="n">types</span><span class="p">)</span> 
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">save_path</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">save_path</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Chosen save path = &#39;</span> <span class="o">+</span> <span class="n">save_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">save_path</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;No save path chosen in dialog&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">###############################                                                                         </span>
+<span class="sd">  Path Functions and classes                                                 </span>
+<span class="sd">###############################                                                                         </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="pathExists"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.pathExists">[docs]</a><span class="k">def</span> <span class="nf">pathExists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test whether a path exists.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str):  the path to test. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the path exists or False if it doesn&#39;t.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+        
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="finalFolder"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.finalFolder">[docs]</a><span class="k">def</span> <span class="nf">finalFolder</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the last folder in the path.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): the path to extract the final folder from.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str containing the name of the final folder in the path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+        
+    
+<div class="viewcode-block" id="setFinalFolder"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.setFinalFolder">[docs]</a><span class="k">def</span> <span class="nf">setFinalFolder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the final folder in the directory path to the given name.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): the path to update.</span>
+<span class="sd">            folder_name (str): the new name for the final folder in the path.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str containing the updated path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Normalise the path so that we don&#39;t get any funny behaviour</span>
+        <span class="n">norm_path</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Get the drive letter</span>
+        <span class="n">drive_letter</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">norm_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Separate out the different folders.</span>
+        <span class="c1"># If it&#39;s an absolute path then we need to deal with the usual drive</span>
+        <span class="c1"># letter problems (doesn&#39;t join it back with a slash.</span>
+        <span class="n">plist</span> <span class="o">=</span> <span class="n">norm_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">drive_letter</span><span class="p">:</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">plist</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">all_but_final_folder</span><span class="p">)</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">plist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">all_but_final_folder</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">all_but_final_folder</span><span class="p">)</span>
+        
+        <span class="c1"># Otherwise just remove the final folder so that we can replace it</span>
+        <span class="c1"># with the new one.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">plist</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">all_but_final_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">all_but_final_folder</span><span class="p">)</span>
+            
+        <span class="c1"># Add the new folder name to the end</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_but_final_folder</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)</span></div>
+        
+
+<div class="viewcode-block" id="getFileName"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.getFileName">[docs]</a><span class="k">def</span> <span class="nf">getFileName</span><span class="p">(</span><span class="n">in_path</span><span class="p">,</span> <span class="n">with_extension</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the file name with the file extension appended.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            in_path (str): the file path to extract the filename from.</span>
+<span class="sd">            with_extension=False (Bool): flag denoting whether to return </span>
+<span class="sd">                the filename with or without the extension.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Str - file name, with or without the extension appended or a </span>
+<span class="sd">                 blank string if there is no file name in the path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">in_path</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">in_path</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="ow">or</span> <span class="p">(</span><span class="n">with_extension</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        
+        <span class="k">if</span> <span class="n">with_extension</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">filename</span></div>
+        
+
+<div class="viewcode-block" id="directory"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.directory">[docs]</a><span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="n">in_path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the directory component of the given path.</span>
+
+<span class="sd">    Checks the given path to see if it has a file or not. </span>
+<span class="sd">    </span>
+<span class="sd">    If there is no file component in the path it will return the path as-is. </span>
+
+<span class="sd">    If there is no directory component in the file it will return a </span>
+<span class="sd">    blank string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        in_path (str): the path to extract the directory from.   </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Str - directory component of the given file path.</span>
+<span class="sd">    </span>
+<span class="sd">    TODO:</span>
+<span class="sd">        Is there any way to tell if it&#39;s only a directory without being able to</span>
+<span class="sd">        check that it exists and it doesn&#39;t end in a slash?</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If the path ends in one of the os designated separators, such as &#39;\&#39;, </span>
+    <span class="c1"># &#39;\\&#39;, or &#39;/&#39; then it&#39;s already the directory.</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+    <span class="k">if</span> <span class="n">sep</span> <span class="ow">in</span> <span class="n">in_path</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]:</span>
+        <span class="k">return</span> <span class="n">in_path</span>
+    
+    <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">in_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dirname</span></div>
+
+
+<div class="viewcode-block" id="PathHolder"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder">[docs]</a><span class="k">class</span> <span class="nc">PathHolder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for storing file paths.</span>
+<span class="sd">    </span>
+<span class="sd">    This holds a range of useful path variables, such as:</span>
+<span class="sd">    # file name</span>
+<span class="sd">    # directory</span>
+<span class="sd">    # full path</span>
+<span class="sd">    # extension</span>
+<span class="sd">    #etc</span>
+<span class="sd">    </span>
+<span class="sd">    Contains functions useful for extracting and updating parts of a file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># FilePathTypes constants</span>
+    <span class="n">ABSOLUTE</span><span class="p">,</span> <span class="n">RELATIVE</span><span class="p">,</span> <span class="n">DIRECTORY</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">EXTENSION</span><span class="p">,</span> <span class="n">NAME_AND_EXTENSION</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> 
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): the path to the file that this object holds the meta </span>
+<span class="sd">                data for.</span>
+<span class="sd">            root (str): Optional - the path to the directory that is the root </span>
+<span class="sd">                of this file. Most tuflow files are referenced relative to the </span>
+<span class="sd">                file that they are called from. The root will allow for an </span>
+<span class="sd">                absolute path to be created from the relative path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c1">#         if not isinstance(path, basestring):</span>
+<span class="c1">#         if not type(path) in (str, unicode):</span>
+<span class="c1">#             raise TypeError</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_as_read</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="c1">#         self.parent_relative_root = &#39;&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setupVars</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    
+    <span class="k">def</span> <span class="nf">_setupVars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets up everything.</span>
+<span class="sd">        </span>
+<span class="sd">        Extracts everything that we need to get from the inputs given to the</span>
+<span class="sd">        constructor. Including the directory, filename and extension.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): the path to create this object for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_as_read</span> <span class="o">=</span> <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span> 
+            <span class="n">root</span> <span class="o">=</span> <span class="n">directory</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setFilename</span><span class="p">(</span><span class="n">getFileName</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">with_extension</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">=</span> <span class="n">directory</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setFilename</span><span class="p">(</span><span class="n">getFileName</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    
+    
+<span class="c1">#     def getFinalFolder(self):</span>
+<div class="viewcode-block" id="PathHolder.finalFolder"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.finalFolder">[docs]</a>    <span class="k">def</span> <span class="nf">finalFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the last folder in the path.</span>
+
+<span class="sd">        If the relative_root variable is set it will be taken from that. </span>
+<span class="sd">        Otherwise if it is not and the root variable is set it will be taken </span>
+<span class="sd">        from that. If nether are set it will return False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple - the first part of the directory path and the final </span>
+<span class="sd">                folder in the directory path for this file, or False if the </span>
+<span class="sd">                variable has not been set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">final_folder</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">final_folder</span> <span class="o">=</span> <span class="n">finalFolder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">final_folder</span> <span class="o">=</span> <span class="n">finalFolder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_folder</span></div>
+    
+    
+<div class="viewcode-block" id="PathHolder.setFinalFolder"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.setFinalFolder">[docs]</a>    <span class="k">def</span> <span class="nf">setFinalFolder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the final folder in the directory path to the given name</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            folder_name (str): the new name for the final folder in the path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">=</span> <span class="n">setFinalFolder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">setFinalFolder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">folder_name</span><span class="p">)</span></div>
+            
+    
+<span class="c1">#     def getAbsolutePath(self, filename=None, relative_roots=[], normalize=True):</span>
+<div class="viewcode-block" id="PathHolder.absolutePath"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.absolutePath">[docs]</a>    <span class="k">def</span> <span class="nf">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">relative_roots</span><span class="o">=</span><span class="p">[],</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the absolute path of the file path stored in this object.</span>
+
+<span class="sd">        If there is no root variables set it will return False because there</span>
+<span class="sd">        is no way of knowing what the absolute path will be.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename: Optional - if a different file name to the one </span>
+<span class="sd">                currently stored in this object is required it can be </span>
+<span class="sd">                specified with this variable.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str - absolute path of this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">()</span>
+        
+        <span class="n">outpath</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">relative_roots</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="c1">#         if not self.root == None and not self.relative_root == None:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">]</span> <span class="o">+</span> <span class="n">relative_roots</span> <span class="o">+</span> <span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+                <span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">paths</span><span class="p">)</span>
+<span class="c1">#             return os.path.join(self.root, self.parent_relative_root, </span>
+<span class="c1">#                                         self.relative_root, filename)</span>
+
+
+<span class="c1">#             if not filename == None:</span>
+<span class="c1">#                 return os.path.join(self.root, self.parent_relative_root, </span>
+<span class="c1">#                                         self.relative_root, filename)</span>
+<span class="c1">#             </span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 return os.path.join(self.root, self.parent_relative_root,</span>
+<span class="c1">#                             self.relative_root, self.filenameAndExtension())</span>
+        
+<span class="c1">#         elif not self.root == None and self.relative_root == None:</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+                <span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+<span class="c1">#             if not filename == None:</span>
+<span class="c1">#                 return os.path.join(self.root, filename)</span>
+<span class="c1">#             </span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 return os.path.join(self.root, self.filenameAndExtension())</span>
+        
+        <span class="k">return</span> <span class="n">outpath</span></div>
+<span class="c1">#         else:</span>
+<span class="c1">#             return outpath</span>
+        
+    
+<span class="c1">#     def getDirectory(self):</span>
+<div class="viewcode-block" id="PathHolder.directory"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.directory">[docs]</a>    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the directory of the file path stored in this object.</span>
+
+<span class="sd">        This makes sure that the correct path, taking into consideration any</span>
+<span class="sd">        relative path links to the main root, is returned.</span>
+
+<span class="sd">        If there is no root variable set it will return False because there</span>
+<span class="sd">        is no way of knowing what the absolute path should be.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str - absolute path of this object without the file name, or</span>
+<span class="sd">                 False if no root variables have been set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">)</span>
+        
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+        
+    
+<span class="c1">#     def getRelativePath(self, with_extension=True, filename=None):</span>
+<div class="viewcode-block" id="PathHolder.relativePath"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.relativePath">[docs]</a>    <span class="k">def</span> <span class="nf">relativePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_extension</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the full relative root with filename for this object.</span>
+
+<span class="sd">        </span>
+<span class="sd">        If a relative root was given to the constructor or set later this will </span>
+<span class="sd">        return it, otherwise it will return False.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            with_extension=True (bool): append the extension to the end of the</span>
+<span class="sd">                path if True.</span>
+<span class="sd">            filename=None (str): if a different file name to the one </span>
+<span class="sd">                currently stored in this object is required it can be </span>
+<span class="sd">                specified with this variable.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str - relative path of this object or False if there is no</span>
+<span class="sd">                 relative path set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>            
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">with_extension</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="kc">False</span></div>
+    
+    
+<span class="c1">#     def getFileNameAndExtension(self):</span>
+<div class="viewcode-block" id="PathHolder.filenameAndExtension"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.filenameAndExtension">[docs]</a>    <span class="k">def</span> <span class="nf">filenameAndExtension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the file name with the file extension appended.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str - file name with the extension appended or a blank string if</span>
+<span class="sd">                 the file name does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+        
+
+<span class="c1">#     def setPathsWithAbsolutePath(self, absolute_path, keep_relative_root=False):</span>
+<div class="viewcode-block" id="PathHolder.setAbsolutePath"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.setAbsolutePath">[docs]</a>    <span class="k">def</span> <span class="nf">setAbsolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">absolute_path</span><span class="p">,</span> <span class="n">keep_relative_root</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the absolute path of this object.</span>
+<span class="sd">        </span>
+<span class="sd">        Takes an absolute path and set the file variables in this object with</span>
+<span class="sd">        it. </span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            This function WILL NOT check that the path exists. If the path used </span>
+<span class="sd">            to call this function must exist it is the responsibility of the </span>
+<span class="sd">            caller to check this.</span>
+<span class="sd">            </span>
+<span class="sd">        keep_relative_root variable information:</span>
+
+<span class="sd">        If a relative root is not set to None it will be included in any path </span>
+<span class="sd">        that is returned by this object. i.e. when an absolute path is </span>
+<span class="sd">        returned by this object it will return: </span>
+<span class="sd">        </span>
+<span class="sd">        path + relativepath + filename + extension</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            absolute_path (str): the new absolute path to use to set the file</span>
+<span class="sd">                variables in this object.</span>
+<span class="sd">            keep_relative_root=False (Bool): if a relative root exists for </span>
+<span class="sd">                this object it will be set to None unless this variable is </span>
+<span class="sd">                set to True.         &quot;&quot;&quot;</span>
+        <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">absolute_path</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_relative_root</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">=</span> <span class="kc">None</span></div>
+    
+    
+<span class="c1">#     def setFileName(self, filename, has_extension=False, keep_extension=False):</span>
+<div class="viewcode-block" id="PathHolder.setFilename"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.setFilename">[docs]</a>    <span class="k">def</span> <span class="nf">setFilename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">has_extension</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_extension</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the filename variables with the given file name.</span>
+
+<span class="sd">        The caller can provide a filename with or without an extension and choose</span>
+<span class="sd">        whether to keep the extension on the file or not.</span>
+<span class="sd">        </span>
+<span class="sd">        has_extension will only be checked if keep_extension == False.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): the new filename to set.</span>
+<span class="sd">            has_extension=False (Bool): whether the filename has a file </span>
+<span class="sd">                extension or not. This should be set to True if an extension </span>
+<span class="sd">                exists. Otherwise the filename will be corrupted. </span>
+<span class="sd">            keep_extension: if the caller want to keep the extension on the </span>
+<span class="sd">               given filename this should be True. Otherwise the file extension</span>
+<span class="sd">               on the new filename will be discarded.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">keep_extension</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">has_extension</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span></div>
+            
+
+<span class="c1">#     def getPathExists(self, ext=None):</span>
+<div class="viewcode-block" id="PathHolder.pathExists"><a class="viewcode-back" href="../../../ship.utils.html#ship.utils.filetools.PathHolder.pathExists">[docs]</a>    <span class="k">def</span> <span class="nf">pathExists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Test whether the path exists..</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            If not self.root variable is set for this object then it is </span>
+<span class="sd">            impossible to know if the path exists or not, so it will always</span>
+<span class="sd">            return False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the path exists or False if it cannot be found or there</span>
+<span class="sd">                has not been a root variable set for this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+           
+            <span class="c1"># If we have a relative root we need to use that as well. if the </span>
+            <span class="c1"># relative root shouldn&#39;t be used we will have had a new root set</span>
+            <span class="c1"># and the relative root set to None in the setAbsolutePath()</span>
+            <span class="c1"># function. </span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relative_root</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">ext</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+    
+    
+    
+    
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

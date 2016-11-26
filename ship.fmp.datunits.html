@@ -1,0 +1,2375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.datunits package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship.fmp package" href="ship.fmp.html"/>
+        <link rel="next" title="ship.tuflow package" href="ship.tuflow.html"/>
+        <link rel="prev" title="ship.fmp package" href="ship.fmp.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ship.fmp.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.datcollection">ship.fmp.datcollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.ief">ship.fmp.ief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.isisunitfactory">ship.fmp.isisunitfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+          <li><a href="ship.fmp.html">ship.fmp package</a> &raquo;</li>
+      
+    <li>ship.fmp.datunits package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.fmp.datunits.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-fmp-datunits-package">
+<h1>ship.fmp.datunits package<a class="headerlink" href="#ship-fmp-datunits-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.fmp.datunits.bridgeunit">
+<span id="ship-fmp-datunits-bridgeunit-module"></span><h2>ship.fmp.datunits.bridgeunit module<a class="headerlink" href="#module-ship.fmp.datunits.bridgeunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the BridgeUnit, BridgeUspbrUnit and BridgeArchUnit classed.
+The BridgeUnit is a superclass to the other containing default shared
+behaviour and content.
+These hold all of the data read in from the bridge units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit">
+<em class="property">class </em><code class="descname">BridgeUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Subclass of AUnit storing Isis Bridge Unit data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This really an abstract class for any bridge unit and is not really
+intended to be used directly.</p>
+</div>
+<p>Contains a reference to a rowdatacollection for storing and
+accessing all the row data. i.e. the geometry data for the section,
+containing the chainage, elevation, roughness, etc values.
+Methods for accessing the data in these objects and adding removing rows
+are available.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'bridge'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'bridge'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new row to one of this bridge units row_collection&#8217;s.</p>
+<p>The new row will be added at the given index. If no index is given it
+will be appended to the end of the collection.</p>
+<p>If no chainage or elevation values are given an AttributeError will be
+raised as they cannot have default values. All other values can be
+ommitted. If they are they will be given defaults.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ship.fmp.datunits.rdt</span> <span class="k">as</span> <span class="nn">rdt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unit</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span><span class="mf">36.2</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.rdt with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; the row to insert into. The existing row at the
+given index will be moved up by one.</li>
+<li><strong>collection_name=None</strong> (<em>str</em>) &#8211; If None the self.row_collection
+with the bridges geometry data will be updated. If a string it
+will be looked for in the self.additional_row_collections
+dictionary or raise an AttributeError if it doesn&#8217;t exist.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; If required values are not given for the rowdata_key
+collection. See _checkRowKeys().</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; if the collection_name does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.area">
+<code class="descname">area</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cross sectional area of the bridge openings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>Dict - containing the area of the opening(s). keys = &#8216;total&#8217;, then</dt>
+<dd>&#8216;1&#8217;, &#8216;2&#8217;, &#8216;n&#8217; for all openings found.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.checkOpening">
+<code class="descname">checkOpening</code><span class="sig-paren">(</span><em>data_obj</em>, <em>value</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.checkOpening"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.checkOpening" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures that the bridge opening values are ok.</p>
+<p>OPEN_END must be &gt; OPEN_START on the same row.
+OPEN_START must be &gt; than OPEN_END on a previous row.
+OPEN_END must be &gt; OPEN_START on a previous row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_obj</strong> (<em>RowDataObj</em>) &#8211; to check the values for.</li>
+<li><strong>value</strong> (<em>float</em>) &#8211; the new value to check.</li>
+<li><strong>index</strong> (<em>int</em>) &#8211; the index the value will be inserted or updated at.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError - if value failes tests at index.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the data in this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit - getData()</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">String list - output data formated the same as in the .DAT file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.numberOfOpenings">
+<code class="descname">numberOfOpenings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.numberOfOpenings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.numberOfOpenings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data into the geometry objects.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The section of the isis dat file pertaining to
+this section.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.setupRowData">
+<code class="descname">setupRowData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.setupRowData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.setupRowData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup the main geometry and opening RowCollection&#8217;s.</p>
+<p>These are used by all BridgeUnits, but they&#8217;re added to a method called
+by the constructor in cases anyone need to override them.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow">
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>collection_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the row at the given index in the river units row_collection.</p>
+<p>The row will be updated at the given index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index</strong> &#8211; the row to update.</li>
+<li><strong>collection_name=None</strong> (<em>str</em>) &#8211; If None the self.row_collection
+with the bridges geometry data will be updated. If a string it
+will be looked for in the self.additional_row_collections
+dictionary or raise an AttributeError if it doesn&#8217;t exist.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; If collection_name key does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitArch">
+<em class="property">class </em><code class="descname">BridgeUnitArch</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnitArch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitArch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.bridgeunit.BridgeUnit" title="ship.fmp.datunits.bridgeunit.BridgeUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.bridgeunit.BridgeUnit</span></code></a></p>
+<p>Concrete implementation of BridgeUnit for USBPR type bridges.</p>
+<p>Contains methods that override superclass with USBPR specific variables
+and file read/write behaviour.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitArch.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'BRIDGE'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitArch.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitArch.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = 'ARCH'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitArch.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitArch.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'bridge'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitArch.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitArch.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'arch'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitArch.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr">
+<em class="property">class </em><code class="descname">BridgeUnitUsbpr</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnitUsbpr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.bridgeunit.BridgeUnit" title="ship.fmp.datunits.bridgeunit.BridgeUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.bridgeunit.BridgeUnit</span></code></a></p>
+<p>Concrete implementation of BridgeUnit for USBPR type bridges.</p>
+<p>Contains methods that override superclass with USBPR specific variables
+and file read/write behaviour.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'BRIDGE'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = 'USBPR1978'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'bridge'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'usbpr'</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.checkOrifice">
+<code class="descname">checkOrifice</code><span class="sig-paren">(</span><em>data_obj</em>, <em>value</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnitUsbpr.checkOrifice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.checkOrifice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.bridgeunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B27990&gt;</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.culvertunit">
+<span id="ship-fmp-datunits-culvertunit-module"></span><h2>ship.fmp.datunits.culvertunit module<a class="headerlink" href="#module-ship.fmp.datunits.culvertunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the Culvert unit type classes.
+This holds all of the data read in from the culvert units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnit">
+<em class="property">class </em><code class="descname">CulvertUnit</code><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Class for dealing with Inlet Culvert units in the .dat file.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'CULVERT'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'culvert'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'culvert'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet">
+<em class="property">class </em><code class="descname">CulvertUnitInlet</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitInlet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.culvertunit.CulvertUnit" title="ship.fmp.datunits.culvertunit.CulvertUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.culvertunit.CulvertUnit</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'CULVERT'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = 'INLET'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'culvert'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'culvert_inlet'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitInlet.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the formatted data for this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitInlet.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitInlet.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitInlet.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitInlet.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet">
+<em class="property">class </em><code class="descname">CulvertUnitOutlet</code><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitOutlet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.culvertunit.CulvertUnit" title="ship.fmp.datunits.culvertunit.CulvertUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.culvertunit.CulvertUnit</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.CATEGORY">
+<code class="descname">CATEGORY</code><em class="property"> = 'culvert'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'CULVERT'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = 'OUTLET'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'culvert_outlet'</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitOutlet.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the formatted data for this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitOutlet.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.culvertunit.CulvertUnitOutlet.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/culvertunit.html#CulvertUnitOutlet.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.culvertunit.CulvertUnitOutlet.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.culvertunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B35510&gt;</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.gisinfounit">
+<span id="ship-fmp-datunits-gisinfounit-module"></span><h2>ship.fmp.datunits.gisinfounit module<a class="headerlink" href="#module-ship.fmp.datunits.gisinfounit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the GisInfoUnit, as subclass of isisunit.
+It&#8217;s used to hold the details in the gis section of the dat file which
+sets up the ixy or gxy files.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Not really implemented at the moment - see class TODO.</p>
+</div>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit">
+<em class="property">class </em><code class="descname">GisInfoUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/gisinfounit.html#GisInfoUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>isisunit for storing the GIS info.</p>
+<p>Stores the GIS info found at the bottom of .dat file.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Reads the file by simply parsing until it reaches EOF. This isn&#8217;t
+necessarily the case as there can be information about photos
+attached to the model below it. Be careful of this.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit</p>
+</div>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Actually do something with this class. At the moment it might as well
+be an UnknownSection.</p>
+</div>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'GISINFO'</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'gis_info'</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'gis_info'</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/gisinfounit.html#GisInfoUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.gisinfounit.GisInfoUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/gisinfounit.html#GisInfoUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.GisInfoUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.gisinfounit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B27350&gt;</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.htbdyunit">
+<span id="ship-fmp-datunits-htbdyunit-module"></span><h2>ship.fmp.datunits.htbdyunit module<a class="headerlink" href="#module-ship.fmp.datunits.htbdyunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the HtbdyUnit class.
+This holds all of the data read in from the HTBDY units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan R.</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit">
+<em class="property">class </em><code class="descname">HtbdyUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Concrete implementation of AUnit storing Isis HTBDY Unit data.</p>
+<p>Contains a reference to a rowdatacollection for storing and
+accessing all the row data. i.e. the stage-time data for the section.
+Methods for accessing the data in these objects and adding removing rows
+are available.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit</p>
+</div>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'HTBDY'</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'boundary_ds'</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'htbdy'</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>data_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Args:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObjects.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the data in this unit.</p>
+<p>The String[] returned is formatted for printing in the fashion
+of the .dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of output data formated the same as in the .DAT file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data into the geometry objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The part of the isis dat file pertaining to
+this section</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit - readUnitData()</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.htbdyunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B35810&gt;</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.initialconditionsunit">
+<span id="ship-fmp-datunits-initialconditionsunit-module"></span><h2>ship.fmp.datunits.initialconditionsunit module<a class="headerlink" href="#module-ship.fmp.datunits.initialconditionsunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the InitialConditionsUnit class.
+This is a holder for all of the data in the initial conditions section
+of the dat file.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">Not fully implemented at the moment - see class TODO comment for details.</p>
+</div>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit">
+<em class="property">class </em><code class="descname">InitialConditionsUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>isisunit for storing the initial conditions.</p>
+<p>Stores the initial conditions data; near the end of the .dat file.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'INITIAL'</em><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'initial_conditions'</em><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'initial_conditions'</em><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>unit_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new row to the InitialCondition units row_collection.</p>
+<p>The new row will be added at the given index. If no index is given it
+will be appended to the end of the collection.</p>
+<p>If no LABEL value is given a AttributeError will be raised as it
+cannot have a default value. All other values can be ommitted. If they
+are they will be given defaults.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ship.fmp.datunits.ROW_DATA_TYPES</span> <span class="k">as</span> <span class="nn">rdt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ics</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">:</span><span class="n">UNITNAME</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">STAGE</span><span class="p">:</span><span class="mf">10.2</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; If LABEL is not given.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName">
+<code class="descname">deleteRowByName</code><span class="sig-paren">(</span><em>unit_name</em>, <em>unit_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.deleteRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete one of the RowDataCollection objects in the row_collection.</p>
+<p>This calls the AUnit deleteRow method, but obtains the index
+of the row to be deleted from the name first.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section_name</strong> (<em>str</em>) &#8211; the name of the AUnit to be removed from
+the initial conditions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">KeyError - if section_name does not exist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.node_count">
+<code class="descname">node_count</code><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.node_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.rowByName">
+<code class="descname">rowByName</code><span class="sig-paren">(</span><em>section_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.rowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.rowByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the data vals in a particular row by name.</p>
+<p>This is the same functionality as the AUnit&#8217;s getRow(int) method
+which returns a row in the RowDataCollection by the index value given.
+In this case it will find the index based on the section label and
+return the same dictionary of row values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section_name</strong> (<em>str</em>) &#8211; the name of the AUnit to be removed from
+the initial conditions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict - containing the values for the requested row.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow">
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the row at the given index in the row_collection.</p>
+<p>Changes the state of the values in the initial conditions list of
+the .dat file at the given index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index</strong> &#8211; the row to update.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName">
+<code class="descname">updateRowByName</code><span class="sig-paren">(</span><em>row_vals</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the row for the entry with the give name.</p>
+<p>Changes the state of the values in the initial conditions list for the
+the .dat file for the unit with the given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>name</strong> &#8211; the name of the unit who&#8217;s ic&#8217;s should be updated.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; If the given name doesn&#8217;t exists in the collection.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.interpolateunit">
+<span id="ship-fmp-datunits-interpolateunit-module"></span><h2>ship.fmp.datunits.interpolateunit module<a class="headerlink" href="#module-ship.fmp.datunits.interpolateunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the InterpolateUnit class.
+These hold all of the data read in from the interpolate units in the dat
+file.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>23 July 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit">
+<em class="property">class </em><code class="descname">InterpolateUnit</code><a class="reference internal" href="_modules/ship/fmp/datunits/interpolateunit.html#InterpolateUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Class for dealing with Interpolate units in the .dat file.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'INTERPOLATE'</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'interpolate'</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'interpolate'</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/interpolateunit.html#InterpolateUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the formatted data for this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.interpolateunit.InterpolateUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/interpolateunit.html#InterpolateUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.InterpolateUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.interpolateunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B35910&gt;</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.isisunit">
+<span id="ship-fmp-datunits-isisunit-module"></span><h2>ship.fmp.datunits.isisunit module<a class="headerlink" href="#module-ship.fmp.datunits.isisunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the AUnit, CommentUnit, HeaderUnit and UnknownSection
+classes.
+The AUnit is an abstract base class for all types of Isis unit read
+in through the ISIS data file. All section types that are built should
+inherit from the AUnit baseclass.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.isisunit.AUnit">
+<em class="property">class </em><code class="descname">AUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Abstract base class for all Dat file units.</p>
+<p>This class must be inherited by all classes representing an isis
+data file unit (such as River, Junction, Culvert, etc).</p>
+<p>Every subclass should override the readUnitData() and getData() methods to
+ensure they are specific to the setup of the individual units variables.
+If they are not overridden this class will simply take the data and store it
+as read and provide it back in the same state.</p>
+<p>All calls from the client to these classes should create the object and then
+call the readUnitData() method with the raw data.</p>
+<p>There is an UknownSection class at the bottom of this file that can be used
+for all parts of the isis dat file that have not had a class defined. It just
+calls the basic read-in read-out methods from this class and understands nothing
+about the structure of the file section it is holding.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">UnknownSection</p>
+</div>
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new data row to one of the row data collections.</p>
+<p>Provides the basics of a function for adding additional row dat to one
+of the RowDataCollection&#8217;s held by an AUnit type.</p>
+<p>Checks that key required variables: ROW_DATA_TYPES.CHAINAGE amd
+ROW_DATA_TYPES.ELEVATION are in the kwargs and that inserting chainge in
+the specified location is not negative, unless check_negatie == False.</p>
+<p>It then passes the kwargs directly to the RowDataCollection&#8217;s
+addNewRow function. It is the concrete class implementations
+respnsobility to ensure that these are the expected values for it&#8217;s
+row collection and to set any defaults. If they are not as expected by
+the RowDataObjectCollection a ValueError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>row_vals</strong> (<em>dict</em>) &#8211; Named arguments required for adding a row to the
+collection. These will be as stipulated by the way that a
+concrete implementation of this class setup the collection.</li>
+<li><strong>rowdata_key='main'</strong> (<em>str</em>) &#8211; the name of the RowDataCollection
+held by this to add the new row to. If None it is the
+self.row_collection. Otherwise it is the name of one of the
+entries in the self.additional_row_collections dictionary.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; the index in the RowDataObjectCollection to insert
+the row into. If None it will be appended to the end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.checkIncreases">
+<code class="descname">checkIncreases</code><span class="sig-paren">(</span><em>data_obj</em>, <em>value</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.checkIncreases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.checkIncreases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that: prev_value &lt; value &lt; next_value.</p>
+<p>If the given value is not greater than the previous value and less
+than the next value it will return False.</p>
+<p>If an index greater than the number of rows in the row_data it will
+check that it&#8217;s greater than previous value and return True if it is.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">the ARowDataObject class accepts a callback function called
+update_callback which is called whenever an item is added or
+updated. That is how this method is generally used.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_obj</strong> (<em>RowDataObject</em>) &#8211; containing the values to check against.</li>
+<li><strong>value</strong> (<em>float | int</em>) &#8211; the value to check.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; index to check ajacent values against. If None
+it will assume the index is the last on in the list.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">False if not prev_value &lt; value &lt; next_value. Otherwise True.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of this unit with it&#8217;s own memory allocation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.deleteRow">
+<code class="descname">deleteRow</code><span class="sig-paren">(</span><em>index</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.deleteRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.deleteRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a data row from the RowDataCollection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the unit data.</p>
+<p>Return the file geometry data formatted ready for saving in the style
+of an ISIS .dat file</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method should be overriden by the sub class to restore the
+data to the format required by the dat file.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings - formatted for writing to .dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.has_ics">
+<code class="descname">has_ics</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.has_ics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.has_row_data">
+<code class="descname">has_row_data</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.has_row_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.head_data">
+<code class="descname">head_data</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.head_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary containing set values that are always present in the file.</p>
+<p>In a RiverUnit this includes values like slope and distance. I.e.
+values that appear in set locations, usually at the top of the unit
+data in the .dat file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the initial_conditions values for this object.</p>
+<p>This method should be overriden by all classes that contain intial
+conditions.</p>
+<p>For example a BridgeUnit type will have two initial conditions labels;
+the upstream and downstream label names.</p>
+<p>By default this will return an empty list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list - of intial condition label names.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.name">
+<code class="descname">name</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.name_ds">
+<code class="descname">name_ds</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.name_ds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>data</em>, <em>file_line</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data supplied to the object.</p>
+<p>This method is called by the IsisUnitFactory class when constructing the
+Isis  unit based on the data passed in from the dat file.
+The default hook just copies all the data parsed in the buildUnit()
+method of the factory and aves it to the given unit. This is exactly
+what happens for the UnknownUnit class that just maintains a copy of the
+unit data exactly as it was read in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>list</em>) &#8211; raw data for the section as supplied to the class.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When a class inherits from AUnit it should override this method
+with unit specific load behaviour. This is likely to include:
+populate unit specific header value dictionary and in some units
+creating row data object.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt>RiverSection for an example of overriding this method with a</dt>
+<dd>concrete class.</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.row">
+<code class="descname">row</code><span class="sig-paren">(</span><em>index</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the data vals in a particular row by index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>int</em>) &#8211; the index of the row to return.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict - containing the values for the requested row.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.rowDataObj">
+<code class="descname">rowDataObj</code><span class="sig-paren">(</span><em>key</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.rowDataObj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.rowDataObj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the row data object as a list.</p>
+<p>This will return the row_collection data object referenced by the key
+provided in list form.</p>
+<p>If you intend to update the values you should use getRowDataObject
+instead as the data provided will be mutable and therefore reflected in
+the values held by the row_collection. If you just want a quick way to
+loop through the values in one of the data objects  and only intend to
+read the data then use this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>int</em>) &#8211; the key for the data object requested. It is best to use
+the class constants (i.e. RiverUnit.CHAINAGE) for this.</li>
+<li><strong>rowdata_key</strong> (<em>str</em>) &#8211; key to a RowDataCollection in row_data.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>List containing the data in the DataObject that the key points</dt>
+<dd><p class="first last">to. Returns false if there is no row collection.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; If key or rowdata_key don&#8217;t exist.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.row_data">
+<code class="descname">row_data</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.row_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection containing all of the ADataRow objects.</p>
+<p>This is the main collection for row data in any unit that contains it.
+In a RiverUnit, for example, this will hold the RowDataObject&#8217;s
+containing the CHAINAGE, ELEVATION, etc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.unit_category">
+<code class="descname">unit_category</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.unit_category" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.AUnit.unit_type">
+<code class="descname">unit_type</code><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.unit_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.updateRow">
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit">
+<em class="property">class </em><code class="descname">CommentUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#CommentUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Holds the data in COMMENT sections of the .dat file.</p>
+<p>This is very similar to the UnknownSection in that all it does is grab the
+data between the comment tags and save it. It then prints out the same data
+in the same format with the COMMENT tags around it.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'COMMENT'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'meta'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'comment'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.addCommentText">
+<code class="descname">addCommentText</code><span class="sig-paren">(</span><em>text</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#CommentUnit.addCommentText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.addCommentText" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#CommentUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.CommentUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#CommentUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.CommentUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit">
+<em class="property">class </em><code class="descname">HeaderUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#HeaderUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>This class deals with the data file values at the top of the file.</p>
+<p>These contain the global variables for the model such as water temperature,
+key matrix coefficients and the total number of nodes.</p>
+<p>There is only ever one of these units in every dat file - at the very top -
+so it seems convenient to put it in this module.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'HEADER'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'meta'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'header'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#HeaderUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for the formatted data to write back to the .dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List - data formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.HeaderUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#HeaderUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.HeaderUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.isisunit.UnknownUnit">
+<em class="property">class </em><code class="descname">UnknownUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#UnknownUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.UnknownUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Catch all section for unknown parts of the .dat file.</p>
+<p>This can be used for all sections of the isis dat file that have not had
+a unit class constructed.</p>
+<p>It has no knowledge of the file section that it contains and will store it
+without altering it&#8217;s state and return it in exactly the same format that it
+received it.</p>
+<p>This class is designed to be a fall-back class for any parts of the dat file
+for which it is deemed unnecessary to deal with more carefully.</p>
+<p>It has a &#8216;Section&#8217; suffix rather that &#8216;Unit&#8217; which is the naming convention
+for the other unit objects because it is not necessarily a single unit. It
+could be many different units.</p>
+<p>It is created whenever the DatLoader finds
+parts of the dat file that it doesn&#8217;t Know how to load (i.e. there is no
+<a href="#id1"><span class="problematic" id="id2">*</span></a>Unit defined for it. It will then put all the dat file data in one of these
+until it reaches a part of the file that it does recognise.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.UnknownUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'UNKNOWN'</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.UnknownUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.isisunit.UnknownUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.UnknownUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.UnknownUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#UnknownUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.UnknownUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.UnknownUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#UnknownUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.UnknownUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.isisunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10270&gt;</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.junctionunit">
+<span id="ship-fmp-datunits-junctionunit-module"></span><h2>ship.fmp.datunits.junctionunit module<a class="headerlink" href="#module-ship.fmp.datunits.junctionunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the JuntionUnit type classes.
+This holds all of the data read in from the junction units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit">
+<em class="property">class </em><code class="descname">JunctionUnit</code><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Class for dealing with Junction units in the .dat file.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'JUNCTION'</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'junction'</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'junction'</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the formatted data for this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.junctionunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B270F0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.orificeunit">
+<span id="ship-fmp-datunits-orificeunit-module"></span><h2>ship.fmp.datunits.orificeunit module<a class="headerlink" href="#module-ship.fmp.datunits.orificeunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Contains the OrificeUnit type classes.
+This holds all of the data read in from the orifice units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</p>
+<p class="last">The OutfallUnit is also in here. It has the same setup as the OrificeUnit
+so it subclasses orifice.</p>
+</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.orificeunit.FloodReliefUnit">
+<em class="property">class </em><code class="descname">FloodReliefUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#FloodReliefUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.FloodReliefUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.orificeunit.OrificeUnit" title="ship.fmp.datunits.orificeunit.OrificeUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.orificeunit.OrificeUnit</span></code></a></p>
+<p>Class for dealing with flood relief arch units in the .dat file.</p>
+<p>Subclasses the orifice unit because they are essentially the same as far
+as the .dat file setup goes.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.FloodReliefUnit.CATEGORY">
+<code class="descname">CATEGORY</code><em class="property"> = 'orifice'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.FloodReliefUnit.CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.FloodReliefUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'FLOOD RELIEF'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.FloodReliefUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.FloodReliefUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.FloodReliefUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.FloodReliefUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'flood_relief'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.FloodReliefUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit">
+<em class="property">class </em><code class="descname">OrificeUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Class for dealing with Orifice units in the .dat file.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'ORIFICE'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'orifice'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'orifice'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the formatted data for this unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formatted for writing to the new dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the given data into the object.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">isisunit.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The raw file data to be processed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.fmp.datunits.orificeunit.OutfallUnit">
+<em class="property">class </em><code class="descname">OutfallUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OutfallUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OutfallUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.orificeunit.OrificeUnit" title="ship.fmp.datunits.orificeunit.OrificeUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.orificeunit.OrificeUnit</span></code></a></p>
+<p>Class for dealing with Outfall units in the .dat file.</p>
+<p>Subclasses the orifice unit because they are essentially the same as far
+as the .dat file setup goes.</p>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OutfallUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'OUTFALL'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OutfallUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OutfallUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OutfallUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OutfallUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'orifice'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OutfallUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.orificeunit.OutfallUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'outfall'</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OutfallUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.orificeunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B35230&gt;</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.refhunit">
+<span id="ship-fmp-datunits-refhunit-module"></span><h2>ship.fmp.datunits.refhunit module<a class="headerlink" href="#module-ship.fmp.datunits.refhunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the Refh class.
+This holds all of the data read in from the refh units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit">
+<em class="property">class </em><code class="descname">RefhUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/refhunit.html#RefhUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Concrete implementation of AUnit storing Isis River Unit
+data.</p>
+<p>Contains a reference to a rowdatacollection for storing and
+accessing all the row data. i.e. the geometry data for the section,
+containing the chainage, elevation, roughness, etc values.</p>
+<p>Methods for accessing the data in these objects and adding removing rows
+are available.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit</p>
+</div>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'REFHBDY'</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'inflows'</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'refh'</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/refhunit.html#RefhUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the data in this unit.</p>
+<p>The String[] returned is formatted for printing in the fashion
+of the .dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formated for writing to .dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.refhunit.RefhUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/refhunit.html#RefhUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.refhunit.RefhUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data into the geometry objects.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit - readUnitData for more information.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The section of the isis dat file pertaining
+to this section</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.refhunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B27FF0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.riverunit">
+<span id="ship-fmp-datunits-riverunit-module"></span><h2>ship.fmp.datunits.riverunit module<a class="headerlink" href="#module-ship.fmp.datunits.riverunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the RiverUnit class.
+This holds all of the data read in from the river units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit">
+<em class="property">class </em><code class="descname">RiverUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Concrete implementation of AUnit storing Isis River Unit
+data.</p>
+<p>Contains a reference to a rowdatacollection for storing and
+accessing all the row data. i.e. the geometry data for the section,
+containing the chainage, elevation, roughness, etc values.</p>
+<p>Methods for accessing the data in these objects and adding removing rows
+are available.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit</p>
+</div>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'RIVER'</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = 'SECTION'</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'river'</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'river'</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new row to the river units row_data.</p>
+<p>The new row will be added at the given index. If no index is given it
+will be appended to the end of the collection.</p>
+<p>If no chainage or elevation values are given a AttributeError will be
+raised as they cannot have default values. All other values can be
+ommitted. If they are they will be given defaults.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ship.fmp.datunits.ROW_DATA_TYPES</span> <span class="k">as</span> <span class="nn">rdt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">river_unit</span><span class="o">.</span><span class="n">addDataRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span><span class="mf">36.2</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; the row to insert into. The existing row at the
+given index will be moved up by one.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; If CHAINAGE or ELEVATION are not given.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the data in this unit.</p>
+<p>The String[] returned is formatted for printing in the fashion
+of the .dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">List of strings formated for writing to .dat file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.head_data">
+<code class="descname">head_data</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.head_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the new row data types to the object collection
+All of them must have type, output format, and position
+in the row all other arguments are excepted as <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data into the geometry objects.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit - readUnitData for more information.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The section of the isis dat file pertaining
+to this section</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.updateRow">
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the row at the given index in the river units row_data.</p>
+<p>The row will be updated at the given index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index</strong> &#8211; the row to update.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211; If CHAINAGE or ELEVATION are not given.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObject&#8217;s.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.riverunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10F70&gt;</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits.spillunit">
+<span id="ship-fmp-datunits-spillunit-module"></span><h2>ship.fmp.datunits.spillunit module<a class="headerlink" href="#module-ship.fmp.datunits.spillunit" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains the SpillUnit class.
+This holds all of the data read in from the spill units in the dat file.
+Can be called to load in the data and read and update the contents
+held in the object.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan R.</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit">
+<em class="property">class </em><code class="descname">SpillUnit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.fmp.datunits.isisunit.AUnit" title="ship.fmp.datunits.isisunit.AUnit"><code class="xref py py-class docutils literal"><span class="pre">ship.fmp.datunits.isisunit.AUnit</span></code></a></p>
+<p>Concrete implementation of AUnit storing Isis Spill Unit data.</p>
+<p>Contains a reference to a rowdatacollection for storing and
+accessing all the row data. i.e. the geometry data for the section,
+containing the chainage, elevation, etc values.
+Methods for accessing the data in these objects and adding removing rows
+are available.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit</p>
+</div>
+<dl class="attribute">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.FILE_KEY">
+<code class="descname">FILE_KEY</code><em class="property"> = 'SPILL'</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.FILE_KEY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.FILE_KEY2">
+<code class="descname">FILE_KEY2</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.FILE_KEY2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.UNIT_CATEGORY">
+<code class="descname">UNIT_CATEGORY</code><em class="property"> = 'spill'</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.UNIT_CATEGORY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.UNIT_TYPE">
+<code class="descname">UNIT_TYPE</code><em class="property"> = 'spill'</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.UNIT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.addRow">
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new row to the spill unit.</p>
+<p>Ensures that certain requirements of the data rows, such as the
+chainage needing to increase for each row down are met, then call the
+addNewRow() method in the row_collection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row_vals</strong> (<em>Dict</em>) &#8211; keys must be datunits.ROW_DATA_TYPES with a legal
+value assigned for the DataType. Chainage and Elevation MUST
+be included.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; the row to insert into. The existing row at the
+given index will be moved up by one.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">False if the addNewRow() method is unsuccessful.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><code class="xref py py-exc docutils literal"><span class="pre">IndexError</span></code> &#8211; If the index does not exist.</li>
+<li><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; If the given value is not accepted by the DataObjects.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataObject and subclasses for information on the parameters.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.getData">
+<code class="descname">getData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.getData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.getData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the data in this unit.</p>
+<p>The String[] returned is formatted for printing in the fashion
+of the .dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of output data formated the same as in the .DAT file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.icLabels">
+<code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.readUnitData">
+<code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the unit data into the geometry objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_data</strong> (<em>list</em>) &#8211; The part of the isis dat file pertaining to
+this section</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">AUnit - readUnitData()</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.datunits.spillunit.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10BD0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.datunits">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.fmp.datunits" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.tuflow.html" class="btn btn-neutral float-right" title="ship.tuflow package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.fmp.html" class="btn btn-neutral" title="ship.fmp package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

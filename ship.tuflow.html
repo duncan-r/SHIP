@@ -1,0 +1,2192 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.tuflow package &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="up" title="ship package" href="ship.html"/>
+        <link rel="next" title="ship.tuflow.data_files package" href="ship.tuflow.data_files.html"/>
+        <link rel="prev" title="ship.fmp.datunits package" href="ship.fmp.datunits.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ship.tuflow package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.tuflow.controlfile">ship.tuflow.controlfile module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.tuflow.tuflowfactory">ship.tuflow.tuflowfactory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.tuflow.tuflowfilepart">ship.tuflow.tuflowfilepart module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.tuflow.tuflowmodel">ship.tuflow.tuflowmodel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.tuflow">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="ship.html">ship package</a> &raquo;</li>
+      
+    <li>ship.tuflow package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/ship.tuflow.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ship-tuflow-package">
+<h1>ship.tuflow package<a class="headerlink" href="#ship-tuflow-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ship.tuflow.data_files.html">ship.tuflow.data_files package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files.datafileloader">ship.tuflow.data_files.datafileloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files.datafileobject">ship.tuflow.data_files.datafileobject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-ship.tuflow.controlfile">
+<span id="ship-tuflow-controlfile-module"></span><h2>ship.tuflow.controlfile module<a class="headerlink" href="#module-ship.tuflow.controlfile" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Container for the main tuflow control files (tcf/tgc/etc).</p>
+<p>This class is used to store the order of items in the file and any data
+that is not understood by the tuflowloader e.g. commented sections and
+components of the file that are not specifically listed.</p>
+<p>If does not store the data directly, just the hash codes for the file
+parts so that they can be cross referenced against the
+TuflowModel.file_parts dictionary.</p>
+<p class="last">The ModelFileEntry class is also kept in this module. This provides simple
+access to main variables held by the TuflowFilePart objects.</p>
+</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.tuflow.controlfile.ControlFile">
+<em class="property">class </em><code class="descname">ControlFile</code><span class="sig-paren">(</span><em>model_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.addControlFile">
+<code class="descname">addControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.addControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.addControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the contents of a new ControlFile to this ControlFile.</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;after&#8217;: ModelFile to place the new ModelFile (model_file) after</dt>
+<dd>in terms of the ordering of the contents.</dd>
+<dt>&#8216;before&#8217;: ModelFile to place the new ModelFile (model_file) before</dt>
+<dd>in terms of the ordering of the contents.</dd>
+</dl>
+</dd>
+</dl>
+<p>If bother &#8216;before&#8217; and &#8216;after&#8217; are given after will take preference. If
+neither are given a ValueError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that is being added.</li>
+<li><strong>control_file</strong> (<a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><em>ControlFile</em></a>) &#8211; the Control to combine with this one.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if neither &#8216;after&#8217; or &#8216;before&#8217; are given.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.addLogicPart">
+<code class="descname">addLogicPart</code><span class="sig-paren">(</span><em>add_part</em>, <em>adjacent_part</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.addLogicPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.addLogicPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a TuflowPart is added to a TuflowLogic.</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs:</dt>
+<dd>&#8216;after&#8217;: the part after the one being added.
+&#8216;before&#8217;: the part before the one being added.</dd>
+</dl>
+<p>If both &#8216;after&#8217; and &#8216;before&#8217; are given in kwargs, or neither are given,
+&#8216;after&#8217; will take precedence.</p>
+<p>This is mostly for use by a callback function in TuflowLogic parts. It
+makes sure that when a TuflowPart is added to a TuflowLogic it is
+also added to the PartHolder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.allParentHashes">
+<code class="descname">allParentHashes</code><span class="sig-paren">(</span><em>parent_hash</em>, <em>iterator</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.allParentHashes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.allParentHashes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the TuflowParts with a specific parent in their heirachy.</p>
+<p>Calls the allParents() method in TuflowPart. To get all of the parent
+TuflowPart.hash values. allParents() is a recursive method that will
+walk all the way up the tree and return the hash of every parent item.</p>
+<p>This method checks to see if a certain hash is in the returned list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parent_hash</strong> (<em>uuid4</em>) &#8211; hash to check against.</li>
+<li><strong>iterator</strong> (<em>list or Iterator</em>) &#8211; containing TuflowPart&#8217;s to fetch the
+parents from.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>tuple - list(Tuflowpart&#8217;s), first index of found paren, last index</dt>
+<dd><p class="first last">of found parent.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.checkPartLogic">
+<code class="descname">checkPartLogic</code><span class="sig-paren">(</span><em>part</em>, <em>se_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.checkPartLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.checkPartLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the part or it&#8217;s parents are inside the current logic terms.</p>
+<p>See TuflowPart isInSeVals method for further information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; the part to check logic terms for.</li>
+<li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing the current scenario and event values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool - True if it&#8217;s in the logic terms, or False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.checkPathsExist">
+<code class="descname">checkPathsExist</code><span class="sig-paren">(</span><em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.checkPathsExist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.checkPathsExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all of the TuflowFile type&#8217;s absolute paths exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>se_vals=None</strong> (<em>dict</em>) &#8211; to select only those TuflowFile&#8217;s that are
+within certain scenario and event clauses.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list - containing all TuflowFile&#8217;s that failed the check.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.contains">
+<code class="descname">contains</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find TuflowPart variables that contain a particular string or value.</p>
+<p>All searches are case insensitive.</p>
+<dl class="docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs:</dt>
+<dd><p class="first">command(str): text to search for in a TuflowPart.command.
+variable(str): characters to search for in a TuflowPart.variable.
+filename(str): text to search for in a TuflowPart.filename.
+parent_filename(str): text to search for in a</p>
+<blockquote>
+<div>TuflowPart.associates.parent.filename.</div></blockquote>
+<dl class="last docutils">
+<dt>active_only(bool): if True only parts currently set to &#8216;active&#8217; will</dt>
+<dd>be returned. Default is True.</dd>
+</dl>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list - of TuflowParts that match the search term.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.controlFileIndices">
+<code class="descname">controlFileIndices</code><span class="sig-paren">(</span><em>parent_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.controlFileIndices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.controlFileIndices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the last index of TuflowParts with particular parent.</p>
+<dl class="docutils">
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs:</dt>
+<dd>&#8216;start&#8217;(bool): only returns the start indices of the control file.
+&#8216;end&#8217;(bool): only returns the end indices of the control file.
+&#8216;both&#8217;(bool): return the start and end indices of the control file.
+&#8216;part&#8217;(bool): returns the parts in that control file as well.</dd>
+</dl>
+<p>If not kwargs are supplied &#8216;both&#8217; and &#8216;part&#8217; are assumed.</p>
+<p>The dict returned will vary in structure depending on the kwargs
+provided. All keys are X_parts, X_logic, X_cfile where &#8216;X&#8217; is either
+&#8216;start&#8217;, &#8216;end&#8217;, &#8216;part&#8217; to match the args given. E.g:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;start_part&#39;</span><span class="p">:</span> <span class="n">PartHolder</span> <span class="n">start</span> <span class="n">index</span><span class="p">,</span>
+    <span class="s1">&#39;start_logic&#39;</span><span class="p">:</span> <span class="n">LogicHolder</span> <span class="n">start</span> <span class="n">index</span><span class="p">,</span>
+    <span class="s1">&#39;start_cfile&#39;</span><span class="p">:</span> <span class="n">control_files</span> <span class="n">start</span> <span class="n">index</span><span class="p">,</span>
+    <span class="s1">&#39;part_part&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">TuflowPart</span><span class="p">,</span> <span class="n">TuflowPart</span><span class="p">],</span>
+    <span class="o">...</span><span class="n">etc</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; to check for last occurence of in self.parts.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict - with last index of &#8216;parts&#8217;, &#8216;logic&#8217; and &#8216;control_files&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.fetchPartType">
+<code class="descname">fetchPartType</code><span class="sig-paren">(</span><em>instance_type</em>, <em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.fetchPartType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.fetchPartType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the TuflowPart&#8217;s that match the criteria.</p>
+<p>TuflowPart&#8217;s will be returned in order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>instance_type</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; class derived from TuflowPart to restrict
+the search to.</li>
+<li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
+TuflowFile types will be checked.</li>
+<li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list - of filepaths that matched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.filepaths">
+<code class="descname">filepaths</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>absolute=False</em>, <em>no_duplicates=True</em>, <em>no_blanks=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.filepaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.filepaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the TuflowFile filepaths that match the criteria.</p>
+<p>Filepaths will be returned in order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
+TuflowFile types will be checked.</li>
+<li><strong>absolute=False</strong> (<em>bool</em>) &#8211; If True absolute paths will be returned. If
+False only filenames will be returned.</li>
+<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
+ignored.</li>
+<li><strong>no_blanks=True</strong> (<em>bool</em>) &#8211; if True any blank filenames will be ignored.</li>
+<li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list - of filepaths that matched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.files">
+<code class="descname">files</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the TuflowFile types that match the criteria.</p>
+<p>TuflowPart&#8217;s will be returned in order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
+TuflowFile types will be checked.</li>
+<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
+ignored.</li>
+<li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list - of TuflowFile&#8217;s that matched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the control files with contents formatted for writing to file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>dict - control files paths as keys and a ordered list of Tuflow</dt>
+<dd>commands as the values.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.logics">
+<code class="descname">logics</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.logics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.logics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.removeControlFile">
+<code class="descname">removeControlFile</code><span class="sig-paren">(</span><em>model_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.removeControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.removeControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the contents of an existing ControlFile.</p>
+<p>Will return a dict with the starting indices of removed sections:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;parts&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;logic&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;control_files&#39;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that will be used to find the
+sections of this ControlFile to delete.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.removeLogicPart">
+<code class="descname">removeLogicPart</code><span class="sig-paren">(</span><em>remove_part</em>, <em>last_part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.removeLogicPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.removeLogicPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when a TuflowPart is removed from a TuflowLogic.</p>
+<p>This is mostly for use by a callback function in TuflowLogic parts. It
+makes sure that when a TuflowPart is removed from a TuflowLogic it is
+moved outside of the scope of the TuflowLogic in the PartHolder.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.replaceControlFile">
+<code class="descname">replaceControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>replace_modelfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.replaceControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.replaceControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace contents of an existing ModelFile with a new one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that will be replacing an
+existing ModelFile.</li>
+<li><strong>control_file</strong> (<a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><em>ControlFile</em></a>) &#8211; containing the contents to update this
+ControlFile with.</li>
+<li><strong>replace_modelfile</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile in this ControlFile to
+replace with the new ControlFile.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.updateRoot">
+<code class="descname">updateRoot</code><span class="sig-paren">(</span><em>root</em>, <em>must_exist=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.updateRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.updateRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the root variable of all TuflowPart&#8217;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>str</em>) &#8211; the new directory path.</li>
+<li><strong>must_exist=True</strong> (<em>bool</em>) &#8211; if True and the given root directory doesn&#8217;t
+exist it will raise a ValueError.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.variables">
+<code class="descname">variables</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the ATuflowVariable types that match the criteria.</p>
+<p>TuflowPart&#8217;s will be returned in order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
+TuflowFile types will be checked.</li>
+<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
+ignored.</li>
+<li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list - of ATuflowVariable types that matched.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.controlfile.LogicHolder">
+<em class="property">class </em><code class="descname">LogicHolder</code><span class="sig-paren">(</span><em>remove_callback=None</em>, <em>add_callback=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#LogicHolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.LogicHolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.tuflow.controlfile.LogicHolder.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>logic</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#LogicHolder.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.LogicHolder.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.LogicHolder.getAllParts">
+<code class="descname">getAllParts</code><span class="sig-paren">(</span><em>hash_only</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#LogicHolder.getAllParts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.LogicHolder.getAllParts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.LogicHolder.partFromHash">
+<code class="descname">partFromHash</code><span class="sig-paren">(</span><em>hash</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#LogicHolder.partFromHash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.LogicHolder.partFromHash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.controlfile.PartHolder">
+<em class="property">class </em><code class="descname">PartHolder</code><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>filepart</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>If both after and before are supplied, after will take precedence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.lastIndexOfParent">
+<code class="descname">lastIndexOfParent</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.lastIndexOfParent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.lastIndexOfParent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.move">
+<code class="descname">move</code><span class="sig-paren">(</span><em>part</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.move" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>filepart</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.remove" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.replace">
+<code class="descname">replace</code><span class="sig-paren">(</span><em>part</em>, <em>replace_part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.replace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.controlfile.TcfControlFile">
+<em class="property">class </em><code class="descname">TcfControlFile</code><span class="sig-paren">(</span><em>mainfile</em>, <em>remove_callback=None</em>, <em>replace_callback=None</em>, <em>add_callback=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.controlfile.ControlFile</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.controlfile.TcfControlFile.addControlFile">
+<code class="descname">addControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.addControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.addControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the contents of a new ControlFile to this ControlFile.</p>
+<dl class="docutils">
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;after&#8217;: ModelFile to place the new ModelFile (model_file) after</dt>
+<dd>in terms of the ordering of the contents.</dd>
+<dt>&#8216;before&#8217;: ModelFile to place the new ModelFile (model_file) before</dt>
+<dd>in terms of the ordering of the contents.</dd>
+</dl>
+</dd>
+</dl>
+<p>If both &#8216;before&#8217; and &#8216;after&#8217; are given after will take preference. If
+neither are given a ValueError will be raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that is being added.</li>
+<li><strong>control_file</strong> (<a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><em>ControlFile</em></a>) &#8211; the Control to combine with this one.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if neither &#8216;after&#8217; or &#8216;before&#8217; are given.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.controlfile.TcfControlFile.mainfile">
+<code class="descname">mainfile</code><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.mainfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.TcfControlFile.removeControlFile">
+<code class="descname">removeControlFile</code><span class="sig-paren">(</span><em>model_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.removeControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.removeControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the contents of an existing ControlFile.</p>
+<p>Will return a dict with the starting indices of removed sections:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;parts&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;logic&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;control_files&#39;</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that will be used to find the
+sections of this ControlFile to delete.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>dict - containging the starting indices of &#8216;parts&#8217;, &#8216;logic&#8217;,</dt>
+<dd>and &#8216;control_files&#8217; that were deleted.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.TcfControlFile.replaceControlFile">
+<code class="descname">replaceControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>replace_modelfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.replaceControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.replaceControlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace contents of an existing ModelFile with a new one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile that will be replacing an
+existing ModelFile.</li>
+<li><strong>control_file</strong> (<a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><em>ControlFile</em></a>) &#8211; containing the contents to update this
+ControlFile with.</li>
+<li><strong>replace_modelfile</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile in this ControlFile to
+replace with the new ControlFile.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.controlfile.TcfControlFile.updateRoot">
+<code class="descname">updateRoot</code><span class="sig-paren">(</span><em>root</em>, <em>must_exist=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.updateRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.updateRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the root variable of all TuflowPart&#8217;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>str</em>) &#8211; the new directory path.</li>
+<li><strong>must_exist=True</strong> (<em>bool</em>) &#8211; if True and the given root directory doesn&#8217;t
+exist it will raise a ValueError.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.tuflow.controlfile.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x053B05F0&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.tuflow.tuflowfactory">
+<span id="ship-tuflow-tuflowfactory-module"></span><h2>ship.tuflow.tuflowfactory module<a class="headerlink" href="#module-ship.tuflow.tuflowfactory" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory">
+<em class="property">class </em><code class="descname">TuflowFactory</code><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createBcEventVariable">
+<em class="property">static </em><code class="descname">createBcEventVariable</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createBcEventVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createBcEventVariable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createBlockLogic">
+<em class="property">static </em><code class="descname">createBlockLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>commands</em>, <em>terms</em>, <em>comments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createBlockLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createBlockLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new IfLogic object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parent</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the parent TuflowPart.</li>
+<li><strong>commands</strong> (<em>str</em>) &#8211; the command part e.g. &#8216;Define Event&#8217;.</li>
+<li><strong>terms</strong> &#8211; (list): terms to add for the clause [&#8216;scen1&#8217;, &#8216;scen2&#8217;].</li>
+<li><strong>comments</strong> (<em>str</em>) &#8211; the comment that should be attached to the end of
+the clause line. e.g. &#8216;If Scenario == scen1 | scen2 ! comment&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">BlockLogic - created with given args.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createDataType">
+<em class="property">static </em><code class="descname">createDataType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createDataType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createDataType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createGisType">
+<em class="property">static </em><code class="descname">createGisType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createGisType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createGisType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createIfLogic">
+<em class="property">static </em><code class="descname">createIfLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>commands</em>, <em>terms</em>, <em>comments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createIfLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createIfLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new IfLogic object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parent</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the parent TuflowPart.</li>
+<li><strong>commands</strong> (<em>list</em>) &#8211; a list of the command part to add for each clause.
+e.g. &#8216;If Scenario&#8217;, &#8216;Else&#8217;, &#8216;Else If Event&#8217;, etc.</li>
+<li><strong>terms</strong> &#8211; (list(list)): terms to add for each clause. e.g.
+[[&#8216;scen1&#8217;, &#8216;scen2&#8217;], [&#8216;scen3&#8217;]]</li>
+<li><strong>comments</strong> (<em>list</em>) &#8211; the comment that should be attached to the end of
+each clause line. e.g. &#8216;If Scenario == scen1 | scen2 ! comment&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">IfLogic - created with given args.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError - if commands, terms and comments are not the same length.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createKeyValueType">
+<em class="property">static </em><code class="descname">createKeyValueType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createKeyValueType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createKeyValueType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createModelType">
+<em class="property">static </em><code class="descname">createModelType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createModelType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createModelType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createModelVariableType">
+<em class="property">static </em><code class="descname">createModelVariableType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createModelVariableType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createModelVariableType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createResultType">
+<em class="property">static </em><code class="descname">createResultType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createResultType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createResultType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createUserVariableType">
+<em class="property">static </em><code class="descname">createUserVariableType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createUserVariableType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createUserVariableType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.createVariableType">
+<em class="property">static </em><code class="descname">createVariableType</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.createVariableType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.createVariableType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ship.tuflow.tuflowfactory.TuflowFactory.getTuflowPart">
+<em class="property">classmethod </em><code class="descname">getTuflowPart</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em>, <em>part_type=None</em>, <em>logic=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#TuflowFactory.getTuflowPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.TuflowFactory.getTuflowPart" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.assignSiblings">
+<code class="descname">assignSiblings</code><span class="sig-paren">(</span><em>parts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#assignSiblings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.assignSiblings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign&#8217;s next and previours sibling&#8217;s in an ordered list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parts</strong> (<em>list</em>) &#8211; a list of TuflowFilepart&#8217;s in associate order.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>parts(list) - with sibling_next and sibling_prev objects set to</dt>
+<dd>adjacent parts in the provided list.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.breakLine">
+<code class="descname">breakLine</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#breakLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.breakLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Breaks a file line into it&#8217;s command/instruction components.</p>
+<p>Most lines in tuflow files are in the form::
+Read Command == ..somepath.ext ! comment</p>
+<p>This separates the command from the rest.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>line</strong> (<em>str</em>) &#8211; the line as read from the file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Tuple - (command, instruction).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.checkEstryAuto">
+<code class="descname">checkEstryAuto</code><span class="sig-paren">(</span><em>line</em>, <em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#checkEstryAuto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.checkEstryAuto" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.checkIsComment">
+<code class="descname">checkIsComment</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#checkIsComment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.checkIsComment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.checkMultiTypes">
+<code class="descname">checkMultiTypes</code><span class="sig-paren">(</span><em>line</em>, <em>part_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#checkMultiTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.checkMultiTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the corrent filepart _type for multi-type commands.</p>
+<p>For example projection can be either a string variable or a gis file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>line</strong> (<em>str</em>) &#8211; the control file line to check.</li>
+<li><strong>part_type</strong> (<em>FILEPART_TYPE</em>) &#8211; the default value to return if everything
+was already correct.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">FILEPART_TYPE</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.getExtension">
+<code class="descname">getExtension</code><span class="sig-paren">(</span><em>path</em>, <em>upper=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#getExtension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.getExtension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="ship.tuflow.tuflowfactory.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0550A110&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.partsFromPipedFiles">
+<code class="descname">partsFromPipedFiles</code><span class="sig-paren">(</span><em>part_type</em>, <em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#partsFromPipedFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.partsFromPipedFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates piped file paths and creates a TuflowFilepart for each.</p>
+<p>The &#8216;path&#8217; entry in the kwargs will be replaced with the specific section
+of the piped file that is being created for each part.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function also call assignSiblings().</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>part_type</strong> (<em>TuflowFilePart</em>) &#8211; class to crate the resultant parts with.</li>
+<li><strong>parent</strong> (<em>TuflowFilePart</em>) &#8211; the control file part containing this command.</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; the arguments to use when building the TuflowFilePart.
+These are dependent on the type of TuflowFilePart that you create.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list - containing TuflowFilePart instance of part_type type.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.resolveResult">
+<code class="descname">resolveResult</code><span class="sig-paren">(</span><em>result_part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#resolveResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.resolveResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fixes the self.type.RESULT paths after load.</p>
+<p>Result and Check file paths are a bit tricky because they can be set
+up in a range of ways as either relative or absolute e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">..</span>\<span class="n">some</span>\<span class="n">path</span>\<span class="n">end</span>
+<span class="o">..</span>\<span class="n">some</span>\<span class="n">path</span>\<span class="n">end</span>\
+<span class="o">..</span>\<span class="n">some</span>\<span class="n">path</span>\<span class="n">end_as_prefix_</span>
+</pre></div>
+</div>
+<p>If output is a checkfile no &#8216;&#8217; on the end indicates that the final
+string should be prepended to all files, but if it&#8217;s a result output
+it is the same as having a &#8216;&#8217; on the end.</p>
+<p>This function attempts to work out what&#8217;s going on with it all and setup
+the root, relative_root and filename accordingly.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Need to account for the case where a string follows the directory
+is given that will be prepended to all output files.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>entry</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ResultFile" title="ship.tuflow.tuflowfilepart.ResultFile"><em>ResultFile</em></a>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">ResultFile - ammended.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.separateComment">
+<code class="descname">separateComment</code><span class="sig-paren">(</span><em>instruction</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#separateComment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.separateComment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates any comment from the line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>instructions</strong> (<em>str</em>) &#8211; the line to seperate comment from.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>tuple(Bool, tuple) - (0)==True if comment found, (1) contains a</dt>
+<dd>tuple with (instruction, comment).</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ship.tuflow.tuflowfactory.takeParentType">
+<code class="descname">takeParentType</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfactory.html#takeParentType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfactory.takeParentType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-ship.tuflow.tuflowfilepart">
+<span id="ship-tuflow-tuflowfilepart-module"></span><h2>ship.tuflow.tuflowfilepart module<a class="headerlink" href="#module-ship.tuflow.tuflowfilepart" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains all of the TuflowPart type classes used to store the data within
+Tuflow control files.</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>20 Nov 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.ATuflowVariable">
+<em class="property">class </em><code class="descname">ATuflowVariable</code><span class="sig-paren">(</span><em>parent</em>, <em>obj_type='variable'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ATuflowVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ATuflowVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowPart</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.ATuflowVariable.resolvedVariable">
+<code class="descname">resolvedVariable</code><span class="sig-paren">(</span><em>user_vars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ATuflowVariable.resolvedVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ATuflowVariable.resolvedVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the variable with any placeholder vars resolved to a value.</p>
+<p>For more information on user_vars see TuflowPart.resolvePlaceholder.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.ATuflowVariable.variable">
+<code class="descname">variable</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ATuflowVariable.variable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.AssociatedParts">
+<em class="property">class </em><code class="descname">AssociatedParts</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#AssociatedParts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.AssociatedParts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stores associate TuflowPart references.</p>
+<p>Every TuflowPart will hold a copy of this class. It is used to store
+references to any other TuflowPart&#8217;s that it has an association with.</p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.AssociatedParts.logic">
+<code class="descname">logic</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.AssociatedParts.logic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.AssociatedParts.observedActiveChange">
+<code class="descname">observedActiveChange</code><span class="sig-paren">(</span><em>status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#AssociatedParts.observedActiveChange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.AssociatedParts.observedActiveChange" title="Permalink to this definition">¶</a></dt>
+<dd><p>called by the parent when registered as an observer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.AssociatedParts.parent">
+<code class="descname">parent</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.AssociatedParts.parent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.BlockLogic">
+<em class="property">class </em><code class="descname">BlockLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#BlockLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.BlockLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowLogic" title="ship.tuflow.tuflowfilepart.TuflowLogic"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowLogic</span></code></a></p>
+<p>For any logic that uses a &#8216;Define something&#8217;.</p>
+<p>I can only think of &#8216;Define Event == term1 | term2 | termN&#8217;, but maybe
+there are others?</p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.BlockLogic.addClause">
+<code class="descname">addClause</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#BlockLogic.addClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.BlockLogic.addClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only one clause allowed in this type.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.DataFile">
+<em class="property">class </em><code class="descname">DataFile</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.DataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.DataFile.DATA_TYPES">
+<code class="descname">DATA_TYPES</code><em class="property"> = {'TMF': ('tmf',), 'CSV': ('csv',)}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.DataFile.DATA_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.GisFile">
+<em class="property">class </em><code class="descname">GisFile</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#GisFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.GisFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.GisFile.GIS_TYPES">
+<code class="descname">GIS_TYPES</code><em class="property"> = {'shp': ('shp', 'shx', 'dbf'), 'mi': ('mif', 'mid')}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.GisFile.GIS_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.IfLogic">
+<em class="property">class </em><code class="descname">IfLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#IfLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.IfLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowLogic" title="ship.tuflow.tuflowfilepart.TuflowLogic"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowLogic</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.IfLogic.addClause">
+<code class="descname">addClause</code><span class="sig-paren">(</span><em>command</em>, <em>terms</em>, <em>comment=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#IfLogic.addClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.IfLogic.addClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new clause to this TuflowLogic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>command</strong> (<em>str</em>) &#8211; the command part of the clause (e.g. &#8216;Else if Event ==&#8217;)</li>
+<li><strong>terms</strong> (<em>list</em>) &#8211; str&#8217;s of terms for clause (e.g. [&#8216;evt1&#8217;, &#8216;evt2&#8217;, &#8216;evtN&#8217;].</li>
+<li><strong>comment=''</strong> (<em>str</em>) &#8211; any comment for the clause line.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.IfLogic.getMiddleClause">
+<code class="descname">getMiddleClause</code><span class="sig-paren">(</span><em>part</em>, <em>out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#IfLogic.getMiddleClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.IfLogic.getMiddleClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if there&#8217;s any middle clause.</p>
+<p>Used for writing out the clauses when printing to file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.IfLogic.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>part</em>, <em>out</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#IfLogic.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.IfLogic.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the printable contents for this TuflowLogic.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.ModelFile">
+<em class="property">class </em><code class="descname">ModelFile</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ModelFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ModelFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.ModelFile.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ModelFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ModelFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.ResultFile">
+<em class="property">class </em><code class="descname">ResultFile</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ResultFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE">
+<code class="descname">RESULT_TYPE</code><em class="property"> = {'check': 'WRITE CHECK FILE', 'output': 'OUTPUT FOLDER', 'log': 'LOG'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.SectionLogic">
+<em class="property">class </em><code class="descname">SectionLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#SectionLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.SectionLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.BlockLogic" title="ship.tuflow.tuflowfilepart.BlockLogic"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.BlockLogic</span></code></a></p>
+<p>Used for all other types of scoping logic.</p>
+<p>This includes things like &#8216;Define Output Zone ==&#8217; etc. The only real
+difference between this and BlockLogic is that BlockLogic sets
+check_sevals = True. It kind of makes sense to treat them slightly
+differently though as the BlockLogic and IfLogic are used with scenario
+and event logic.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile">
+<em class="property">class </em><code class="descname">TuflowFile</code><span class="sig-paren">(</span><em>parent</em>, <em>obj_type='file'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowPart</span></code></a>, <a class="reference internal" href="ship.utils.html#ship.utils.filetools.PathHolder" title="ship.utils.filetools.PathHolder"><code class="xref py py-class docutils literal"><span class="pre">ship.utils.filetools.PathHolder</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.absolutePath">
+<code class="descname">absolutePath</code><span class="sig-paren">(</span><em>user_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.absolutePath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.absolutePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the absolute path of this object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_vars</strong> (<em>dict</em>) &#8211; a dict containing variable placeholder values as
+keys and the actual values as values. See
+TuflowPart.resolvePlaceholder() method for more information.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.absolutePathAllTypes">
+<code class="descname">absolutePathAllTypes</code><span class="sig-paren">(</span><em>user_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.absolutePathAllTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.absolutePathAllTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the absolute paths for all_types.</p>
+<p>If the file has other file types in all_types (e.g. .shp, shx, .dbf)
+this will return the absolute paths for all of them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>user_vars</strong> (<em>dict</em>) &#8211; a dict containing variable placeholder values as
+keys and the actual values as values. See
+TuflowPart.resolvePlaceholder() method for more information.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.checkPipedStatus">
+<code class="descname">checkPipedStatus</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.checkPipedStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.checkPipedStatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.getRelativeRoots">
+<code class="descname">getRelativeRoots</code><span class="sig-paren">(</span><em>roots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.getRelativeRoots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.getRelativeRoots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the relative paths of this and all parent objects.</p>
+<p>Recursively calls all of it&#8217;s parents to obtain the relative paths
+before calling absolutePath of the PathHolder superclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowKeyValue">
+<em class="property">class </em><code class="descname">TuflowKeyValue</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowKeyValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowKeyValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.ATuflowVariable" title="ship.tuflow.tuflowfilepart.ATuflowVariable"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.ATuflowVariable</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowKeyValue.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowKeyValue.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowKeyValue.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic">
+<em class="property">class </em><code class="descname">TuflowLogic</code><span class="sig-paren">(</span><em>parent</em>, <em>obj_type='logic'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowPart</span></code></a></p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.END_CLAUSE">
+<code class="descname">END_CLAUSE</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.END_CLAUSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override with with whatever the end statement is (e.g. &#8216;End If&#8217;)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.addPart">
+<code class="descname">addPart</code><span class="sig-paren">(</span><em>part</em>, <em>group=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.addPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.addPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new TuflowPart.</p>
+<dl class="docutils">
+<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>skip_callback=False(bool): if true it won&#8217;t call the callback</dt>
+<dd>function in the ControlFile. Basically don&#8217;t use this.</dd>
+</dl>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; the part to add.</li>
+<li><strong>group</strong> (<em>int</em>) &#8211; the clause group to add the part to.</li>
+<li><strong>skip_callback=False</strong> (<em>bool</em>) &#8211; if true it won&#8217;t call the callback
+function in the ControlFile. Basically don&#8217;t change this.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.add_callback">
+<code class="descname">add_callback</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.add_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function called when a TuflowPart is added.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.allTerms">
+<code class="descname">allTerms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.allTerms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.allTerms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all of the terms in every clause.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.check_sevals">
+<code class="descname">check_sevals</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.check_sevals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to check the scenarion event values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getAllParts">
+<code class="descname">getAllParts</code><span class="sig-paren">(</span><em>hash_only</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getAllParts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getAllParts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all of the TuflowParts in this TuflowLogic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hash_only</strong> &#8211; if True the TuflowPart.hash codes otherwise the actual
+TuflowPart will be.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list - of TuflowPart&#8217;s or TuflowPart.hash</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getEndClause">
+<code class="descname">getEndClause</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getEndClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getEndClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the end clause formatted for printing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getGroup">
+<code class="descname">getGroup</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getGroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the group index of the given part.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>int - the index of the group that this part is in, or -1 if it</dt>
+<dd>could not be found.</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getLogic">
+<code class="descname">getLogic</code><span class="sig-paren">(</span><em>hash_only</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getLogic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: Check what this does and if it&#8217;s used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>part</em>, <em>out</em>, <em>group=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return contents formatted for printing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; current TuflowPart in PartHolder parts list.</li>
+<li><strong>out</strong> (<em>list</em>) &#8211; list to update.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.getTopClause">
+<code class="descname">getTopClause</code><span class="sig-paren">(</span><em>part</em>, <em>out</em>, <em>force</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.getTopClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.getTopClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the top clause command and terms formatted for printing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.insertPart">
+<code class="descname">insertPart</code><span class="sig-paren">(</span><em>new_part</em>, <em>adjacent_part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.insertPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.insertPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a TuflowPart adjacent to an existing part.</p>
+<p>This allows you to have control over where in a group a part is placed.
+If you don&#8217;t care where it goes in the group, or you want it to go at
+the end of the group use addPart() instead.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>new_part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; the part to add.</li>
+<li><strong>adjacent_part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; the part to put the new part next to.
+It will be placed above the existing part.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.isInClause">
+<code class="descname">isInClause</code><span class="sig-paren">(</span><em>part</em>, <em>term</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.isInClause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.isInClause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether the given part is within a particular clause.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; check if it&#8217;s in this TuflowLogic.</li>
+<li><strong>term</strong> (<em>str</em>) &#8211; term to check the part against.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>bool - True if the term is part of one of the clauses in this</dt>
+<dd><p class="first last">TuflowLogic and the part is within that clause; Else False.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.isInTerms">
+<code class="descname">isInTerms</code><span class="sig-paren">(</span><em>part</em>, <em>se_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.isInTerms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.isInTerms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the clause terms associated with part match se_vals.</p>
+<p>If the part is in an &#8216;Else&#8217; clause it checks that the se_vals DON&#8217;T
+match any of the terms in any of the clauses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; to find the terms for. If now reference of the
+part can be found False will be returned.</li>
+<li><strong>se_Vals</strong> (<em>dict</em>) &#8211; in format {&#8216;scenario&#8217;: [list, of]. &#8216;event&#8217;: [terms]}.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool - True if the part is within the given se_vals, otherwise False.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.isTuflowPart">
+<code class="descname">isTuflowPart</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.isTuflowPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.isTuflowPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.removePart">
+<code class="descname">removePart</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.removePart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.removePart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a TuflowPart.</p>
+<p>Will also call a callback function to the ControlFile object that
+contains this TuflowLogic and ensure that the PartHolder order is
+updated. It just ensures that the TuflowPart is moved out of the
+scope of the parts still within the TuflowLogic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowLogic.remove_callback">
+<code class="descname">remove_callback</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.remove_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function called when a TuflowPart is removed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowModelVariable">
+<em class="property">class </em><code class="descname">TuflowModelVariable</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowModelVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowModelVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.ATuflowVariable" title="ship.tuflow.tuflowfilepart.ATuflowVariable"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.ATuflowVariable</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowModelVariable.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowModelVariable.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowModelVariable.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ship.tuflow.tuflowfilepart.TuflowModelVariable.noParent">
+<em class="property">classmethod </em><code class="descname">noParent</code><span class="sig-paren">(</span><em>key</em>, <em>variable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowModelVariable.noParent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowModelVariable.noParent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowModelVariable.variable_name">
+<code class="descname">variable_name</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowModelVariable.variable_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart">
+<em class="property">class </em><code class="descname">TuflowPart</code><span class="sig-paren">(</span><em>parent</em>, <em>obj_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Interface for all TuflowPart&#8217;s.</p>
+<p>All components containing data stored by ControlFile subclass this one.</p>
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.active">
+<code class="descname">active</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.allParents">
+<code class="descname">allParents</code><span class="sig-paren">(</span><em>parent_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.allParents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.allParents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all the hash codes of all parents to this object.</p>
+<p>Recursive method to search up through all of the parents - in the
+associates object - and retrieve their hash codes.</p>
+<p>The parent hash codes will be returned in ascending order. I.e. the
+immediate parent will be at index 0, then it&#8217;s parent, and so on.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">parent_list arg is used to pass the found parents through the
+recursion. When calling this method you should probably always
+provide an empty list.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list -  containing the hash codes for every parent of the called
+TuflowPart in assending order.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.buildPrintline">
+<code class="descname">buildPrintline</code><span class="sig-paren">(</span><em>command</em>, <em>instruction</em>, <em>comment=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.buildPrintline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.buildPrintline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.copy">
+<em class="property">classmethod </em><code class="descname">copy</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.isInSeVals">
+<code class="descname">isInSeVals</code><span class="sig-paren">(</span><em>se_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.isInSeVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.isInSeVals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that this TuflowPart or it&#8217;s parents are inside given logic terms.</p>
+<p>The parents must be checked when a part doesn&#8217;t have a reference to any
+logic because the part may exists inside a control file that does have
+a logic clause. In this situation the part would not have any logic
+directly assigned to it, but would be within the logical clause by
+virtue of it&#8217;s parent being inside it...</p>
+<p>Example::
+:</p>
+<blockquote>
+<div><p>a_tcf_file.tcf...</p>
+<dl class="docutils">
+<dt>If Scenario == somescenario</dt>
+<dd>tgc1.tgc</dd>
+<dt>Else</dt>
+<dd>tgc2.tgc</dd>
+</dl>
+<p>End If</p>
+<p>tgc1.tgc...</p>
+<p>! This file&#8217;s logic == None, but if scenario == &#8216;somescenario&#8217; it
+! should not be returned.
+Read GIS Z Line == afile.shp</p>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>part</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; the part to check logic terms for.</li>
+<li><strong>user_vars</strong> (<a class="reference internal" href="#ship.tuflow.tuflowmodel.UserVariables" title="ship.tuflow.tuflowmodel.UserVariables"><em>UserVariables</em></a>) &#8211; containing the current scenario and
+event values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool - True if it&#8217;s in the logic terms, or False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.observers">
+<code class="descname">observers</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.observers" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a poor man&#8217;s observer interface.</p>
+<p>If an object wants to be notified of key internal changes, such as the
+Logic being activated/deactivated, then can add themselves to this
+list.</p>
+<p>If an object is added to this list it should implement the following
+.. method:: - observedActiveChange(bool)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.tuflow.tuflowfilepart.TuflowPart.resolvePlaceholder">
+<em class="property">static </em><code class="descname">resolvePlaceholder</code><span class="sig-paren">(</span><em>value</em>, <em>user_vars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowPart.resolvePlaceholder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowPart.resolvePlaceholder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces the contents of a placeholder value with an actual value.</p>
+<p>Tuflow allows scenario, event and user defined variables to be used
+as placeholders. This method will check for a given value against a
+dict of current variables and update the value if found.</p>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Original tcf command</span>
+<span class="n">Cell</span> <span class="n">Size</span> <span class="o">==</span> <span class="o">&lt;&lt;</span><span class="n">myvar</span><span class="o">&gt;&gt;</span>
+<span class="n">Read</span> <span class="n">Materials</span> <span class="n">File</span> <span class="o">==</span> <span class="s1">&#39;..\Materials_&lt;&lt;s1&gt;&gt;.tmf</span>
+<span class="n">Timestep</span> <span class="o">==</span> <span class="o">&lt;&lt;</span><span class="n">unknownvar</span><span class="o">&gt;&gt;</span>
+
+<span class="c1"># user_vars  note that this includes all variable in UserVars in</span>
+<span class="c1"># a single dict</span>
+<span class="n">user_vars</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="s1">&#39;scen1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">:</span> <span class="s1">&#39;scen2&#39;</span><span class="p">,</span> <span class="s1">&#39;e1&#39;</span><span class="p">:</span> <span class="s1">&#39;event1&#39;</span><span class="p">,</span> <span class="s1">&#39;e2&#39;</span><span class="p">:</span> <span class="s1">&#39;event2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;myvar&#39;</span><span class="p">:</span> <span class="s1">&#39;12&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># The above commands would return the following values when the</span>
+<span class="c1"># above user_vars are given.</span>
+<span class="n">Cell</span> <span class="n">Size</span> <span class="o">==</span> <span class="mi">12</span>
+<span class="n">Read</span> <span class="n">Materials</span> <span class="n">File</span> <span class="o">==</span> <span class="s1">&#39;..\Materials_scen1.tmf</span>
+<span class="n">Timestep</span> <span class="o">==</span> <span class="o">&lt;&lt;</span><span class="n">unknownvar</span><span class="o">&gt;&gt;</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>value</strong> &#8211; the value to check for a placeholder and replace.</li>
+<li><strong>user_vars</strong> (<em>dict</em>) &#8211; see UserVariables.variablesTodict().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the value, updated if found or the same if not.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowUserVariable">
+<em class="property">class </em><code class="descname">TuflowUserVariable</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowUserVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowUserVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.ATuflowVariable" title="ship.tuflow.tuflowfilepart.ATuflowVariable"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.ATuflowVariable</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowUserVariable.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowUserVariable.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowUserVariable.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="ship.tuflow.tuflowfilepart.TuflowUserVariable.noParent">
+<em class="property">classmethod </em><code class="descname">noParent</code><span class="sig-paren">(</span><em>key</em>, <em>variable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowUserVariable.noParent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowUserVariable.noParent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowUserVariable.variable_name">
+<code class="descname">variable_name</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowUserVariable.variable_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.TuflowVariable">
+<em class="property">class </em><code class="descname">TuflowVariable</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.ATuflowVariable" title="ship.tuflow.tuflowfilepart.ATuflowVariable"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.ATuflowVariable</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowVariable.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowVariable.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowVariable.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowVariable.split_variable">
+<code class="descname">split_variable</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowVariable.split_variable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowfilepart.TuflowVariable.variable">
+<code class="descname">variable</code><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowVariable.variable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowfilepart.UnknownPart">
+<em class="property">class </em><code class="descname">UnknownPart</code><span class="sig-paren">(</span><em>parent</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#UnknownPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.UnknownPart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowPart</span></code></a></p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.UnknownPart.getPrintableContents">
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#UnknownPart.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.UnknownPart.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.tuflow.tuflowfilepart.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04C9E850&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.tuflow.tuflowmodel">
+<span id="ship-tuflow-tuflowmodel-module"></span><h2>ship.tuflow.tuflowmodel module<a class="headerlink" href="#module-ship.tuflow.tuflowmodel" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Container and main interface for accessing the Tuflow model and a class
+for containing the main tuflow model files (Tcf, Tgc, etc).</p>
+<p class="last">There are several other classes in here that are used to determine the
+order of the files in the model and key words for reading in the files.</p>
+</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel">
+<em class="property">class </em><code class="descname">TuflowModel</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Container for the entire loaded tuflow model.</p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.addTcfModelFile">
+<code class="descname">addTcfModelFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.addTcfModelFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.addTcfModelFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new ModelFile instance to a TCF type ControlFile.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can call this function directly if you want to, but it is also
+hooked into a callback in the TCF ControlFile. This means that when
+you use the standard ControlFile add/remove/replaceControlFile()
+methods these will be called automatically.</p>
+</div>
+<dl class="docutils">
+<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
+<dd>after(TuflowPart): the part to add the new ModelFile after.
+before(TuflowPart): the part to add the new ModelFile before.</dd>
+</dl>
+<p>Either after or before kwargs must be given. If both are provided after
+will take precedence.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">model_file(ModelFile): the replacement ModelFile TuflowPart.
+control_file(ControlFile): containing the contents to replace the</p>
+<blockquote class="last">
+<div>existing ControlFile.</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.bc_event">
+<code class="descname">bc_event</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.bc_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains the currently acitve BC Event variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.checkPathsExist">
+<code class="descname">checkPathsExist</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.checkPathsExist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.checkPathsExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that all of the filepaths in the TuflowModel exist.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.control_files">
+<code class="descname">control_files</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.control_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tuflow Control File objects.</p>
+<p>All types of Tuflow Control file are stored here under the type header.
+Types are: TCF, TGC, TBC, ECF, TEF.
+TCF is slightly different to the others as it contains an additional
+member variable &#8216;main_file_hash&#8217; to identify the main tcf file that
+was called to load the model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.missing_model_files">
+<code class="descname">missing_model_files</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.missing_model_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains any tcf, tgs, etc files that could not be loaded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.removeTcfModelFile">
+<code class="descname">removeTcfModelFile</code><span class="sig-paren">(</span><em>model_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.removeTcfModelFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.removeTcfModelFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an existing ModelFile from &#8216;TCF&#8217; and update ControlFile.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can call this function directly if you want to, but it is also
+hooked into a callback in the TCF ControlFile. This means that when
+you use the standard ControlFile add/remove/replaceControlFile()
+methods these will be called automatically.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_files</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the ModelFile being removed.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.replaceTcfModelFile">
+<code class="descname">replaceTcfModelFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>replace_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.replaceTcfModelFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.replaceTcfModelFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace an existing ModelFile in &#8216;TCF&#8217; and update ControlFile.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can call this function directly if you want to, but it is also
+hooked into a callback in the TCF ControlFile. This means that when
+you use the standard ControlFile add/remove/replaceControlFile()
+methods these will be called automatically.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the replacement TuflowPart.</li>
+<li><strong>control_file</strong> (<a class="reference internal" href="#ship.tuflow.controlfile.ControlFile" title="ship.tuflow.controlfile.ControlFile"><em>ControlFile</em></a>) &#8211; containing the contents to replace the
+existing ControlFile.</li>
+<li><strong>replace_file</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.ModelFile" title="ship.tuflow.tuflowfilepart.ModelFile"><em>ModelFile</em></a>) &#8211; the TuflowPart to be replaced.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.root">
+<code class="descname">root</code><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.root" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.updateRoot">
+<code class="descname">updateRoot</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.updateRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.updateRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the root variable in all TuflowFile&#8217;s in the model.</p>
+<p>The root variable (TuflowModel.root) is the directory that the main
+.tcf file is in. This is used to define the location of all other files
+which are usually referenced relative to each other.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>This method will be called automatically when setting the</dt>
+<dd>TuflowModel.root variable.</dd>
+</dl>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>root</strong> (<em>str</em>) &#8211; the new root to set.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.user_variables">
+<code class="descname">user_variables</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.user_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class containing the scenario/event/variable keys and values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowmodel.TuflowTypes">
+<em class="property">class </em><code class="descname">TuflowTypes</code><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains key words from Tuflow files for lookup.</p>
+<p>This acts as a lookup table for the TuflowLoader class more than anything
+else. It is kept here as that seems to be most sensible.</p>
+<p>Contains methods for identifying whether a command given to it is known
+to the library and what type it is. i.e. what UNIT_CATEGORY it falls into.</p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowTypes.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>find_val</em>, <em>file_type='*'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowTypes.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowTypes.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given value is known or not.</p>
+<p>The word to look for doesn&#8217;t have to be an exact match to the given
+value, it only has to start with it. This means that we don&#8217;t need to
+know whether it is a &#8216;command == something&#8217; or just &#8216;command something&#8217;
+(like: &#8216;Estry Control File Auto&#8217;) at this point.</p>
+<p>This helps to avoid unnecessary repitition. i.e. many files are like:
+&#8216;READ GIS&#8217; + another word. All of them are GIS type files so they all
+get dealt with in the same way.</p>
+<p>In some edge cases there are command that start the same. These are
+dealt with by secondary check to see if the next character is &#8216;=&#8217; or
+not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>find_val</strong> (<em>str</em>) &#8211; the value attempt to find in the lookup table.</li>
+<li><strong>file_type</strong> (<em>int</em>) &#8211; Optional - reduce the lookup time by providing
+the type (catgory) to look for the value in. These are the
+constants (MODEL, GIS, etc).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>Tuple (Bool, int) True if found. Int is the class constant</dt>
+<dd><p class="first last">indicating what type the value was found under.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ship.tuflow.tuflowmodel.UserVariables">
+<em class="property">class </em><code class="descname">UserVariables</code><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Container for all user defined variables.</p>
+<p>Includes variable set in the control files with &#8216;Set somevar ==&#8217; and the
+scenario and event variables.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only the currently active scenario and event variables will be stored
+in this class.</p>
+</div>
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>filepart</em>, <em>vtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new variables to the class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filepart</strong> (<em>TuflowModelVariables or TuflowUserVariable</em>) &#8211; </p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li>TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.</li>
+<li>ValueError - if filepart already exists.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>vtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the TuflowPart at the given key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>key</strong> (<em>str</em>) &#8211; the key associated with the required TuflowPart.</li>
+<li><strong>vtype=None</strong> (<em>str</em>) &#8211; the type of part to return. If None it will return
+a &#8216;variable&#8217; type. Other options are &#8216;scenario&#8217; and &#8216;event&#8217;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">TuflowPart - TuflowModelVariable or TuflowUserVariable type.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the variable stored at the given key.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; key for either the scenario, event, or variables dict.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.replace">
+<code class="descname">replace</code><span class="sig-paren">(</span><em>filepart</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.replace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace an existing variable.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filepart</strong> (<em>TuflowModelVariables or TuflowUserVariable</em>) &#8211; </p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li>TypeError - if filepart is not a TuflowModelVariable or TuflowUserVariable.</li>
+<li>ValueError - if filepart doesn&#8217;t already exist.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.seValsToDict">
+<code class="descname">seValsToDict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.seValsToDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.seValsToDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the values of the scenario and event variables.</p>
+<p>Returns the currently active scenario and event values only - not the
+placeholder keys - in a dictionary in the format:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">valN</span><span class="p">],</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">valN</span><span class="p">]}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict - of scenario and event values.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.UserVariables.variablesToDict">
+<code class="descname">variablesToDict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#UserVariables.variablesToDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.UserVariables.variablesToDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the values of the variables.</p>
+<p>Note that, like tuflow, scenario and event values will be includes in
+the variables dict returned.</p>
+<blockquote>
+<div>{&#8216;name1&#8217;: var1, &#8216;name2&#8217;: var2, &#8216;nameN&#8217;: name2}</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict - with variables names as key and values as values.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.tuflow.tuflowmodel.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0550AF30&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.tuflow">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ship.tuflow" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.tuflow.data_files.html" class="btn btn-neutral float-right" title="ship.tuflow.data_files package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ship.fmp.datunits.html" class="btn btn-neutral" title="ship.fmp.datunits package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

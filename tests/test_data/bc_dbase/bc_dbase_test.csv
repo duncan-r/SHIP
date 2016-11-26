@@ -1,4 +1,0 @@
-Name,Source,Column1_or_Time,Column2_or_Value_or_ID,TimeAdd,ValueMult,ValueAdd,IMultF,IAddF,ITimeAddF
-Name1,Name1.csv,time,Downstream,,,,,,
-Name2,Name2.csv,time,Flow,,,,,,
-Name3,Name2.csv,time,Dummy,,,,,,

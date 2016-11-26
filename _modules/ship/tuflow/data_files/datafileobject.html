@@ -1,0 +1,786 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.tuflow.data_files.datafileobject &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.tuflow.data_files.datafileobject</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.tuflow.data_files.datafileobject</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Used for accessing files that contain data and links to other files.</span>
+<span class="sd">    contains a factory method that will select the correct concrete </span>
+<span class="sd">    implementation of ADataFileObject for the user based on the contents of</span>
+<span class="sd">    the DataFile variables given as a parameter.</span>
+
+<span class="sd">    Contains the abstract ADataFileObject class and concrete implmentations.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+<span class="sd">     </span>
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd"> </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+<span class="sd">     </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>
+<span class="c1"># from ship.data_structures.rowdatacollection import DataTypes</span>
+<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span><span class="c1">#, DataTypes</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ADataFileObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject">[docs]</a><span class="k">class</span> <span class="nc">ADataFileObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract superclass for all data file objects.</span>
+<span class="sd">    </span>
+<span class="sd">    All classes that deal with reading and writing data from the DataFile </span>
+<span class="sd">    derivation of TuflowFilePart should create an implementation of this class.</span>
+<span class="sd">    </span>
+<span class="sd">    Loading of the data should be separated into the DataFileLoader module to</span>
+<span class="sd">    reduce the complexity of these classes.</span>
+<span class="sd">    </span>
+<span class="sd">    Primarily these classes are for data access and handling although they also</span>
+<span class="sd">    must contain a method for writing the data back to file.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        DataFile</span>
+<span class="sd">        DataFileLoader</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="o">=</span><span class="p">[],</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span> <span class="o">=</span> <span class="n">row_collection</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span> <span class="o">=</span> <span class="n">file_part</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">extension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span> <span class="o">=</span> <span class="n">comment_lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evt_src_data</span> <span class="o">=</span> <span class="n">args_dict</span>
+        
+    
+<div class="viewcode-block" id="ADataFileObject.getDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.getDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">getDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the ADataObject associated with the given key.</span>
+<span class="sd">        </span>
+<span class="sd">        The Keys for each class are usually defined by a related enum. These</span>
+<span class="sd">        should be used when calling this function.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (int): values associated with the different data types.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            ADataObject: containing the data stipulated by the given key.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if key value does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">ITERABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not match any avialable&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+
+<span class="c1">#     def getDataEntryAsList(self, key):</span>
+<div class="viewcode-block" id="ADataFileObject.dataObjectAsList"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.dataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">dataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the a list of the data associated with the given key.</span>
+<span class="sd">        </span>
+<span class="sd">        The Keys for each class are usually defined by a related enum. These</span>
+<span class="sd">        should be used when calling this function.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (int): values associated with the different data types.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list: containing the data stipulated by the given key.</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if key value does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">ITERABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not match any avialable&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        
+        <span class="n">outlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">outlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">outlist</span></div>
+    
+        
+<div class="viewcode-block" id="ADataFileObject.saveData"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.saveData">[docs]</a>    <span class="k">def</span> <span class="nf">saveData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plus_subfiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the current state of the data contained by this instance.</span>
+<span class="sd">        </span>
+<span class="sd">        Unless plus_subfiles == False all subfile data will be saved as well.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            plus_subfiles=False (bool): if True all associated subfile will be</span>
+<span class="sd">            saved to their current state as well.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IOError: if there is a problem writing to file.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getPrintableContents</span><span class="p">()</span>
+            <span class="n">filetools</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Could not write contents for </span><span class="si">%s</span><span class="s1"> file to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">extension</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()))</span>
+            <span class="k">raise</span> <span class="ne">IOError</span> <span class="p">(</span><span class="s1">&#39;Unable to write file to disc&#39;</span><span class="p">)</span>  
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span> <span class="ow">and</span> <span class="n">plus_subfiles</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">subfile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">contents</span> <span class="o">=</span> <span class="n">subfile</span><span class="o">.</span><span class="n">_getPrintableContents</span><span class="p">()</span>
+                    <span class="n">filetools</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">subfile</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">())</span>
+                <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Could not write contents for </span><span class="si">%s</span><span class="s1"> file to </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="n">subfile</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()))</span>
+                    <span class="k">raise</span> </div>
+    
+    
+<div class="viewcode-block" id="ADataFileObject.addSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.addSubfile">[docs]</a>    <span class="k">def</span> <span class="nf">addSubfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a subfile to this object.</span>
+<span class="sd">        </span>
+<span class="sd">        Subfiles are separate data files that are references by the contents</span>
+<span class="sd">        of an ADatafileObject instance.</span>
+<span class="sd">        </span>
+<span class="sd">        They should be derived from ADatafileSubFile.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            subfile (ADataFileSubfile): subfile to add.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError if subfile is not of type ADataFileSubfile</span>
+<span class="sd">            </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataFileSubfile</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="n">ADataFileSubfile</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span> <span class="p">(</span><span class="s1">&#39;subfile is not an instance of ADataFileSubFile&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subfile</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="ADataFileObject.changeRoot"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.changeRoot">[docs]</a>    <span class="k">def</span> <span class="nf">changeRoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the root variable in the path_holder</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            root (str): new root directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span></div>
+    
+    
+<div class="viewcode-block" id="ADataFileObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all paths held by this object</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            include_this=True(bool): if True it includes the path of this </span>
+<span class="sd">                DatafileObject.</span>
+<span class="sd">            name_only=False(bool): if True only the filename will be returned.</span>
+<span class="sd">            resolver_name=True(bool): if True any placeholders in the filename</span>
+<span class="sd">                will be replaced with the value set in the EventSourceData.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list - containing all the filepaths referenced by this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">include_this</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name_only</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name_only</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+        
+        <span class="k">if</span> <span class="n">resolve_paths</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolveEvtSrc</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">paths</span></div>
+    
+
+<div class="viewcode-block" id="ADataFileObject.resolveEvtSrc"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.resolveEvtSrc">[docs]</a>    <span class="k">def</span> <span class="nf">resolveEvtSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replace placeholders with values in the given list.</span>
+<span class="sd">        </span>
+<span class="sd">        Placeholder values can be used in most of the data files to define</span>
+<span class="sd">        filenames, variables, etc. This method will replace the placeholder</span>
+<span class="sd">        with the corresponding value if found in the EventSourceData.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value(list): str&#39;s to replace placeholders in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">placeholders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evt_src_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">holder</span> <span class="ow">in</span> <span class="n">placeholders</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">holder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evt_src_data</span><span class="p">[</span><span class="n">holder</span><span class="p">])</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">out</span></div>
+    
+
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format the data held by this object for writing to file.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+    
+
+<div class="viewcode-block" id="XsEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.XsEnum">[docs]</a><span class="k">class</span> <span class="nc">XsEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for accessing data in CrossSectionDataObject.&quot;&quot;&quot;</span>
+    <span class="n">SOURCE</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">FLAGS</span><span class="p">,</span> <span class="n">COLUMN_1</span><span class="p">,</span> <span class="n">COLUMN_2</span><span class="p">,</span> <span class="n">COLUMN_3</span><span class="p">,</span> <span class="n">COLUMN_4</span><span class="p">,</span> <span class="n">COLUMN_5</span><span class="p">,</span> \
+    <span class="n">COLUMN_6</span><span class="p">,</span> <span class="n">Z_INCREMENT</span><span class="p">,</span> <span class="n">Z_MAXIMUM</span><span class="p">,</span> <span class="n">SKEW</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="XsDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.XsDataObject">[docs]</a><span class="k">class</span> <span class="nc">XsDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataFileObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">XsEnum</span><span class="p">()</span>
+
+    
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format data held by this object for writing to file.&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;It is not currently possible to save changes from XsDataObjects&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    
+<div class="viewcode-block" id="TmfEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.TmfEnum">[docs]</a><span class="k">class</span> <span class="nc">TmfEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for accessing data in TmfDataObject</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ID</span><span class="p">,</span> <span class="n">MANNINGS</span><span class="p">,</span> <span class="n">INITIAL_LOSS</span><span class="p">,</span> <span class="n">CONTINUING_LOSS</span><span class="p">,</span> <span class="n">MANNINGS_DEPTH_1</span><span class="p">,</span> <span class="n">MANNINGS_1</span><span class="p">,</span> \
+    <span class="n">MANNINGS_DEPTH_2</span><span class="p">,</span> <span class="n">MANNINGS_2</span><span class="p">,</span> <span class="n">RESERVED</span><span class="p">,</span> <span class="n">SOIL_REDUCTION_FACTOR</span><span class="p">,</span> \
+    <span class="n">FRACTION_IMPERVIOUS</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+    <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TmfDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.TmfDataObject">[docs]</a><span class="k">class</span> <span class="nc">TmfDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete implementation of the ADataFileObject class.</span>
+<span class="sd">    </span>
+<span class="sd">    Used for reading/writing tuflow .tmf materials files.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_collection (rowdatacollection): row data from file.</span>
+<span class="sd">            file_part (DataFile): containing the path info for the file.</span>
+<span class="sd">            comment_lines (list): containing the contents of any comment only</span>
+<span class="sd">                lines in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataFileObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">TmfEnum</span><span class="p">()</span>
+    
+
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format the data held by this object for writing to file.&quot;&quot;&quot;</span>
+
+        <span class="n">file_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getNumberOfRows</span><span class="p">()</span>
+        <span class="n">out_contents</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_length</span><span class="p">)</span>
+        
+        <span class="n">data_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+        
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getNumberOfRows</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+            <span class="n">out_contents</span><span class="p">[</span><span class="n">data_rows</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        
+        <span class="c1"># Add any comment lines in</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">out_contents</span></div>
+
+
+<div class="viewcode-block" id="BcEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcEnum">[docs]</a><span class="k">class</span> <span class="nc">BcEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for accessing data in BcDataObject</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NAME</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">COLUMN1</span><span class="p">,</span> <span class="n">COLUMN2</span><span class="p">,</span> <span class="n">ADD_COL_1</span><span class="p">,</span> <span class="n">MULT_COL</span><span class="p">,</span> <span class="n">ADD_COL_2</span><span class="p">,</span> \
+    <span class="n">COLUMN_3</span><span class="p">,</span> <span class="n">COLUMN_4</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BcDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcDataObject">[docs]</a><span class="k">class</span> <span class="nc">BcDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Concrete implementation of the ADataFileObject class.</span>
+<span class="sd">    Reads/Writes the data in tuflow boundary condition database csv files.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+     
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_collection (rowdatacollection): row data from file.</span>
+<span class="sd">            file_part (DataFile): containing the path info for the file.</span>
+<span class="sd">            comment_lines (list): containing the contents of any comment only</span>
+<span class="sd">                lines in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataFileObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">args_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">BcEnum</span><span class="p">()</span>
+    
+    
+<div class="viewcode-block" id="BcDataObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcDataObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get all paths held by this object</span>
+<span class="sd">        </span>
+<span class="sd">        Overrides superclass method.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">include_this</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name_only</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">())</span>
+                
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">SOURCE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name_only</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> 
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">parent_relative_root</span><span class="p">,</span> 
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">relative_root</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">resolve_paths</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolveEvtSrc</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span> 
+            
+        <span class="k">return</span> <span class="n">paths</span></div>
+    
+        
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format data for printing to file&quot;&quot;&quot;</span>
+
+        <span class="n">data_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+        <span class="n">header_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getDataCollection</span><span class="p">()</span>
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getNumberOfRows</span><span class="p">()</span>
+        <span class="n">out_contents</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span>
+            <span class="n">out_contents</span><span class="p">[</span><span class="n">data_rows</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        
+        <span class="n">header_row</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_row</span><span class="p">)</span>
+        <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">header_row</span><span class="p">)</span>
+        
+        <span class="c1"># Add any comment lines in</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39; ,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_contents</span> </div>
+
+
+<div class="viewcode-block" id="MatCsvEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.MatCsvEnum">[docs]</a><span class="k">class</span> <span class="nc">MatCsvEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for accessing data in MatCsvDataObject</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ID</span><span class="p">,</span> <span class="n">MANNINGS</span><span class="p">,</span> <span class="n">N1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">N2</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">SUBFILE_NAME</span><span class="p">,</span> <span class="n">HEADER1</span><span class="p">,</span> <span class="n">HEADER2</span><span class="p">,</span> <span class="n">IL</span><span class="p">,</span> <span class="n">CL</span><span class="p">,</span> \
+    <span class="n">HAZARD_ID</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> 
+    <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MatCsvDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.MatCsvDataObject">[docs]</a><span class="k">class</span> <span class="nc">MatCsvDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Concrete implementation of the ADataFileObject class.</span>
+<span class="sd">    Reads/Writes the data in tuflow Materials csv files.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+     
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_collection (rowdatacollection): row data from file.</span>
+<span class="sd">            file_part (DataFile): containing the path info for the file.</span>
+<span class="sd">            comment_lines (list): containing the contents of any comment only</span>
+<span class="sd">                lines in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataFileObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">file_part</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">args_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">MatCsvEnum</span><span class="p">()</span>
+        
+        
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format the data held by this object for writing to file.&quot;&quot;&quot;</span>
+               
+        <span class="c1"># Grab these because they need deleting in the loop.</span>
+        <span class="n">data_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+        <span class="n">header_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getDataCollection</span><span class="p">()</span>
+        <span class="n">comment_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getDataCollection</span><span class="p">()</span>
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getNumberOfRows</span><span class="p">()</span>
+        <span class="n">out_contents</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">)</span>
+        
+        <span class="c1"># Get each row in the collection. Need to delete values not written to</span>
+        <span class="c1"># file on each iteration.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">)</span>
+            <span class="n">out_contents</span><span class="p">[</span><span class="n">data_rows</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refactorPrintableRow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="n">comment_row</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            
+        <span class="c1"># Add the header names to the start of the list.</span>
+        <span class="n">header_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refactorPrintableRow</span><span class="p">(</span><span class="n">header_row</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">header_row</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_row</span><span class="p">)</span> <span class="o">+</span> <span class="n">comment_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">header_row</span><span class="p">)</span>
+        
+        <span class="c1"># Add any comment lines in</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39; ,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_contents</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_refactorPrintableRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_row</span><span class="p">,</span> <span class="n">is_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts the values from individual back to tuflow recognised groupings.</span>
+<span class="sd">        </span>
+<span class="sd">        Tuflow can have multiple values grouped under a single heading.  </span>
+<span class="sd">        E.g. Mannings can equal:  </span>
+<span class="sd">            * Single value.  </span>
+<span class="sd">            * Two n values and two depth values.  </span>
+<span class="sd">            * A file name and up to two column headers.</span>
+<span class="sd">            </span>
+<span class="sd">        This takes the separated values and groups them back together again.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data_row (list): The row taken from the RowCollection.</span>
+<span class="sd">            is_header=False (bool): true if this is a header row.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            string: comma seperated for writing to file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_row</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
+         
+        <span class="k">if</span> <span class="n">is_header</span><span class="p">:</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">out_row</span>
+         
+        <span class="c1"># ID is always a single value</span>
+        <span class="n">data_row</span> <span class="o">=</span> <span class="n">data_row</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">out_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+         
+        <span class="c1"># if only a single manning&#39;s n value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+         
+        <span class="c1"># otherwise it&#39;s multiple mannings n and depth values</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span> 
+        
+        <span class="c1"># Or finally it could be file name and headers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+             
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>
+                <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; | &#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+             
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39; &#39;</span><span class="p">:</span>
+                <span class="n">out_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39; | &#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+ 
+        <span class="c1"># Infiltration parametres</span>
+        <span class="n">out_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span>
+        <span class="c1"># Land use hazard</span>
+        <span class="n">out_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_row</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+         
+        <span class="n">out_row</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_row</span></div>
+
+
+<div class="viewcode-block" id="ADataFileSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileSubfile">[docs]</a><span class="k">class</span> <span class="nc">ADataFileSubfile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract super class for and ADataFileObject contained subfiles.</span>
+<span class="sd">    </span>
+<span class="sd">    Any files that are referenced by the ADataFileObject and which need to be</span>
+<span class="sd">    read in should be included in the ADataFileObject&#39;s self.subfiles list</span>
+<span class="sd">    and be derived from this class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_holder</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">comment_lines</span><span class="o">=</span><span class="p">[],</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path_holder (PathHolder): containing file path data.</span>
+<span class="sd">            row_collection (rowdatacollection): containing all of the</span>
+<span class="sd">                row data read from file.</span>
+<span class="sd">            filename (string): the name of file the object is based on.</span>
+<span class="sd">            comment_lines=[] (list): containing any comment only lines that</span>
+<span class="sd">                do not need accessing from within the row data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_holder</span> <span class="o">=</span> <span class="n">path_holder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span> <span class="o">=</span> <span class="n">row_collection</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span> <span class="o">=</span> <span class="n">comment_lines</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="SubfileMatEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.SubfileMatEnum">[docs]</a><span class="k">class</span> <span class="nc">SubfileMatEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enum for use in accessing data in DataFileSubfileMat&quot;&quot;&quot;</span>
+    <span class="n">NAME</span><span class="p">,</span> <span class="n">DEPTH</span><span class="p">,</span> <span class="n">MANNINGS</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataFileSubfileMat"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.DataFileSubfileMat">[docs]</a><span class="k">class</span> <span class="nc">DataFileSubfileMat</span><span class="p">(</span><span class="n">ADataFileSubfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete instance of ADataFileSubfile&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_holder</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> 
+                                        <span class="n">head1_location</span><span class="p">,</span> <span class="n">head2_location</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            path_holder (PathHolder): containing file path data.</span>
+<span class="sd">            row_collection (rowdatacollection): containing all of the</span>
+<span class="sd">                row data read from file.</span>
+<span class="sd">            filename (string): the name of file the object is based on.</span>
+<span class="sd">            comment_lines=[] (list): containing any comment only lines that</span>
+<span class="sd">                do not need accessing from within the row data.</span>
+<span class="sd">            head1_location (int): location of the first key header in the file</span>
+<span class="sd">                columns.</span>
+<span class="sd">            head2_location (int): location of the second key header in the file</span>
+<span class="sd">                columns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataFileSubfile</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_holder</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span>
+                                  <span class="n">comment_lines</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">SubfileMatEnum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head1_location</span> <span class="o">=</span> <span class="n">head1_location</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head2_location</span> <span class="o">=</span> <span class="n">head2_location</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_getPrintableContents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format data for printing to file&quot;&quot;&quot;</span>
+
+        <span class="n">data_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+        <span class="n">header_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getDataCollection</span><span class="p">()</span>
+        <span class="n">no_of_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getNumberOfRows</span><span class="p">()</span>
+        <span class="n">out_contents</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">no_of_rows</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_rows</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;row_no&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">deleteDataObject</span><span class="p">(</span><span class="s1">&#39;actual_header&#39;</span><span class="p">)</span>
+            <span class="n">out_contents</span><span class="p">[</span><span class="n">data_rows</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        
+        <span class="n">header_row</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_row</span><span class="p">)</span>
+        <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">header_row</span><span class="p">)</span>
+        
+        <span class="c1"># Add any comment lines in</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment_lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out_contents</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39; ,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">out_contents</span> </div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

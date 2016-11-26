@@ -1,8 +1,0 @@
-!#####################################################################################
-! ****************************      TEST SHIP MODEL      *****************************
-! ****************************           TRD 3           *****************************
-!#####################################################################################
-
-!Define base Z points
-Set Zpts == 3 ! Defines global elevation in mAOD. Initialises grid values
-Read GIS Z Line THIN == gis\2d_zln_shiptest_trd_v3_L.shp | gis\2d_zln_shiptest_trd_v3_P.shp ! some comment

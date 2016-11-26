@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.tools.openchannel &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.tools.openchannel</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.tools.openchannel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">     Contains methods for calculating characteristics of open channel flow.</span>
+<span class="sd">     </span>
+<span class="sd">     Currently only used to calculate conveyance for a channel section.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd">  Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">ship.utils.utilfunctions</span> <span class="k">as</span> <span class="nn">utilfunc</span>
+
+
+<div class="viewcode-block" id="interpolateGaps"><a class="viewcode-back" href="../../../../ship.utils.tools.html#ship.utils.tools.openchannel.interpolateGaps">[docs]</a><span class="k">def</span> <span class="nf">interpolateGaps</span><span class="p">(</span><span class="n">y_vals</span><span class="p">,</span> <span class="n">space</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Fill in any large gaps in the depths list</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        y_vals(list): elevation values.</span>
+<span class="sd">        space(float): maximum allowable difference between interpolation values.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        list of new y values to calculate conveyance for.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">depths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">y_vals</span><span class="p">)</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_vals</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">location</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">depths</span><span class="p">[</span><span class="n">location</span><span class="p">]</span> <span class="o">-</span> <span class="n">depths</span><span class="p">[</span><span class="n">location</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">space</span><span class="p">:</span>
+            <span class="n">no_insert</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">diff</span> <span class="o">/</span> <span class="n">space</span><span class="p">)</span>
+              
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_insert</span><span class="p">):</span>
+                <span class="n">baseline</span> <span class="o">=</span> <span class="n">depths</span><span class="p">[</span><span class="n">location</span><span class="p">]</span>
+                <span class="n">depths</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">baseline</span> <span class="o">-</span> <span class="n">space</span><span class="p">)</span>
+            <span class="n">location</span> <span class="o">-=</span> <span class="mi">1</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">location</span> <span class="o">-=</span> <span class="mi">1</span>
+    
+    <span class="k">return</span> <span class="n">depths</span></div>
+
+
+<div class="viewcode-block" id="calcConveyance"><a class="viewcode-back" href="../../../../ship.utils.tools.html#ship.utils.tools.openchannel.calcConveyance">[docs]</a><span class="k">def</span> <span class="nf">calcConveyance</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">panel_vals</span><span class="o">=</span><span class="p">[],</span> <span class="n">n_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">depths</span><span class="o">=</span><span class="p">[],</span> 
+                        <span class="n">no_panels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">interpolate_space</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate conveyance over a range of depths from min to max elevation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x_vals(list): cross section chainage values.</span>
+<span class="sd">        y_vals(list): corresponding elevation values</span>
+<span class="sd">        panel_vals=[](list): corresponding panel locations.</span>
+<span class="sd">        n_vals=[](list): corresponding mannings n values.</span>
+<span class="sd">        depths=[](list): list of depths required. Any specific depths needed.</span>
+<span class="sd">        no_panels(Bool): If false any panels found will not be included</span>
+<span class="sd">            in the calculations.</span>
+<span class="sd">        interpolate_space=0(int): float stipulating the maximum allowable space</span>
+<span class="sd">            between depths. If zero then only section elevations will be used.</span>
+<span class="sd">        tolerance=0.0(float): tolerance used to identify negative conveyance.</span>
+<span class="sd">            if the reduction in conveyance is less than tolerance it will not</span>
+<span class="sd">            be flagged.</span>
+<span class="sd">    </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Tuple:  </span>
+<span class="sd">            list: containing a dictionary for each depth with:  </span>
+<span class="sd">                Conveyance: the conveyance value calculated.  </span>
+<span class="sd">                Stage: the depth of the value calculated.  </span>
+<span class="sd">                Negative: boolean - True if value less than previous depth.  </span>
+<span class="sd">            boolean: True if contains a negative conveyance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">checkVars</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">n_vals</span><span class="p">,</span> <span class="n">depths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check variables before running.</span>
+<span class="sd">        </span>
+<span class="sd">        If n_vals elements are None they will be replaced with the default</span>
+<span class="sd">        value of 0.04.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_vals(list): cross section chainage values.</span>
+<span class="sd">            n_vals=[](list): corresponding mannings n values.</span>
+<span class="sd">            depths=[](list): list of depths required. Any specific depths needed.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            tuple: depths(list), roughness(list)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">depths</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">depths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">y_vals</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">interpolate_space</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">depths</span> <span class="o">=</span> <span class="n">interpolateGaps</span><span class="p">(</span><span class="n">y_vals</span><span class="p">,</span> <span class="n">interpolate_space</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">y_vals</span><span class="p">)</span>
+        
+        <span class="c1"># If not n vals supplied set up some defaults</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">n_vals</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">n_vals</span><span class="o">=</span> <span class="p">[</span><span class="n">n_vals</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_vals</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">n_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.04</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_vals</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="n">depths</span><span class="p">,</span> <span class="n">n_vals</span>
+    
+
+    <span class="k">def</span> <span class="nf">buildSections</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">n_vals</span><span class="p">,</span> <span class="n">panel_vals</span><span class="p">,</span> <span class="n">no_panels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the section setups needed based on the inputs</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_vals(list): cross section chainage values.</span>
+<span class="sd">            y_vals(list): corresponding elevation values</span>
+<span class="sd">            n_vals=[](list): corresponding mannings n values.</span>
+<span class="sd">            panel_vals=[](list): corresponding panel locations.</span>
+<span class="sd">            no_panels(Bool): If false any panels found will not be included</span>
+<span class="sd">                in the calculations.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list of all of the panel section data as tuple(x(list), y(list),</span>
+<span class="sd">                n(list)).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    
+        <span class="n">all_sections</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># If there&#39;s only one panel wanted only create one section from all</span>
+        <span class="c1"># of the data provided. Otherwise create multiple sections split on</span>
+        <span class="c1"># panel markers indices</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">panel_vals</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">no_panels</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">x_arr</span> <span class="o">=</span> <span class="n">x_vals</span>
+                <span class="n">y_arr</span> <span class="o">=</span> <span class="n">y_vals</span>
+                <span class="n">n_arr</span> <span class="o">=</span> <span class="n">n_vals</span>
+                <span class="n">all_sections</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">n_arr</span><span class="p">])</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">panel_vals</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">x_arr</span> <span class="o">=</span> <span class="n">x_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">y_arr</span> <span class="o">=</span> <span class="n">y_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">n_arr</span> <span class="o">=</span> <span class="n">n_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">all_sections</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">n_arr</span><span class="p">])</span>            
+                <span class="n">start</span> <span class="o">=</span> <span class="n">i</span>
+            
+            <span class="n">x_arr</span> <span class="o">=</span> <span class="n">x_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span>
+            <span class="n">y_arr</span> <span class="o">=</span> <span class="n">y_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span>
+            <span class="n">n_arr</span> <span class="o">=</span> <span class="n">n_vals</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span>
+            <span class="n">all_sections</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">n_arr</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">all_sections</span>
+    
+
+    <span class="k">def</span> <span class="nf">calcSectionK</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate conveyance (K) for each section at the given depth.</span>
+<span class="sd">        </span>
+<span class="sd">        section is a list of tuples containing the data for each section of</span>
+<span class="sd">        channel geometry in the cross section (i.e. each set of two x and y</span>
+<span class="sd">        points and their associated roughness value).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            section(list): containing variables for this geometrical section.</span>
+<span class="sd">            depth(float): the depth below which to calculate conveyance.</span>
+<span class="sd">        </span>
+<span class="sd">         Return:</span>
+<span class="sd">            Dict: containing lists of area, wp and n * wp</span>
+<span class="sd">             </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">panel_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;area&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;wp&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;nxwp&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+        
+        <span class="k">def</span> <span class="nf">addToPanel</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">nxwp</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Add calculated values to panel list</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
+            <span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;wp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wp</span><span class="p">)</span>
+            <span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;nxwp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nxwp</span><span class="p">)</span>
+        
+        <span class="c1"># Loop through each of the channel data sections (i.e. the sets of</span>
+        <span class="c1"># x&#39;s) and calculate K for the piece. Then add to the panel list.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">section</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+             
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">x2</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">y1</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">y2</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">section</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            
+            <span class="n">miny</span><span class="p">,</span> <span class="n">maxy</span><span class="p">,</span> <span class="n">same_val</span> <span class="o">=</span> <span class="n">utilfunc</span><span class="o">.</span><span class="n">findMax</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span>
+            
+            <span class="c1"># Water level lower than min elevation so no K</span>
+            <span class="k">if</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="n">miny</span><span class="p">:</span>
+                <span class="n">addToPanel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">height</span> <span class="o">=</span> <span class="n">maxy</span> <span class="o">-</span> <span class="n">miny</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x1</span><span class="o">-</span><span class="n">x2</span><span class="p">)</span>
+                
+                <span class="c1"># Need to scale the triangle because the depth is lower than</span>
+                <span class="c1"># the top of the x/y triangle. Reduce x by the same factor as</span>
+                <span class="c1"># we&#39;re reducing y.</span>
+                <span class="k">if</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="n">maxy</span><span class="p">:</span>
+                    <span class="n">height2</span> <span class="o">=</span> <span class="n">depth</span> <span class="o">-</span> <span class="n">miny</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="p">(</span><span class="n">height2</span> <span class="o">/</span> <span class="n">height</span><span class="p">)</span>
+                    <span class="n">height</span> <span class="o">=</span> <span class="n">height2</span>                    
+                    <span class="n">maxy</span> <span class="o">=</span> <span class="n">depth</span>
+                
+                <span class="c1"># If the y vals are the same then wp is just the difference </span>
+                <span class="c1"># between the x values, and the flow area contributed to by the</span>
+                <span class="c1"># difference in y is 0. otherwise it&#39;s the hypotenus and the</span>
+                <span class="c1"># area is taken from the triangle. </span>
+                <span class="k">if</span> <span class="n">same_val</span><span class="p">:</span>
+                    <span class="n">wp</span> <span class="o">=</span> <span class="n">width</span>
+                    <span class="n">area</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">wp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">height</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">width</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>
+                    <span class="n">area</span> <span class="o">=</span> <span class="p">((</span><span class="n">height</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                
+                <span class="c1"># flow above it to area.</span>
+                <span class="k">if</span> <span class="n">maxy</span> <span class="o">&lt;</span> <span class="n">depth</span><span class="p">:</span>
+                    <span class="n">area</span> <span class="o">+=</span> <span class="p">((</span><span class="n">depth</span> <span class="o">-</span> <span class="n">maxy</span><span class="p">)</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+                    
+                <span class="c1"># Finally calculate mannings x wetted perimiter and add to the</span>
+                <span class="c1"># panel calcs list.</span>
+                <span class="n">nxwp</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">wp</span>
+                <span class="n">addToPanel</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">wp</span><span class="p">,</span> <span class="n">nxwp</span><span class="p">)</span>
+                <span class="c1">#print &#39;Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f&#39; % (depth, area, wp, nxwp)  </span>
+        <span class="k">return</span> <span class="n">panel_data</span>
+    
+        
+    <span class="n">depths</span><span class="p">,</span> <span class="n">n_vals</span> <span class="o">=</span> <span class="n">checkVars</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">n_vals</span><span class="p">,</span> <span class="n">depths</span><span class="p">)</span>
+    <span class="n">all_sections</span> <span class="o">=</span> <span class="n">buildSections</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">n_vals</span><span class="p">,</span> <span class="n">panel_vals</span><span class="p">,</span> <span class="n">no_panels</span><span class="p">)</span>
+    
+    <span class="c1"># Loop through the depths calculating K and add the sum af the conveyance</span>
+    <span class="c1"># from each panel together and put results in a list to return to the </span>
+    <span class="c1"># calling function.</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">has_negative</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">previous_k</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">depths</span><span class="p">:</span>
+        <span class="n">total_k</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># There could be one panel or many so loop through them all at each</span>
+        <span class="c1"># depth calc and calculate flow area and wetted perimiter for each</span>
+        <span class="c1"># x/y pair before using to calculate conveyance.</span>
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">all_sections</span><span class="p">:</span>
+                        
+            <span class="n">panel_data</span> <span class="o">=</span>  <span class="n">calcSectionK</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+            <span class="n">total_area</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">])</span>
+            <span class="n">total_wp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;wp&#39;</span><span class="p">])</span>
+            <span class="n">total_nxwp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">panel_data</span><span class="p">[</span><span class="s1">&#39;nxwp&#39;</span><span class="p">])</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">total_wp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">panel_k</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">total_area</span><span class="o">**</span><span class="mf">5.0</span> <span class="o">/</span> <span class="n">total_wp</span><span class="o">**</span><span class="mf">2.0</span> <span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span> <span class="n">total_wp</span> <span class="o">/</span> <span class="n">total_nxwp</span> <span class="p">)</span>
+                <span class="c1">#print &#39;Panel totals&#39;</span>
+                <span class="c1">#print &#39;Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f&#39; % (d, total_area, total_wp, total_nxwp) </span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">panel_k</span> <span class="o">=</span> <span class="mf">0.0</span>
+            
+            <span class="n">total_k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">panel_k</span><span class="p">)</span>
+        
+        <span class="n">negative</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">depth_k</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">previous_k</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">previous_k</span> <span class="o">&gt;</span> <span class="n">depth_k</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">previous_k</span> <span class="o">-</span> <span class="n">depth_k</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">:</span>
+                <span class="n">negative</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">has_negative</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">previous_k</span> <span class="o">=</span> <span class="n">depth_k</span>
+        
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">depth_k</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">negative</span><span class="p">])</span>
+        <span class="c1">#print &#39;Depth Totals&#39;</span>
+        <span class="c1">#print &#39;Conveyance at depth: %f  =  %f\n&#39; % (d, depth_k)</span>
+                
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">has_negative</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

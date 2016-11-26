@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.utils.fileloaders.tuflowloader &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.utils.fileloaders.tuflowloader</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.utils.fileloaders.tuflowloader</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowmodel</span> <span class="k">import</span> <span class="n">TuflowModel</span><span class="p">,</span> <span class="n">TuflowTypes</span><span class="p">,</span> <span class="n">UserVariables</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">controlfile</span> <span class="k">as</span> <span class="n">control</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">tuflowfilepart</span> <span class="k">as</span> <span class="n">tuflowpart</span>
+<span class="kn">from</span> <span class="nn">ship.utils.fileloaders.loader</span> <span class="k">import</span> <span class="n">ALoader</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">tuflowfactory</span> <span class="k">as</span> <span class="n">tfactory</span>
+
+
+<div class="viewcode-block" id="TuflowLoader"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader">[docs]</a><span class="k">class</span> <span class="nc">TuflowLoader</span><span class="p">(</span><span class="n">ALoader</span><span class="p">):</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ALoader</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">TuflowTypes</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="n">UserVariables</span><span class="p">()</span>
+<span class="c1">#         self.scenario_vals = {}</span>
+<span class="c1">#         &quot;&quot;&quot;Any scenario values that are passed through.&quot;&quot;&quot;</span>
+<span class="c1">#         </span>
+<span class="c1">#         self.event_vals = {}</span>
+        <span class="sd">&quot;&quot;&quot;Any event values that are passed through.&quot;&quot;&quot;</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;TuflowModel class instance&quot;&quot;&quot;</span>
+        
+        <span class="c1"># Internal stuff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetLoader</span><span class="p">()</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_resetLoader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">FileQueue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="n">UserVariables</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bc_event</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1">#         self.scenario_vals = {}</span>
+<span class="c1">#         self.event_vals = {}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        
+<div class="viewcode-block" id="TuflowLoader.loadFile"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tcf_path</span><span class="p">,</span> <span class="n">arg_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Main loader function defined by the ALoader interface.</span>
+<span class="sd">        </span>
+<span class="sd">        The presumption with this loader is that a .tcf file (i.e. the root of</span>
+<span class="sd">        all tuflow models will be given as a starting point. The rest of the</span>
+<span class="sd">        model can then be accessed from there.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">,</span> <span class="n">arg_dict</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="TuflowLoader.loadModel"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadModel">[docs]</a>    <span class="k">def</span> <span class="nf">loadModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tcf_path</span><span class="p">,</span> <span class="n">arg_dict</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load a full tuflow model from the given tcf path.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetLoader</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="s1">&#39;scenario&#39;</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_scenario</span> <span class="o">=</span> <span class="kc">True</span> 
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_Variables</span><span class="o">.</span><span class="n">has_cmd_vals</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scenario_vals</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;scenario&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">addVariable</span><span class="p">(</span><span class="n">tuflowpart</span><span class="o">.</span><span class="n">TuflowModelVariable</span><span class="o">.</span><span class="n">noParent</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">),</span> <span class="s1">&#39;scen&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="s1">&#39;event&#39;</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_event</span> <span class="o">=</span> <span class="kc">True</span> 
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_Variables</span><span class="o">.</span><span class="n">has_cmd_vals</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_vals</span> <span class="o">=</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">arg_dict</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">addVariable</span><span class="p">(</span><span class="n">tuflowpart</span><span class="o">.</span><span class="n">TuflowModelVariable</span><span class="o">.</span><span class="n">noParent</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">),</span> <span class="s1">&#39;evnt&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Check that the tcf exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Tcf file at </span><span class="si">%s</span><span class="s1"> does not exist&#39;</span> <span class="o">%</span> <span class="n">tcf_path</span><span class="p">)</span>
+        <span class="n">root</span><span class="p">,</span> <span class="n">tcf_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+<span class="c1">#         root = unicode(root)</span>
+        <span class="n">tcf_name</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="n">tcf_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span> <span class="o">=</span> <span class="n">TuflowModel</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        
+        <span class="c1"># Parse the tuflow control files</span>
+        <span class="n">main_file</span> <span class="o">=</span> <span class="n">tuflowpart</span><span class="o">.</span><span class="n">ModelFile</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="n">tcf_name</span><span class="p">,</span> <span class="s1">&#39;command&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                                <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;model_type&#39;</span><span class="p">:</span> <span class="s1">&#39;TCF&#39;</span><span class="p">,</span>
+                                                <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="n">root</span><span class="p">})</span>
+        <span class="n">tcf_path</span> <span class="o">=</span> <span class="n">main_file</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+<span class="c1">#         self.tuflow_model.main_file = main_file</span>
+        
+        <span class="c1"># Setup the file and object holders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">main_file</span><span class="p">)</span>
+        
+        <span class="c1"># Read the control files and their contents into memory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetchTuflowModel</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        
+        <span class="c1"># Order the input and create the actual ControlFile objects</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orderModel</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
+        
+        <span class="c1"># Return the loaded model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">bc_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bc_event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">addTcfModelFile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">removeTcfModelFile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">replaceTcfModelFile</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span></div>
+
+
+<div class="viewcode-block" id="TuflowLoader.loadControlFile"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.loadControlFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadControlFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">model_file</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;model_file path does not exists at: &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetLoader</span><span class="p">()</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">model_file</span><span class="o">.</span><span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetchTuflowModel</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">_load_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> 
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span><span class="p">[</span><span class="n">path</span><span class="p">]</span>
+        <span class="n">mtype</span> <span class="o">=</span> <span class="n">model_file</span><span class="o">.</span><span class="n">model_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_control</span> <span class="o">=</span> <span class="p">[</span><span class="n">mtype</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span> <span class="o">=</span> <span class="p">{</span><span class="n">mtype</span><span class="p">:</span> <span class="n">control</span><span class="o">.</span><span class="n">ControlFile</span><span class="p">(</span><span class="n">mtype</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span><span class="p">[</span><span class="n">path</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildControlFiles</span><span class="p">(</span><span class="n">_load_list</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">mtype</span><span class="p">]</span></div>
+    
+    
+    <span class="k">def</span> <span class="nf">_orderModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tcf_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup the ControlFile&#39;s with ordered TuflowFilepart&#39;s.</span>
+<span class="sd">        </span>
+<span class="sd">        There will always be a tcf file as an entry point, so that is setup</span>
+<span class="sd">        first. Then builControlFiles is called to deal with all the others.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_load_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span><span class="p">[</span><span class="n">tcf_path</span><span class="p">]</span> 
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span><span class="p">[</span><span class="n">tcf_path</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_control</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TCF&#39;</span><span class="p">:</span> <span class="n">control</span><span class="o">.</span><span class="n">TcfControlFile</span><span class="p">(</span><span class="n">model</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span><span class="p">[</span><span class="n">tcf_path</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildControlFiles</span><span class="p">(</span><span class="n">_load_list</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        
+    
+<div class="viewcode-block" id="TuflowLoader.buildControlFiles"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.buildControlFiles">[docs]</a>    <span class="k">def</span> <span class="nf">buildControlFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_load_list</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add TuflowFilepart&#39;s to the correct ControlFile&#39;s.</span>
+<span class="sd">        </span>
+<span class="sd">        Loops through the list of TuflowFilePart&#39;s created when parsing the</span>
+<span class="sd">        tuflow input files. When it finds a TuflowFilepart containing a </span>
+<span class="sd">        reference to a tuflow control file it will recursively call itself and</span>
+<span class="sd">        start adding parts to the ControlFile for that type instead. It will </span>
+<span class="sd">        either find another control file and, again, make a recursive call, or </span>
+<span class="sd">        will finish adding the TuflowFileparts to the ControlFile and drop back</span>
+<span class="sd">        into the previous function call (recursive) to continue reading the</span>
+<span class="sd">        previous list of TuflowFilepart&#39;s.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_load_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">obj_type</span> <span class="o">==</span> <span class="s1">&#39;model&#39;</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">model_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">ControlFile</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">buildControlFiles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+
+            <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;TCF&#39;</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_VARIABLE</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_bc_event</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">variable</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
+
+    
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        #</span>
+<span class="sd">        Control file parsers.</span>
+<span class="sd">        #</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+        
+    <span class="k">def</span> <span class="nf">_fetchTuflowModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Read all of the control files into memory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">missing_model_files</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Keep processing control files until there are none left in the queue</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">control_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">dequeue</span><span class="p">()</span>
+            <span class="c1"># DEBUG</span>
+<span class="c1">#             self.scenario_vals[&#39;s&#39;] = &#39;CHEESE&#39;</span>
+<span class="c1">#             self.event_vals[&#39;e2&#39;] = &#39;HAM&#39;</span>
+<span class="c1">#             control_part.filename = &#39;something_~s1~_~e2~_blah&#39;</span>
+            <span class="c1"># DEBUG</span>
+            <span class="n">cpath</span> <span class="o">=</span> <span class="n">control_part</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+<span class="c1">#             logger.debug(&#39;cpath before resolve: &#39; + cpath)</span>
+<span class="c1">#             print (&#39;cpath before resolve: &#39; + cpath)</span>
+<span class="c1">#             cpath = uf.getSEResolvedFilename(cpath, {&#39;scenario&#39;: self.scenario_vals, &#39;event&#39;: self.event_vals})</span>
+<span class="c1"># #             logger.debug(&#39;cpath after resolve: &#39; + cpath)</span>
+<span class="c1">#             print (&#39;cpath after resolve: &#39; + cpath)</span>
+            <span class="n">raw_contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFile</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
+            
+            <span class="c1"># If we couldn&#39;t load the file add it to the missing list</span>
+            <span class="k">if</span> <span class="n">raw_contents</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">missing_model_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">contents</span><span class="p">,</span> <span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readControlFile</span><span class="p">(</span><span class="n">raw_contents</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">control_part</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span><span class="p">[</span><span class="n">cpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">contents</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span><span class="p">[</span><span class="n">cpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">logic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span><span class="p">[</span><span class="n">cpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">control_part</span>
+        
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span>
+        
+        
+    <span class="k">def</span> <span class="nf">_readControlFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_contents</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">control_part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the content of a control file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">unknown_store</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">logic</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">logic_done</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">factory</span> <span class="o">=</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">createUnknown</span><span class="p">(</span><span class="n">unknown_store</span><span class="p">,</span> <span class="n">l</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Creates an UnknownPart from the current list.&quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">unknown_store</span><span class="p">:</span>
+                <span class="nb">vars</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unknown_store</span><span class="p">)</span>
+                <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tuflowpart</span><span class="o">.</span><span class="n">UnknownPart</span><span class="p">(</span><span class="n">control_part</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="k">def</span> <span class="nf">addLogicAssociate</span><span class="p">(</span><span class="n">lpart</span><span class="p">,</span> <span class="n">logic_stack</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">logic</span><span class="p">:</span>
+                <span class="n">lpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span> <span class="o">=</span> <span class="n">logic</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">logic</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">addPart</span><span class="p">(</span><span class="n">lpart</span><span class="p">,</span> <span class="n">skip_callback</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">logic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lpart</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">logic</span>
+        
+        
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">raw_contents</span><span class="p">:</span>
+
+            <span class="n">current_logic</span> <span class="o">=</span> <span class="n">logic</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">logic</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">upline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">checkIsComment</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="n">unknown_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">upline</span><span class="p">)</span>
+            
+            <span class="c1"># If we don&#39;t know what it is</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">unknown_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">unknown_store</span> <span class="o">=</span> <span class="n">createUnknown</span><span class="p">(</span><span class="n">unknown_store</span><span class="p">,</span> <span class="n">current_logic</span><span class="p">)</span>
+
+            <span class="c1"># Build logic types </span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">IF_LOGIC</span><span class="p">:</span>
+                <span class="nb">vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parseIfLogic</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">control_part</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;IF&#39;</span><span class="p">):</span>
+                    <span class="n">lfile</span> <span class="o">=</span> <span class="n">tuflowpart</span><span class="o">.</span><span class="n">IfLogic</span><span class="p">(</span><span class="n">control_part</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+                    <span class="n">logic</span> <span class="o">=</span> <span class="n">addLogicAssociate</span><span class="p">(</span><span class="n">lfile</span><span class="p">,</span> <span class="n">logic</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;END IF&#39;</span><span class="p">):</span>
+                    <span class="n">logic_done</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">current_logic</span><span class="o">.</span><span class="n">addClause</span><span class="p">(</span><span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">])</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_LOGIC</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">SECTION_LOGIC</span><span class="p">:</span>
+                <span class="nb">vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parseDefineLogic</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">control_part</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;END&#39;</span><span class="p">):</span>
+                    <span class="n">logic_done</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_LOGIC</span><span class="p">:</span>
+                        <span class="n">dfile</span> <span class="o">=</span> <span class="n">tuflowpart</span><span class="o">.</span><span class="n">BlockLogic</span><span class="p">(</span><span class="n">control_part</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dfile</span> <span class="o">=</span> <span class="n">tuflowpart</span><span class="o">.</span><span class="n">SectionLogic</span><span class="p">(</span><span class="n">control_part</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+                    <span class="n">logic</span> <span class="o">=</span> <span class="n">addLogicAssociate</span><span class="p">(</span><span class="n">dfile</span><span class="p">,</span> <span class="n">logic</span><span class="p">)</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># All other FilePart types</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">getTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">control_part</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current_logic</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">has_cmd_args</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">USER_VARIABLE</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                        
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+                <span class="n">contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">logic</span><span class="p">:</span>
+                    <span class="n">current_logic</span><span class="o">.</span><span class="n">addPart</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">skip_callback</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="n">unknown_store</span> <span class="o">=</span> <span class="n">createUnknown</span><span class="p">(</span><span class="n">unknown_store</span><span class="p">,</span> <span class="n">current_logic</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">contents</span><span class="p">,</span> <span class="n">logic_done</span>
+                
+    
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        #</span>
+<span class="sd">        TuflowFilepart type builders.</span>
+<span class="sd">        #</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="TuflowLoader.parseDefineLogic"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.parseDefineLogic">[docs]</a>    <span class="k">def</span> <span class="nf">parseDefineLogic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">command</span><span class="p">,</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">],</span> <span class="n">cchar</span> <span class="o">=</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">separateComment</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;==&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">breakLine</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">command</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;tpart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">return</span> <span class="nb">vars</span></div>
+
+   
+<div class="viewcode-block" id="TuflowLoader.parseIfLogic"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.parseIfLogic">[docs]</a>    <span class="k">def</span> <span class="nf">parseIfLogic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">command</span><span class="p">,</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">],</span> <span class="n">cchar</span> <span class="o">=</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">separateComment</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;==&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfactory</span><span class="o">.</span><span class="n">breakLine</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">command</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">return</span> <span class="nb">vars</span></div>
+
+    
+    <span class="k">def</span> <span class="nf">_addModelVariable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds any model variables read in to the global variables dict.</span>
+<span class="sd">        </span>
+<span class="sd">        The dict will only be updated if there are no values in it already.</span>
+<span class="sd">        This is inline with the Tuflow manual guidance.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            part(TuflowVariable): with self.tpart_type == FILEPART_TYPE.MODEL_VARIABLE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="s1">&#39;EVENT&#39;</span> <span class="ow">in</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_vals</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">split_variable</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">event_vals</span><span class="p">[</span><span class="s1">&#39;e&#39;</span> <span class="o">+</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">scenario_vals</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">split_variable</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">scenario_vals</span><span class="p">[</span><span class="s1">&#39;s&#39;</span> <span class="o">+</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">s</span>
+    
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        #</span>
+<span class="sd">        File processing methods</span>
+<span class="sd">        #</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="TuflowLoader.getFile"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.tuflowloader.TuflowLoader.getFile">[docs]</a>    <span class="k">def</span> <span class="nf">getFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the file into the contents list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str): path to the required file. </span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if loaded ok, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;loading File: &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">raw_contents</span> <span class="o">=</span> <span class="n">filetools</span><span class="o">.</span><span class="n">getFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;IOError - Unable to load file&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+        <span class="k">if</span><span class="p">(</span><span class="n">raw_contents</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span> 
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;model file is empty at: &#39;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+                
+        <span class="k">return</span> <span class="n">raw_contents</span></div></div>
+        
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

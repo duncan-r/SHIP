@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DatCollection &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>DatCollection</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/datcollection.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="datcollection">
+<span id="datcollection-top"></span><h1>DatCollection<a class="headerlink" href="#datcollection" title="Permalink to this headline">¶</a></h1>
+<p>DatCollection is the main class used for accessing all of the data in a
+Flood Modeller .dat file - or, despite the name, .ief file (this is because
+they are basically the same file structure). When you load a .dat file or an
+.ied file the FileLoader will return a DatCollection.</p>
+<div class="section" id="loading-dat-ied-files">
+<span id="datcollection-loading"></span><h2>Loading dat/ied files<a class="headerlink" href="#loading-dat-ied-files" title="Permalink to this headline">¶</a></h2>
+<p>.dat and .ief files, like all other files, can be loaded with the FileLoader
+class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.utils.fileloaders.fileloader</span> <span class="k">import</span> <span class="n">FileLoader</span>
+
+<span class="n">ied_path</span> <span class="o">=</span> <span class="s2">&quot;C:/path/to/iedfile.ied&quot;</span>
+<span class="n">dat_path</span> <span class="o">=</span> <span class="s2">&quot;C:/path/to/datfile.dat&quot;</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">FileLoader</span><span class="p">()</span>
+<span class="n">ief</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">ied_path</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">dat_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The DatCollection class is a collection of all of the AUnit types loaded (or
+added later) from a .dat or .ief file. It contains methods for adding and
+removing units from the collection, as well as a range of methods for accessing
+the units in different ways.</p>
+<p>The DatCollection class is also an iterator, so you can loop through the units
+withint the collection the same way as a list.</p>
+<p>Generally you will probably want to obtain a DatCollection object by
+loading an existing file (<a class="reference internal" href="#datcollection-loading"><span class="std std-ref">Loading dat/ied files</span></a>). If you ever need to
+create new DatCollection for a .dat file you should use the initialisedDat()
+classmethod. This will setup some of the required units that are needed by all
+.dat files, such as HeaderUnit and InitialConditionsUnit:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ship.isis.datcollection</span>
+
+<span class="c1"># Will create a DatCollection with required units setup already</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">datcollection</span><span class="o">.</span><span class="n">initialisedDat</span><span class="p">(</span><span class="s2">&quot;C:/path/to/write/datfile.dat&quot;</span><span class="p">)</span>
+
+<span class="c1"># If you have some units that you&#39;ve already initialised or taken from</span>
+<span class="c1"># another collection you can pass them in as a list. The order will be</span>
+<span class="c1"># preserved.</span>
+<span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">RiverUnit</span><span class="p">(),</span> <span class="n">BridgeUnit</span><span class="p">(),</span> <span class="n">RiverUnit</span><span class="p">()]</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">datcollection</span><span class="o">.</span><span class="n">initialisedDat</span><span class="p">(</span><span class="s2">&quot;C:/path/to/write/datfile.dat&quot;</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="accessing-data">
+<h2>Accessing Data<a class="headerlink" href="#accessing-data" title="Permalink to this headline">¶</a></h2>
+<p>Accessing the units in the DatCollection is done through three main methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>unit(str, unit_type)</strong>: for accessing a particular unit in the collection.</li>
+<li><strong>unitsBytype(unit_types)</strong>: for getting all of a particular type of unit.</li>
+<li><strong>unitsByCategory(unit_categorys)</strong>: for getting all of a particular category
+of unit.</li>
+</ul>
+</div></blockquote>
+<p>Accessing a particular unit by name:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">dat_path</span><span class="p">)</span>
+
+<span class="c1"># assumes there&#39;s a river unit called RIV_01 in the collection</span>
+<span class="n">river</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s1">&#39;RIV_01&#39;</span><span class="p">,</span> <span class="s1">&#39;river&#39;</span><span class="p">)</span>
+
+<span class="c1"># Note you don&#39;t have to provide a unit_type to the above function, but if</span>
+<span class="c1"># you don&#39;t it will return the first unit with that name. E.g. If there is an</span>
+<span class="c1"># RefhUnit called &#39;RIV_01&#39; above the river unit and we do this...</span>
+<span class="n">river</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s1">&#39;RIV_01&#39;</span><span class="p">)</span>
+
+<span class="c1"># Then this will print &#39;refh&#39;</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">river</span><span class="o">.</span><span class="n">unit_type</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Most of the time you will probably want to accessing a subset of units, for
+example to do something to all of the RiverUnit&#8217;s or BridgeUnit&#8217;s. DatCollection
+uses unitsByType and unitsByCategory for this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># All of these methods return a list</span>
+
+<span class="c1"># Returns all BridgeUnit types in the model</span>
+<span class="n">bridges</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unitsByCategory</span><span class="p">(</span><span class="s1">&#39;bridge&#39;</span><span class="p">)</span>
+
+<span class="c1"># Returns all BridgeUnitArch type in the model</span>
+<span class="n">arch_bridges</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unitsByType</span><span class="p">(</span><span class="s1">&#39;arch&#39;</span><span class="p">)</span>
+
+<span class="c1"># Note that both of these functions will also accept a list of type/category.</span>
+<span class="c1"># For example to return multiple unit_types do</span>
+<span class="n">bridges</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unitsByType</span><span class="p">([</span><span class="s1">&#39;arch&#39;</span><span class="p">,</span> <span class="s1">&#39;usbpr&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finally, because the DatCollection is an iterator you can just loop through all
+of the units in the collection:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">dat</span><span class="p">:</span>
+   <span class="c1"># ...do something with unit here</span>
+</pre></div>
+</div>
+<p>All of these methods return a list of AUnit types (except unit() which returns
+a single AUnit). For more information on AUnit&#8217;s and how to use them and access
+their data see <a class="reference internal" href="unit.html#unit-top"><span class="std std-ref">FMP Units</span></a>.</p>
+</div>
+<div class="section" id="adding-removing-units">
+<h2>Adding/Removing Units<a class="headerlink" href="#adding-removing-units" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adding-a-unit">
+<h3>Adding a unit<a class="headerlink" href="#adding-a-unit" title="Permalink to this headline">¶</a></h3>
+<p>Units can be added to the collection with the addUnit() method. If no index is
+given the unit will be added to end of the existing units:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Adds a new RiverUnit after all of the existing units</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">RiverUnit</span><span class="p">())</span>
+
+<span class="c1"># Adds a new RiverUnit at a specific index</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">RiverUnit</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The addUnit() method also takes some kwargs arguments that include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>ics(dict)</strong>: initial conditions data to add for the unit. If not supplied they
+will be set as the default.</li>
+<li><strong>update_node_count=True(bool)</strong>: If you don&#8217;t want to update the node count
+when adding another unit. You probably never want to set this to False it&#8217;s
+only hear for when loading files.</li>
+</ul>
+</div></blockquote>
+<p>When adding a unit you may want to find the index of an existing unit so that
+you place the new unit next to it. For that you can use the index() method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># find the existing unit and get it&#39;s index</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">existing_river_unit</span><span class="p">)</span>
+
+<span class="c1"># or just a name. unit_type is optional, but again you probably want it</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;RIV_01&#39;</span><span class="p">,</span> <span class="s1">&#39;river&#39;</span><span class="p">)</span>
+
+<span class="c1"># You can now add the unit before or after an existing unit</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">RiverUnit</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># Add it before</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">RiverUnit</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Add it after</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="removing-a-unit">
+<h3>Removing a unit<a class="headerlink" href="#removing-a-unit" title="Permalink to this headline">¶</a></h3>
+<p>Units can be removed with the removeUnit() method. This takes either an AUnit
+type or a str containing the name of a unit. If you provide the name of a unit
+as a str you must also provide a unit_type:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Both of these would work</span>
+
+<span class="c1"># Remove by name</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">removeUnit</span><span class="p">(</span><span class="s1">&#39;RiV_01&#39;</span><span class="p">,</span> <span class="s1">&#39;river&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get an existing unit</span>
+<span class="n">river</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s1">&#39;RIV_01&#39;</span><span class="p">,</span> <span class="s1">&#39;river&#39;</span><span class="p">)</span>
+<span class="c1"># Remove the unit from the collection</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">removeUnit</span><span class="p">(</span><span class="n">river</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Remove unit also takes a update_node_count value, like addUnit. Again you almost
+certainly don&#8217;t want to change the default.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

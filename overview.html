@@ -1,0 +1,825 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Overview &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
+        <link rel="next" title="ship package" href="ship.html"/>
+        <link rel="prev" title="Installing the Library" href="install.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing the Library</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#topics">Topics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flood-modeller">Flood Modeller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tuflow">Tuflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Flood Modeller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Tuflow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Overview</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/overview.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="overview">
+<span id="overview-top"></span><h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>The SHIP library can be used to read, write and amend the majority of Flood
+Modeller Pro and Tuflow model configuration files. If you find that there is a
+particular file type that you need which isn&#8217;t supported, please make a feature
+request (or even consider <a class="reference internal" href="contributing.html#contributing"><span class="std std-ref">Contribute</span></a>).</p>
+<p>The API currently has three core packages:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>fmp</strong>: containing all Flood Modeller interfaces.</li>
+<li><strong>tuflow</strong>: containing all of the Tuflow interfaces.</li>
+<li><strong>utils</strong>: containing a range of utilities that are shared throughout the rest
+of the library.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="topics">
+<h1>Topics<a class="headerlink" href="#topics" title="Permalink to this headline">¶</a></h1>
+<p><em>These docs are currently in the process of being put together. There are</em>
+<em>probably a lot of things missing and I&#8217;m sure some (many?) mistakes. If you</em>
+<em>find anything wrong or unintelligible please let me know.</em></p>
+<p>The <a class="reference internal" href="#overview-intro"><span class="std std-ref">Introduction</span></a> on this page covers the basics of loading and
+accesssing the data in both Flood Modeller and Tuflow models. You&#8217;ll want to
+start here and when you&#8217;ve got your head around this look at the Flood Modeller
+and Tuflow specific sections below for more details.</p>
+<div class="section" id="flood-modeller">
+<h2>Flood Modeller<a class="headerlink" href="#flood-modeller" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="fmp/ief.html#ief-top"><span class="std std-ref">Ief</span></a>: class that contains all of the .ief file data.</li>
+<li><a class="reference internal" href="fmp/datcollection.html#datcollection-top"><span class="std std-ref">DatCollection</span></a>: class that contains all of the .dat and .ief file data.</li>
+<li><a class="reference internal" href="fmp/unit.html#unit-top"><span class="std std-ref">FMP Units</span></a>: class&#8217; representing all of the different components of a
+Flood Modeller .dat or .ied file.</li>
+<li><a class="reference internal" href="fmp/rowdatacollection.html#rowdatacollection-top"><span class="std std-ref">RowDataCollection</span></a>: class containing all of the variable length
+data in AUnit types.</li>
+<li><a class="reference internal" href="fmp/unitdescriptions.html#unitdescriptions-top"><span class="std std-ref">Unit Descriptions</span></a>: Summary of all of the currently supported units
+in the API and their head_data and row_data keys.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="tuflow">
+<h2>Tuflow<a class="headerlink" href="#tuflow" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="tuflow/tuflowmodel.html#tuflowmodel-top"><span class="std std-ref">TuflowModel</span></a>: container class for a loaded tuflow model.</li>
+<li><a class="reference internal" href="tuflow/controlfile.html#controlfile-top"><span class="std std-ref">ControlFile</span></a>: container class for all parts from a type of control
+file.</li>
+<li><a class="reference internal" href="tuflow/tuflowpart.html#tuflowpart-top"><span class="std std-ref">TuflowPart</span></a>: main data store for sections of tuflow control files.</li>
+<li><a class="reference internal" href="tuflow/addingparts.html#addingtuflowparts-top"><span class="std std-ref">Adding TuflowPart&#8217;s</span></a>: overview of how to add new TuflowPart&#8217;s to a
+loaded TuflowModel.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="utils/pathholder.html#pathholder-top"><span class="std std-ref">PathHolder</span></a>: class for storing data pertaining to filepaths.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="introduction">
+<span id="overview-intro"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>All the file loader modules can be found in the ship.utils.fileloaders package.
+The only interface you need to use for loading all model files is the FileLoader class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Import the FileLoader class</span>
+<span class="kn">from</span> <span class="nn">ship.utils.fileloader.fileloader</span> <span class="k">import</span> <span class="n">FileLoader</span>
+
+<span class="n">dat_path</span> <span class="o">=</span> <span class="s2">&quot;c:/path/to/an/fmp/datafile.dat&quot;</span>     <span class="c1"># Fmp .dat model file</span>
+<span class="n">tcf_path</span> <span class="o">=</span> <span class="s2">&quot;c:/path/to/an/fmp/tuflowfile.tcf&quot;</span>   <span class="c1"># Tuflow .tcf file</span>
+<span class="n">ief_path</span> <span class="o">=</span> <span class="s2">&quot;c:/path/to/an/fmp/ieffile.ief&quot;</span>      <span class="c1"># Fmp .ief run file</span>
+<span class="n">ied_path</span> <span class="o">=</span> <span class="s2">&quot;c:/path/to/an/fmp/iedfile.ied&quot;</span>      <span class="c1"># Fmp .ied boundary file</span>
+
+<span class="c1"># Get the loader and use it to load the .dat file.</span>
+<span class="c1"># This returns a loaded FMP model as a DatCollection object.</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">FileLoader</span><span class="p">()</span>
+<span class="n">fmp_model</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">dat_path</span><span class="p">)</span>
+
+<span class="c1"># This same loader can be used for any type of file.</span>
+
+<span class="c1"># Get the loaded tuflow model as a TuflowModel object</span>
+<span class="n">tuflow_model</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
+
+<span class="c1"># Get the loaded .ief file as an Ief object</span>
+<span class="n">ief</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">ief_path</span><span class="p">)</span>
+
+<span class="c1"># ... etc</span>
+</pre></div>
+</div>
+<p>Now that you have a loaded model/model file you can access the data that it
+contains. The approach to this varies slightly depending on which kind of
+model or file type was loaded.</p>
+<div class="section" id="id1">
+<h2>Flood Modeller<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>The main class used for interacting with Flood Modeller models is the
+DatCollection class. This is an iterator based class that contains all of the
+data in the either .dat or .ied files (depending on which was loaded).</p>
+<p>This class contains several interfaces for accessing and updating data within
+the model. The model data is contained within the &#8216;AUnit&#8217; type classes
+(e.g. RiverUnit, BridgeUnit, RefhUnit). These can be accessed by iterating
+through the DatCollection or they can be grouped:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ... We have a DatCollection, loaded as above</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadModel</span><span class="p">(</span><span class="n">dat_path</span><span class="p">)</span>
+
+<span class="c1"># You can loop through all of the Units in the model</span>
+<span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">DatCollection</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>       <span class="c1"># The main label for the unit.</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">unit_type</span><span class="p">)</span>  <span class="c1"># Would be &#39;Arch&#39; for a BridgeUnitArch</span>
+
+<span class="c1"># Or you can retrieve a subset of units in a variety of ways</span>
+<span class="c1"># By category. Returns a list</span>
+<span class="n">bridges</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unitsByCategory</span><span class="p">(</span><span class="s1">&#39;bridge&#39;</span><span class="p">)</span>
+
+<span class="c1"># By type. Returns a list</span>
+<span class="n">bridges</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unitsByType</span><span class="p">(</span><span class="s1">&#39;arch&#39;</span><span class="p">)</span>
+
+<span class="c1"># By name. Returns a single instance</span>
+<span class="n">bridge</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s1">&#39;SECT3_BU&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you&#8217;ve accessed a unit or a set of units you can read and interact with
+the data they contain. The setup of the unit classes tries to remain relatively
+true to that in the FMP software to ease the learning curve. There are two main
+types of data in FMP units: &#8216;head_data&#8217; and &#8216;row_data&#8217;.</p>
+<p>In keeping with the bridge example above:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>head_data (dict): single variables used by a unit type (e.g. comment, remote_us,</dt>
+<dd><p class="first last">calibration_coef, etc). The naming scheme tries to remain close to those
+used in the software and the help manual, although these two vary at times!</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>row_data (dict): variable number of data entries, like geometry data in</dt>
+<dd><p class="first last">a lot of units, and bridge opening data in bridges. All row_data have a
+&#8216;main&#8217; key, the main row data - usually geometry. The dict values are
+RowDataCollection objects.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Accessing head_data is simple:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># You could loop through a list of return type/category as you would with</span>
+<span class="c1"># any list, but for this example we&#39;ll use a single unit.</span>
+
+<span class="c1"># As above - note that you don&#39;t have to provide a type or category, but if</span>
+<span class="c1"># you don&#39;t you may get the wrong unit. For example: a river and adjacent</span>
+<span class="c1"># Refh unit can have the same name.</span>
+<span class="n">bridge</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="s1">&#39;SECT3_BU&#39;</span><span class="p">,</span> <span class="s1">&#39;bridge&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print upstream label, downstream label, category and type</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">bridge</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bridge</span><span class="o">.</span><span class="n">name_ds</span><span class="p">,</span> <span class="n">bridge</span><span class="o">.</span><span class="n">unit_category</span><span class="p">,</span> <span class="n">bridge</span><span class="o">.</span><span class="n">unit_type</span><span class="p">)</span>
+
+<span class="c1"># Access items in the head_data</span>
+<span class="n">remote_us</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+<span class="n">coef</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;calibration_coef&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># updating it is the same</span>
+<span class="n">bridge</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;remote_us&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;diff_sect&#39;</span>
+</pre></div>
+</div>
+<p>Accessing the row_data is a little more involved, but not too complex either.
+There&#8217;s two main things you need to know:</p>
+<blockquote>
+<div><ul class="simple">
+<li>All the data is held in a RowDataCollection object. This stores the entries
+for a particular data row (e.g. for a BridgeUnit &#8216;main&#8217; row_data entry
+this would contain values for chainage, elevation, manning&#8217;s, embankments).</li>
+<li>RowDataCollection&#8217;s store this data in DataObject classes. These group the
+same types of data into a single object (e.g. all the chainage, or elevation).</li>
+</ul>
+</div></blockquote>
+<p><strong>Note</strong>
+There are two functions in the AUnit itself that you can use as convenience
+functions for accessing RowDataCollection data:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+
+<span class="c1"># Get a DataObject containing the CHAINAGE data</span>
+<span class="n">dobj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">rowDataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">rowdata_type</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for</span>
+<span class="c1"># a specific row index</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to access rows of data there are two functions that you will probably
+want to use either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>rowAsList(index): return a list of that data in the row at index where the</li>
+<li>rowAsDict(index): return a dict of that data in the row at index where the
+keys are ROW_DATA_TYPES (in datunits.__init__.py module).</li>
+<li>iterateRow(): returns a generator that can be used to loop all rows.</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># list</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rowAsList</span><span class="p">()</span>
+<span class="c1"># dict</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rowAsDict</span><span class="p">()</span>
+
+<span class="c1"># Loop the row_data</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterateRows</span><span class="p">():</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="c1"># prints a list</span>
+
+<span class="c1"># You can also get all the row data if you want</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">toList</span><span class="p">()</span>   <span class="c1"># Returns list of lists with all data</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>   <span class="c1"># Returns dict of lists with all data</span>
+</pre></div>
+</div>
+<p>Most of the time you will probably want to access the different DataObjects
+(defined by ROW_DATA_TYPES constants) held by the collection. If you only need
+to read the data the best approach is to use either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>dataObject(ROW_DATA_TYPES): return a DataObject.</li>
+<li>dataObjectAsList(ROW_DATA_TYPES): return a list of the data in the DataObject.</li>
+<li>toDict(): returns a dict of all of the DataObject with values in a list
+and keys as ROW_DATA_TYPES.</li>
+</ul>
+</div></blockquote>
+<p>Note that you can also get these from the AUnit itself with:</p>
+<blockquote>
+<div><ul class="simple">
+<li>dataObj(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
+<li>dataObjAsList(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Import the ROW_DATA_TYPES enum</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+
+<span class="c1"># Get a list of a specific type</span>
+<span class="n">elevations</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rowAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">)</span>
+
+<span class="c1"># Get a dict of all types. Returns a dict where keys are the ROW_DATA_TYPES</span>
+<span class="c1"># and the values are lists of all values in that type</span>
+<span class="n">row_stuff</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
+
+<span class="c1"># First elevation entry and first roughness entry:</span>
+<span class="n">elev1</span> <span class="o">=</span> <span class="n">row_stuff</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">rgh1</span> <span class="o">=</span> <span class="n">row_stuff</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If you want to update the values in a DataObject or you need more control you
+you should use the DataObject itself:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rgh_obj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
+
+<span class="c1"># You can now loop through data_obj and read or update each entry</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rgh_obj</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">getValue</span><span class="p">)</span>
+
+   <span class="c1"># Note that rgh_obj returned above is a shallow copy so changes you make</span>
+   <span class="c1"># here will also be made in the DatCollection.</span>
+   <span class="n">r</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">getValue</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>NOTE</strong>
+<em>The above approach is fine if you just want to update some values, like</em>
+<em>altering the roughness above. DON&#8217;T use this to add or remove values from the</em>
+<em>DataObject! RowDataCollection keeps track of the length of the different</em>
+<em>DataObjects and will start throwing errors if they differ.</em></p>
+<p>You can check to see if a unit has any row_data with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># prints True for bridge units (False for, say, an OrificeUnit)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">bridge</span><span class="o">.</span><span class="n">has_row_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The primary RowDataCollection (row_data) is always called &#8216;main&#8217;. Although this
+may seema little confusing it&#8217;s fairly easy to tell what the main collection is
+and it helps not having to remember lots of different key names for a common
+task.
+Other row_data key&#8217;s are specific to what they do. For example with a
+UsbprBridge:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">culver_rows</span> <span class="o">=</span> <span class="n">usbpr</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span> <span class="c1"># bridge culvert data</span>
+<span class="n">opening_rows</span> <span class="o">=</span> <span class="n">usbpr</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span> <span class="c1"># bridge opening data</span>
+</pre></div>
+</div>
+<p>That&#8217;s the end of this short introduction on the fmp package. There&#8217;s obviously
+a lot more you can do; we haven&#8217;t covered reading .ief files yet and we haven&#8217;t
+really looked at updating or adding new content. For the .ief files you will
+want to have a look at <a class="reference internal" href="fmp/ief.html#ief-top"><span class="std std-ref">Ief</span></a> and for more on dealing with .dat files and
+.ied files <a class="reference internal" href="fmp/datcollection.html#datcollection-top"><span class="std std-ref">DatCollection</span></a>. You can also find more information
+on <a class="reference internal" href="fmp/rowdatacollection.html#rowdatacollection-top"><span class="std std-ref">RowDataCollection</span></a> here.</p>
+</div>
+<div class="section" id="id2">
+<h2>Tuflow<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Similar to the DatCollection in the fmp package, the tuflow package has a class
+called TuflowModel. This is the main interface for all data in a tuflow model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>  <span class="c1"># returns TuflowModel instance</span>
+
+<span class="c1"># A couple of convenience methods:</span>
+<span class="c1"># Get file paths</span>
+<span class="n">fpaths</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">filePaths</span><span class="p">()</span>
+
+<span class="c1"># update the model root</span>
+<span class="n">tuflow</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;c:</span><span class="se">\n</span><span class="s1">ew\model\directory</span>
+</pre></div>
+</div>
+<p>The TuflowModel object itself doesn&#8217;t actually do a lot. It has a few
+convenience functions, but it&#8217;s mainly just a container for the ControlFile
+objects. Most of your interactions with a tuflow model will be through the
+ControlFile interface.</p>
+<p>There is one ControlFile for each of the different tuflow control file types.
+They are held in a dict in TuflowModel.control_files and can be referenced
+using the following keys: &#8216;TCF&#8217;, &#8216;ECF&#8217;, &#8216;TGC&#8217;, &#8216;TBC&#8217;, &#8216;TEF&#8217;:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Get the &#39;TGC&#39; control file. Contains all of the .tgc type files and their</span>
+<span class="c1"># contents.</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>ControlFile objects contain two main collections, a collection of &#8216;parts&#8217; in a
+PartHolder class and a collection of &#8216;logic&#8217; in a LogicHolder class. Almost all
+of the content in a TuflowModel is held in these iterators.</p>
+<p>The core data structure of a tuflow model is the TuflowPart - the objects held
+in the PartHolder collection. TuflowPart is abstract, but it is inherited by
+all other components of a Tuflow model: including logic. Similar to the way
+that all units are subclasses of AUnit in the fmp package. Generally they are
+further subclasses from three different interfaces:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>ATuflowVariable</strong> - all of the variables in a tuflow model, commands like
+&#8216;Set IWL == 12&#8217; for example.</li>
+<li><strong>TuflowFile</strong> - all of the files in a tuflow model, command like
+&#8216;Read GIS Z Line == ..gissomefile.shp&#8217;</li>
+<li><strong>TuflowLogic</strong> - all logic contructs in a tuflow model. If-else and define
+logic is stored in these.</li>
+</ul>
+</div></blockquote>
+<p>Of the three interfaces above the TuflowLogic is a little bit different as it is
+more of a container for other items. The other two store data related to a
+specific line in the file.</p>
+<p>The most common type of variable class you&#8217;ll see are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>TuflowVariable</strong>: standard variable class used for most variables in the
+tuflow model files.</li>
+<li><strong>TuflowKeyVal</strong>: used where a placeholder and variable are supplied at the
+same time, for example &#8216;BC Event Source == Q100 | SHIP&#8217;.</li>
+<li><strong>TuflowUserVariable</strong>: user defined variables. for example
+&#8216;Set Variable MyTcfVariable == 1&#8217;</li>
+</ul>
+</div></blockquote>
+<p>The most common types of file class you&#8217;ll see are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>TuflowFile</strong>: this is the standard file class. Usually things will be further
+refined than this, but it does get used sometimes.</li>
+<li><strong>GisFile</strong>: stores all GIS type files.</li>
+<li><strong>ModelFile</strong>: stores all tuflow control file commands, for example the command
+&#8216;Read Geometry File == &#8216;..modelmygeomfile.tgc&#8217;</li>
+<li><strong>DataFile</strong>: stores all commands that contain files with additional information
+such as &#8216;BC Database&#8217; or &#8216;Read Materials File&#8217; commands.</li>
+<li><strong>ResultsFile</strong>: any command the deals with output, like &#8216;Output Folder ==&#8217;
+or &#8216;Write Check Files ==&#8217; or &#8216;Log Folder ==&#8217;.</li>
+</ul>
+</div></blockquote>
+<p>Now we have an idea of the basic structure of the tuflow package we can try and
+access some data:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>  <span class="c1"># returns TuflowModel instance</span>
+
+<span class="c1"># You can loop through the control_files dict and do everything if you need.</span>
+<span class="c1"># Here, to save typing, we&#39;ll just use the TGC ControlFile</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+
+<span class="c1"># You can then loop through all of the TuflowParts if you need</span>
+<span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">tcg</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+   <span class="c1"># Prints out type like &#39;variable&#39;, &#39;model&#39;, &#39;gis&#39;, &#39;result&#39;, etcx</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">obj_type</span><span class="p">)</span>
+
+<span class="c1"># Or you could access subsets of the collection</span>
+
+<span class="c1"># This will give you all ATuflowVariable parts in the TGC file.</span>
+<span class="n">variables</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">variables</span><span class="p">()</span>   <span class="c1"># Returns a list of ATuflowVariable types</span>
+
+<span class="c1"># This will give you only the gis files in the TGC file.</span>
+<span class="c1"># To do this you&#39;ll need to import the FILEPART_TYPES enum from tuflow.__init__.py</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">ft</span>
+<span class="n">gis</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">part_type</span><span class="o">=</span><span class="n">ft</span><span class="o">.</span><span class="n">GIS</span><span class="p">)</span>   <span class="c1"># Returns a list of GisFile types</span>
+
+<span class="c1"># You can loop through the returned lists to access the data in the TuflowPart</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gis</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also access the ModelFile objects for the control files you are looking
+at from the ControlFile class. That&#8217;s a slightly confusing way of saying that
+a ControlFile is not the contents of one .tgc, but the contents of all the
+.tgc files. The command &#8216;Read Geometry File ==&#8217; is actually in a TCF ControlFile
+and you can access it from there, but can also access it from the TGC
+ControlFile through the control_files list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Loop through all of the ModelFile parts that were used to load the</span>
+<span class="c1"># TGC ControlFile contents</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tgc</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>TuflowParts contain reference to other objects that they have an association
+with. This is done through the &#8216;associates&#8217; object. Currently these include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>parent: the ModelFile that contains the TuflowPart.</li>
+<li>logic: TuflowLogic associated with this TUflowPart. This can == None.</li>
+<li>sibling_next: Another TuflowPart on the same command line as this.</li>
+<li>sibling_prev: Same as sibling_next except it is the TuflowPart to the
+left rather than the right.</li>
+</ul>
+</div></blockquote>
+<p>Continuing with the TGC ControlFile gis list from above; these are accessed like so:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gis</span><span class="p">:</span>
+
+   <span class="c1"># Get the parent. The parent will be a ModelFile object and will also be</span>
+   <span class="c1"># in the control_files list discussed above</span>
+   <span class="n">parent</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">parent</span><span class="o">.</span><span class="n">obj_type</span><span class="p">)</span>
+
+   <span class="c1"># Some file commands can be &#39;piped&#39; together with &#39;|&#39; symbol. This is</span>
+   <span class="c1"># quite common with gis commands like:</span>
+   <span class="c1"># Read GIS BC == gis\2d_bc_hx_L.shp | gis\2d_bc_cn_L.shp</span>
+   <span class="c1"># if g.filename is 2d_bc_hx_L we will have the following...</span>
+
+   <span class="c1"># Prints &#39;No previous sibling&#39;</span>
+   <span class="n">associate</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span>
+   <span class="k">if</span> <span class="n">associate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">associate</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+   <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;No previous sibling&#39;</span><span class="p">)</span>
+
+   <span class="c1"># Prints &#39;2d_bc_cn_L&#39;</span>
+   <span class="n">associate</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span>
+   <span class="k">if</span> <span class="n">associate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="n">associate</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+   <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;No next sibling&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All TuflowParts have these associates. So they are accessible whether it is a
+TuflowFile type or ModelVariable type or TuflowLogic type.</p>
+<p><strong>IMPORTANT</strong>
+<em>It&#8217;s important to know that all of the TuflowPart&#8217;s are mutable objects. This</em>
+<em>has a lot of advantages when it comes to propogating updates through the</em>
+<em>model heirachy, but with great power comes great responsibility. For example</em>
+<em>if you do this</em>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># ...taking from the above example</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="c1"># change the filename of the parent</span>
+<span class="n">parent</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;something_else&#39;</span>
+</pre></div>
+</div>
+<p>It will update the filename for the <em>actual</em> ModelFile object that the parent
+references. I.e. if you were to access the parent associate of a different
+TuflowPart, or any other reference, the filename will equal &#8216;something_else&#8217;.
+If you want to get a copy of the TuflowPart and change things about without
+affecting the other instances you will need to do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">parent</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
+
+<span class="c1"># Return a whole new object that&#39;s not associated with the original</span>
+<span class="n">new_parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># If you want to compare two TuflowParts to see if they&#39;re the same just use</span>
+<span class="c1"># the standard &#39;==&#39; operator</span>
+<span class="k">if</span> <span class="n">parent</span> <span class="o">==</span> <span class="n">new_parent</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;They&#39;re equal&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;They&#39;re different&quot;</span><span class="p">)</span>   <span class="c1"># Will print this one</span>
+</pre></div>
+</div>
+<p>Also note that you don&#8217;t want to just reassign self.associates.parent = new_parent
+as the new_parent will be a &#8216;hanging object&#8217;, if you like. Meaning that it
+isn&#8217;t associated with a, in this case, TGC ControlFile and it isn&#8217;t referenced
+by a TCF or another TGC file. For more information on this have a look at the
+<a class="reference internal" href="tuflow/addingparts.html#addingtuflowparts-top"><span class="std std-ref">Adding TuflowPart&#8217;s</span></a> section.</p>
+<p>It&#8217;s worth remembering that there are a few convenience methods available for
+easily accessing certain types of data that are commonly needed. For example
+both the TuflowModel and ControlFile classes contain a method for checking that
+all of the file paths in the model exist:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># From the TuflowModel class.</span>
+<span class="n">failed</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">checkPathsExist</span><span class="p">()</span>
+
+<span class="c1"># From the ControlFile class. Note the one above is just a loop that calls</span>
+<span class="c1"># this method in all of the ControlFile&#39;s</span>
+<span class="n">failed</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">checkPathsExist</span><span class="p">()</span>
+
+<span class="c1"># failed is a list of TuflowFile&#39;s that couldn&#39;t be found on disk.</span>
+<span class="c1"># To check what the paths are you could do</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">failed</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>And the control files contain a method for efficiently getting all file path
+details based on certain conditions:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Returns all absolute paths from GIS FILEPART_TYPES</span>
+<span class="c1"># If absolute == False only the file name will be returned</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">ft</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># By default the filepaths method won&#39;t return duplicates. If you want to</span>
+<span class="c1"># know when there are duplicates just set the flag to False.</span>
+<span class="c1"># Also note here that no filepart_type is stated. This means that the paths</span>
+<span class="c1"># of all TuflowFile type objects will be returned (i.e. all paths in the model).</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="p">(</span><span class="n">no_duplicates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information on how to use <a class="reference internal" href="tuflow/controlfile.html#controlfile-top"><span class="std std-ref">ControlFile</span></a>&#8216;s follow the link.</p>
+<p>Finally for this intro, here&#8217;s a few notes on logic structures. Tuflow models
+can contain if-else and define-something logical clauses in the control files.
+These are evaluated using the scenario and event variables which can be either
+set in the control files (these will be a TuflowModelVariable type) or added
+to the command line call.</p>
+<p>When loading a .tcf file with FileLoader you can pass an additional argument
+that contains the scenario and event values that would normally be put at the
+command line. This argument is a dict setup like so:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">se_vals</span> <span class="o">=</span> <span class="p">{</span>
+             <span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="s1">&#39;scen1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">:</span> <span class="s1">&#39;scen2&#39;</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">:</span> <span class="s1">&#39;scen3&#39;</span>
+              <span class="p">},</span>
+             <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;e1&#39;</span><span class="p">:</span> <span class="s1">&#39;evt1&#39;</span><span class="p">,</span> <span class="s1">&#39;e2&#39;</span><span class="p">:</span> <span class="s1">&#39;evt2&#39;</span>
+             <span class="p">}</span>
+          <span class="p">}</span>
+</pre></div>
+</div>
+<p>You do not have to include both (or either) but the main keys must be
+&#8216;scenario&#8217; and/or &#8216;event&#8217;. Anything else will be ignored. There is a
+function in utilities for converting a string version (such as that entered
+into the FMP runform (.ief). That saves you from having to convert it into a dict
+yourself:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the utilfunctions</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+
+<span class="c1"># Returns a dict formatted exactly as descibed above</span>
+<span class="n">se_vals</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">convertRunOptionsToSEDict</span><span class="p">(</span><span class="s2">&quot;s1 scen1 s2 scen2 e1 evt1 e2 evt2&quot;</span><span class="p">)</span>
+
+<span class="c1"># You can now do this if you want</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">FileLoader</span><span class="p">()</span>
+<span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If your model contains logic you may want to be able to interogate the contents
+using this logic. TuflowModel objects contain a variable &#8216;user_variables&#8217; which
+is a UserVariables class. This object stores both scenario and event values and
+any user defined variables (TuflowUserVariable - see above). If you call the
+following method in the UserVariable class you will get the same dict discussed
+above:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">seValsToDict</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Almost all of the ControlFile class methods accept this dict as an argument.
+When given it will only return the TuflowPart/filepaths/whatever that are
+compatible with those scenario and event variables (i.e. anything outside the
+logic clauses, and everything within the logic clauses that match the
+scenario and event logic). Say we have the following .tgc file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Set Code == 0
+Read GIS Code == gis\2d_code_shiptest_tgc_v1_R.shp
+Read GIS Code BC == gis\2d_bc_hx_shiptest_tgc_v1_R.shp
+
+! Call another tgc file
+IF SCENARIO == scen1 | scen1more
+   if scenario == scen1more
+      Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v1_P.shp
+   else if scenario == scen1
+      Read GIS Whatevs == gis\2d_whatevs_shiptest_tgc_v2_P.shp
+   end if
+   Read File == test_trd1.trd
+ELSE ! comment for else
+   Read File == test_trd3.trd ! trd3
+END IF
+</pre></div>
+</div>
+<p>And we loaded our model (or updated them later, but we&#8217;ll stick to loaded
+for the time being) with the following scenario and event vals:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">se_vals</span> <span class="o">=</span> <span class="p">{</span>
+             <span class="s1">&#39;scenario&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="s1">&#39;scen1&#39;</span><span class="p">},</span>
+          <span class="p">}</span>
+<span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And we wanted to get only the file paths that fell within our current setup for
+scenario (and event) variables, i.e. where the scenario == scen1:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">scenarioEventValuesToDict</span><span class="p">()</span>
+
+<span class="n">paths</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="p">(</span><span class="n">se_vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+
+<span class="c1"># Would print the following</span>
+<span class="p">[</span><span class="s1">&#39;2d_code_shiptest_tgc_v1_R.shp&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;2d_bc_hx_shiptest_tgc_v1_R.shp&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;2d_whatevs_shiptest_tgc_v2_P.shp&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;test_trd1.trd&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>NOTE</strong>
+The checks for scenario and event logic are recursive. They will search all the
+way up through the parent heirachy to make sure they should be included. This
+means that if you have, for example, two .tgc. files within a logic clause and
+only one is active, then all TuflowParts that lead back to the .tcg ModelFile
+that is not in the correct logic clause will be ignored. So don&#8217;t be surprised
+if a TuflowPart that doesn&#8217;t have any logic associate is skipped. If you follow
+it back up the heirachy you will (hopefully) find that it&#8217;s the correct
+behviour.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ship.html" class="btn btn-neutral float-right" title="ship package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral" title="Installing the Library" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

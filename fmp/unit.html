@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FMP Units &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>FMP Units</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/fmp/unit.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="fmp-units">
+<span id="unit-top"></span><h1>FMP Units<a class="headerlink" href="#fmp-units" title="Permalink to this headline">¶</a></h1>
+<p>The AUnit class is an abstact base class that all of the components of a
+Flood Modeller .dat and/or .ied file are created with, e.g. RiverUnit,
+RefhUnit, BridgeUnitArch, etc. All of the contents of the <a class="reference internal" href="datcollection.html#datcollection-top"><span class="std std-ref">DatCollection</span></a>
+are classes of AUnit type.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The AUnit class defines a interface with a few variables and a number of
+methods that are implemented in all of the concrete unit classes. Namely:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>unit_name(str)</strong>: name of a particular unit instance, this is the
+&#8216;upstream label&#8217; used in Flood modeller.</li>
+<li><strong>unit_name_ds(str)</strong>: &#8216;downstream_label&#8217; in Flood Modeller or None if the
+unit does not have a downstream label.</li>
+<li><strong>unit_type(str)</strong>: the same amoung all units of the same type (e.g. &#8216;usbpr&#8217;)</li>
+<li><strong>unit_category(str)</strong>: the same amoung all units of the same category (e.g. &#8216;bridge&#8217;)</li>
+</ul>
+</div></blockquote>
+<p>In addition to these variables there are two other key components to all units:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>head_data(dict)</strong>: single variables associated with the unit. The dict
+stores HeadDataItem objects.</li>
+<li><strong>row_data(dict)</strong>: variable length data associated with the unit. The
+dict stores RowDataCollection objects.</li>
+</ul>
+</div></blockquote>
+<p>head_data and row_data are the components that you will spend most of the time
+working with.</p>
+</div>
+<div class="section" id="head-data">
+<h2>Head Data<a class="headerlink" href="#head-data" title="Permalink to this headline">¶</a></h2>
+<p>The head_data dict contains HeadDataItem objects. These contain rules for
+storing all of the single variables in a particular unit. An example of the
+kind of data stored here for the RiverUnit would be: &#8216;distance&#8217;, &#8216;lateral1&#8217;,
+&#8216;slope&#8217;, etc.</p>
+<p>Currently HeadDataItem&#8217;s store four different types of data:</p>
+<blockquote>
+<div><ul class="simple">
+<li>float</li>
+<li>int</li>
+<li>string</li>
+<li>tuple</li>
+</ul>
+</div></blockquote>
+<p>The only one that needs explaining is the tuple. This is a tuple of possible
+values that can be set for that item. As an example in the BridgeUnit the
+&#8216;pier_shape&#8217; HeadDataItem is set to only allow the values (&#8216;FLAT&#8217;, &#8216;ARCH&#8217;),
+because they are the allowed values in the FMP bridge units. If you try to
+add a variable that isn&#8217;t supported by HeadDataItem it will raise a ValueError.</p>
+<p>The individual AUnit types in the datunits package should all contain a
+summary of the values that their specific HeadDataItem&#8217;s support.</p>
+<div class="section" id="accessing-and-updating">
+<h3>Accessing and updating<a class="headerlink" href="#accessing-and-updating" title="Permalink to this headline">¶</a></h3>
+<p>All the head_data values can be accessed like so:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># get the value</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># change the value</span>
+<span class="n">river</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">32.5</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="row-data">
+<h2>Row Data<a class="headerlink" href="#row-data" title="Permalink to this headline">¶</a></h2>
+<p>The row_data is also a dict, although for a lot of units it will only contain
+one entry: &#8216;main&#8217;. The primary dict in all of the units will be called &#8216;main&#8217;
+rather than something specific to make it easier to remember. Some units will
+contain no row_data (row_data == {}) and some others may have multiple row_data
+entries, such as BridgeUnitUsbpr which also has &#8216;culvert&#8217; and &#8216;opening&#8217;. It
+will depend on how many variable length dataset the unit has. It shoud be
+apparent from knowledge of the component in Flood Modeller how many dicts it
+will have.</p>
+<p>The values of the row_data dict are RowDataCollection objects. The
+RowDatacollection class is a collection of data pertaining to the loaded row
+data. For further information see <a class="reference internal" href="rowdatacollection.html#rowdatacollection-top"><span class="std std-ref">RowDataCollection</span></a>.</p>
+<p><strong>Important</strong>
+<em>You should never add/remove items to/from the row_data dict. It is setup in</em>
+<em>the class constructor and is relied on by a lot of the codebase. If you change</em>
+<em>it you will probably get a lot of errors.</em></p>
+<div class="section" id="id1">
+<h3>Accessing and updating<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><em>For more fine grained control of accessing and updating the data within the</em>
+<em>RowDataCollection&#8217;s you should use the RowDataCollection itself</em>.</p>
+<p>When accessing data in RowDataCollection&#8217;s held by an AUnit type more
+functionality is available in the methods within the RowDataCollection itself.
+There is though a couple of convenience hooks in the AUnit interface for
+common requests. These include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>rowDataObj(key, rowdata_type=&#8217;main&#8217;): to return one of the DataObject&#8217;s in
+the RowDataCollection.</li>
+<li>row(index, rowdata_type=&#8217;main&#8217;): to return the contents of a particular
+row in a RowDataCollection.</li>
+</ul>
+</div></blockquote>
+<p>example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume we have RiverUnit called river.</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+
+<span class="c1"># Returns the ROUGHNESS DataObject from the row data in the &#39;main&#39; row_data</span>
+<span class="n">dobj</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">rowDataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGNESS</span><span class="p">)</span>
+
+<span class="c1"># You can now get at the data in this (note you shouldn&#39;t ever add any new</span>
+<span class="c1"># data to a DataObject directly, you should use the addRow method in the</span>
+<span class="c1"># RowDataCollection that keeps track of the data sanity. Although you can</span>
+<span class="c1"># update values if wanted. For example:</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dobj</span><span class="p">):</span>
+   <span class="n">dobj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span> <span class="o">*</span> <span class="mf">1.2</span>
+</pre></div>
+</div>
+<p>The AUnit types contain some methods for adding and removing rows from the
+RowDataCollection&#8217;s:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>addRow()</strong>: add a new row to a specific row_data item.</li>
+<li><strong>updateRow()</strong>: alter the data in a specific row_data item.</li>
+<li><strong>deleteRow()</strong>: delete a row from a specific row_data item.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="add-row">
+<h4>Add Row<a class="headerlink" href="#add-row" title="Permalink to this headline">¶</a></h4>
+<p>The addRow allows you to add a new row to one of the RowDataCollection objects
+in the row_data dict. It must have a row_vals argument. This is a dict that
+contains the values you want to add to the row. The values of this dict will
+vary depending on the type of unit you are adding it to. The keys of the
+row_vals dict use the ROW_DATA_TYPES enum in the datunits package .__init__.py
+file. To use RiverUnit as an example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the ROW_DATA_TYPES</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
+
+<span class="c1"># A complete row_vals dict for RiverUnit</span>
+<span class="n">row_vals</span> <span class="o">=</span> <span class="p">{</span>
+               <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">35.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
+               <span class="n">rdt</span><span class="o">.</span><span class="n">PANEL_MARKER</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">RPL</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">BANKMARKER</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">rdt</span><span class="o">.</span><span class="n">EASTING</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">NORTHING</span><span class="p">:</span> <span class="mf">0.00</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">DEACTIVATION</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+           <span class="p">}</span>
+
+<span class="c1"># Appends a new row to the end of the &#39;main&#39; RowDataCollection</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">)</span>
+
+<span class="c1"># However most units will set defaults for the values that they can</span>
+<span class="c1"># So this will work as well</span>
+<span class="n">row_vals</span> <span class="o">=</span> <span class="p">{</span>
+               <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">35.0</span>
+           <span class="p">}</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">)</span>
+
+<span class="c1"># Check the docs for individual units to see which ones are set as default.</span>
+</pre></div>
+</div>
+<p>As well as the row_vals the addRow method takes two optional arguments:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>rowdata_type(str)</strong>: the key to the row_data entry to update. Default == &#8216;main&#8217;.</li>
+<li><strong>index(int)</strong>: the index to add the row at. If not supplied it will be
+appended to the end of the RowDatacollection.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="update-row">
+<h4>Update Row<a class="headerlink" href="#update-row" title="Permalink to this headline">¶</a></h4>
+<p>The updateRow allows you to update some or all of the values in a particular
+entry in a RowDataCollection. It is the same as addRow except the index is not
+an optional argument.</p>
+</div>
+<div class="section" id="delete-row">
+<h4>Delete Row<a class="headerlink" href="#delete-row" title="Permalink to this headline">¶</a></h4>
+<p>The deleteRow method deletes a row from a specific RowDataCollection. You
+must provide an index and an options row_data key.</p>
+</div>
+</div>
+</div>
+<div class="section" id="unit-specfic-attributes">
+<h2>Unit specfic attributes<a class="headerlink" href="#unit-specfic-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The docstrings within all of the AUnit classes in the datunits package contain
+class specific information about the head_data variables and row_data entries.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
