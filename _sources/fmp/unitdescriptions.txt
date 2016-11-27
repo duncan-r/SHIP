@@ -18,7 +18,7 @@ ship.fmp.datunits.refhunit
 **Note** 
 Where types are specified in head_data, prefaced with dt, dt means::
    
-   ship.data_structures.DATA_TYPES as dt
+   ship.datastructures.DATA_TYPES as dt
 
 Where types are specified in row_data, prefaced with rdt, rdt means::
    

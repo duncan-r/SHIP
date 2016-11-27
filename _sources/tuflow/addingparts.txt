@@ -438,6 +438,95 @@ make life easier and just call getTuflowPart::
    print (len(new_gisfile_list))   # prints '2'
    
 
+.. _addingtuflowparts-saving:
 
+####################
+Saving ControlFile's
+####################
+
+If you've made some changes to some of the files in a controlFile class you
+will probably want to be able to save them to disk. There are two options for
+doing this:
+
+   - getPrintablecontents(): returns a dict where keys are absolute paths of
+     the tuflow control file and values are list of lines in that file.
+   - write(): writes the contents of tuflow control files to disk.
+   
+If you want more control over what happens or you want to view the contents
+that you are about to write you should use getPrintableContents. Although it
+does involve a bit more work. It takes the following optional kwargs:
+
+   - **active_only=True(bool)**: if True only the parts with 'active' status
+     set to True will be included.
+   - **parents(list)**: a list of parents (tuflow control files) to return.
+     if not given all the parents in self.control_files will be returned.
+
+Example::
+
+   # Contains a load of functions for working with files
+   from ship.utils import filetools
+
+   # Assume we have a loaded TuflowModel called tuflow.
+   tgc = tuflow.contol_files['TGC']
+   
+   # Returns a dict where keys are absolute paths and values are the file
+   # contents as a list separated by line.
+   contents = tgc.getPrintableContents()
+   
+   # You can now operate on the dict as you normally would. Change the path
+   # and stuff if you want. When you're ready you can write to file with:
+   for cpath, clist in contents.items():
+      filetools.writeFile(clist, cpath)
+   
+The write methods takes the same kwargs as above plus one extra:
+
+   - **overwrite=False(bool)**: if set to True it will overwrite an existing
+     file without warning. If False it will raise an error if the file
+     already exists.
+
+The write functions just takes some of the work out of the process for you. It
+will call getPrintableContents, if overwrite == False it will check the files
+don't exists, then it will write the contents to file::
+
+   # Assume we have a loaded TuflowModel called tuflow.
+   tgc = tuflow.contol_files['TGC']
+
+   # If you tried to do this without setting overwrite=True it will raise an
+   # IOError
+   # tgc.write()
+   
+   # As an example we'll get just one of the ModelFile's from the 'TGC' 
+   # ControlFile to show how the other kwargs work
+   model_file = tgc.control_files[0]
+   
+   # again if you tried write now without setting overwrite=True it will fail
+   
+   # Update the filename
+   model_file.filename += "_updated"
+
+   # As a side note if you want to update the root variable of the file, so
+   # that you can put in a particular folder perhaps you will need to do the 
+   # following
+
+   model_file.root = "C:/path/to/new/folder"
+
+   # This is needed to stop the path builders from considering any relative
+   # path components when calling model_file.absolutePath()
+   model_file.has_own_root = True
+
+   # This will now write the contents of model_file to disk at the path set
+   # above. If model_file doesn't exists in the 'TGC' control file you will 
+   # get an error
+   tgc.write(parents=[model_file])
+
+   # If you want to just write all of the tuflow control files stored in 'TGC'
+   # to disk and are happy to overwrite the existing files do this
+   tgc.write(overwrite=True)
+   
+   # You could always just do a quick update of the filenames of all the 
+   # ModelFiles in the ControlFile and then do it without overwriting
+   for c in tgc.control_files:
+      c.filename += "_updated"
+   tgc.write()    # shouldn't need overwrite=True this time
 
 

@@ -629,8 +629,11 @@
             <span class="n">all_types</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">extension</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_types</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">a</span>
-            <span class="n">fpath</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> 
-                                            <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_own_root</span><span class="p">:</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fpath</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> 
+                                                <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
 
             <span class="c1"># Replace any variable placeholders if given</span>
             <span class="k">if</span> <span class="n">user_vars</span><span class="p">:</span>
@@ -647,8 +650,11 @@
 <span class="sd">                keys and the actual values as values. See </span>
 <span class="sd">                TuflowPart.resolvePlaceholder() method for more information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">rel_roots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRelativeRoots</span><span class="p">([])</span>
-        <span class="n">abs_path</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_own_root</span><span class="p">:</span>
+            <span class="n">abs_path</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rel_roots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRelativeRoots</span><span class="p">([])</span>
+            <span class="n">abs_path</span> <span class="o">=</span> <span class="n">PathHolder</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relative_roots</span><span class="o">=</span><span class="n">rel_roots</span><span class="p">)</span>
 
         <span class="c1"># Replace any variable placeholders if given</span>
         <span class="k">if</span> <span class="n">user_vars</span><span class="p">:</span>

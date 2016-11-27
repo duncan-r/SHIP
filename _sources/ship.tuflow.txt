@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    ship.tuflow.data_files
+    ship.tuflow.datafiles
 
 Submodules
 ----------

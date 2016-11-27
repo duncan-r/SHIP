@@ -1,0 +1,936 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.datastructures.dataobject &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.datastructures.dataobject</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.datastructures.dataobject</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:  </span>
+<span class="sd">    Contains the ADataObject class and all of its subclasses.</span>
+<span class="sd">    </span>
+<span class="sd">    These classes can be used to hold used by the :class:&#39;&lt;RowDataCollection&gt;&#39;.</span>
+<span class="sd">    They provide a range of methods for easily acessing, amending and retrieving</span>
+<span class="sd">    values to print to file. Classes include support for:  </span>
+<span class="sd">        # Numeric data.  </span>
+<span class="sd">        # String data.  </span>
+<span class="sd">        # Symbol data.  </span>
+<span class="sd">        # Constant data (a tuple of legal values).</span>
+
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+<span class="sd">     </span>
+<span class="sd"> Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+<span class="sd">     </span>
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ADataRowObject"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject">[docs]</a><span class="k">class</span> <span class="nc">ADataRowObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class for all data objects used in an AUnit class.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        It is unlikley that you want to call a class of this type directly.</span>
+<span class="sd">        The RowDataFactory will perform checks required when constructing one</span>
+<span class="sd">        of these objects. It should be used instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    
+    
+<span class="c1">#     def __init__(self, row_pos, datatype, format_str, default):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            format_str (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">                update_callback: a callback function that should be run everytime</span>
+<span class="sd">                    a value is updated (added or set). For example to check</span>
+<span class="sd">                    that chainage is increasing.</span>
+<span class="sd">                    When called it will provide the following arguments:</span>
+<span class="sd">                    (self, value, index).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">datatype</span>
+<span class="c1">#         self.record_length = 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_pos</span> <span class="o">=</span> <span class="n">row_pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update_callback&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span> <span class="o">=</span> <span class="p">[]</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">record_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an iterator for the data_collection list&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate to the next item in data_collection list&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">]</span>
+        
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets a value from data_collection using index notation.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            contents of the data_collection element at index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets a value using index notation</span>
+<span class="sd">        </span>
+<span class="sd">        Calls the setValue() function to do the hard work.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): index to update.</span>
+<span class="sd">            value: the value to add to the data_collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+    
+ 
+<div class="viewcode-block" id="ADataRowObject.getValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.getValue">[docs]</a>    <span class="k">def</span> <span class="nf">getValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getter for retrieving the value at the supplied index.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): The index of the required value.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The value at the supplied index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+ 
+    
+<div class="viewcode-block" id="ADataRowObject.getPrintableValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.getPrintableValue">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getter for the formatted printable value at the supplied index.</span>
+
+<span class="sd">        If the default value given == &#39;~&#39; then all formatting should be removed</span>
+<span class="sd">        from the value if it is empty. Otherwise we call the subclass </span>
+<span class="sd">        formatPrintString() method.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): The index of the required value.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String containing the .DAT file print formatted value as defined </span>
+<span class="sd">                by the format_print_string variables set when the object was</span>
+<span class="sd">                initialised.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">             IndexError: If the given index doesn&#39;t exist. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">out_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">==</span> <span class="s1">&#39;~&#39;</span> <span class="ow">and</span> <span class="n">out_value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">out_value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            
+            <span class="k">elif</span> <span class="n">out_value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">out_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">out_value</span>            
+                
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_value</span><span class="p">)</span>
+                        
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatPrintString</span><span class="p">(</span><span class="n">out_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;DataObject addValue() index out of bounds&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        
+        <span class="k">return</span> <span class="n">out_value</span></div>
+    
+    
+<div class="viewcode-block" id="ADataRowObject.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the data_collection.</span>
+<span class="sd">        </span>
+<span class="sd">        This values will either be appended or put at a specific index if </span>
+<span class="sd">        one is provided. </span>
+<span class="sd">        </span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            value: Optional - The value to be added. If no value is </span>
+<span class="sd">                provided the default value will be used.</span>
+<span class="sd">            index (int): Optional - The index at which to add the value. If no</span>
+<span class="sd">                value is given it will be appended to the end.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If index does not exist. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">==</span> <span class="n">length</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;DataObject addValue() index out of bounds&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span> <span class="p">(</span><span class="s1">&#39;DataObject addValue() index out of bounds&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1">#         self.record_length += 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span></div>
+           
+
+<div class="viewcode-block" id="ADataRowObject.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: The new value to set. </span>
+<span class="sd">            index (int): The index of the value to be changed</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If index does not exist. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">==</span> <span class="n">length</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;DataObject setValue() index out of bounds&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span> <span class="p">(</span><span class="s1">&#39;DataObject setValue() index out of bounds&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    
+<div class="viewcode-block" id="ADataRowObject.deleteValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.deleteValue">[docs]</a>    <span class="k">def</span> <span class="nf">deleteValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete value at supplied position in unit.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): index of value to be removed.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            IndexError: If index does not exist. </span>
+<span class="sd">     </span>
+<span class="sd">        TODO:</span>
+<span class="sd">            Bit dodgy to be honest as people could start deleting random </span>
+<span class="sd">            parts of one data_object without the other ones which would cock </span>
+<span class="sd">            things right up.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;DataObject deleteValue() index out of bounds&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span> <span class="p">(</span><span class="s1">&#39;DataObject deleteValue() index out of bounds&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1">#         self.record_length -= 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">)</span></div>
+   
+   
+<div class="viewcode-block" id="ADataRowObject.getDataCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.getDataCollection">[docs]</a>    <span class="k">def</span> <span class="nf">getDataCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span></div>
+    
+    
+<div class="viewcode-block" id="ADataRowObject.checkDefault"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.checkDefault">[docs]</a>    <span class="k">def</span> <span class="nf">checkDefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">==</span> <span class="s1">&#39;~&#39;</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="ADataRowObject.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Abstract method for formatting the value to be printed.</span>
+<span class="sd">        </span>
+<span class="sd">        Formats the value as defined by format_string when the object was</span>
+<span class="sd">        instantiated. This should be the format required when printing to </span>
+<span class="sd">        the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            This class must be overridden by the concrete class with behaviour</span>
+<span class="sd">            specific to formatting the particular value type.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            value: The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+    
+<div class="viewcode-block" id="ADataRowObject.setChangeStatus"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ADataRowObject.setChangeStatus">[docs]</a>    <span class="k">def</span> <span class="nf">setChangeStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="IntData"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.IntData">[docs]</a><span class="k">class</span> <span class="nc">IntData</span><span class="p">(</span><span class="n">ADataRowObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Concrete implememtation of the ADataRowObject for integer values.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        ADataRowObject</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<span class="c1">#     def __init__(self, row_pos, datatype, format_str=&#39;{}&#39;, default=None):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            format_str={} (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default=None: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+         
+        
+<div class="viewcode-block" id="IntData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.IntData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: addValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to IntDataObject&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to IntDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="IntData.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.IntData.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: setValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to IntDataObject&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to IntDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+            
+
+<div class="viewcode-block" id="IntData.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.IntData.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method for formatting the value to be printed in the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Overriddes superclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkDefault</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">integer_format</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%0d</span><span class="s1">&#39;</span>
+            <span class="n">value</span> <span class="o">=</span>  <span class="n">integer_format</span> <span class="o">%</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+
+<div class="viewcode-block" id="FloatData"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.FloatData">[docs]</a><span class="k">class</span> <span class="nc">FloatData</span><span class="p">(</span><span class="n">ADataRowObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overrides the value return methods from ADataObject to return a </span>
+<span class="sd">    float value instead of a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<span class="c1">#     def __init__(self, row_pos, datatype, format_str=&#39;{}&#39;, default=None, no_of_dps=0):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1">#default=None, no_of_dps=0):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            format_str={} (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default=None: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">                no_of_dps: int of the number of decimal places that this value</span>
+<span class="sd">                       should be represented with when printed to file. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_dps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_of_dps&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+         
+        
+<div class="viewcode-block" id="FloatData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.FloatData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: addValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to FloatDataObject&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to FloatDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="FloatData.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.FloatData.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: setValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to FloatDataObject&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to FloatDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+            
+
+<div class="viewcode-block" id="FloatData.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.FloatData.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method for formatting the value to be printed in the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Overriddes superclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkDefault</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decimal_format</span> <span class="o">=</span> <span class="s1">&#39;%0.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_of_dps</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;f&#39;</span>
+            <span class="n">value</span> <span class="o">=</span>  <span class="n">decimal_format</span> <span class="o">%</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+
+<div class="viewcode-block" id="StringData"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.StringData">[docs]</a><span class="k">class</span> <span class="nc">StringData</span><span class="p">(</span><span class="n">ADataRowObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overrides the value return methods from ADataObject to return a </span>
+<span class="sd">    str value. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            format_str={} (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default=None: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        
+<div class="viewcode-block" id="StringData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.StringData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: addValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to StringDataObject&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to StringDataObject&#39;</span><span class="p">)</span>
+            
+            <span class="c1"># Strip any whitespace off</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            
+        <span class="c1"># Call the superclass part of the method to add it.</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StringData.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.StringData.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: setValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to StringDataObject&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to StringDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Get rid of any whitespace</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># Call the superclass to set the value</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StringData.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.StringData.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method for formatting the value to be printed in the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Overriddes superclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkDefault</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+
+<div class="viewcode-block" id="ConstantData"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ConstantData">[docs]</a><span class="k">class</span> <span class="nc">ConstantData</span><span class="p">(</span><span class="n">ADataRowObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overrides the value return methods from ADataObject to return a </span>
+<span class="sd">    str value from a list of predefined constants.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">legal_values</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            legal_values(tuple): contains the possible values that this </span>
+<span class="sd">                collection can have.</span>
+<span class="sd">            format_str={} (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default=None: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: if legal_values in not a valid tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">legal_values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span> <span class="p">(</span><span class="s1">&#39;legal_values is not a tuple&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span> <span class="o">=</span> <span class="n">legal_values</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+         
+        
+<div class="viewcode-block" id="ConstantData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ConstantData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: addValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+            
+        <span class="c1"># Call the superclass part of the method to add it.</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConstantData.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ConstantData.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: setValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="c1"># Call the superclass to set the value</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConstantData.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ConstantData.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method for formatting the value to be printed in the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Overriddes superclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkDefault</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">value</span></div></div>
+
+
+
+<div class="viewcode-block" id="SymbolData"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.SymbolData">[docs]</a><span class="k">class</span> <span class="nc">SymbolData</span><span class="p">(</span><span class="n">ADataRowObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overrides the value return methods from ADataObject to return a </span>
+<span class="sd">    float value instead of a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
+<span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
+<span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
+<span class="sd">            symbol(str): The symbol that should should be used to represent the </span>
+<span class="sd">               presence of this value in the file.</span>
+<span class="sd">            legal_values(tuple): contains the possible values that this </span>
+<span class="sd">                collection can have.</span>
+<span class="sd">            format_str={} (str): Represents the format that should be used to</span>
+<span class="sd">                print out the values kept in this data collection. This </span>
+<span class="sd">                should be in the form &#39;{:&lt;10}&#39; = 10 spaces formatted left. </span>
+<span class="sd">                With the required spaces need to correctly format the value </span>
+<span class="sd">                in the file.</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                default=None: The default value that the collection should use -</span>
+<span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
+<span class="sd">                    should remove the formatting and apply an empty string.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            AttributeError: if legal_values in not a valid tuple.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bool_type</span> <span class="o">=</span> <span class="nb">bool</span> <span class="c1"># Used to test if a value is of type bool or not</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+         
+        
+<div class="viewcode-block" id="SymbolData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.SymbolData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a value to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: addValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span> 
+                
+            <span class="c1"># Make sure that we are adding a bool type</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bool_type</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to SymbolDataObject&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to SymbolDataObject&#39;</span><span class="p">)</span>
+             
+        <span class="c1"># Call superclass to add the value</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+        
+        
+<div class="viewcode-block" id="SymbolData.setValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.SymbolData.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Changes the value at the given index</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ADataRowObject: setValue()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span> 
+            
+        <span class="c1"># Make sure that we are adding a bool type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bool_type</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to SymbolDataObject&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span> <span class="p">(</span><span class="s1">&#39;Attempted to add invalid value to SymbolDataObject&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Call the superclass to set the value</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SymbolData.formatPrintString"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.SymbolData.formatPrintString">[docs]</a>    <span class="k">def</span> <span class="nf">formatPrintString</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Method for formatting the value to be printed in the .DAT file.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Overriddes superclass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value (int): The value to format.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            String formatted value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkDefault</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="n">value</span></div></div>
+        
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

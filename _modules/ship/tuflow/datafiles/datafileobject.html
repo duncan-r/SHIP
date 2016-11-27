@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ship.tuflow.data_files.datafileobject &mdash; SHIP 0.3.0 documentation</title>
+  <title>ship.tuflow.datafiles.datafileobject &mdash; SHIP 0.3.0 documentation</title>
   
 
   
@@ -122,7 +122,7 @@
       
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
       
-    <li>ship.tuflow.data_files.datafileobject</li>
+    <li>ship.tuflow.datafiles.datafileobject</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -134,7 +134,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for ship.tuflow.data_files.datafileobject</h1><div class="highlight"><pre>
+  <h1>Source code for ship.tuflow.datafiles.datafileobject</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd"> Summary:</span>
@@ -171,7 +171,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ADataFileObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject">[docs]</a><span class="k">class</span> <span class="nc">ADataFileObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject">[docs]</a><span class="k">class</span> <span class="nc">ADataFileObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstract superclass for all data file objects.</span>
 <span class="sd">    </span>
 <span class="sd">    All classes that deal with reading and writing data from the DataFile </span>
@@ -199,7 +199,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">evt_src_data</span> <span class="o">=</span> <span class="n">args_dict</span>
         
     
-<div class="viewcode-block" id="ADataFileObject.getDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.getDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">getDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.getDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.getDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">getDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the ADataObject associated with the given key.</span>
 <span class="sd">        </span>
 <span class="sd">        The Keys for each class are usually defined by a related enum. These</span>
@@ -220,7 +220,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_collection</span><span class="o">.</span><span class="n">getDataObject</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ADataFileObject.dataObjectAsList"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.dataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">dataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.dataObjectAsList"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.dataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">dataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the a list of the data associated with the given key.</span>
 <span class="sd">        </span>
 <span class="sd">        The Keys for each class are usually defined by a related enum. These</span>
@@ -245,7 +245,7 @@
         <span class="k">return</span> <span class="n">outlist</span></div>
     
         
-<div class="viewcode-block" id="ADataFileObject.saveData"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.saveData">[docs]</a>    <span class="k">def</span> <span class="nf">saveData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plus_subfiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.saveData"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.saveData">[docs]</a>    <span class="k">def</span> <span class="nf">saveData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plus_subfiles</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the current state of the data contained by this instance.</span>
 <span class="sd">        </span>
 <span class="sd">        Unless plus_subfiles == False all subfile data will be saved as well.</span>
@@ -277,7 +277,7 @@
                     <span class="k">raise</span> </div>
     
     
-<div class="viewcode-block" id="ADataFileObject.addSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.addSubfile">[docs]</a>    <span class="k">def</span> <span class="nf">addSubfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfile</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.addSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.addSubfile">[docs]</a>    <span class="k">def</span> <span class="nf">addSubfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a subfile to this object.</span>
 <span class="sd">        </span>
 <span class="sd">        Subfiles are separate data files that are references by the contents</span>
@@ -300,7 +300,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">subfiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subfile</span><span class="p">)</span></div>
     
     
-<div class="viewcode-block" id="ADataFileObject.changeRoot"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.changeRoot">[docs]</a>    <span class="k">def</span> <span class="nf">changeRoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.changeRoot"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.changeRoot">[docs]</a>    <span class="k">def</span> <span class="nf">changeRoot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates the root variable in the path_holder</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
@@ -311,7 +311,7 @@
             <span class="n">s</span><span class="o">.</span><span class="n">path_holder</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span></div>
     
     
-<div class="viewcode-block" id="ADataFileObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get all paths held by this object</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
@@ -342,7 +342,7 @@
         <span class="k">return</span> <span class="n">paths</span></div>
     
 
-<div class="viewcode-block" id="ADataFileObject.resolveEvtSrc"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileObject.resolveEvtSrc">[docs]</a>    <span class="k">def</span> <span class="nf">resolveEvtSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileObject.resolveEvtSrc"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileObject.resolveEvtSrc">[docs]</a>    <span class="k">def</span> <span class="nf">resolveEvtSrc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace placeholders with values in the given list.</span>
 <span class="sd">        </span>
 <span class="sd">        Placeholder values can be used in most of the data files to define</span>
@@ -367,14 +367,14 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
     
 
-<div class="viewcode-block" id="XsEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.XsEnum">[docs]</a><span class="k">class</span> <span class="nc">XsEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="XsEnum"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.XsEnum">[docs]</a><span class="k">class</span> <span class="nc">XsEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enum for accessing data in CrossSectionDataObject.&quot;&quot;&quot;</span>
     <span class="n">SOURCE</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">,</span> <span class="n">FLAGS</span><span class="p">,</span> <span class="n">COLUMN_1</span><span class="p">,</span> <span class="n">COLUMN_2</span><span class="p">,</span> <span class="n">COLUMN_3</span><span class="p">,</span> <span class="n">COLUMN_4</span><span class="p">,</span> <span class="n">COLUMN_5</span><span class="p">,</span> \
     <span class="n">COLUMN_6</span><span class="p">,</span> <span class="n">Z_INCREMENT</span><span class="p">,</span> <span class="n">Z_MAXIMUM</span><span class="p">,</span> <span class="n">SKEW</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
     <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="XsDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.XsDataObject">[docs]</a><span class="k">class</span> <span class="nc">XsDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+<div class="viewcode-block" id="XsDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.XsDataObject">[docs]</a><span class="k">class</span> <span class="nc">XsDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -392,7 +392,7 @@
 
 
     
-<div class="viewcode-block" id="TmfEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.TmfEnum">[docs]</a><span class="k">class</span> <span class="nc">TmfEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TmfEnum"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.TmfEnum">[docs]</a><span class="k">class</span> <span class="nc">TmfEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enum for accessing data in TmfDataObject</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ID</span><span class="p">,</span> <span class="n">MANNINGS</span><span class="p">,</span> <span class="n">INITIAL_LOSS</span><span class="p">,</span> <span class="n">CONTINUING_LOSS</span><span class="p">,</span> <span class="n">MANNINGS_DEPTH_1</span><span class="p">,</span> <span class="n">MANNINGS_1</span><span class="p">,</span> \
@@ -400,7 +400,7 @@
     <span class="n">FRACTION_IMPERVIOUS</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
     <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TmfDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.TmfDataObject">[docs]</a><span class="k">class</span> <span class="nc">TmfDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+<div class="viewcode-block" id="TmfDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.TmfDataObject">[docs]</a><span class="k">class</span> <span class="nc">TmfDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Concrete implementation of the ADataFileObject class.</span>
 <span class="sd">    </span>
 <span class="sd">    Used for reading/writing tuflow .tmf materials files.</span>
@@ -440,14 +440,14 @@
         <span class="k">return</span> <span class="n">out_contents</span></div>
 
 
-<div class="viewcode-block" id="BcEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcEnum">[docs]</a><span class="k">class</span> <span class="nc">BcEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="BcEnum"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.BcEnum">[docs]</a><span class="k">class</span> <span class="nc">BcEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enum for accessing data in BcDataObject</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">NAME</span><span class="p">,</span> <span class="n">SOURCE</span><span class="p">,</span> <span class="n">COLUMN1</span><span class="p">,</span> <span class="n">COLUMN2</span><span class="p">,</span> <span class="n">ADD_COL_1</span><span class="p">,</span> <span class="n">MULT_COL</span><span class="p">,</span> <span class="n">ADD_COL_2</span><span class="p">,</span> \
     <span class="n">COLUMN_3</span><span class="p">,</span> <span class="n">COLUMN_4</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
     <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BcDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcDataObject">[docs]</a><span class="k">class</span> <span class="nc">BcDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+<div class="viewcode-block" id="BcDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.BcDataObject">[docs]</a><span class="k">class</span> <span class="nc">BcDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Concrete implementation of the ADataFileObject class.</span>
 <span class="sd">    Reads/Writes the data in tuflow boundary condition database csv files.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -465,7 +465,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">BcEnum</span><span class="p">()</span>
     
     
-<div class="viewcode-block" id="BcDataObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.BcDataObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="BcDataObject.getAllPaths"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.BcDataObject.getAllPaths">[docs]</a>    <span class="k">def</span> <span class="nf">getAllPaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_this</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_paths</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get all paths held by this object</span>
 <span class="sd">        </span>
 <span class="sd">        Overrides superclass method.</span>
@@ -522,14 +522,14 @@
         <span class="k">return</span> <span class="n">out_contents</span> </div>
 
 
-<div class="viewcode-block" id="MatCsvEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.MatCsvEnum">[docs]</a><span class="k">class</span> <span class="nc">MatCsvEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="MatCsvEnum"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.MatCsvEnum">[docs]</a><span class="k">class</span> <span class="nc">MatCsvEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enum for accessing data in MatCsvDataObject</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ID</span><span class="p">,</span> <span class="n">MANNINGS</span><span class="p">,</span> <span class="n">N1</span><span class="p">,</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">N2</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">SUBFILE_NAME</span><span class="p">,</span> <span class="n">HEADER1</span><span class="p">,</span> <span class="n">HEADER2</span><span class="p">,</span> <span class="n">IL</span><span class="p">,</span> <span class="n">CL</span><span class="p">,</span> \
     <span class="n">HAZARD_ID</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> 
     <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="MatCsvDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.MatCsvDataObject">[docs]</a><span class="k">class</span> <span class="nc">MatCsvDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
+<div class="viewcode-block" id="MatCsvDataObject"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.MatCsvDataObject">[docs]</a><span class="k">class</span> <span class="nc">MatCsvDataObject</span><span class="p">(</span><span class="n">ADataFileObject</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;Concrete implementation of the ADataFileObject class.</span>
 <span class="sd">    Reads/Writes the data in tuflow Materials csv files.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -636,7 +636,7 @@
         <span class="k">return</span> <span class="n">out_row</span></div>
 
 
-<div class="viewcode-block" id="ADataFileSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.ADataFileSubfile">[docs]</a><span class="k">class</span> <span class="nc">ADataFileSubfile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ADataFileSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.ADataFileSubfile">[docs]</a><span class="k">class</span> <span class="nc">ADataFileSubfile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstract super class for and ADataFileObject contained subfiles.</span>
 <span class="sd">    </span>
 <span class="sd">    Any files that are referenced by the ADataFileObject and which need to be</span>
@@ -666,12 +666,12 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
-<div class="viewcode-block" id="SubfileMatEnum"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.SubfileMatEnum">[docs]</a><span class="k">class</span> <span class="nc">SubfileMatEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SubfileMatEnum"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.SubfileMatEnum">[docs]</a><span class="k">class</span> <span class="nc">SubfileMatEnum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Enum for use in accessing data in DataFileSubfileMat&quot;&quot;&quot;</span>
     <span class="n">NAME</span><span class="p">,</span> <span class="n">DEPTH</span><span class="p">,</span> <span class="n">MANNINGS</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">ITERABLE</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataFileSubfileMat"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileobject.DataFileSubfileMat">[docs]</a><span class="k">class</span> <span class="nc">DataFileSubfileMat</span><span class="p">(</span><span class="n">ADataFileSubfile</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFileSubfileMat"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileobject.DataFileSubfileMat">[docs]</a><span class="k">class</span> <span class="nc">DataFileSubfileMat</span><span class="p">(</span><span class="n">ADataFileSubfile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Concrete instance of ADataFileSubfile&quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_holder</span><span class="p">,</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> 

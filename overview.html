@@ -194,6 +194,7 @@ file.</li>
 <li><a class="reference internal" href="tuflow/tuflowpart.html#tuflowpart-top"><span class="std std-ref">TuflowPart</span></a>: main data store for sections of tuflow control files.</li>
 <li><a class="reference internal" href="tuflow/addingparts.html#addingtuflowparts-top"><span class="std std-ref">Adding TuflowPart&#8217;s</span></a>: overview of how to add new TuflowPart&#8217;s to a
 loaded TuflowModel.</li>
+<li><a class="reference internal" href="tuflow/addingparts.html#addingtuflowparts-saving"><span class="std std-ref">Saving ControlFile&#8217;s</span></a>: how to save changes to disk.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -273,15 +274,17 @@ types of data in FMP units: &#8216;head_data&#8217; and &#8216;row_data&#8217;.<
 <blockquote>
 <div><ul>
 <li><dl class="first docutils">
-<dt>head_data (dict): single variables used by a unit type (e.g. comment, remote_us,</dt>
-<dd><p class="first last">calibration_coef, etc). The naming scheme tries to remain close to those
+<dt>head_data (dict):</dt>
+<dd><p class="first last">single variables used by a unit type (e.g. comment, remote_us,
+calibration_coef, etc). The naming scheme tries to remain close to those
 used in the software and the help manual, although these two vary at times!</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>row_data (dict): variable number of data entries, like geometry data in</dt>
-<dd><p class="first last">a lot of units, and bridge opening data in bridges. All row_data have a
+<dt>row_data (dict):</dt>
+<dd><p class="first last">variable number of data entries, like geometry data in
+a lot of units, and bridge opening data in bridges. All row_data have a
 &#8216;main&#8217; key, the main row data - usually geometry. The dict values are
 RowDataCollection objects.</p>
 </dd>
@@ -289,6 +292,8 @@ RowDataCollection objects.</p>
 </li>
 </ul>
 </div></blockquote>
+<p>For a summary of the head_data keys, row_data keys, and the unit type and
+category strings see <a class="reference internal" href="fmp/unitdescriptions.html#unitdescriptions-top"><span class="std std-ref">Unit Descriptions</span></a>.</p>
 <p>Accessing head_data is simple:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># You could loop through a list of return type/category as you would with</span>
 <span class="c1"># any list, but for this example we&#39;ll use a single unit.</span>
@@ -321,12 +326,12 @@ same types of data into a single object (e.g. all the chainage, or elevation).</
 </ul>
 </div></blockquote>
 <p><strong>Note</strong>
-There are two functions in the AUnit itself that you can use as convenience
-functions for accessing RowDataCollection data:</p>
+<em>There are two functions in the AUnit itself that you can use as convenience</em>
+<em>functions for accessing RowDataCollection data</em>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 
 <span class="c1"># Get a DataObject containing the CHAINAGE data</span>
-<span class="n">dobj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">rowDataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">rowdata_type</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
+<span class="n">dobj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">rowDataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">rowdata_type</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
 
 <span class="c1"># Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for</span>
 <span class="c1"># a specific row index</span>
@@ -337,10 +342,10 @@ functions for accessing RowDataCollection data:</p>
 want to use either:</p>
 <blockquote>
 <div><ul class="simple">
-<li>rowAsList(index): return a list of that data in the row at index where the</li>
-<li>rowAsDict(index): return a dict of that data in the row at index where the
+<li><strong>rowAsList(index)</strong>: return a list of that data in the row at index where the</li>
+<li><strong>rowAsDict(index)</strong>: return a dict of that data in the row at index where the
 keys are ROW_DATA_TYPES (in datunits.__init__.py module).</li>
-<li>iterateRow(): returns a generator that can be used to loop all rows.</li>
+<li><strong>iterateRow()</strong>: returns a generator that can be used to loop all rows.</li>
 </ul>
 </div></blockquote>
 <p>Example:</p>
@@ -363,9 +368,9 @@ keys are ROW_DATA_TYPES (in datunits.__init__.py module).</li>
 to read the data the best approach is to use either:</p>
 <blockquote>
 <div><ul class="simple">
-<li>dataObject(ROW_DATA_TYPES): return a DataObject.</li>
-<li>dataObjectAsList(ROW_DATA_TYPES): return a list of the data in the DataObject.</li>
-<li>toDict(): returns a dict of all of the DataObject with values in a list
+<li><strong>dataObject(ROW_DATA_TYPES)</strong>: return a DataObject.</li>
+<li><strong>dataObjectAsList(ROW_DATA_TYPES)</strong>: return a list of the data in the DataObject.</li>
+<li><strong>toDict()</strong>: returns a dict of all of the DataObject with values in a list
 and keys as ROW_DATA_TYPES.</li>
 </ul>
 </div></blockquote>
@@ -535,6 +540,48 @@ access some data:</p>
    <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>There is also a really useful method in ControlFile for querying the
+TuflowPart&#8217;s that contain certain strings: the contains() method. This takes
+several kwargs:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>command(str)</strong>: text to search for in a TuflowPart.command.</p>
+</li>
+<li><p class="first"><strong>variable(str)</strong>: characters to search for in a TuflowPart.variable.</p>
+</li>
+<li><p class="first"><strong>filename(str)</strong>: text to search for in a TuflowPart.filename.</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>parent_filename(str)</strong>: text to search for in a</dt>
+<dd><p class="first last">TuflowPart.associates.parent.filename.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>active_only(bool)</strong>: if True only parts currently set to &#8216;active&#8217; will</dt>
+<dd><p class="first last">be returned. Default is True.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>exact(bool)</strong>: Default is False. If set to True it will only return an</dt>
+<dd><p class="first last">exact match, otherwise checks if the str is &#8216;in&#8217;.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>and will return a list containing all of the TuflowPart&#8217;s that match the kwargs.
+If multiple kwargs are given a part must match all of them to be included in
+the returned list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Returns a list containing all of the &#39;Timestep ==&#39; TuflowParts that have</span>
+<span class="c1"># a value of &#39;2.5&#39;.</span>
+<span class="n">timesteps</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;Timestep&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2.5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It uses an &#8216;in&#8217; clause to check for the variable so if you ask for &#8216;2&#8217; and there
+is another with &#8216;2.5&#8217; both will be returned. If you don&#8217;t want this you can
+set the &#8216;exact&#8217; kwarg to True.</p>
 <p>You can also access the ModelFile objects for the control files you are looking
 at from the ControlFile class. That&#8217;s a slightly confusing way of saying that
 a ControlFile is not the contents of one .tgc, but the contents of all the

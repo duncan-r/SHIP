@@ -1,11 +1,11 @@
 ship.datastructures package
-============================
+===========================
 
 Submodules
 ----------
 
 ship.datastructures.dataobject module
---------------------------------------
+-------------------------------------
 
 .. automodule:: ship.datastructures.dataobject
     :members:
@@ -13,7 +13,7 @@ ship.datastructures.dataobject module
     :show-inheritance:
 
 ship.datastructures.rowdatacollection module
----------------------------------------------
+--------------------------------------------
 
 .. automodule:: ship.datastructures.rowdatacollection
     :members:

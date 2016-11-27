@@ -129,25 +129,45 @@ Example::
    ief.addIedFile('c:/some/iedfile.ied', 'someiedname')
    
    
-######
-Saving
-######
+##############
+Saving Changes
+##############
 
-If you have updated the Ief object you will probably want to save your 
-changes to file. If you just want to overwrite the file that you loaded you
-can call the write() method::
+After making changes to an Ief you will probably want to be able to save them 
+to file. The easiest way to do this is with the write() method. The write 
+method takes the following arguments:
+
+   - **filepath=None(str)**: the absolute path to save the file to. If None it 
+     will use the current setup of path_holder.
+   - **overwrite=False(bool)**: if the filepath already exists and overwrite is
+     False it will raise an IOError.
+     
+Saving your changes is as simple as::
+
+   # Assume we have a loaded Ief called ief
+   
+   # Below are four ways you could write to file
+   
+   # 1.
+   # Save to the current path settings in path_holder
+   # will raise an IOError if the file already exists
+   ief.write()
+   
+   # 2.
+   # Force it to overwrite an existing file if it exists
+   ief.write(overwrite=True)
+   
+   # 3.
+   # Hand in a different path to write to
+   ief.write(filpath="C:/new/file/path/myief.ief")
+   
+   # 4.
+   # Change the path_holder filename and then write
+   ief.path_holder.filename += "_updated"
+
+   # You could also change the folder too if you want
+   # ief.path_holder.root = "C:/my/new/folder"
 
    ief.write()
    
-If you want to save your changes to a new file you have two options. You can
-either update the 'filename' variable (and directory etc too) in the 
-'path_holder' member of the Ief, or you can pass an absolute path to the write()
-method::
-
-   # Change the path_holder variables
-   # Note that no extension is given. This is stored in path_holder.extension
-   ief.path_holder.filename = 'something_else'
-   
-   # or just give a new path to write
-   ief.write('C:/spangly/new/ieffile.ief')
    

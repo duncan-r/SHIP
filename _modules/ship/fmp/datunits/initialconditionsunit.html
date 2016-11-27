@@ -161,8 +161,8 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
 
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
-<span class="kn">from</span> <span class="nn">ship.data_structures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span>
-<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
+<span class="kn">from</span> <span class="nn">ship.datastructures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span>
+<span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -309,7 +309,7 @@
 <span class="sd">        See Also:</span>
 <span class="sd">            ADataObject and subclasses for information on the parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -365,7 +365,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit_type</span><span class="p">]</span>
 
         <span class="c1"># Don&#39;t add the same ic&#39;s in twice</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span>
 
@@ -389,7 +389,7 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            KeyError - if section_name does not exist.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -427,7 +427,7 @@
 <span class="sd">        Return:</span>
 <span class="sd">            dict - containing the values for the requested row.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>

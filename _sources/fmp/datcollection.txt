@@ -171,4 +171,45 @@ Remove unit also takes a update_node_count value, like addUnit. Again you almost
 certainly don't want to change the default.
 
 
+##############
+Saving Changes
+##############
 
+After making changes to a DatCollection you will probably want to be able to
+save them to file. The easiest way to do this is with the write() method. The
+write method takes the following arguments:
+
+   - **filepath=None(str)**: the absolute path to save the file to. If None it will
+     use the current setup of path_holder.
+   - **overwrite=False(bool)**: if the filepath already exists and overwrite is
+     False it will raise an IOError.
+     
+Saving your changes is as simple as::
+
+   # Assume we have a loaded DatCollection called dat
+   
+   # Below are four ways you could write to file
+   
+   # 1.
+   # Save to the current path settings in path_holder
+   # will raise an IOError if the file already exists
+   dat.write()
+   
+   # 2.
+   # Force it to overwrite an existing file if it exists
+   dat.write(overwrite=True)
+   
+   # 3.
+   # Hand in a different path to write to
+   dat.write(filpath="C:/new/file/path/mydat.dat")
+   
+   # 4.
+   # Chainge the path_holder filename and then write
+   dat.path_holder.filename += "_updated"
+
+   # You could also change the folder too if you want
+   # dat.path_holder.root = "C:/my/new/folder"
+
+   dat.write()
+   
+   

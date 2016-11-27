@@ -253,8 +253,8 @@ DataObject type. This can be done in several ways:</p>
 <div><ul class="simple">
 <li><strong>toDict</strong>: return a dict with ROW_DATA_TYPES as key and list of the values
 in the associated DataObject as the item.</li>
-<li><strong>dataObj</strong>: returns the dataObj at the given ROW_DATA_TYPE.</li>
-<li><strong>dataObjAsList</strong>: returns the values in the dataObject at the given index
+<li><strong>dataObject</strong>: returns the DataObject at the given ROW_DATA_TYPE.</li>
+<li><strong>dataObjectAsList</strong>: returns the values in the dataObject at the given index
 as a list.</li>
 </ul>
 </div></blockquote>
@@ -271,13 +271,13 @@ as a list.</li>
 <span class="c1"># prints True</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">eq</span><span class="p">)</span>
 
-<span class="n">chainage</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">)</span>
+<span class="n">chainage</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">)</span>
 
 <span class="c1"># prints True</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">chainage</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.00</span><span class="p">,</span> <span class="mf">3.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">6.00</span><span class="p">])</span>
 
 <span class="c1"># Fetch the actual DataObject itself under the ROUGHNESS key</span>
-<span class="n">dataobj</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
+<span class="n">dataobj</span> <span class="o">=</span> <span class="n">river</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
 
 <span class="c1"># Can now access the DataObject directly</span>
 <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataobj</span><span class="p">:</span>

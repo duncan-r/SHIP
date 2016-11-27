@@ -36,7 +36,7 @@
     <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
         <link rel="up" title="ship package" href="ship.html"/>
         <link rel="next" title="ship.fmp.datunits package" href="ship.fmp.datunits.html"/>
-        <link rel="prev" title="ship.data_structures package" href="ship.data_structures.html"/> 
+        <link rel="prev" title="ship.datastructures package" href="ship.datastructures.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -92,7 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ship.fmp package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
@@ -114,7 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ship.fmp package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
@@ -551,7 +551,7 @@ of AUnit or a list of strings for multiple types.</td>
 
 <dl class="method">
 <dt id="ship.fmp.datcollection.DatCollection.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.write" title="Permalink to this definition">¶</a></dt>
+<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the contents of this file to disk.</p>
 <p>Writes out to file in the format required for reading by ISIS/FMP.</p>
 <div class="admonition note">
@@ -564,11 +564,17 @@ file that was loaded.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
 written to that location. If not, the current settings in this
-object path_holder object will be used.</td>
+object path_holder object will be used.</li>
+<li><strong>overwrite=False</strong> (<em>bool</em>) &#8211; if the file already exists it will raise
+an IOError.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">IOError - If unable to write to file.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">IOError - If unable to write to file.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -578,7 +584,7 @@ object path_holder object will be used.</td>
 
 <dl class="data">
 <dt id="ship.fmp.datcollection.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x048A1510&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05841E30&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -650,7 +656,7 @@ place rather than littered around all subclasses of AUnit.</p>
 
 <dl class="data">
 <dt id="ship.fmp.headdata.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10610&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05831DB0&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -864,7 +870,7 @@ in the ief file.</p>
 
 <dl class="method">
 <dt id="ship.fmp.ief.Ief.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.write" title="Permalink to this definition">¶</a></dt>
+<code class="descname">write</code><span class="sig-paren">(</span><em>filepath=None</em>, <em>overwrite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/ief.html#Ief.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.ief.Ief.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the contents of this file to disk.</p>
 <p>Writes out to file in the format required for reading by ISIS/FMP.</p>
 <div class="admonition note">
@@ -877,11 +883,17 @@ file that was loaded.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepath=None</strong> (<em>str</em>) &#8211; if a filename is provided it the file will be
 written to that location. If not, the current settings in this
-object path_holder object will be used.</td>
+object path_holder object will be used.</li>
+<li><strong>overwrite=False</strong> (<em>bool</em>) &#8211; if the file already exists it will raise
+an IOError.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">IOError - If unable to write to file.</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">IOError - If unable to write to file.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -924,7 +936,7 @@ object path_holder object will be used.</td>
 
 <dl class="data">
 <dt id="ship.fmp.ief.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0401F510&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0513B810&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -964,7 +976,7 @@ data required.</dd>
 <p>This is a Factory pattern object for the creation of isisunit subclasses.</p>
 <dl class="attribute">
 <dt id="ship.fmp.isisunitfactory.IsisUnitFactory.available_units">
-<code class="descname">available_units</code><em class="property"> = (&lt;class 'ship.fmp.datunits.isisunit.HeaderUnit'&gt;, &lt;class 'ship.fmp.datunits.riverunit.RiverUnit'&gt;, &lt;class 'ship.fmp.datunits.refhunit.RefhUnit'&gt;, &lt;class 'ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit'&gt;, &lt;class 'ship.fmp.datunits.gisinfounit.GisInfoUnit'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitArch'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr'&gt;, &lt;class 'ship.fmp.datunits.spillunit.SpillUnit'&gt;, &lt;class 'ship.fmp.datunits.htbdyunit.HtbdyUnit'&gt;, &lt;class 'ship.fmp.datunits.junctionunit.JunctionUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OrificeUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.FloodReliefUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OutfallUnit'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitInlet'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitOutlet'&gt;, &lt;class 'ship.fmp.datunits.interpolateunit.InterpolateUnit'&gt;)</em><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.available_units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">available_units</code><em class="property"> = (&lt;class 'ship.fmp.datunits.isisunit.HeaderUnit'&gt;, &lt;class 'ship.fmp.datunits.isisunit.CommentUnit'&gt;, &lt;class 'ship.fmp.datunits.riverunit.RiverUnit'&gt;, &lt;class 'ship.fmp.datunits.refhunit.RefhUnit'&gt;, &lt;class 'ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit'&gt;, &lt;class 'ship.fmp.datunits.gisinfounit.GisInfoUnit'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitArch'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr'&gt;, &lt;class 'ship.fmp.datunits.spillunit.SpillUnit'&gt;, &lt;class 'ship.fmp.datunits.htbdyunit.HtbdyUnit'&gt;, &lt;class 'ship.fmp.datunits.junctionunit.JunctionUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OrificeUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.FloodReliefUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OutfallUnit'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitInlet'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitOutlet'&gt;, &lt;class 'ship.fmp.datunits.interpolateunit.InterpolateUnit'&gt;)</em><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.available_units" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
@@ -1047,7 +1059,7 @@ that have been defined, when loading the dat file.</p>
 
 <dl class="data">
 <dt id="ship.fmp.isisunitfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04B10890&gt;</em><a class="headerlink" href="#ship.fmp.isisunitfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057B6BD0&gt;</em><a class="headerlink" href="#ship.fmp.isisunitfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1067,7 +1079,7 @@ that have been defined, when loading the dat file.</p>
         <a href="ship.fmp.datunits.html" class="btn btn-neutral float-right" title="ship.fmp.datunits package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="ship.data_structures.html" class="btn btn-neutral" title="ship.data_structures package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ship.datastructures.html" class="btn btn-neutral" title="ship.datastructures package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

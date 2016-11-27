@@ -167,7 +167,7 @@
 <span class="c1"># from abc import ABCMeta, abstractmethod</span>
 
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
-<span class="kn">from</span> <span class="nn">ship.data_structures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+<span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -303,7 +303,7 @@
         <span class="k">return</span> <span class="n">object_copy</span></div>
     
     
-<div class="viewcode-block" id="AUnit.rowDataObj"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.rowDataObj">[docs]</a>    <span class="k">def</span> <span class="nf">rowDataObj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AUnit.rowDataObject"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.rowDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">rowDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the row data object as a list.</span>
 <span class="sd"> </span>
 <span class="sd">        This will return the row_collection data object referenced by the key</span>
@@ -468,10 +468,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getAdjacentDataObjDetails</span><span class="p">(</span><span class="n">data_obj</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;prev_value&#39;</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;CHAINAGE must be &gt; prev index and &lt; next index.&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="n">details</span><span class="p">[</span><span class="s1">&#39;next_value&#39;</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;CHAINAGE must be &gt; prev index and &lt; next index.&#39;</span><span class="p">)</span></div>
     
     

@@ -52,6 +52,7 @@ Tuflow
    - :ref:`tuflowpart-top`: main data store for sections of tuflow control files.
    - :ref:`addingtuflowparts-top`: overview of how to add new TuflowPart's to a
      loaded TuflowModel.
+   - :ref:`addingtuflowparts-saving`: how to save changes to disk.
 
 Other
 =====
@@ -143,13 +144,18 @@ types of data in FMP units: 'head_data' and 'row_data'.
 
 In keeping with the bridge example above:
 
-   - head_data (dict): single variables used by a unit type (e.g. comment, remote_us,
-      calibration_coef, etc). The naming scheme tries to remain close to those
-      used in the software and the help manual, although these two vary at times!
-   - row_data (dict): variable number of data entries, like geometry data in 
-      a lot of units, and bridge opening data in bridges. All row_data have a
-      'main' key, the main row data - usually geometry. The dict values are
-      RowDataCollection objects.
+   - head_data (dict): 
+       single variables used by a unit type (e.g. comment, remote_us,
+       calibration_coef, etc). The naming scheme tries to remain close to those
+       used in the software and the help manual, although these two vary at times!
+   - row_data (dict): 
+       variable number of data entries, like geometry data in 
+       a lot of units, and bridge opening data in bridges. All row_data have a
+       'main' key, the main row data - usually geometry. The dict values are
+       RowDataCollection objects.
+
+For a summary of the head_data keys, row_data keys, and the unit type and
+category strings see :ref:`unitdescriptions-top`.
 
 Accessing head_data is simple::
 
@@ -180,13 +186,13 @@ There's two main things you need to know:
      same types of data into a single object (e.g. all the chainage, or elevation).
 
 **Note**
-There are two functions in the AUnit itself that you can use as convenience
-functions for accessing RowDataCollection data::
+*There are two functions in the AUnit itself that you can use as convenience*
+*functions for accessing RowDataCollection data*::
 
    from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
    # Get a DataObject containing the CHAINAGE data
-   dobj = bridge.rowDataObj(rdt.CHAINAGE, rowdata_type='main')
+   dobj = bridge.rowDataObject(rdt.CHAINAGE, rowdata_type='main')
    
    # Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for
    # a specific row index
@@ -195,10 +201,10 @@ functions for accessing RowDataCollection data::
 If you want to access rows of data there are two functions that you will probably
 want to use either:
 
-   - rowAsList(index): return a list of that data in the row at index where the
-   - rowAsDict(index): return a dict of that data in the row at index where the
+   - **rowAsList(index)**: return a list of that data in the row at index where the
+   - **rowAsDict(index)**: return a dict of that data in the row at index where the
      keys are ROW_DATA_TYPES (in datunits.__init__.py module).
-   - iterateRow(): returns a generator that can be used to loop all rows.
+   - **iterateRow()**: returns a generator that can be used to loop all rows.
 
 Example::
 
@@ -220,9 +226,9 @@ Most of the time you will probably want to access the different DataObjects
 (defined by ROW_DATA_TYPES constants) held by the collection. If you only need 
 to read the data the best approach is to use either:
    
-   - dataObject(ROW_DATA_TYPES): return a DataObject.
-   - dataObjectAsList(ROW_DATA_TYPES): return a list of the data in the DataObject. 
-   - toDict(): returns a dict of all of the DataObject with values in a list
+   - **dataObject(ROW_DATA_TYPES)**: return a DataObject.
+   - **dataObjectAsList(ROW_DATA_TYPES)**: return a list of the data in the DataObject. 
+   - **toDict()**: returns a dict of all of the DataObject with values in a list
      and keys as ROW_DATA_TYPES.
 
 Note that you can also get these from the AUnit itself with:
@@ -389,6 +395,32 @@ access some data::
    
    for g in gis:
       print (g.filename, g.command)
+
+There is also a really useful method in ControlFile for querying the
+TuflowPart's that contain certain strings: the contains() method. This takes
+several kwargs:
+
+   - **command(str)**: text to search for in a TuflowPart.command.
+   - **variable(str)**: characters to search for in a TuflowPart.variable.
+   - **filename(str)**: text to search for in a TuflowPart.filename.
+   - **parent_filename(str)**: text to search for in a 
+       TuflowPart.associates.parent.filename.
+   - **active_only(bool)**: if True only parts currently set to 'active' will
+       be returned. Default is True.
+   - **exact(bool)**: Default is False. If set to True it will only return an
+       exact match, otherwise checks if the str is 'in'.
+
+and will return a list containing all of the TuflowPart's that match the kwargs.
+If multiple kwargs are given a part must match all of them to be included in 
+the returned list::
+
+   # Returns a list containing all of the 'Timestep ==' TuflowParts that have
+   # a value of '2.5'.
+   timesteps = tgc.contains(command='Timestep', variable='2.5')
+
+It uses an 'in' clause to check for the variable so if you ask for '2' and there 
+is another with '2.5' both will be returned. If you don't want this you can
+set the 'exact' kwarg to True.
 
 You can also access the ModelFile objects for the control files you are looking
 at from the ControlFile class. That's a slightly confusing way of saying that

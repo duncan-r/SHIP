@@ -35,7 +35,7 @@
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="SHIP 0.3.0 documentation" href="index.html"/>
         <link rel="up" title="ship package" href="ship.html"/>
-        <link rel="next" title="ship.tuflow.data_files package" href="ship.tuflow.data_files.html"/>
+        <link rel="next" title="ship.tuflow.datafiles package" href="ship.tuflow.datafiles.html"/>
         <link rel="prev" title="ship.fmp.datunits package" href="ship.fmp.datunits.html"/> 
 
   
@@ -92,7 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html#introduction">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ship.tuflow package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
@@ -114,7 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ship.data_structures.html">ship.data_structures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ship.tuflow package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
@@ -177,11 +177,11 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="ship.tuflow.data_files.html">ship.tuflow.data_files package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files.datafileloader">ship.tuflow.data_files.datafileloader module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files.datafileobject">ship.tuflow.data_files.datafileobject module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.data_files.html#module-ship.tuflow.data_files">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ship.tuflow.datafiles.html">ship.tuflow.datafiles package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.datafiles.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.datafiles.html#module-ship.tuflow.datafiles.datafileloader">ship.tuflow.datafiles.datafileloader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.datafiles.html#module-ship.tuflow.datafiles.datafileobject">ship.tuflow.datafiles.datafileobject module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ship.tuflow.datafiles.html#module-ship.tuflow.datafiles">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -352,6 +352,8 @@ parent_filename(str): text to search for in a</p>
 <dl class="last docutils">
 <dt>active_only(bool): if True only parts currently set to &#8216;active&#8217; will</dt>
 <dd>be returned. Default is True.</dd>
+<dt>exact(bool): Default is False. If set to True it will only return an</dt>
+<dd>exact match, otherwise checks if the str is &#8216;in&#8217;.</dd>
 </dl>
 </dd>
 </dl>
@@ -486,6 +488,17 @@ search criteria.</li>
 <dt id="ship.tuflow.controlfile.ControlFile.getPrintableContents">
 <code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the control files with contents formatted for writing to file.</p>
+<dl class="docutils">
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>active_only=True(bool): if True only the parts with &#8216;active&#8217; status</dt>
+<dd>set to True will be included.</dd>
+<dt>parents(list): a list of parents (tuflow control files) to return.</dt>
+<dd>if not given all the parents in self.control_files will be
+returned.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -602,6 +615,35 @@ search criteria.</li>
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>overwrite=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the control files to disk.</p>
+<p>Calls the getPrintableContents function and then writes the returned
+contents to file.</p>
+<dl class="docutils">
+<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>active_only=True(bool): if True only the parts with &#8216;active&#8217; status</dt>
+<dd>set to True will be included.</dd>
+<dt>parents(list): a list of parents (tuflow control files) to return.</dt>
+<dd>if not given all the parents in self.control_files will be
+returned.</dd>
+</dl>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>overwrite=False</strong> (<em>bool</em>) &#8211; if set to True it will overwrite an existing
+file without warning. If False it will raise an error if the
+file already exists.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -671,7 +713,7 @@ search criteria.</li>
 <code class="descname">addControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.addControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.addControlFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the contents of a new ControlFile to this ControlFile.</p>
 <dl class="docutils">
-<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs:</dt>
+<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>&#8216;after&#8217;: ModelFile to place the new ModelFile (model_file) after</dt>
 <dd>in terms of the ordering of the contents.</dd>
@@ -776,7 +818,7 @@ exist it will raise a ValueError.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.controlfile.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x053B05F0&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06DD4D10&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -971,7 +1013,7 @@ was already correct.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0550A110&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x047B6310&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1213,7 +1255,7 @@ there are others?</p>
 <dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
 <dl class="attribute">
 <dt id="ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE">
-<code class="descname">RESULT_TYPE</code><em class="property"> = {'check': 'WRITE CHECK FILE', 'output': 'OUTPUT FOLDER', 'log': 'LOG'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
+<code class="descname">RESULT_TYPE</code><em class="property"> = {'log': 'LOG', 'check': 'WRITE CHECK FILE', 'output': 'OUTPUT FOLDER'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1314,7 +1356,7 @@ before calling absolutePath of the PathHolder superclass.</p>
 <code class="descname">addPart</code><span class="sig-paren">(</span><em>part</em>, <em>group=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.addPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.addPart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new TuflowPart.</p>
 <dl class="docutils">
-<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs:</dt>
+<dt><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>skip_callback=False(bool): if true it won&#8217;t call the callback</dt>
 <dd>function in the ControlFile. Basically don&#8217;t use this.</dd>
@@ -1759,7 +1801,7 @@ dict of current variables and update the value if found.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfilepart.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04C9E850&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06DDDDD0&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1799,7 +1841,7 @@ you use the standard ControlFile add/remove/replaceControlFile()
 methods these will be called automatically.</p>
 </div>
 <dl class="docutils">
-<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
+<dt><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs:</dt>
 <dd>after(TuflowPart): the part to add the new ModelFile after.
 before(TuflowPart): the part to add the new ModelFile before.</dd>
 </dl>
@@ -2111,7 +2153,7 @@ the variables dict returned.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowmodel.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0550AF30&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x047B64F0&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2128,7 +2170,7 @@ the variables dict returned.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ship.tuflow.data_files.html" class="btn btn-neutral float-right" title="ship.tuflow.data_files package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="ship.tuflow.datafiles.html" class="btn btn-neutral float-right" title="ship.tuflow.datafiles package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="ship.fmp.datunits.html" class="btn btn-neutral" title="ship.fmp.datunits package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

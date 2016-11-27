@@ -579,6 +579,100 @@ make life easier and just call getTuflowPart:</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="saving-controlfile-s">
+<span id="addingtuflowparts-saving"></span><h2>Saving ControlFile&#8217;s<a class="headerlink" href="#saving-controlfile-s" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;ve made some changes to some of the files in a controlFile class you
+will probably want to be able to save them to disk. There are two options for
+doing this:</p>
+<blockquote>
+<div><ul class="simple">
+<li>getPrintablecontents(): returns a dict where keys are absolute paths of
+the tuflow control file and values are list of lines in that file.</li>
+<li>write(): writes the contents of tuflow control files to disk.</li>
+</ul>
+</div></blockquote>
+<p>If you want more control over what happens or you want to view the contents
+that you are about to write you should use getPrintableContents. Although it
+does involve a bit more work. It takes the following optional kwargs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>active_only=True(bool)</strong>: if True only the parts with &#8216;active&#8217; status
+set to True will be included.</li>
+<li><strong>parents(list)</strong>: a list of parents (tuflow control files) to return.
+if not given all the parents in self.control_files will be returned.</li>
+</ul>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Contains a load of functions for working with files</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>
+
+<span class="c1"># Assume we have a loaded TuflowModel called tuflow.</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">contol_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+
+<span class="c1"># Returns a dict where keys are absolute paths and values are the file</span>
+<span class="c1"># contents as a list separated by line.</span>
+<span class="n">contents</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">()</span>
+
+<span class="c1"># You can now operate on the dict as you normally would. Change the path</span>
+<span class="c1"># and stuff if you want. When you&#39;re ready you can write to file with:</span>
+<span class="k">for</span> <span class="n">cpath</span><span class="p">,</span> <span class="n">clist</span> <span class="ow">in</span> <span class="n">contents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+   <span class="n">filetools</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">clist</span><span class="p">,</span> <span class="n">cpath</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The write methods takes the same kwargs as above plus one extra:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>overwrite=False(bool)</strong>: if set to True it will overwrite an existing
+file without warning. If False it will raise an error if the file
+already exists.</li>
+</ul>
+</div></blockquote>
+<p>The write functions just takes some of the work out of the process for you. It
+will call getPrintableContents, if overwrite == False it will check the files
+don&#8217;t exists, then it will write the contents to file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume we have a loaded TuflowModel called tuflow.</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">contol_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+
+<span class="c1"># If you tried to do this without setting overwrite=True it will raise an</span>
+<span class="c1"># IOError</span>
+<span class="c1"># tgc.write()</span>
+
+<span class="c1"># As an example we&#39;ll get just one of the ModelFile&#39;s from the &#39;TGC&#39;</span>
+<span class="c1"># ControlFile to show how the other kwargs work</span>
+<span class="n">model_file</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># again if you tried write now without setting overwrite=True it will fail</span>
+
+<span class="c1"># Update the filename</span>
+<span class="n">model_file</span><span class="o">.</span><span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;_updated&quot;</span>
+
+<span class="c1"># As a side note if you want to update the root variable of the file, so</span>
+<span class="c1"># that you can put in a particular folder perhaps you will need to do the</span>
+<span class="c1"># following</span>
+
+<span class="n">model_file</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="s2">&quot;C:/path/to/new/folder&quot;</span>
+
+<span class="c1"># This is needed to stop the path builders from considering any relative</span>
+<span class="c1"># path components when calling model_file.absolutePath()</span>
+<span class="n">model_file</span><span class="o">.</span><span class="n">has_own_root</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># This will now write the contents of model_file to disk at the path set</span>
+<span class="c1"># above. If model_file doesn&#39;t exists in the &#39;TGC&#39; control file you will</span>
+<span class="c1"># get an error</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">model_file</span><span class="p">])</span>
+
+<span class="c1"># If you want to just write all of the tuflow control files stored in &#39;TGC&#39;</span>
+<span class="c1"># to disk and are happy to overwrite the existing files do this</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># You could always just do a quick update of the filenames of all the</span>
+<span class="c1"># ModelFiles in the ControlFile and then do it without overwriting</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tgc</span><span class="o">.</span><span class="n">control_files</span><span class="p">:</span>
+   <span class="n">c</span><span class="o">.</span><span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;_updated&quot;</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>    <span class="c1"># shouldn&#39;t need overwrite=True this time</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

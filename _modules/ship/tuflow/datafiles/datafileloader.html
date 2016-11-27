@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ship.tuflow.data_files.datafileloader &mdash; SHIP 0.3.0 documentation</title>
+  <title>ship.tuflow.datafiles.datafileloader &mdash; SHIP 0.3.0 documentation</title>
   
 
   
@@ -122,7 +122,7 @@
       
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
       
-    <li>ship.tuflow.data_files.datafileloader</li>
+    <li>ship.tuflow.datafiles.datafileloader</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -134,7 +134,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for ship.tuflow.data_files.datafileloader</h1><div class="highlight"><pre>
+  <h1>Source code for ship.tuflow.datafiles.datafileloader</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd"> Summary:</span>
@@ -176,7 +176,7 @@
 <span class="kn">from</span> <span class="nn">ship.datastructures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span>
 <span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">GisFile</span><span class="p">,</span> <span class="n">TuflowFile</span>
-<span class="kn">from</span> <span class="nn">ship.tuflow.data_files</span> <span class="k">import</span> <span class="n">datafileobject</span> <span class="k">as</span> <span class="n">dataobj</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow.datafiles</span> <span class="k">import</span> <span class="n">datafileobject</span> <span class="k">as</span> <span class="n">dataobj</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uuf</span>
 <span class="kn">from</span> <span class="nn">ship.utils.dbfread</span> <span class="k">import</span> <span class="n">DBF</span>
@@ -186,7 +186,7 @@
 
 
     
-<div class="viewcode-block" id="loadDataFile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.loadDataFile">[docs]</a><span class="k">def</span> <span class="nf">loadDataFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="loadDataFile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.loadDataFile">[docs]</a><span class="k">def</span> <span class="nf">loadDataFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;Factory function for creating DataFileObject type objects.</span>
 <span class="sd">    </span>
 <span class="sd">    Loads the contents of the DataFileObject based on the composition of the</span>
@@ -273,7 +273,7 @@
                                     <span class="o">%</span> <span class="p">(</span><span class="n">datafile</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">datafile</span><span class="o">.</span><span class="n">extension</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="readXsFile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.readXsFile">[docs]</a><span class="k">def</span> <span class="nf">readXsFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">):</span>
+<div class="viewcode-block" id="readXsFile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.readXsFile">[docs]</a><span class="k">def</span> <span class="nf">readXsFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads the contents of the estry 1d_xs file reference by datafile.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">value_separator</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
@@ -394,7 +394,7 @@
     
  
 
-<div class="viewcode-block" id="readBcFile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.readBcFile">[docs]</a><span class="k">def</span> <span class="nf">readBcFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="readBcFile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.readBcFile">[docs]</a><span class="k">def</span> <span class="nf">readBcFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;Loads the contents of the BC Database file refernced by datafile.</span>
 <span class="sd">    </span>
 <span class="sd">    Loads the data from the file referenced by the given TuflowFile object into</span>
@@ -539,7 +539,7 @@
     <span class="k">return</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">comment_lines</span></div>
 
 
-<div class="viewcode-block" id="readMatCsvFile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.readMatCsvFile">[docs]</a><span class="k">def</span> <span class="nf">readMatCsvFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="readMatCsvFile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.readMatCsvFile">[docs]</a><span class="k">def</span> <span class="nf">readMatCsvFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">args_dict</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;Loads the contents of the Materials CSV file referenced by datafile.</span>
 <span class="sd">    </span>
 <span class="sd">    Loads the data from the file referenced by the given TuflowFile object into</span>
@@ -749,7 +749,7 @@
     <span class="k">return</span> <span class="n">row_collection</span><span class="p">,</span> <span class="n">comment_lines</span><span class="p">,</span> <span class="n">subfile_details</span></div>
 
 
-<div class="viewcode-block" id="readMatSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.readMatSubfile">[docs]</a><span class="k">def</span> <span class="nf">readMatSubfile</span><span class="p">(</span><span class="n">main_datafile</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">header_list</span><span class="p">,</span> <span class="n">args_dict</span><span class="p">):</span> 
+<div class="viewcode-block" id="readMatSubfile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.readMatSubfile">[docs]</a><span class="k">def</span> <span class="nf">readMatSubfile</span><span class="p">(</span><span class="n">main_datafile</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">header_list</span><span class="p">,</span> <span class="n">args_dict</span><span class="p">):</span> 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">value_separator</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
@@ -919,7 +919,7 @@
     <span class="k">return</span> <span class="n">mat_sub</span></div>
 
 
-<div class="viewcode-block" id="readTmfFile"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.readTmfFile">[docs]</a><span class="k">def</span> <span class="nf">readTmfFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">):</span>
+<div class="viewcode-block" id="readTmfFile"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.readTmfFile">[docs]</a><span class="k">def</span> <span class="nf">readTmfFile</span><span class="p">(</span><span class="n">datafile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads the contents of the Materials CSV file referenced by datafile.</span>
 <span class="sd">    </span>
 <span class="sd">    Loads the data from the file referenced by the given TuflowFile object into</span>
@@ -1046,7 +1046,7 @@
     <span class="k">return</span> <span class="n">contents</span> 
 
 
-<div class="viewcode-block" id="hasCommentOnlyLine"><a class="viewcode-back" href="../../../../ship.tuflow.data_files.html#ship.tuflow.data_files.datafileloader.hasCommentOnlyLine">[docs]</a><span class="k">def</span> <span class="nf">hasCommentOnlyLine</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">comment_types</span><span class="p">):</span>
+<div class="viewcode-block" id="hasCommentOnlyLine"><a class="viewcode-back" href="../../../../ship.tuflow.datafiles.html#ship.tuflow.datafiles.datafileloader.hasCommentOnlyLine">[docs]</a><span class="k">def</span> <span class="nf">hasCommentOnlyLine</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">comment_types</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find if line contains only comments</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>

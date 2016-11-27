@@ -1,0 +1,848 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.datastructures.rowdatacollection &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.datastructures.rowdatacollection</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.datastructures.rowdatacollection</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains the RowDataCollection object. This is an object used to hold</span>
+<span class="sd">    all of the data for a specific row of a unit in an ISIS dat file.</span>
+<span class="sd">    It acts a collection pattern to make accessing and updating the contents</span>
+<span class="sd">    of a row simpler.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd"> Created:  </span>
+<span class="sd">     01 Apr 2016</span>
+
+<span class="sd"> Copyright: </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">ship.datastructures.dataobject</span> <span class="k">import</span> <span class="o">*</span>
+<span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="RowDataCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection">[docs]</a><span class="k">class</span> <span class="nc">RowDataCollection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Composite/Facade for the ADataRowObject classes.</span>
+<span class="sd">    </span>
+<span class="sd">    AUnit classes should instantiate this class in order to manage all the</span>
+<span class="sd">    ADataRowObject classes used to hold the units row data.</span>
+<span class="sd">    There are several convenience methods to retrieve and safely update the</span>
+<span class="sd">    contents.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        There are many references to a &#39;key&#39; variable in this class to decipher</span>
+<span class="sd">        which object in the collection to access/update/etc. This is one of</span>
+<span class="sd">        the ROW_DATA_TYPES enum values in the datunits package.</span>
+<span class="sd">    </span>
+<span class="sd">    See Also:</span>
+<span class="sd">        ROW_DATA_TYPE - in :class:&#39;datunits &lt;ship.fmp.datunits&gt;&#39; module.</span>
+<span class="sd">    </span>
+<span class="sd">    TODO:</span>
+<span class="sd">          Need to find a way to safely add values to the collection while making</span>
+<span class="sd">          sure that all the data objects stay in sync (i.e. have the same number</span>
+<span class="sd">          of rows), otherwise it will be chaos. At the moment this is tricky</span>
+<span class="sd">          because we need to add individual values at the start. Possibly stop </span>
+<span class="sd">          client from using any get methods etc unless all the data objects have</span>
+<span class="sd">          the same number of rows. For the time being there is a convenience</span>
+<span class="sd">          method checkRowsInSync() that can be called to verify that all of the</span>
+<span class="sd">          data objects in this collection have the same length.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a reference to the collection list.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_collection</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_collection</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_updateCallback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update_callback&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RowDataCollection.bulkInitCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.bulkInitCollection">[docs]</a>    <span class="k">def</span> <span class="nf">bulkInitCollection</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">dataobjects</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataobjects</span><span class="p">:</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">rc</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rc</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
+    
+
+<div class="viewcode-block" id="RowDataCollection.initCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.initCollection">[docs]</a>    <span class="k">def</span> <span class="nf">initCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataobject</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup a new data object and add it to the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            obj_type (str): The type of ADataRowObject to create. This should </span>
+<span class="sd">                be a DataTypes enum from the ADataObject module.</span>
+<span class="sd">            vars (list): The variables specific to the ADataRowObject that is </span>
+<span class="sd">                going to be instantiated.</span>
+<span class="sd">                </span>
+<span class="sd">        See Also: </span>
+<span class="sd">            ADataRowObject (and subclasses), DataTypes - all in ADataObject </span>
+<span class="sd">            module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataobject</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="RowDataCollection.indexOfDataObject"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.indexOfDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">indexOfDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the index of the DataObject with data_type equal to key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span></div>
+    
+<div class="viewcode-block" id="RowDataCollection.iterateRows"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.iterateRows">[docs]</a>    <span class="k">def</span> <span class="nf">iterateRows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a generator for iterating through the rows in the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        If no key is given it will return a list containing all of the values</span>
+<span class="sd">        in the row.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key=None(int): ROW_DATA_TYPE to return. If None all values in the</span>
+<span class="sd">                row will be returned as a list.</span>
+<span class="sd">                </span>
+<span class="sd">        Return:</span>
+<span class="sd">            list if key == None, a single value otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="p">[</span><span class="n">o</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexOfDataObject</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="RowDataCollection.rowAsDict"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.rowAsDict">[docs]</a>    <span class="k">def</span> <span class="nf">rowAsDict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the data vals in a particular row by index.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index(int): the index of the row to return.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - containing the values for the requested row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">data_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="RowDataCollection.rowAsList"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.rowAsList">[docs]</a>    <span class="k">def</span> <span class="nf">rowAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the data vals in a particular row by index.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index(int): the index of the row to return.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - containing the values for the requested row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">output</span></div>
+        
+    
+<div class="viewcode-block" id="RowDataCollection.dataObject"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.dataObject">[docs]</a>    <span class="k">def</span> <span class="nf">dataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the ADataRowObject instance requested.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name_key (str): The key to use to retrieve the object </span>
+<span class="sd">                (e.g. &#39;chainage&#39;). This is usually a class declared constant </span>
+<span class="sd">                e.g. RiverUnit.CHAINAGE.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ADataRowObject or False if the key doesn&#39;t match any in the </span>
+<span class="sd">            collection.</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">        Note: </span>
+<span class="sd">            Returns a shallow copy of the collection. Any changes to the</span>
+<span class="sd">            values will remain within the main list. If you want to be </span>
+<span class="sd">            able to change it without affecting the main copy use</span>
+<span class="sd">            getDataObjectCopy().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">name_key</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;name_key </span><span class="si">%s</span><span class="s1"> was not found in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name_key</span><span class="p">))</span></div>
+    
+
+<div class="viewcode-block" id="RowDataCollection.DataObjectAsList"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.DataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">DataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a DataObject as a list.</span>
+
+<span class="sd">        This will return the row_collection DataObject referenced by the key</span>
+<span class="sd">        provided (as a ROW_DATA_TYPES) in list form.</span>
+
+<span class="sd">        If you intend to update the values you should use getRowDataObject</span>
+<span class="sd">        instead as the data provided will be mutable and therefore reflected in</span>
+<span class="sd">        the values held by the row_collection. If you just want a quick way to</span>
+<span class="sd">        loop through the values in one of the data objects  and only intend to</span>
+<span class="sd">        read the data then use this.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(str): the key for the data object requested. It is best </span>
+<span class="sd">                to use  the class constants (i.e. RiverUnit.CHAINAGE) for this.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List containing the data in the DataObject that the key points</span>
+<span class="sd">                 to. Returns false if there is no row collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If key does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>                
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data_col</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_col</span><span class="p">:</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">vals</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span></div>
+
+    
+<div class="viewcode-block" id="RowDataCollection.toList"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.toList">[docs]</a>    <span class="k">def</span> <span class="nf">toList</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the row data a list.</span>
+<span class="sd">        </span>
+<span class="sd">        Collects the row data in each of the ADataObjects in this collection</span>
+<span class="sd">        into a list. Then adds them to a list based on the order of this </span>
+<span class="sd">        collection. I.e. each inner list is the data pertaining to a single </span>
+<span class="sd">        ADataObject.</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+<span class="sd">            [</span>
+<span class="sd">                [0.0, 1.5, 3.0],</span>
+<span class="sd">                [32.5, 31.0, 31.5],</span>
+<span class="sd">                [0.03, 0.03, 0.03]</span>
+<span class="sd">            ]</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List - containing lists of the data in the DataObjects in this</span>
+<span class="sd">                collection.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If key does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">outlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">innerlist</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">innerlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">outlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">innerlist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outlist</span></div>
+                
+    
+<div class="viewcode-block" id="RowDataCollection.toDict"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.toDict">[docs]</a>    <span class="k">def</span> <span class="nf">toDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the row data object as a dict.</span>
+
+<span class="sd">        Provides a dict where keys are the datunits.ROW_DATA_TYPES and the</span>
+<span class="sd">        values are lists of the values for that type in sequence.</span>
+
+<span class="sd">        If you intend to update the values you should use getRowDataObject</span>
+<span class="sd">        instead as the data provided will be mutable and therefore reflected in</span>
+<span class="sd">        the values held by the collection. If you just want to read the data </span>
+<span class="sd">        then use this.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict - containing lists of values by ROW_DATA_TYPE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">inner</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">inner</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">vals</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">data_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">inner</span>
+        <span class="k">return</span> <span class="n">vals</span></div>
+    
+    
+<div class="viewcode-block" id="RowDataCollection.dataValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.dataValue">[docs]</a>    <span class="k">def</span> <span class="nf">dataValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value in a DataObject at index.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key(int): ROW_DATA_TYPES for the DataObject.</span>
+<span class="sd">            index(int): the row to return the value from.</span>
+<span class="sd">            </span>
+<span class="sd">        Return:</span>
+<span class="sd">            The value in the DataObject at given index.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError - if key does not exist in collection.</span>
+<span class="sd">            IndexError - if index does not exist in DataObject.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">getValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;DataObject </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span></div>
+
+        
+    <span class="k">def</span> <span class="nf">_addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new value to the data object in the collection as referenced by</span>
+<span class="sd">        the key provided.</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            You almost certainly don&#39;t want to be using this. It&#39;s used internally</span>
+<span class="sd">            to add values to ADataObject&#39;s. If you need to add data use the</span>
+<span class="sd">            addRow() method.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (int): Name of the data object to add the given value to.</span>
+<span class="sd">            value: Optional - The value to add to the collection. If no value</span>
+<span class="sd">                is supplied a default will be used.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">             KeyError: If the name key doesn&#39;t exist in the collection.  </span>
+
+<span class="sd">        TODO:</span>
+<span class="sd">            Check what other errors are thrown by the data object and make </span>
+<span class="sd">            sure that they are dealt with/passed on from here.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Find the collection by the key and add the value to it.</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        
+    
+    <span class="k">def</span> <span class="nf">_setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the value to the data object in the collection.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            You almost certainly don&#39;t want to be using this. It&#39;s used internally</span>
+<span class="sd">            to set alues to ADataObject&#39;s. If you need to add data use the</span>
+<span class="sd">            updateRow() method. It will check consitency across the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            key (int): the type data object to add the given value to.</span>
+<span class="sd">            value: The value to add to the collection.</span>
+<span class="sd">            index (int): the index to set the value at.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If the name key doesn&#39;t exist in the collection.  </span>
+<span class="sd">            ValueError: If the value is not appropriate for the data type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Find the collection by the key and add the value to it.</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">c</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                    <span class="k">break</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">raise</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        
+    
+<div class="viewcode-block" id="RowDataCollection.getPrintableRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.getPrintableRow">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the row data in printable form.</span>
+<span class="sd">        </span>
+<span class="sd">        Retrieves all of the values in this RowDataObjectCollection at the</span>
+<span class="sd">        given index and returns the row. The order is based on the row_pos </span>
+<span class="sd">        variable provided in the initCollection() method.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index (int): the row collection index to access.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            string formatted for printing to .DAT file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1"># Sort the collection by the row_pos variable in the ADataRowObjects</span>
+        <span class="c1"># and loop through the collection getting a printable value.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">row_pos</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">):</span>
+            <span class="n">out_str</span> <span class="o">+=</span> <span class="n">obj</span><span class="o">.</span><span class="n">getPrintableValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="n">out_str</span></div>
+    
+        
+<div class="viewcode-block" id="RowDataCollection.updateRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new row to the units data rows.</span>
+<span class="sd">        </span>
+<span class="sd">        Creates a new row from the values in the supplied value dict at the location</span>
+<span class="sd">        given by the index.</span>
+<span class="sd">        If the index is None then the value will be appended to the end of the row</span>
+<span class="sd">        rather than inserted.</span>
+<span class="sd">        </span>
+<span class="sd">        Note: </span>
+<span class="sd">            If there is any problem while updating the values in the row all </span>
+<span class="sd">            datarow objects will be returned to the state they were in before </span>
+<span class="sd">            the operation. This ensures that they don&#39;t get out of sync if an </span>
+<span class="sd">            error is found halfway through adding the different values. This is </span>
+<span class="sd">            done by creating a deep copy of the object prior to updating.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals (dict): Contains the names of the data objects of</span>
+<span class="sd">                collection as keys and the new row values as values.</span>
+<span class="sd">            index (int): The index at which to insert the row.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If any of the keys don&#39;t exist.</span>
+<span class="sd">            IndexError: If the index doesn&#39;t exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+
+        <span class="n">dataobj_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collectionTypes</span><span class="p">()</span>
+        <span class="n">vkeys</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">vkeys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dataobj_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;ROW_DATA_TYPE &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;is not in collection&#39;</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
+            <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
+            <span class="c1"># in the different objects out of sync.</span>
+            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">err</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">o</span>
+            <span class="k">del</span> <span class="n">temp_list</span></div>
+     
+        
+<div class="viewcode-block" id="RowDataCollection.addRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a new row to the units data rows.</span>
+<span class="sd">        </span>
+<span class="sd">        Creates a new row from the values in the supplied value dict at the location</span>
+<span class="sd">        given by the index.</span>
+<span class="sd">        If the index is None then the value will be appended to the end of the row</span>
+<span class="sd">        rather than inserted.</span>
+<span class="sd">        </span>
+<span class="sd">        Note: </span>
+<span class="sd">            If there is any problem while adding the new row all datarow objects</span>
+<span class="sd">            will be returned to the state they were in before the operation.</span>
+<span class="sd">            This ensures that they don&#39;t get out of sync if an error is found</span>
+<span class="sd">            halfway through adding the different values. This is done by </span>
+<span class="sd">            creating a deep copy of the object prior to updating.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals (dict): Contains the names of the data objects of</span>
+<span class="sd">                collection as keys and the new row values as values.</span>
+<span class="sd">            index (int): The index at which to insert the row. If None it will</span>
+<span class="sd">                be appended to end of the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: If any of the keys don&#39;t exist.</span>
+<span class="sd">            IndexError: If the index doesn&#39;t exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        
+        <span class="n">dataobj_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collectionTypes</span><span class="p">()</span>
+        <span class="n">vkeys</span> <span class="o">=</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">vkeys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dataobj_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;ROW_DATA_TYPE &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;is not in collection&#39;</span><span class="p">)</span>
+        
+        <span class="n">temp_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
+            <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
+            <span class="c1"># in the different objects out of sync.</span>
+            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">data_type</span> <span class="ow">in</span> <span class="n">vkeys</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">obj</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">obj</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="n">row_vals</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">data_type</span><span class="p">],</span> <span class="n">index</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkRowsInSync</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span>
+            
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
+            <span class="k">raise</span> 
+        <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Collection not in sync!&#39;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Collection reset to previous state&#39;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">temp_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">o</span>
+                <span class="k">del</span> <span class="n">temp_list</span></div>
+    
+    
+<div class="viewcode-block" id="RowDataCollection.deleteRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete a row from the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index(int): the index to delete the values for.</span>
+<span class="sd">        </span>
+<span class="sd">        Raise:</span>
+<span class="sd">            IndexError: if index is out of the bounds of the collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
+            <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
+            <span class="c1"># in the different objects out of sync.</span>
+            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">deleteValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
+            <span class="k">raise</span> 
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">o</span>
+            <span class="k">del</span> <span class="n">temp_list</span></div>
+        
+        
+<div class="viewcode-block" id="RowDataCollection.collectionTypes"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.collectionTypes">[docs]</a>    <span class="k">def</span> <span class="nf">collectionTypes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Get a list of the types (names) of all the objects in the collection.</span>
+<span class="sd">        </span>
+<span class="sd">        The list returned will contain all of the names used in this </span>
+<span class="sd">        row collection. e.g. &#39;chainage&#39;, &#39;elevation&#39; etc.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            keys (list): containing the names of the data objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">data_type</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">keys</span></div>
+                
+    
+<div class="viewcode-block" id="RowDataCollection.dataObjectCopy"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.dataObjectCopy">[docs]</a>    <span class="k">def</span> <span class="nf">dataObjectCopy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the ADataRowObject instance requested.</span>
+
+<span class="sd">        Same as the getDataObject() method except it makes a deep copy of the</span>
+<span class="sd">        data object before returning it so that any changes will local to the</span>
+<span class="sd">        returned copy only and not to the main reference.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name_key (str): The key to use to retrieve the object </span>
+<span class="sd">                (e.g. &#39;chainage&#39;). This is usually a class declared constant </span>
+<span class="sd">                e.g. RiverUnit.CHAINAGE.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ADataRowObject or False if the key doesn&#39;t match any in the </span>
+<span class="sd">            collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">name_key</span><span class="p">:</span>
+                <span class="n">obj_copy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">obj_copy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;name_key </span><span class="si">%s</span><span class="s1"> was not found in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name_key</span><span class="p">))</span></div>
+            
+    
+<div class="viewcode-block" id="RowDataCollection.deleteDataObject"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.deleteDataObject">[docs]</a>    <span class="k">def</span> <span class="nf">deleteDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Delete the ADataRowObject instance requested.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name_key (str): The key to use to retrieve the object </span>
+<span class="sd">                (i.e. &#39;chainage&#39;)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the object was successfully deleted; False if not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">name_key</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+              
+    
+<div class="viewcode-block" id="RowDataCollection.numberOfRows"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.numberOfRows">[docs]</a>    <span class="k">def</span> <span class="nf">numberOfRows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of rows held in the collection</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int - number of rows in this collection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkRowsInSync</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;RowCollection objects are not in sync&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+    
+    
+<div class="viewcode-block" id="RowDataCollection.checkRowsInSync"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.checkRowsInSync">[docs]</a>    <span class="k">def</span> <span class="nf">checkRowsInSync</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks that the data objects in the collection are in sync.</span>
+<span class="sd">        </span>
+<span class="sd">        All the rows should be the same length. If they aren&#39;t then there&#39;s </span>
+<span class="sd">        a problem and it will corrupt any output .dat file.</span>
+<span class="sd">        </span>
+<span class="sd">        Warning:</span>
+<span class="sd">            It isn&#39;t actually that hard to corrupt the collection at the </span>
+<span class="sd">            moment. It&#39;s ok if the DataObject classes are only accessed through</span>
+<span class="sd">            here. If they are accessed independently of this class and not</span>
+<span class="sd">            carefully checked they could fall out of sync.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if all data collections have the same length, otherwise</span>
+<span class="sd">                 False. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
+            <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">record_length</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">==</span> <span class="n">lengths</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+    
+
+    <span class="k">def</span> <span class="nf">_resetDataObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset the data_objects list to its previous state.</span>
+<span class="sd">        </span>
+<span class="sd">        This method is called when there is a problem with updating the data_objects</span>
+<span class="sd">        list. It returns the self owned versions to their original state.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            temp_list: The versions to return the objects to.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span> <span class="o">=</span> <span class="n">temp_list</span>
+
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">o</span>
+        <span class="k">del</span> <span class="n">temp_list</span>
+               
+                
+    <span class="k">def</span> <span class="nf">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot;Create a deep copy of the data_objects</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">object_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">object_copy</span></div>
+    
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
