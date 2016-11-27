@@ -36,10 +36,10 @@ import csv
 import os
 
 # ship modules
-from ship.data_structures.rowdatacollection import RowDataCollection
-from ship.data_structures import dataobject as do
+from ship.datastructures.rowdatacollection import RowDataCollection
+from ship.datastructures import dataobject as do
 from ship.tuflow.tuflowfilepart import DataFile, GisFile, TuflowFile
-from ship.tuflow.data_files import datafileobject as dataobj
+from ship.tuflow.datafiles import datafileobject as dataobj
 from ship.utils import filetools
 from ship.utils import utilfunctions as uuf
 from ship.utils.dbfread import DBF

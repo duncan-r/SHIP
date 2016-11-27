@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import unittest
  
-from ship.data_structures import rowdatacollection as rdc
-from ship.data_structures import dataobject as do
+from ship.datastructures import rowdatacollection as rdc
+from ship.datastructures import dataobject as do
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
  
  

@@ -107,7 +107,7 @@ functionality is available in the methods within the RowDataCollection itself.
 There is though a couple of convenience hooks in the AUnit interface for 
 common requests. These include:
    
-   - rowDataObj(key, rowdata_type='main'): to return one of the DataObject's in
+   - rowDataObject(key, rowdata_type='main'): to return one of the DataObject's in
      the RowDataCollection.
    - row(index, rowdata_type='main'): to return the contents of a particular
      row in a RowDataCollection.
@@ -118,7 +118,7 @@ example::
    from ship.fmp.datunits import ROW_DATA_TYPES as rdt
    
    # Returns the ROUGHNESS DataObject from the row data in the 'main' row_data
-   dobj = river.rowDataObj(rdt.ROUGNESS)
+   dobj = river.rowDataObject(rdt.ROUGNESS)
    
    # You can now get at the data in this (note you shouldn't ever add any new
    # data to a DataObject directly, you should use the addRow method in the

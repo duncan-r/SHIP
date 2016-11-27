@@ -5,7 +5,7 @@
 # import os
 # import hashlib
 #  
-# from ship.tuflow.data_files import datafileloader
+# from ship.tuflow.datafiles import datafileloader
 # from ship.tuflow.tuflowfilepart import DataFile, GisFile
 #  
 # class DataFileObjectTests(unittest.TestCase):

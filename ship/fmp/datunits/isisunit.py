@@ -30,7 +30,7 @@ import copy
 # from abc import ABCMeta, abstractmethod
 
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
-from ship.data_structures import DATA_TYPES as dt
+from ship.datastructures import DATA_TYPES as dt
 from ship.fmp.headdata import HeadDataItem
 
 import logging

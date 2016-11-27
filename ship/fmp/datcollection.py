@@ -314,7 +314,7 @@ class DatCollection(object):
         return out_data
     
     
-    def write(self, filepath=None):
+    def write(self, filepath=None, overwrite=False):
         """Write the contents of this file to disk.
         
         Writes out to file in the format required for reading by ISIS/FMP.
@@ -328,12 +328,17 @@ class DatCollection(object):
             filepath=None(str): if a filename is provided it the file will be
                 written to that location. If not, the current settings in this
                 object path_holder object will be used.
+            overwrite=False(bool): if the file already exists it will raise
+                an IOError.
         
         Raises:
             IOError - If unable to write to file.
         """
         if filepath is None:
             filepath = self.path_holder.absolutePath()
+        
+        if not overwrite and os.path.exists(filepath):
+            raise IOError('filepath %s already exists. Set overwrite=True to ignore this warning.' % filepath)
             
         contents = self.getPrintableContents()
         ft.writeFile(contents, filepath)

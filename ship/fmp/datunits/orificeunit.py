@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 
 from ship.fmp.datunits.isisunit import AUnit
 from ship.fmp.headdata import HeadDataItem
-from ship.data_structures import DATA_TYPES as dt
+from ship.datastructures import DATA_TYPES as dt
 from ship.utils import utilfunctions as uf
 
 import logging

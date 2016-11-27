@@ -32,12 +32,12 @@ import math
 from collections import OrderedDict
 
 from ship.fmp.datunits.isisunit import AUnit
-from ship.data_structures import dataobject as do
-from ship.data_structures.rowdatacollection import RowDataCollection
+from ship.datastructures import dataobject as do
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.fmp.headdata import HeadDataItem
 from ship.utils.tools import geometry
-from ship.data_structures import DATA_TYPES as dt
+from ship.datastructures import DATA_TYPES as dt
 
 
 

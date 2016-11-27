@@ -492,8 +492,11 @@ class TuflowFile(TuflowPart, PathHolder):
             all_types = [self.extension]
         for a in all_types:
             f = self.filename + '.' + a
-            fpath = PathHolder.absolutePath(self, filename=f, 
-                                            relative_roots=rel_roots)
+            if self.has_own_root:
+                fpath = PathHolder.absolutePath(self, filename=f)
+            else:
+                fpath = PathHolder.absolutePath(self, filename=f, 
+                                                relative_roots=rel_roots)
 
             # Replace any variable placeholders if given
             if user_vars:
@@ -510,8 +513,11 @@ class TuflowFile(TuflowPart, PathHolder):
                 keys and the actual values as values. See 
                 TuflowPart.resolvePlaceholder() method for more information.
         """
-        rel_roots = self.getRelativeRoots([])
-        abs_path = PathHolder.absolutePath(self, relative_roots=rel_roots)
+        if self.has_own_root:
+            abs_path = PathHolder.absolutePath(self)
+        else:
+            rel_roots = self.getRelativeRoots([])
+            abs_path = PathHolder.absolutePath(self, relative_roots=rel_roots)
 
         # Replace any variable placeholders if given
         if user_vars:

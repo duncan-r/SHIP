@@ -4,12 +4,12 @@
 # import unittest
 # import os
 #  
-# from ship.tuflow.data_files import datafileloader
-# from ship.tuflow.data_files.datafileobject import TmfDataObject, \
+# from ship.tuflow.datafiles import datafileloader
+# from ship.tuflow.datafiles.datafileobject import TmfDataObject, \
 #                                 BcDataObject, MatCsvDataObject, XsDataObject
 # from ship.tuflow.tuflowfilepart import DataFile, GisFile
-# from ship.data_structures.rowdatacollection import RowDataCollection
-# from ship.data_structures import dataobject as do 
+# from ship.datastructures.rowdatacollection import RowDataCollection
+# from ship.datastructures import dataobject as do 
 #  
 #  
 # class DataFileLoaderTests(unittest.TestCase):

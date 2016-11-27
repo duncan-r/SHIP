@@ -102,8 +102,8 @@ Most of the time you are more likely to want to group the data by a particular
 DataObject type. This can be done in several ways:
    - **toDict**: return a dict with ROW_DATA_TYPES as key and list of the values
      in the associated DataObject as the item.
-   - **dataObj**: returns the dataObj at the given ROW_DATA_TYPE.
-   - **dataObjAsList**: returns the values in the dataObject at the given index
+   - **dataObject**: returns the DataObject at the given ROW_DATA_TYPE.
+   - **dataObjectAsList**: returns the values in the dataObject at the given index
      as a list.
 
 Example::
@@ -120,13 +120,13 @@ Example::
    # prints True
    print (eq)
 
-   chainage = river.row_data['main'].dataObjAsList(rdt.CHAINAGE)
+   chainage = river.row_data['main'].dataObjectAsList(rdt.CHAINAGE)
    
    # prints True
    print (chainage == [0.00, 3.00, 5.00, 6.00])
 
    # Fetch the actual DataObject itself under the ROUGHNESS key
-   dataobj = river.row_data['main'].dataObj(rdt.ROUGHNESS)
+   dataobj = river.row_data['main'].dataObject(rdt.ROUGHNESS)
    
    # Can now access the DataObject directly
    for d in dataobj:

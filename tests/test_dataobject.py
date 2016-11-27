@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import unittest
  
-from ship.data_structures import dataobject as do
-from ship.data_structures.dataobject import ADataRowObject
+from ship.datastructures import dataobject as do
+from ship.datastructures.dataobject import ADataRowObject
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
  
  

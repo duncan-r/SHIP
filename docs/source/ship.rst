@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    ship.data_structures
+    ship.datastructures
     ship.fmp
     ship.tuflow
     ship.utils

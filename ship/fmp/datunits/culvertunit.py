@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 from ship.fmp.datunits.isisunit import AUnit
 from ship.fmp.headdata import HeadDataItem
-from ship.data_structures import DATA_TYPES as dt
+from ship.datastructures import DATA_TYPES as dt
 
 
 class CulvertUnit(AUnit):

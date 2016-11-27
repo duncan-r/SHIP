@@ -27,7 +27,7 @@ import copy
 import logging
 logger = logging.getLogger(__name__)
 
-from ship.data_structures.dataobject import *
+from ship.datastructures.dataobject import *
 """logging references with a __name__ set to this module."""
 
 

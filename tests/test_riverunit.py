@@ -4,8 +4,8 @@ import unittest
 
 from ship.fmp.datunits import riverunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
-from ship.data_structures.rowdatacollection import RowDataCollection 
-from ship.data_structures import dataobject as do
+from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures import dataobject as do
 from ship.fmp.isisunitfactory import IsisUnitFactory
 
 class RiverUnitTests(unittest.TestCase):

@@ -28,8 +28,8 @@ from __future__ import unicode_literals
 import os
 
 from ship.utils import filetools
-# from ship.data_structures.rowdatacollection import DataTypes
-from ship.data_structures.rowdatacollection import RowDataCollection#, DataTypes
+# from ship.datastructures.rowdatacollection import DataTypes
+from ship.datastructures.rowdatacollection import RowDataCollection#, DataTypes
 
 import logging
 logger = logging.getLogger(__name__)

@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 from ship.fmp.datunits.isisunit import AUnit
-from ship.data_structures.rowdatacollection import RowDataCollection 
-from ship.data_structures import DATA_TYPES as dt
+from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures import DATA_TYPES as dt
 from ship.fmp.headdata import HeadDataItem
 
 

@@ -27,6 +27,9 @@ transition of existing code. They are ordered by module.
 **The biggest change for the isis package is the package name change from*
 ***isis* to *fmp*. Although it's probably the easiest to deal with.**
 
+*The data_structures package has also been renamed to datastructures.*
+*This is to have a compatible naming convention with all the others.*
+
 
 AIsisUnit/AUnit
 ###############

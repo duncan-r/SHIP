@@ -38,7 +38,9 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, TuflowVariable, ModelFile
+from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, \
+                                       TuflowVariable, ModelFile
+from ship.utils import filetools                                       
 
     
 
@@ -243,6 +245,13 @@ class ControlFile(object):
     def getPrintableContents(self, **kwargs):
         """Return the control files with contents formatted for writing to file.
         
+        **kwargs:
+            active_only=True(bool): if True only the parts with 'active' status
+                set to True will be included.
+            parents(list): a list of parents (tuflow control files) to return.
+                if not given all the parents in self.control_files will be
+                returned.
+        
         Return:
             dict - control files paths as keys and a ordered list of Tuflow
                 commands as the values.
@@ -253,19 +262,28 @@ class ControlFile(object):
             else:
                 return ''.join(['\t' for x in range(indent)])
         
+        active_only = kwargs.get('active_only', True)
+        parents = kwargs.get('parents', self.control_files)
+        for p in parents:
+            if not p in self.control_files:
+                raise ValueError("All 'parents' must be in self.control_files'")
+
         logic_stack = {}
         logic_group = {}
         cur_ctrl = None
         out = {}
-        indent = 0
-        active_only = kwargs.get('active_only', True)
+#         indent = 0
+        parent_indents = {}
         open_logic = 0
          
         for p in self.parts:
+            if not p.associates.parent in parents: continue
             if not cur_ctrl == p.associates.parent.hash:
                 cur_ctrl = p.associates.parent.hash
             if not cur_ctrl in out.keys():
                 out[cur_ctrl] = []; logic_stack[cur_ctrl] = []; logic_group[cur_ctrl] = []
+                parent_indents[cur_ctrl] = 0
+#             indent = parent_indents[cur_ctrl]
             
             # Get any logic clauses that appear above this part
             if p.associates.logic is not None:
@@ -275,8 +293,9 @@ class ControlFile(object):
                                                             p, logic_clause)
                 for i, l in enumerate(logic_clause):
                     open_logic += 1 
-                    out[cur_ctrl].append(createIndent(indent) + l)
-                    indent += 1
+                    out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + l)
+#                     indent += 1
+                    parent_indents[cur_ctrl] += 1
 
             # Get the part
             if not active_only or (active_only and p.active != False):
@@ -284,20 +303,51 @@ class ControlFile(object):
                 if add_to_prev:
                     out[cur_ctrl][-1] = out[cur_ctrl][-1] + pout
                 else:
-                    out[cur_ctrl].append(createIndent(indent) + pout)
+                    out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + pout)
             
             # Get any closing statements for logic clauses
             if p.associates.logic is not None:
                 logic_clause = p.associates.logic.getEndClause(p)
-                indent -= 1
+#                 indent -= 1
+                parent_indents[cur_ctrl] -= 1
                 if logic_clause and open_logic > 0:
-                    out[cur_ctrl].append(createIndent(indent) + logic_clause)
+                    out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + logic_clause)
                     open_logic -= 1
                 
         for c in self.control_files:
-            path = c.absolutePath()
-            out[path] = out.pop(c.hash)
+            if c.hash in out.keys():
+                path = c.absolutePath()
+                out[path] = out.pop(c.hash)
         return out
+    
+    
+    def write(self, overwrite=False, **kwargs):
+        """Write the control files to disk.
+        
+        Calls the getPrintableContents function and then writes the returned
+        contents to file.
+
+        **kwargs:
+            active_only=True(bool): if True only the parts with 'active' status
+                set to True will be included.
+            parents(list): a list of parents (tuflow control files) to return.
+                if not given all the parents in self.control_files will be
+                returned.
+        
+        Args:
+            overwrite=False(bool): if set to True it will overwrite an existing
+                file without warning. If False it will raise an error if the
+                file already exists.
+        """
+        contents = self.getPrintableContents(**kwargs) 
+        for ckey in contents.keys():
+            if os.path.exists(ckey) and not overwrite:
+                raise IOError('File %s already exists. Use overwrite=True to ignore this warning' % ckey)
+        
+        for ckey, cval in contents.items():
+            i=0
+            filetools.writeFile(cval, ckey)
+            
     
     def removeLogicPart(self, remove_part, last_part):
         """Called when a TuflowPart is removed from a TuflowLogic.
@@ -366,6 +416,8 @@ class ControlFile(object):
                 TuflowPart.associates.parent.filename.
             active_only(bool): if True only parts currently set to 'active' will
                 be returned. Default is True.
+            exact(bool): Default is False. If set to True it will only return an
+                exact match, otherwise checks if the str is 'in'.
         
         Return:
             list - of TuflowParts that match the search term.
@@ -375,6 +427,7 @@ class ControlFile(object):
         filename = kwargs.get('filename', '').upper()
         parent_filename = kwargs.get('parent_filename', '').upper()
         active_only = kwargs.get('active_only', True)
+        exact = kwargs.get('exact', False)
         results = []
         for part in self.parts:
             out = None
@@ -383,22 +436,38 @@ class ControlFile(object):
 
             if parent_filename:
                 try:
-                    if parent_filename in part.associates.parent.filename.upper():out = part
-                    else: continue #out = None
+                    if exact:
+                        if parent_filename == part.associates.parent.filename.upper():
+                            out = part
+                    elif parent_filename in part.associates.parent.filename.upper():
+                        out = part
+                    else: continue 
                 except AttributeError: continue
             if command:
                 try:
-                    if command in part.command.upper():out = part
+                    if exact:
+                        if command in part.command.upper():
+                            out = part
+                    elif command in part.command.upper():
+                        out = part
                     else: continue
                 except AttributeError: continue
             if variable:
                 try:
-                    if variable in part.variable.upper(): out = part
+                    if exact:
+                        if variable == part.variable.upper(): 
+                            out = part
+                    elif variable in part.variable.upper(): 
+                        out = part
                     else: continue
                 except AttributeError: continue
             if filename:
                 try:
-                    if filename in part.filename.upper(): out = part
+                    if exact:
+                        if filename == part.filename.upper(): 
+                            out = part
+                    if filename in part.filename.upper(): 
+                        out = part
                     else: continue
                 except AttributeError: continue
 
