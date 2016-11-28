@@ -165,8 +165,10 @@
 
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
 <span class="kn">from</span> <span class="nn">ship.datastructures.rowdatacollection</span> <span class="k">import</span> <span class="n">RowDataCollection</span> 
+<span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">dataobject</span> <span class="k">as</span> <span class="n">do</span>
 <span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 
 
 
@@ -198,9 +200,8 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">RefhUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">RefhUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;storm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;Refh_unit&#39;</span>
-        
+<span class="c1">#         self.row_data[&#39;main&#39;] = []</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">==</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;Refh_unit&#39;</span>
 
         <span class="c1"># Fill in the header values these contain the data at the top of the</span>
         <span class="c1"># section, such as the unit name and labels.</span>
@@ -297,9 +298,15 @@
             <span class="s1">&#39;br_dcf&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
             <span class="s1">&#39;br&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
             <span class="s1">&#39;bf0&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="mf">0.000</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">dps</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
-
-
         <span class="p">}</span>
+        
+        <span class="n">dobjs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c1"># update_callback is called every time a value is added or updated</span>
+            <span class="n">do</span><span class="o">.</span><span class="n">FloatData</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">RAIN</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_of_dps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">dummy_row</span> <span class="o">=</span> <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">RAIN</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RowDataCollection</span><span class="o">.</span><span class="n">bulkInitCollection</span><span class="p">(</span><span class="n">dobjs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">setDummyRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">RAIN</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
     
         
 <div class="viewcode-block" id="RefhUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.refhunit.RefhUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
@@ -404,7 +411,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out_line</span> <span class="o">=</span> <span class="n">file_line</span> <span class="o">+</span> <span class="n">storm_rows</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">file_line</span><span class="p">,</span> <span class="n">out_line</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;storm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
         
         <span class="k">return</span> <span class="n">out_line</span>
     
@@ -500,9 +507,14 @@
     <span class="k">def</span> <span class="nf">_getStormData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;storm&#39;</span><span class="p">]))]</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;storm&#39;</span><span class="p">]:</span>
-            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:&gt;10}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">())]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()):</span>
+            <span class="n">out_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">getPrintableRow</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out_data</span>
+<span class="c1">#         out_data = [&#39;{:&gt;10}&#39;.format(self.row_data[&#39;main&#39;].numberOfRows())]</span>
+<span class="c1">#         for line in self.row_data[&#39;main&#39;]:</span>
+<span class="c1">#             out_data.append(&#39;{:&gt;10}&#39;.format(line))</span>
             
         <span class="k">return</span> <span class="n">out_data</span>
     

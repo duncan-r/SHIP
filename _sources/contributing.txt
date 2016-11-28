@@ -31,7 +31,6 @@ you don't know what I have a long list of things like I'd like to get done.
 
 .. _contributing-stuff:
 
-
 #################
 Main Requirements
 #################
@@ -44,25 +43,8 @@ all after changes). Normally we will add new units when they are needed for
 a script or a tool. If there is one that you need it is probably a good place
 to start with contributions.
 
-The best approach is to have a look at the RiverUnit. It's reasonably simple,
-but includes everything that is supported in some way. The basic process is:
-
-   - Create a new module for the new unit.
-   - Add the basic requirements:
-      * Set the UNIT_TYPE and UNIT_CATEGORY static class constants and set
-        the member variables to the same.
-      * Create the standard setup and instantiate HeadDataItem dict and
-        required RowDataCollections in the constructor.
-      * readUnitData() method. This is called by the UnitFactory and is given
-        the current .dat/.ied file line and the contents list.
-      * Add the import for the unit to the UnitFactory and add the class to
-        the 'available_units' list in UnitFactory.
-      * Write the code to parse the file contents in readUnitData.
-      * Write the code to return the formatted contents in getData().
-
-and that's it. It doesn't normally take very long to put a unit together. Once
-you've made one please add a module to the tests package and try and get some
-decent test coverage for it.
+Have a look at :ref:`addaunit-top` for a walkthrough on what needs to be done
+to build a new unit.
 
 It would also be great if you could let me know if you're planning on working
 on anything. Then we can try and avoid duplicated effort.

@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">ship.utils.atool</span> <span class="k">import</span> <span class="n">ATool</span>
 <span class="kn">from</span> <span class="nn">ship.utils.fileloaders.loader</span> <span class="k">import</span> <span class="n">ALoader</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ftools</span>
-<span class="kn">from</span> <span class="nn">ship.fmp.isisunitfactory</span> <span class="k">import</span> <span class="n">IsisUnitFactory</span>
+<span class="kn">from</span> <span class="nn">ship.fmp.fmpunitfactory</span> <span class="k">import</span> <span class="n">FmpUnitFactory</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">UnknownUnit</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datcollection</span> <span class="k">import</span> <span class="n">DatCollection</span>
@@ -279,7 +279,7 @@
         <span class="c1"># file contents list.</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Get an instance of the unit factory with the number of nodes in the file.</span>
-        <span class="n">unit_factory</span> <span class="o">=</span> <span class="n">IsisUnitFactory</span><span class="p">()</span>
+        <span class="n">unit_factory</span> <span class="o">=</span> <span class="n">FmpUnitFactory</span><span class="p">()</span>
 
         <span class="c1"># Dictionary containing the keys to identify units in the dat file </span>
         <span class="n">unit_vars</span> <span class="o">=</span> <span class="n">unit_factory</span><span class="o">.</span><span class="n">getUnitIdentifiers</span><span class="p">()</span>

@@ -107,7 +107,21 @@
 <li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.datastructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -184,7 +198,7 @@ values to print to file. Classes include support for:</p>
 <p>Updates:</p>
 <dl class="class">
 <dt id="ship.datastructures.dataobject.ADataRowObject">
-<em class="property">class </em><code class="descname">ADataRowObject</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>format_str</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#ADataRowObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.ADataRowObject" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">ADataRowObject</code><span class="sig-paren">(</span><em>datatype</em>, <em>format_str</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#ADataRowObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.ADataRowObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Abstract class for all data objects used in an AUnit class.</p>
 <div class="admonition note">
@@ -237,12 +251,6 @@ value is given it will be appended to the end.</li>
 </tr>
 </tbody>
 </table>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Bit dodgy to be honest as people could start deleting random
-parts of one data_object without the other ones which would cock
-things right up.</p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -351,7 +359,7 @@ initialised.</dd>
 
 <dl class="class">
 <dt id="ship.datastructures.dataobject.ConstantData">
-<em class="property">class </em><code class="descname">ConstantData</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>legal_values</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#ConstantData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.ConstantData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">ConstantData</code><span class="sig-paren">(</span><em>datatype</em>, <em>legal_values</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#ConstantData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.ConstantData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ship.datastructures.dataobject.ADataRowObject" title="ship.datastructures.dataobject.ADataRowObject"><code class="xref py py-class docutils literal"><span class="pre">ship.datastructures.dataobject.ADataRowObject</span></code></a></p>
 <p>Overrides the value return methods from ADataObject to return a
 str value from a list of predefined constants.</p>
@@ -399,7 +407,7 @@ str value from a list of predefined constants.</p>
 
 <dl class="class">
 <dt id="ship.datastructures.dataobject.FloatData">
-<em class="property">class </em><code class="descname">FloatData</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#FloatData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.FloatData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">FloatData</code><span class="sig-paren">(</span><em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#FloatData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.FloatData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ship.datastructures.dataobject.ADataRowObject" title="ship.datastructures.dataobject.ADataRowObject"><code class="xref py py-class docutils literal"><span class="pre">ship.datastructures.dataobject.ADataRowObject</span></code></a></p>
 <p>Overrides the value return methods from ADataObject to return a
 float value instead of a string.</p>
@@ -447,7 +455,7 @@ float value instead of a string.</p>
 
 <dl class="class">
 <dt id="ship.datastructures.dataobject.IntData">
-<em class="property">class </em><code class="descname">IntData</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#IntData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.IntData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">IntData</code><span class="sig-paren">(</span><em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#IntData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.IntData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ship.datastructures.dataobject.ADataRowObject" title="ship.datastructures.dataobject.ADataRowObject"><code class="xref py py-class docutils literal"><span class="pre">ship.datastructures.dataobject.ADataRowObject</span></code></a></p>
 <p>Concrete implememtation of the ADataRowObject for integer values.</p>
 <div class="admonition seealso">
@@ -498,7 +506,7 @@ float value instead of a string.</p>
 
 <dl class="class">
 <dt id="ship.datastructures.dataobject.StringData">
-<em class="property">class </em><code class="descname">StringData</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#StringData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.StringData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">StringData</code><span class="sig-paren">(</span><em>datatype</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#StringData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.StringData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ship.datastructures.dataobject.ADataRowObject" title="ship.datastructures.dataobject.ADataRowObject"><code class="xref py py-class docutils literal"><span class="pre">ship.datastructures.dataobject.ADataRowObject</span></code></a></p>
 <p>Overrides the value return methods from ADataObject to return a
 str value.</p>
@@ -546,7 +554,7 @@ str value.</p>
 
 <dl class="class">
 <dt id="ship.datastructures.dataobject.SymbolData">
-<em class="property">class </em><code class="descname">SymbolData</code><span class="sig-paren">(</span><em>row_pos</em>, <em>datatype</em>, <em>symbol</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#SymbolData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.SymbolData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">SymbolData</code><span class="sig-paren">(</span><em>datatype</em>, <em>symbol</em>, <em>format_str='{}'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/dataobject.html#SymbolData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.dataobject.SymbolData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ship.datastructures.dataobject.ADataRowObject" title="ship.datastructures.dataobject.ADataRowObject"><code class="xref py py-class docutils literal"><span class="pre">ship.datastructures.dataobject.ADataRowObject</span></code></a></p>
 <p>Overrides the value return methods from ADataObject to return a
 float value instead of a string.</p>
@@ -594,7 +602,7 @@ float value instead of a string.</p>
 
 <dl class="data">
 <dt id="ship.datastructures.dataobject.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05354F10&gt;</em><a class="headerlink" href="#ship.datastructures.dataobject.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04AEA9B0&gt;</em><a class="headerlink" href="#ship.datastructures.dataobject.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -635,7 +643,7 @@ the ROW_DATA_TYPES enum values in the datunits package.</p>
 <p class="first admonition-title">See also</p>
 <p class="last">ROW_DATA_TYPE - in :class:&#8217;datunits &lt;ship.fmp.datunits&gt;&#8217; module.</p>
 </div>
-<div class="admonition-todo admonition" id="index-1">
+<div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p class="last">Need to find a way to safely add values to the collection while making
 sure that all the data objects stay in sync (i.e. have the same number
@@ -712,6 +720,31 @@ be appended to end of the collection.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.datastructures.rowdatacollection.RowDataCollection.addToCollection">
+<code class="descname">addToCollection</code><span class="sig-paren">(</span><em>dataobject</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.addToCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.addToCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup a new data object and add it to the collection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj_type</strong> (<em>str</em>) &#8211; The type of ADataRowObject to create. This should
+be a DataTypes enum from the ADataObject module.</li>
+<li><strong>vars</strong> (<em>list</em>) &#8211; The variables specific to the ADataRowObject that is
+going to be instantiated.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ADataRowObject (and subclasses), DataTypes - all in ADataObject
+module.</p>
+</div>
 </dd></dl>
 
 <dl class="classmethod">
@@ -878,9 +911,8 @@ collection.</td>
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.getPrintableRow">
 <code class="descname">getPrintableRow</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.getPrintableRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.getPrintableRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the row data in printable form.</p>
-<p>Retrieves all of the values in this RowDataObjectCollection at the
-given index and returns the row. The order is based on the row_pos
-variable provided in the initCollection() method.</p>
+<p>Retrieves all of the values in this RowDataObjectCollection in the
+order that it exists in the list.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -897,31 +929,6 @@ variable provided in the initCollection() method.</p>
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.indexOfDataObject">
 <code class="descname">indexOfDataObject</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.indexOfDataObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.indexOfDataObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the index of the DataObject with data_type equal to key.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="ship.datastructures.rowdatacollection.RowDataCollection.initCollection">
-<code class="descname">initCollection</code><span class="sig-paren">(</span><em>dataobject</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.initCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.initCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Setup a new data object and add it to the collection.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>obj_type</strong> (<em>str</em>) &#8211; The type of ADataRowObject to create. This should
-be a DataTypes enum from the ADataObject module.</li>
-<li><strong>vars</strong> (<em>list</em>) &#8211; The variables specific to the ADataRowObject that is
-going to be instantiated.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last">ADataRowObject (and subclasses), DataTypes - all in ADataObject
-module.</p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -993,6 +1000,18 @@ row will be returned as a list.</td>
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.row_count">
 <code class="descname">row_count</code><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.row_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.datastructures.rowdatacollection.RowDataCollection.setDummyRow">
+<code class="descname">setDummyRow</code><span class="sig-paren">(</span><em>row_vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.setDummyRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.setDummyRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a special &#8216;dummy row&#8217; as a placeholder until actual values.</p>
+<p>Sometimes it can be useful to have placeholder values in a collection.
+This is particularly true for FMP units that will cause errors in
+FMP if there is no data in the rows.</p>
+<p>This method will add the dummy row data and set the self.has_dummy
+flag to True. When actual row data is added to the collection it will
+check the flag and delete the row if it&#8217;s True.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.toDict">

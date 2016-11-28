@@ -97,9 +97,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.datcollection">ship.fmp.datcollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.fmpunitfactory">ship.fmp.fmpunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.ief">ship.fmp.ief module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.isisunitfactory">ship.fmp.isisunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp">Module contents</a></li>
 </ul>
 </li>
@@ -358,13 +358,36 @@ for a USBPR bridge the unit_category == Bridge and unit_type == &#8216;Usbpr&#82
 
 <dl class="classmethod">
 <dt id="ship.fmp.datcollection.DatCollection.initialisedDat">
-<em class="property">classmethod </em><code class="descname">initialisedDat</code><span class="sig-paren">(</span><em>dat_path</em>, <em>units=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.initialisedDat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.initialisedDat" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">initialisedDat</code><span class="sig-paren">(</span><em>dat_path</em>, <em>units=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.initialisedDat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.initialisedDat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new ISIS .dat file with basic header info and no units.</p>
 <p>Creates the equivelant of generating a new .dat unit in the software. The
 DatCollection returned can then be manipulated in the same way that any
 other one loaded from file would be.</p>
 <p>A single comment unit will be be added to the file stating that it was
 created by the SHIP library at timestamp.</p>
+<dl class="docutils">
+<dt>Example unit_kwargs. Note that first index is a placholder for no args::</dt>
+<dd><dl class="first docutils">
+<dt>unit_kwargs== [{},</dt>
+<dd><dl class="first docutils">
+<dt>{</dt>
+<dd>&#8216;ics&#8217;: {rdt.FLOW: 3.0, rdt.STAGE: 15.0, rdt.ELEVATION: 14.5},</dd>
+</dl>
+<p class="last">}</p>
+</dd>
+</dl>
+<p class="last">]</p>
+</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>unit_kwargs(list): contains a dict with the kwargs for each unit</dt>
+<dd>that is included in units. The list must be the same length
+as units, or not included. If no kwargs for a particular unit
+are to be given an empty dict should be used as a placholder in
+the list.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -584,7 +607,135 @@ an IOError.</li>
 
 <dl class="data">
 <dt id="ship.fmp.datcollection.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05841E30&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062727F0&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.fmpunitfactory">
+<span id="ship-fmp-fmpunitfactory-module"></span><h2>ship.fmp.fmpunitfactory module<a class="headerlink" href="#module-ship.fmp.fmpunitfactory" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd>Contains factory classes that are used in the library.
+At the moment the only factory in here is the IsisFactory. This is used
+to build the isisunit types.</dd>
+<dt>Author:</dt>
+<dd><blockquote class="first">
+<div>Duncan Runnacles</div></blockquote>
+<dl class="last docutils">
+<dt>Created:</dt>
+<dd>01 Apr 2016</dd>
+</dl>
+</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<dl class="docutils">
+<dt>Updates:</dt>
+<dd>DR - 21/02/16: Major change to the setup of the factory. It no longer
+scans the .dat file contents to identify the extent of the section and
+passes only that to the unit. It now identifies the unit type to create
+and hands the entire contents list to the new unit which extracts the
+data required.</dd>
+</dl>
+<dl class="class">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory">
+<em class="property">class </em><code class="descname">FmpUnitFactory</code><a class="reference internal" href="_modules/ship/fmp/fmpunitfactory.html#FmpUnitFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Builds isisunit type objects.</p>
+<p>This is a Factory pattern object for the creation of isisunit subclasses.</p>
+<dl class="attribute">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory.available_units">
+<code class="descname">available_units</code><em class="property"> = (&lt;class 'ship.fmp.datunits.isisunit.HeaderUnit'&gt;, &lt;class 'ship.fmp.datunits.isisunit.CommentUnit'&gt;, &lt;class 'ship.fmp.datunits.riverunit.RiverUnit'&gt;, &lt;class 'ship.fmp.datunits.refhunit.RefhUnit'&gt;, &lt;class 'ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit'&gt;, &lt;class 'ship.fmp.datunits.gisinfounit.GisInfoUnit'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitArch'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr'&gt;, &lt;class 'ship.fmp.datunits.spillunit.SpillUnit'&gt;, &lt;class 'ship.fmp.datunits.htbdyunit.HtbdyUnit'&gt;, &lt;class 'ship.fmp.datunits.junctionunit.JunctionUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OrificeUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.FloodReliefUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OutfallUnit'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitInlet'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitOutlet'&gt;, &lt;class 'ship.fmp.datunits.interpolateunit.InterpolateUnit'&gt;)</em><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory.available_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory.createUnit">
+<em class="property">static </em><code class="descname">createUnit</code><span class="sig-paren">(</span><em>unit_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/fmpunitfactory.html#FmpUnitFactory.createUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory.createUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new AUnit.</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs:</dt>
+<dd><dl class="first docutils">
+<dt>&#8216;name&#8217;: the name variable to apply to the unit. If not found</dt>
+<dd>&#8216;unknown&#8217; will be set.</dd>
+<dt>&#8216;name_ds&#8217;: the name_ds variable to apply to the unit. If not found</dt>
+<dd>&#8216;unknown&#8217; will be set.</dd>
+</dl>
+<p>head_data: dict of head_data values to set in the AUnit.
+row_data: dict of row_data keys containing lists of row data to</p>
+<blockquote>
+<div>set in the unit.</div></blockquote>
+<dl class="last docutils">
+<dt>dummy_row: if no row_data is given and this is set to True it will</dt>
+<dd>create a dummy row in all row_data. i.e. set an initial row
+to 0&#8217;s so it will load in fmp.</dd>
+</dl>
+</dd>
+</dl>
+<p>The row_data kwarg is expected to be set out like the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">brg_rowdata</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;main&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;opening&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>I.e. dict&#8217;s of row_data types to update, containing a list of row_vals
+data to set. These will be used to call the addRow() method in the
+AUnit. The contents of the list entries will be specific to the
+unit_type. For more information see the addRow() method and row_data
+setup of specific AUnit&#8217;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_type</strong> (<em>str</em>) &#8211; the AUnit.UNIT_TYPE to create.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">AUnit - the newly created unit.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory.createUnitFromFile">
+<code class="descname">createUnitFromFile</code><span class="sig-paren">(</span><em>contents</em>, <em>file_line</em>, <em>file_key</em>, <em>file_order</em>, <em>reach_number=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/fmpunitfactory.html#FmpUnitFactory.createUnitFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory.createUnitFromFile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory.findIcLabels">
+<code class="descname">findIcLabels</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/fmpunitfactory.html#FmpUnitFactory.findIcLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory.findIcLabels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.fmpunitfactory.FmpUnitFactory.getUnitIdentifiers">
+<code class="descname">getUnitIdentifiers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/fmpunitfactory.html#FmpUnitFactory.getUnitIdentifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.fmpunitfactory.FmpUnitFactory.getUnitIdentifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the unit identifiers that the object holds.</p>
+<p>Getter for obtaining the identifier strings needed to find the units
+that have been defined, when loading the dat file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>- unit_identifers dictionary.</strong> (<em>Dict</em>) &#8211; </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="ship.fmp.fmpunitfactory.logger">
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06293C70&gt;</em><a class="headerlink" href="#ship.fmp.fmpunitfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -593,10 +744,8 @@ an IOError.</li>
 <span id="ship-fmp-headdata-module"></span><h2>ship.fmp.headdata module<a class="headerlink" href="#module-ship.fmp.headdata" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt>Summary:</dt>
-<dd>Contains the RiverUnit class.
-This holds all of the data read in from the river units in the dat file.
-Can be called to load in the data and read and update the contents
-held in the object.</dd>
+<dd>Contains the HeadDataItem class. Used for storing data types, values,
+formatting and location of data stored in the head_data dict.</dd>
 <dt>Author:</dt>
 <dd><blockquote class="first">
 <div>Duncan Runnacles</div></blockquote>
@@ -612,7 +761,7 @@ held in the object.</dd>
 <p>Updates:</p>
 <dl class="class">
 <dt id="ship.fmp.headdata.HeadDataItem">
-<em class="property">class </em><code class="descname">HeadDataItem</code><span class="sig-paren">(</span><em>value</em>, <em>format_str</em>, <em>line_no</em>, <em>col_no</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/headdata.html#HeadDataItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">HeadDataItem</code><span class="sig-paren">(</span><em>initial_value</em>, <em>format_str</em>, <em>line_no</em>, <em>col_no</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/headdata.html#HeadDataItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.headdata.HeadDataItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Objects stored in the head_data dict in AUnit&#8217;s.</p>
 <p>Allow for formatting variables and value checks to be encapsulated in one
@@ -628,6 +777,8 @@ place rather than littered around all subclasses of AUnit.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>compare_val</strong> &#8211; value to compare with self.value.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">bool - true if equal, false if not.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if value is not the correct type.</td>
 </tr>
 </tbody>
 </table>
@@ -656,7 +807,7 @@ place rather than littered around all subclasses of AUnit.</p>
 
 <dl class="data">
 <dt id="ship.fmp.headdata.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05831DB0&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0629A0F0&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -936,130 +1087,7 @@ an IOError.</li>
 
 <dl class="data">
 <dt id="ship.fmp.ief.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0513B810&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
-<dd><p>logging references with a __name__ set to this module.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-ship.fmp.isisunitfactory">
-<span id="ship-fmp-isisunitfactory-module"></span><h2>ship.fmp.isisunitfactory module<a class="headerlink" href="#module-ship.fmp.isisunitfactory" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>Summary:</dt>
-<dd>Contains factory classes that are used in the library.
-At the moment the only factory in here is the IsisFactory. This is used
-to build the isisunit types.</dd>
-<dt>Author:</dt>
-<dd><blockquote class="first">
-<div>Duncan Runnacles</div></blockquote>
-<dl class="last docutils">
-<dt>Created:</dt>
-<dd>01 Apr 2016</dd>
-</dl>
-</dd>
-<dt>Copyright:</dt>
-<dd>Duncan Runnacles 2016</dd>
-</dl>
-<p>TODO:</p>
-<dl class="docutils">
-<dt>Updates:</dt>
-<dd>DR - 21/02/16: Major change to the setup of the factory. It no longer
-scans the .dat file contents to identify the extent of the section and
-passes only that to the unit. It now identifies the unit type to create
-and hands the entire contents list to the new unit which extracts the
-data required.</dd>
-</dl>
-<dl class="class">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory">
-<em class="property">class </em><code class="descname">IsisUnitFactory</code><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Builds isisunit type objects.</p>
-<p>This is a Factory pattern object for the creation of isisunit subclasses.</p>
-<dl class="attribute">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.available_units">
-<code class="descname">available_units</code><em class="property"> = (&lt;class 'ship.fmp.datunits.isisunit.HeaderUnit'&gt;, &lt;class 'ship.fmp.datunits.isisunit.CommentUnit'&gt;, &lt;class 'ship.fmp.datunits.riverunit.RiverUnit'&gt;, &lt;class 'ship.fmp.datunits.refhunit.RefhUnit'&gt;, &lt;class 'ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit'&gt;, &lt;class 'ship.fmp.datunits.gisinfounit.GisInfoUnit'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitArch'&gt;, &lt;class 'ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr'&gt;, &lt;class 'ship.fmp.datunits.spillunit.SpillUnit'&gt;, &lt;class 'ship.fmp.datunits.htbdyunit.HtbdyUnit'&gt;, &lt;class 'ship.fmp.datunits.junctionunit.JunctionUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OrificeUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.FloodReliefUnit'&gt;, &lt;class 'ship.fmp.datunits.orificeunit.OutfallUnit'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitInlet'&gt;, &lt;class 'ship.fmp.datunits.culvertunit.CulvertUnitOutlet'&gt;, &lt;class 'ship.fmp.datunits.interpolateunit.InterpolateUnit'&gt;)</em><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.available_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.createUnit">
-<em class="property">static </em><code class="descname">createUnit</code><span class="sig-paren">(</span><em>unit_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.createUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.createUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new AUnit.</p>
-<dl class="docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
-<dd><dl class="first docutils">
-<dt>&#8216;name&#8217;: the name variable to apply to the unit. If not found</dt>
-<dd>&#8216;unknown&#8217; will be set.</dd>
-<dt>&#8216;name_ds&#8217;: the name_ds variable to apply to the unit. If not found</dt>
-<dd>&#8216;unknown&#8217; will be set.</dd>
-</dl>
-<p>head_data: dict of head_data values to set in the AUnit.
-row_data: dict of row_data keys containing lists of row data to</p>
-<blockquote class="last">
-<div>set in the unit.</div></blockquote>
-</dd>
-</dl>
-<p>The row_data kwarg is expected to be set out like the following:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">brg_rowdata</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;main&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">},</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">},</span>
-    <span class="p">],</span>
-    <span class="s1">&#39;opening&#39;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">},</span>
-        <span class="p">{</span><span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_START</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">OPEN_END</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>I.e. dict&#8217;s of row_data types to update, containing a list of row_vals
-data to set. These will be used to call the addRow() method in the
-AUnit. The contents of the list entries will be specific to the
-unit_type. For more information see the addRow() method and row_data
-setup of specific AUnit&#8217;s.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit_type</strong> (<em>str</em>) &#8211; the AUnit.UNIT_TYPE to create.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">AUnit - the newly created unit.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.createUnitFromFile">
-<code class="descname">createUnitFromFile</code><span class="sig-paren">(</span><em>contents</em>, <em>file_line</em>, <em>file_key</em>, <em>file_order</em>, <em>reach_number=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.createUnitFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.createUnitFromFile" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.findIcLabels">
-<code class="descname">findIcLabels</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.findIcLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.findIcLabels" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="ship.fmp.isisunitfactory.IsisUnitFactory.getUnitIdentifiers">
-<code class="descname">getUnitIdentifiers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/isisunitfactory.html#IsisUnitFactory.getUnitIdentifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.isisunitfactory.IsisUnitFactory.getUnitIdentifiers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the unit identifiers that the object holds.</p>
-<p>Getter for obtaining the identifier strings needed to find the units
-that have been defined, when loading the dat file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>- unit_identifers dictionary.</strong> (<em>Dict</em>) &#8211; </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="data">
-<dt id="ship.fmp.isisunitfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057B6BD0&gt;</em><a class="headerlink" href="#ship.fmp.isisunitfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x04EC4410&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 

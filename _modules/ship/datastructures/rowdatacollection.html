@@ -202,6 +202,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_collection</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_collection</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_updateCallback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update_callback&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">False</span>
 
     
     <span class="nd">@classmethod</span>
@@ -217,7 +218,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
     
 
-<div class="viewcode-block" id="RowDataCollection.initCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.initCollection">[docs]</a>    <span class="k">def</span> <span class="nf">initCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataobject</span><span class="p">):</span>
+<span class="c1">#     def initCollection(self, dataobject):</span>
+<div class="viewcode-block" id="RowDataCollection.addToCollection"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.addToCollection">[docs]</a>    <span class="k">def</span> <span class="nf">addToCollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataobject</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Setup a new data object and add it to the collection.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
@@ -230,7 +232,13 @@
 <span class="sd">            ADataRowObject (and subclasses), DataTypes - all in ADataObject </span>
 <span class="sd">            module.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  
-        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataobject</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataobject</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">dataobject</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span><span class="p">(</span><span class="s1">&#39;Index </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span></div>
     
     
@@ -460,6 +468,11 @@
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;Key </span><span class="si">%s</span><span class="s1"> does not exist in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+        <span class="c1"># Do this after so it&#39;s not removed when something goes wrong</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">False</span>
         
     
     <span class="k">def</span> <span class="nf">_setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -495,10 +508,9 @@
 <div class="viewcode-block" id="RowDataCollection.getPrintableRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.getPrintableRow">[docs]</a>    <span class="k">def</span> <span class="nf">getPrintableRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the row data in printable form.</span>
 <span class="sd">        </span>
-<span class="sd">        Retrieves all of the values in this RowDataObjectCollection at the</span>
-<span class="sd">        given index and returns the row. The order is based on the row_pos </span>
-<span class="sd">        variable provided in the initCollection() method.</span>
-<span class="sd">        </span>
+<span class="sd">        Retrieves all of the values in this RowDataObjectCollection in the </span>
+<span class="sd">        order that it exists in the list.        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            index (int): the row collection index to access.</span>
 <span class="sd">            </span>
@@ -506,9 +518,6 @@
 <span class="sd">            string formatted for printing to .DAT file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="c1"># Sort the collection by the row_pos variable in the ADataRowObjects</span>
-        <span class="c1"># and loop through the collection getting a printable value.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">row_pos</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">):</span>
             <span class="n">out_str</span> <span class="o">+=</span> <span class="n">obj</span><span class="o">.</span><span class="n">getPrintableValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
                 
@@ -599,6 +608,7 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">vkeys</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dataobj_keys</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;ROW_DATA_TYPE &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;is not in collection&#39;</span><span class="p">)</span>
+
         
         <span class="n">temp_list</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -632,7 +642,12 @@
             <span class="k">if</span> <span class="n">temp_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
                     <span class="k">del</span> <span class="n">o</span>
-                <span class="k">del</span> <span class="n">temp_list</span></div>
+                <span class="k">del</span> <span class="n">temp_list</span>
+
+        <span class="c1"># Do this after so it&#39;s not removed if something goes wrong</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">False</span></div>
     
     
 <div class="viewcode-block" id="RowDataCollection.deleteRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -722,7 +737,24 @@
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
-              
+        
+    
+<div class="viewcode-block" id="RowDataCollection.setDummyRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.setDummyRow">[docs]</a>    <span class="k">def</span> <span class="nf">setDummyRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets a special &#39;dummy row&#39; as a placeholder until actual values.</span>
+<span class="sd">        </span>
+<span class="sd">        Sometimes it can be useful to have placeholder values in a collection.</span>
+<span class="sd">        This is particularly true for FMP units that will cause errors in</span>
+<span class="sd">        FMP if there is no data in the rows. </span>
+<span class="sd">        </span>
+<span class="sd">        This method will add the dummy row data and set the self.has_dummy</span>
+<span class="sd">        flag to True. When actual row data is added to the collection it will</span>
+<span class="sd">        check the flag and delete the row if it&#39;s True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">True</span></div>
+               
     
 <div class="viewcode-block" id="RowDataCollection.numberOfRows"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.numberOfRows">[docs]</a>    <span class="k">def</span> <span class="nf">numberOfRows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the number of rows held in the collection</span>

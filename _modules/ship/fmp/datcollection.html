@@ -169,7 +169,7 @@
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ft</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">CommentUnit</span>
-<span class="kn">from</span> <span class="nn">ship.fmp</span> <span class="k">import</span> <span class="n">isisunitfactory</span> <span class="k">as</span> <span class="n">iuf</span>
+<span class="kn">from</span> <span class="nn">ship.fmp</span> <span class="k">import</span> <span class="n">fmpunitfactory</span> <span class="k">as</span> <span class="n">iuf</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -663,7 +663,7 @@
     
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DatCollection.initialisedDat"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.initialisedDat">[docs]</a>    <span class="k">def</span> <span class="nf">initialisedDat</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">dat_path</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="DatCollection.initialisedDat"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.initialisedDat">[docs]</a>    <span class="k">def</span> <span class="nf">initialisedDat</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">dat_path</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a new ISIS .dat file with basic header info and no units.</span>
 <span class="sd">        </span>
 <span class="sd">        Creates the equivelant of generating a new .dat unit in the software. The</span>
@@ -673,34 +673,52 @@
 <span class="sd">        A single comment unit will be be added to the file stating that it was</span>
 <span class="sd">        created by the SHIP library at timestamp.</span>
 <span class="sd">        </span>
+<span class="sd">        Example unit_kwargs. Note that first index is a placholder for no args::</span>
+<span class="sd">            unit_kwargs== [{}, </span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;ics&#39;: {rdt.FLOW: 3.0, rdt.STAGE: 15.0, rdt.ELEVATION: 14.5},</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            unit_kwargs(list): contains a dict with the kwargs for each unit</span>
+<span class="sd">                that is included in units. The list must be the same length</span>
+<span class="sd">                as units, or not included. If no kwargs for a particular unit</span>
+<span class="sd">                are to be given an empty dict should be used as a placholder in</span>
+<span class="sd">                the list. </span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            dat_path(str): the path to set for the newly created .dat file.</span>
 <span class="sd">            </span>
 <span class="sd">        Return:</span>
 <span class="sd">            DatCollection - setup as an empty ISIS .dat file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;#REVISION#1&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;         0     0.750     0.900     0.100     0.001        12SI&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;    10.000     0.010     0.010     0.700     0.100     0.700     0.000&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;RAD FILE&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;END GENERAL&#39;</span>
-                <span class="s1">&#39;INITIAL CONDITIONS&#39;</span><span class="p">,</span>
-                <span class="s1">&#39; label   ?      flow     stage froude no  velocity     umode    ustate         z&#39;</span><span class="p">,</span>
-        <span class="p">]</span>
+<span class="c1">#         contents = [</span>
+<span class="c1">#                 &#39;&#39;,</span>
+<span class="c1">#                 &#39;#REVISION#1&#39;,</span>
+<span class="c1">#                 &#39;         0     0.750     0.900     0.100     0.001        12SI&#39;,</span>
+<span class="c1">#                 &#39;    10.000     0.010     0.010     0.700     0.100     0.700     0.000&#39;,</span>
+<span class="c1">#                 &#39;RAD FILE&#39;,</span>
+<span class="c1">#                 &#39;&#39;,</span>
+<span class="c1">#                 &#39;END GENERAL&#39;</span>
+<span class="c1">#                 &#39;INITIAL CONDITIONS&#39;,</span>
+<span class="c1">#                 &#39; label   ?      flow     stage froude no  velocity     umode    ustate         z&#39;,</span>
+<span class="c1">#         ]</span>
+
+        <span class="n">unit_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;unit_kwargs&#39;</span><span class="p">,</span> <span class="p">[{}]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">unit_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unit_kwargs kwarg must be the same length as unit or not be given&#39;</span><span class="p">)</span>
 
         <span class="n">path_holder</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">PathHolder</span><span class="p">(</span><span class="n">dat_path</span><span class="p">)</span>
         <span class="n">dat</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">path_holder</span><span class="p">)</span>
-        <span class="n">hunit</span> <span class="o">=</span> <span class="n">iuf</span><span class="o">.</span><span class="n">IsisUnitFactory</span><span class="o">.</span><span class="n">createUnit</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>
-        <span class="n">icunit</span> <span class="o">=</span> <span class="n">iuf</span><span class="o">.</span><span class="n">IsisUnitFactory</span><span class="o">.</span><span class="n">createUnit</span><span class="p">(</span><span class="s1">&#39;initial_conditions&#39;</span><span class="p">)</span>
+        <span class="n">hunit</span> <span class="o">=</span> <span class="n">iuf</span><span class="o">.</span><span class="n">FmpUnitFactory</span><span class="o">.</span><span class="n">createUnit</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>
+        <span class="n">icunit</span> <span class="o">=</span> <span class="n">iuf</span><span class="o">.</span><span class="n">FmpUnitFactory</span><span class="o">.</span><span class="n">createUnit</span><span class="p">(</span><span class="s1">&#39;initial_conditions&#39;</span><span class="p">)</span>
         <span class="n">cunit</span> <span class="o">=</span> <span class="n">CommentUnit</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Created by SHIP library on </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%M-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">)))</span>
         <span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">hunit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">cunit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">icunit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">units</span><span class="p">:</span>
-            <span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
+            <span class="n">dat</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="o">**</span><span class="n">unit_kwargs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">dat</span></div></div>
    
     

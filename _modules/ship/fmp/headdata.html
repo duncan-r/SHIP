@@ -138,10 +138,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd"> Summary:</span>
-<span class="sd">    Contains the RiverUnit class.</span>
-<span class="sd">    This holds all of the data read in from the river units in the dat file.</span>
-<span class="sd">    Can be called to load in the data and read and update the contents </span>
-<span class="sd">    held in the object.</span>
+<span class="sd">    Contains the HeadDataItem class. Used for storing data types, values,</span>
+<span class="sd">    formatting and location of data stored in the head_data dict.</span>
 
 <span class="sd"> Author:  </span>
 <span class="sd">     Duncan Runnacles</span>
@@ -175,7 +173,27 @@
 <span class="sd">    place rather than littered around all subclasses of AUnit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="n">line_no</span><span class="p">,</span> <span class="n">col_no</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_value</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="n">line_no</span><span class="p">,</span> <span class="n">col_no</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        A few checks of the validity of the value given will be made against</span>
+<span class="sd">        the initial_value given.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            dtype(int): one of the datatructures.DATA_TYPES.</span>
+<span class="sd">            default: a default value to apply when none is given.</span>
+<span class="sd">            allow_blank(bool): whether to allow blank/non-value entries.</span>
+<span class="sd">            update_callback(func): a function to vall when a value is updated.</span>
+<span class="sd">                This is not currently used.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            initial_value: the initial value to set.</span>
+<span class="sd">            format_str(str): the format to return the item with. Should be in</span>
+<span class="sd">                the form &#39;{:&gt;10}&#39;. Use &#39;&#39; for no formatting.</span>
+<span class="sd">            line_no(int): the line number that the value occurs in the head_data.</span>
+<span class="sd">                0 indexed.</span>
+<span class="sd">            col_no(int): the column that the value occurs in - 0 indexed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">kkeys</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
@@ -193,7 +211,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">col_no</span> <span class="o">=</span> <span class="n">col_no</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkValue</span><span class="p">(</span><span class="n">initial_value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update_callback&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -204,6 +222,11 @@
     
     <span class="nd">@value</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Property for setting the value.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if value is not the correct type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkValue</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">val</span>
     
@@ -244,6 +267,9 @@
 <span class="sd">        </span>
 <span class="sd">        Return:</span>
 <span class="sd">            bool - true if equal, false if not.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if value is not the correct type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">compare_val</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>

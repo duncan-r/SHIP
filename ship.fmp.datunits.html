@@ -97,9 +97,9 @@
 <li class="toctree-l4 current"><a class="reference internal" href="ship.fmp.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.datcollection">ship.fmp.datcollection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.fmpunitfactory">ship.fmp.fmpunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.ief">ship.fmp.ief module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.isisunitfactory">ship.fmp.isisunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp">Module contents</a></li>
 </ul>
 </li>
@@ -478,13 +478,14 @@ and file read/write behaviour.</p>
 <dl class="method">
 <dt id="ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.checkOrifice">
 <code class="descname">checkOrifice</code><span class="sig-paren">(</span><em>data_obj</em>, <em>value</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnitUsbpr.checkOrifice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnitUsbpr.checkOrifice" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>TODO: implement this</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.bridgeunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057AEB50&gt;</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062AC470&gt;</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -669,7 +670,7 @@ held in the object.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.culvertunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057EEAB0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062BD1B0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -748,7 +749,7 @@ be an UnknownSection.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.gisinfounit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069B30D0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0629AE30&gt;</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -873,7 +874,7 @@ this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.htbdyunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057EE770&gt;</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062BD350&gt;</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1169,7 +1170,7 @@ file.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.interpolateunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057FFD10&gt;</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062BD450&gt;</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1209,6 +1210,10 @@ call the readUnitData() method with the raw data.</p>
 for all parts of the isis dat file that have not had a class defined. It just
 calls the basic read-in read-out methods from this class and understands nothing
 about the structure of the file section it is holding.</p>
+<p>If you are creating subclass of this that has row_data (see below) you
+should make sure that you call the setDummyRow() method in each of the
+RowDataCollections. Otherwise, if the user doesn&#8217;t add any rows, FMP will
+throw errors.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last">UnknownSection</p>
@@ -1366,7 +1371,7 @@ the upstream and downstream label names.</p>
 <dt id="ship.fmp.datunits.isisunit.AUnit.readUnitData">
 <code class="descname">readUnitData</code><span class="sig-paren">(</span><em>data</em>, <em>file_line</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the unit data supplied to the object.</p>
-<p>This method is called by the IsisUnitFactory class when constructing the
+<p>This method is called by the FmpUnitFactory class when constructing the
 Isis  unit based on the data passed in from the dat file.
 The default hook just copies all the data parsed in the buildUnit()
 method of the factory and aves it to the given unit. This is exactly
@@ -1622,7 +1627,7 @@ until it reaches a part of the file that it does recognise.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.isisunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x052F1310&gt;</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06295F50&gt;</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1713,7 +1718,7 @@ held in the object.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.junctionunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A524D0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0629ABD0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1865,7 +1870,7 @@ as the .dat file setup goes.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.orificeunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057DB2F0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062ACEB0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1965,7 +1970,7 @@ to this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.refhunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x057DBCD0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x062ACC90&gt;</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2153,7 +2158,7 @@ be included.</li>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.riverunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x05918AB0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0629AA70&gt;</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2294,7 +2299,7 @@ this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.spillunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0577AC50&gt;</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x0629A6D0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 

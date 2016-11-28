@@ -195,10 +195,10 @@ unit_category = &#8216;river&#8217;</p>
 <li>DataObject=FloatData, key=rdt.ROUGHNESS, default=0.039, no_of_dps=3</li>
 <li>DataObject=SymbolData, symbol=*, key=rdt.PANEL_MARKER, default=False</li>
 <li>DataObject=FloatData, key=rdt.RPL, default=1.000, no_of_dps=3</li>
-<li>DataObject=do.ConstantData, rdt.BANKMARKER, choices=(&#8216;LEFT&#8217;, &#8216;RIGHT&#8217;, &#8216;BED&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=do.ConstantData, rdt.BANKMARKER, choices=(&#8216;&#8217;, &#8216;LEFT&#8217;, &#8216;RIGHT&#8217;, &#8216;BED&#8217;), default=&#8217;&#8216;</li>
 <li>DataObject=FloatData, key=rdt.EASTING, default=0.0, no_of_dps=2</li>
 <li>DataObject=FloatData, key=rdt.NORTHING, default=0.0, no_of_dps=2</li>
-<li>DataObject=ConstantData, rdt.DEACTIVATION, choices=(&#8216;LEFT&#8217;, &#8216;RIGHT&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=ConstantData, rdt.DEACTIVATION, choices=(&#8216;&#8217;, &#8216;LEFT&#8217;, &#8216;RIGHT&#8217;), default=&#8217;&#8216;</li>
 <li>DataObject=StringData, key=rdt.SPECIAL, default=&#8217;~&#8217;
 # Default == &#8216;~&#8217; means to ignore formatting and apply &#8216;&#8217; when value is None</li>
 </ul>
@@ -210,8 +210,8 @@ unit_category = &#8216;river&#8217;</p>
 <h2>BridgeUnitArch<a class="headerlink" href="#bridgeunitarch" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id1">
 <h3>Type and Category<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>unit_type = &#8216;bridge&#8217;
-unit_category = &#8216;arch&#8217;</p>
+<p>unit_type = &#8216;arch&#8217;
+unit_category = &#8216;bridge&#8217;</p>
 </div>
 <div class="section" id="id2">
 <h3>ic_labels<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
@@ -245,7 +245,7 @@ unit_category = &#8216;arch&#8217;</p>
 <li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
 <li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)</li>
 <li>DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3</li>
-<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;&#8217;, &#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
 </ul>
 </dd>
 <dt><strong>row_data[&#8216;opening&#8217;]</strong></dt>
@@ -263,8 +263,8 @@ unit_category = &#8216;arch&#8217;</p>
 <h2>BridgeUnitUsbpr<a class="headerlink" href="#bridgeunitusbpr" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id5">
 <h3>Type and Category<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
-<p>unit_type = &#8216;bridge&#8217;
-unit_category = &#8216;usbpr&#8217;</p>
+<p>unit_type = &#8216;usbpr&#8217;
+unit_category = &#8216;bridge&#8217;</p>
 </div>
 <div class="section" id="id6">
 <h3>ic_labels<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
@@ -304,7 +304,7 @@ unit_category = &#8216;usbpr&#8217;</p>
 <li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
 <li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)</li>
 <li>DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3</li>
-<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
+<li>DataObject=ConstantData, rdt.EMBANKMENT, choices=(&#8216;&#8217;, &#8216;L&#8217;, &#8216;R&#8217;), default=&#8217;&#8216;</li>
 </ul>
 </dd>
 <dt><strong>row_data[&#8216;opening&#8217;]</strong></dt>
@@ -382,7 +382,7 @@ unit_category = &#8216;spill&#8217;</p>
 <div class="section" id="id15">
 <h3>Row Data<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><a href="#id16"><span class="problematic" id="id17">**</span></a>row_data[&#8216;main&#8217;] - rdt.CHAINAGE must increase*</dt>
+<dt><strong>row_data[&#8216;main&#8217;] - rdt.CHAINAGE must increase</strong></dt>
 <dd><ul class="first last simple">
 <li>DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3</li>
 <li>DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3</li>
@@ -403,17 +403,17 @@ the same unit_category (orifice). Although they differ in unit_type:</p>
 <li>OutfallUnit unit_type == &#8216;outfall&#8217;</li>
 </ul>
 </div></blockquote>
-<div class="section" id="id18">
-<h3>Type and Category<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Type and Category<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <p>unit_type = &#8216;orifice&#8217;
 unit_category = &#8216;orifice&#8217;</p>
 </div>
-<div class="section" id="id19">
-<h3>ic_labels<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>ic_labels<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <p>self.name, self.name_ds</p>
 </div>
-<div class="section" id="id20">
-<h3>head_data contents<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id18">
+<h3>head_data contents<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
@@ -430,8 +430,8 @@ unit_category = &#8216;orifice&#8217;</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="id21">
-<h3>Row Data<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id19">
+<h3>Row Data<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
 <p>None</p>
 </div>
 </div>
@@ -440,13 +440,13 @@ unit_category = &#8216;orifice&#8217;</p>
 <p>Note that JunctionUnit.head_data containes one non-HeadDataItem entry for names.
 I may update this to use HeadDataItem in the future, but for now, just to be
 confusing the value is a list.</p>
-<div class="section" id="id22">
-<h3>Type and Category<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id20">
+<h3>Type and Category<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
 <p>unit_type = &#8216;junction&#8217;
 unit_category = &#8216;junction&#8217;</p>
 </div>
-<div class="section" id="id23">
-<h3>head_data contents<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id21">
+<h3>head_data contents<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
@@ -455,24 +455,24 @@ unit_category = &#8216;junction&#8217;</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="id24">
-<h3>Row Data<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id22">
+<h3>Row Data<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
 <p>None</p>
 </div>
 </div>
 <div class="section" id="interpolateunit">
 <h2>InterpolateUnit<a class="headerlink" href="#interpolateunit" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id25">
-<h3>Type and Category<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id23">
+<h3>Type and Category<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
 <p>unit_type = &#8216;interpolate&#8217;
 unit_category = &#8216;interpolate&#8217;</p>
 </div>
-<div class="section" id="id26">
-<h3>ic_labels<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id24">
+<h3>ic_labels<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h3>
 <p>self.name</p>
 </div>
-<div class="section" id="id27">
-<h3>head_data contents<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id25">
+<h3>head_data contents<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
@@ -488,24 +488,24 @@ unit_category = &#8216;interpolate&#8217;</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="id28">
-<h3>Row Data<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id26">
+<h3>Row Data<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h3>
 <p>None</p>
 </div>
 </div>
 <div class="section" id="htbdyunit">
 <h2>HtbdyUnit<a class="headerlink" href="#htbdyunit" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id29">
-<h3>Type and Category<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id27">
+<h3>Type and Category<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h3>
 <p>unit_type = &#8216;htbdy&#8217;
 unit_category = &#8216;boundary_ds&#8217;</p>
 </div>
-<div class="section" id="id30">
-<h3>ic_labels<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id28">
+<h3>ic_labels<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
 <p>self.name</p>
 </div>
-<div class="section" id="id31">
-<h3>head_data contents<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id29">
+<h3>head_data contents<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
@@ -523,8 +523,8 @@ unit_category = &#8216;boundary_ds&#8217;</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id32">
-<h3>Row Data<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id30">
+<h3>Row Data<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><strong>row_data[&#8216;main&#8217;]</strong></dt>
 <dd><ul class="first last simple">
@@ -537,17 +537,17 @@ unit_category = &#8216;boundary_ds&#8217;</p>
 </div>
 <div class="section" id="culvertinletunit">
 <h2>CulvertInletUnit<a class="headerlink" href="#culvertinletunit" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id33">
-<h3>Type and Category<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id31">
+<h3>Type and Category<a class="headerlink" href="#id31" title="Permalink to this headline">¶</a></h3>
 <p>unit_type = &#8216;culvert_inlet&#8217;
 unit_category = &#8216;culvert&#8217;</p>
 </div>
-<div class="section" id="id34">
-<h3>ic_labels<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id32">
+<h3>ic_labels<a class="headerlink" href="#id32" title="Permalink to this headline">¶</a></h3>
 <p>self.name</p>
 </div>
-<div class="section" id="id35">
-<h3>head_data contents<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id33">
+<h3>head_data contents<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
 <blockquote>
 <div><ul class="simple">
 <li>key=&#8217;comment&#8217;, data_type=dt.STRING</li>
@@ -567,8 +567,8 @@ unit_category = &#8216;culvert&#8217;</p>
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="id36">
-<h3>Row Data<a class="headerlink" href="#id36" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id34">
+<h3>Row Data<a class="headerlink" href="#id34" title="Permalink to this headline">¶</a></h3>
 <p>None</p>
 </div>
 </div>

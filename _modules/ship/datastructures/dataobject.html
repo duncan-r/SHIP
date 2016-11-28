@@ -186,11 +186,10 @@
     
     
 <span class="c1">#     def __init__(self, row_pos, datatype, format_str, default):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            format_str (str): Represents the format that should be used to</span>
@@ -209,9 +208,7 @@
 <span class="sd">                    (self, value, index).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">datatype</span>
-<span class="c1">#         self.record_length = 0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">format_str</span> <span class="o">=</span> <span class="n">format_str</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">row_pos</span> <span class="o">=</span> <span class="n">row_pos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;update_callback&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">has_changed</span> <span class="o">=</span> <span class="kc">False</span>
@@ -390,11 +387,6 @@
 <span class="sd">        </span>
 <span class="sd">        Raises:</span>
 <span class="sd">            IndexError: If index does not exist. </span>
-<span class="sd">     </span>
-<span class="sd">        TODO:</span>
-<span class="sd">            Bit dodgy to be honest as people could start deleting random </span>
-<span class="sd">            parts of one data_object without the other ones which would cock </span>
-<span class="sd">            things right up.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_collection</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
@@ -453,11 +445,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <span class="c1">#     def __init__(self, row_pos, datatype, format_str=&#39;{}&#39;, default=None):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            format_str={} (str): Represents the format that should be used to</span>
@@ -470,7 +461,7 @@
 <span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
 <span class="sd">                    should remove the formatting and apply an empty string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
          
         
 <div class="viewcode-block" id="IntData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.IntData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -532,11 +523,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <span class="c1">#     def __init__(self, row_pos, datatype, format_str=&#39;{}&#39;, default=None, no_of_dps=0):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1">#default=None, no_of_dps=0):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1">#default=None, no_of_dps=0):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            format_str={} (str): Represents the format that should be used to</span>
@@ -552,7 +542,7 @@
 <span class="sd">                       should be represented with when printed to file. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">no_of_dps</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_of_dps&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
          
         
 <div class="viewcode-block" id="FloatData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.FloatData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -613,11 +603,10 @@
 <span class="sd">    str value. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            format_str={} (str): Represents the format that should be used to</span>
@@ -630,7 +619,7 @@
 <span class="sd">                    Can be None if defaults are not allowed or &#39;~&#39; if the default </span>
 <span class="sd">                    should remove the formatting and apply an empty string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         
 <div class="viewcode-block" id="StringData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.StringData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -696,11 +685,10 @@
 <span class="sd">    str value from a list of predefined constants.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">legal_values</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">legal_values</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            legal_values(tuple): contains the possible values that this </span>
@@ -721,7 +709,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">legal_values</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span> <span class="p">(</span><span class="s1">&#39;legal_values is not a tuple&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span> <span class="o">=</span> <span class="n">legal_values</span>
-        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
          
         
 <div class="viewcode-block" id="ConstantData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.ConstantData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -730,9 +718,14 @@
 <span class="sd">        See Also:</span>
 <span class="sd">            ADataRowObject: addValue()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;value cannot be None when no default is set.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;value </span><span class="si">%s</span><span class="s1"> is not included in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">)))</span>
             
         <span class="c1"># Call the superclass part of the method to add it.</span>
         <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
@@ -745,7 +738,7 @@
 <span class="sd">            ADataRowObject: setValue()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;value %S does is not included in </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">legal_values</span><span class="p">)))</span>
         
         <span class="c1"># Call the superclass to set the value</span>
         <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
@@ -779,11 +772,10 @@
 <span class="sd">    float value instead of a string.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            row_pos(int): the position in the datarow held by this object.</span>
 <span class="sd">            datatype (int): The type of collection it will hold (see the enum </span>
 <span class="sd">                list in the isis.datunits.ROW_DATA_TYPES.</span>
 <span class="sd">            symbol(str): The symbol that should should be used to represent the </span>
@@ -805,7 +797,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">symbol</span> <span class="o">=</span> <span class="n">symbol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bool_type</span> <span class="o">=</span> <span class="nb">bool</span> <span class="c1"># Used to test if a value is of type bool or not</span>
-        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_pos</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ADataRowObject</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">,</span> <span class="n">format_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
          
         
 <div class="viewcode-block" id="SymbolData.addValue"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.dataobject.SymbolData.addValue">[docs]</a>    <span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
