@@ -233,8 +233,8 @@ to read the data the best approach is to use either:
 
 Note that you can also get these from the AUnit itself with:
 
-   - dataObj(ROW_DATA_TYPES, rowdata_key='main')
-   - dataObjAsList(ROW_DATA_TYPES, rowdata_key='main')
+   - dataObject(ROW_DATA_TYPES, rowdata_key='main')
+   - dataObjectAsList(ROW_DATA_TYPES, rowdata_key='main')
 
 Example::
 
@@ -255,7 +255,7 @@ Example::
 If you want to update the values in a DataObject or you need more control you 
 you should use the DataObject itself::
 
-   rgh_obj = bridge.row_data['main'].dataObj(rdt.ROUGHNESS)
+   rgh_obj = bridge.row_data['main'].dataObject(rdt.ROUGHNESS)
    
    # You can now loop through data_obj and read or update each entry
    for r in rgh_obj:

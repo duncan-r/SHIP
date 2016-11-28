@@ -24,6 +24,7 @@ a decent deprecation period). Note that this is not completely true for the
 datafileloader and datafileobject modules, which still need overhauling. The
 good news is the documentation is now a lot better, so it should be easier to
 see what's going on. You can see the documentation for the project here:
+[SHIP Docs](http://duncan-r.github.io/SHIP/index.html)
 
 
 If you need to continue using the older (0.2.5) version there is a branch
@@ -50,8 +51,9 @@ Here's more context from the extract in the docs:
    *So if you've been using this library, sorry :( . I think though that you will*
    *find it much improved and it's defintiely easier to maintain and improve going*
    *forward. Not also that "the possible API break" stage is through and any*
-   *functionality will be properly deprecated for a reasonable amoutn of time from*
-   *now on. For more info on what's changed see ..*
+   *functionality will be properly deprecated for a reasonable amount of time from*
+   *now on. For more info on what's changed see [API Changes](http://duncan-r.github.io/SHIP/fmp/updatechanges.html#updatechanges-top)*
+
 
 Python version
 --------------

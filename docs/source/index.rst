@@ -7,7 +7,11 @@ Welcome to SHIP API documentation!
 ==================================
 
 SHIP (Simple Hydraulic model Interface for Python) is a Python library for 
-interfacing with Flood Modeller Pro and Tuflow model configuration files. 
+interfacing with Flood Modeller Pro and Tuflow model configuration files. You
+can get the code from the GitHub repo for SHIP_.
+
+.. _SHIP: https://github.com/duncan-r/SHIP
+
 
 For an introduction to using the API and interacting with model files go to
 :ref:`overview-top` .
