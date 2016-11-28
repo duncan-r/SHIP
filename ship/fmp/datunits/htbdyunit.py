@@ -81,6 +81,7 @@ class HtbdyUnit (AUnit):
             do.FloatData(rdt.TIME, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+        self.row_data['main'].setDummyRow({rdt.TIME: 0, rdt.ELEVATION: 0})
 
 
     def icLabels(self):

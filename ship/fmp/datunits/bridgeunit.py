@@ -88,6 +88,8 @@ class BridgeUnit (AUnit):
             do.ConstantData(rdt.EMBANKMENT, ('', 'L', 'R'), format_str='{:>11}', default=''),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(main_dobjs) 
+        self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION: 0,
+                                           rdt.ROUGHNESS: 0})
         
         open_dobjs = [
             do.FloatData(rdt.OPEN_START, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
@@ -96,6 +98,7 @@ class BridgeUnit (AUnit):
             do.FloatData(rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
         ]
         self.row_data['opening'] = RowDataCollection.bulkInitCollection(open_dobjs) 
+        self.row_data['opening'].setDummyRow({rdt.OPEN_START: 0, rdt.OPEN_END: 0})
         
     
     def icLabels(self):
@@ -340,7 +343,7 @@ class BridgeUnit (AUnit):
             if not rdt.OPEN_START in keys or not rdt.OPEN_END in keys:
                 logger.error('Bridge: Required values of OPEN_START and OPEN_END not given')
                 raise AttributeError('Bridge: row_vals must include OPEN_START and OPEN_END.')
-            if not row_vals[rdt.OPEN_END] > row_vals[rdt.OPEN_START]:
+            if not row_vals[rdt.OPEN_END] >= row_vals[rdt.OPEN_START]:
                 logger.error('Bridge: OPEN_END must be > than OPEN_START')
                 raise AttributeError('Bridge: OPEN_END must be > than OPEN_START')
             if rdt.SOFFIT_LEVEL in keys and rdt.SPRINGING_LEVEL in keys:
@@ -369,24 +372,24 @@ class BridgeUnit (AUnit):
 
         if data_obj.data_type == rdt.OPEN_START:
             if details['prev_value']:
-                if not value > details['prev_value']:
+                if not value >= details['prev_value']:
                     raise ValueError('Bridge: OPEN_START must be > than previous value')
-                if not value > self.row_data['opening'].dataObject(rdt.OPEN_END)[details['prev_index']]:#.getValue(details['prev_index']):
+                if not value >= self.row_data['opening'].dataObject(rdt.OPEN_END)[details['prev_index']]:
                     raise ValueError('Bridge: OPEN_START must be > than previous OPEN_END value')
             if details['next_value']:
-                if not value < details['next_value']:
+                if not value <= details['next_value']:
                     raise ValueError('Bridge: OPEN_START must be < than next OPEN_START value')
 
         elif data_obj.data_type == rdt.OPEN_END:
             if details['prev_value']:
-                if not value > details['prev_value']:
+                if not value >= details['prev_value']:
                     raise ValueError('Bridge: OPEN_END must be > than previous OPEN_END value')
-                if not value > self.row_data['opening'].dataObject(rdt.OPEN_START)[details['index']]:#.getValue(details['index']):
+                if not value >= self.row_data['opening'].dataObject(rdt.OPEN_START)[details['index']]:
                     raise ValueError('Bridge: OPEN_END must be > than OPEN_START value')
             if details['next_value']:
-                if not value < details['next_value']:
+                if not value <= details['next_value']:
                     raise ValueError('OBridge: PEN_END must be < than next OPEN_END value')
-                if not value > self.row_data['opening'].dataObject(rdt.OPEN_START)[details['next_index']]:#.getValue(details['next_index']):
+                if not value >= self.row_data['opening'].dataObject(rdt.OPEN_START)[details['next_index']]:
                     raise ValueError('Bridge: OPEN_END must be < than next OPEN_START value')
             
         
@@ -475,6 +478,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             do.FloatData(rdt.DROWNING, format_str='{:>10}', no_of_dps=3, default=1.0),
         ]
         self.row_data['culvert'] = RowDataCollection.bulkInitCollection(dobjs) 
+        self.row_data['culvert'].setDummyRow({rdt.INVERT: 0, rdt.SOFFIT: 0})
 
     
     
@@ -655,6 +659,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         
     def checkOrifice(self, data_obj, value, index):
         """
+        TODO: implement this
         """
         pass
 

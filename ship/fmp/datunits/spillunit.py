@@ -78,6 +78,7 @@ class SpillUnit (AUnit):
             do.FloatData(rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.00),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+        self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION: 0})
 
 
     def icLabels(self):

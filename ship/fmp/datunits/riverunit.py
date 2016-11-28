@@ -67,8 +67,7 @@ class RiverUnit (AUnit):
 
         self._unit_type = RiverUnit.UNIT_TYPE
         self._unit_category = RiverUnit.UNIT_CATEGORY
-        self._name = 'RivUS'
-#         self.ic_labels.append(self._name)
+        if self._name == 'unknown': self._name = 'RivUS'
 
         self.reach_number = kwargs.get('reach_number', -1)
         
@@ -81,8 +80,8 @@ class RiverUnit (AUnit):
             'lateral2': HeadDataItem('', '{:<12}', 2, 7, dtype=dt.STRING),
             'lateral3': HeadDataItem('', '{:<12}', 2, 8, dtype=dt.STRING),
             'lateral4': HeadDataItem('', '{:<12}', 2, 9, dtype=dt.STRING),
-            'distance': HeadDataItem(0, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
-            'slope': HeadDataItem(0.0000, '{:>20}', 3, 1, dtype=dt.FLOAT, dps=4),
+            'distance': HeadDataItem(0.0, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
+            'slope': HeadDataItem(0.0001, '{:>20}', 3, 1, dtype=dt.FLOAT, dps=4),
             'density': HeadDataItem(1000, '{:>10}', 3, 2, dtype=dt.INT),
         }
         
@@ -106,6 +105,7 @@ class RiverUnit (AUnit):
             do.StringData(rdt.SPECIAL, format_str='{:<10}', default='~'),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+        self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION:0, rdt.ROUGHNESS: 0})
     
     
     def icLabels(self):
@@ -123,8 +123,8 @@ class RiverUnit (AUnit):
             unit_data (list): The section of the isis dat file pertaining 
                 to this section 
         """
-        file_line, unit_length = self._readHeadData(unit_data, file_line)
-        file_line = self._readRowData(unit_data, file_line, (file_line + unit_length))
+        file_line = self._readHeadData(unit_data, file_line)
+        file_line = self._readRowData(unit_data, file_line) 
         return file_line - 1
         
 
@@ -145,11 +145,10 @@ class RiverUnit (AUnit):
         self.head_data['distance'].value = unit_data[file_line + 3][0:10].strip()
         self.head_data['slope'].value = unit_data[file_line + 3][10:30].strip()
         self.head_data['density'].value = unit_data[file_line + 3][30:40].strip()
-        unit_length = int(unit_data[file_line + 4].strip())
 
-        return file_line + 5, unit_length
+        return file_line + 4
 
-    def _readRowData(self, unit_data, file_line, end_line):
+    def _readRowData(self, unit_data, file_line):
         """Reads the units rows into the row collection.
 
         This is all the geometry data that occurs after the no of rows variable in
@@ -158,9 +157,11 @@ class RiverUnit (AUnit):
         Args:
             unit_data (list): the data pertaining to this unit.
         """ 
+        end_line = int(unit_data[file_line].strip())
+        file_line += 1
         try:
             # Load the geometry data
-            for i in range(file_line, end_line):
+            for i in range(file_line, end_line + file_line):
                 chain   = unit_data[i][0:10].strip()
                 elev    = unit_data[i][10:20].strip()
                 rough   = unit_data[i][20:30].strip()

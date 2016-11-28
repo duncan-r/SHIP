@@ -32,7 +32,7 @@ import os
 from ship.utils.atool import ATool
 from ship.utils.fileloaders.loader import ALoader
 from ship.utils import filetools as ftools
-from ship.fmp.isisunitfactory import IsisUnitFactory
+from ship.fmp.fmpunitfactory import FmpUnitFactory
 from ship.utils import utilfunctions as uf
 from ship.fmp.datunits.isisunit import UnknownUnit
 from ship.fmp.datcollection import DatCollection
@@ -142,7 +142,7 @@ class DatLoader(ATool, ALoader):
         # file contents list.
         i = 0
         # Get an instance of the unit factory with the number of nodes in the file.
-        unit_factory = IsisUnitFactory()
+        unit_factory = FmpUnitFactory()
 
         # Dictionary containing the keys to identify units in the dat file 
         unit_vars = unit_factory.getUnitIdentifiers()

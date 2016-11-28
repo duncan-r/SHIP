@@ -120,7 +120,8 @@ class InitialConditionsUnit (AUnit):
         out_data = []
         out_data.append('INITIAL CONDITIONS')
         out_data.append(' label   ?      flow     stage froude no  velocity     umode    ustate         z')
-        for i in range(0, self._node_count):
+#         for i in range(0, self._node_count):
+        for i in range(0, self.row_data['main'].numberOfRows()):
             out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data

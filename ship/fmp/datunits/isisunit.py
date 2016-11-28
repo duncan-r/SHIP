@@ -55,7 +55,12 @@ class AUnit(object):
     There is an UknownSection class at the bottom of this file that can be used 
     for all parts of the isis dat file that have not had a class defined. It just
     calls the basic read-in read-out methods from this class and understands nothing
-    about the structure of the file section it is holding.     
+    about the structure of the file section it is holding.
+    
+    If you are creating subclass of this that has row_data (see below) you 
+    should make sure that you call the setDummyRow() method in each of the
+    RowDataCollections. Otherwise, if the user doesn't add any rows, FMP will
+    throw errors.
     
     See Also:
         UnknownSection
@@ -73,8 +78,8 @@ class AUnit(object):
         Both of these are called at or immediately after initialisation.
         """
         
-        self._name = 'unknown'                   # Unit label
-        self._name_ds = 'unknown'                # Unit downstream label
+        self._name = kwargs.get('name', 'unknown')       # Unit label
+        self._name_ds = kwargs.get('name_ds', 'unknown') # Unit downstream label
         
         self._data = None                       
         """This is used for catch-all data storage.
@@ -226,7 +231,7 @@ class AUnit(object):
     def readUnitData(self, data, file_line, **kwargs):
         """Reads the unit data supplied to the object.
         
-        This method is called by the IsisUnitFactory class when constructing the
+        This method is called by the FmpUnitFactory class when constructing the
         Isis  unit based on the data passed in from the dat file.
         The default hook just copies all the data parsed in the buildUnit() 
         method of the factory and aves it to the given unit. This is exactly
@@ -513,13 +518,13 @@ class HeaderUnit(AUnit):
         self._name = 'header'
         self.head_data = {
             'name': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
-            'revision': HeadDataItem('1', '{:>10}', 1, 0, dtype=dt.STRING),
+            'revision': HeadDataItem('#REVISION#1', '{:>10}', 1, 0, dtype=dt.STRING),
             'node_count': HeadDataItem(0, '{:>10}', 2, 0, dtype=dt.INT),
             'fr_lower': HeadDataItem(0.750, '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3),
             'fr_upper': HeadDataItem(0.900, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
             'min_depth': HeadDataItem(0.100, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'direct_method': HeadDataItem(0.001, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-            'unknown': HeadDataItem('12SI', '{:>10}', 2, 5, dtype=dt.STRING), 
+            'unknown': HeadDataItem('12', '{:>10}', 2, 5, dtype=dt.STRING), 
             'water_temp': HeadDataItem(10.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'flow': HeadDataItem(0.010, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'head': HeadDataItem(0.010, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),

@@ -64,10 +64,10 @@ Row Data
    * DataObject=FloatData, key=rdt.ROUGHNESS, default=0.039, no_of_dps=3
    * DataObject=SymbolData, symbol=*, key=rdt.PANEL_MARKER, default=False
    * DataObject=FloatData, key=rdt.RPL, default=1.000, no_of_dps=3
-   * DataObject=do.ConstantData, rdt.BANKMARKER, choices=('LEFT', 'RIGHT', 'BED'), default=''
+   * DataObject=do.ConstantData, rdt.BANKMARKER, choices=('', 'LEFT', 'RIGHT', 'BED'), default=''
    * DataObject=FloatData, key=rdt.EASTING, default=0.0, no_of_dps=2
    * DataObject=FloatData, key=rdt.NORTHING, default=0.0, no_of_dps=2
-   * DataObject=ConstantData, rdt.DEACTIVATION, choices=('LEFT', 'RIGHT'), default=''
+   * DataObject=ConstantData, rdt.DEACTIVATION, choices=('', 'LEFT', 'RIGHT'), default=''
    * DataObject=StringData, key=rdt.SPECIAL, default='~'
      # Default == '~' means to ignore formatting and apply '' when value is None
             
@@ -111,7 +111,7 @@ Row Data
    * DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3
    * DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)
    * DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3
-   * DataObject=ConstantData, rdt.EMBANKMENT, choices=('L', 'R'), default=''
+   * DataObject=ConstantData, rdt.EMBANKMENT, choices=('', 'L', 'R'), default=''
 
 **row_data['opening']**
    * DataObject=FloatData, key=rdt.OPEN_START, no_of_dps=3
@@ -165,7 +165,7 @@ Row Data
    * DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3
    * DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3)
    * DataObject=FloatData, key=rdt.ROUGHNESS, no_of_dps=3
-   * DataObject=ConstantData, rdt.EMBANKMENT, choices=('L', 'R'), default=''
+   * DataObject=ConstantData, rdt.EMBANKMENT, choices=('', 'L', 'R'), default=''
 
 **row_data['opening']**
    * DataObject=FloatData, key=rdt.OPEN_START, no_of_dps=3

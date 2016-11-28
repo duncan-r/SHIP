@@ -238,7 +238,8 @@ class BridgeUnitTests(unittest.TestCase):
                          '    15.267    34.096     0.040          R',
                          '         1',
                          '    11.587    15.231    33.680    33.680',
-                         '         0']
+                         '         1',
+                         '     0.000     0.000     0.000     1.000     1.000     1.000']
 
         output = b.getData()
         self.assertListEqual(test_output, output)

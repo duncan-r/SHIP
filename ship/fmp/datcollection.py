@@ -32,7 +32,7 @@ from ship.fmp.datunits.isisunit import AUnit
 from ship.utils import filetools as ft
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.fmp.datunits.isisunit import CommentUnit
-from ship.fmp import isisunitfactory as iuf
+from ship.fmp import fmpunitfactory as iuf
 from ship.utils import utilfunctions as uf
 
 import logging
@@ -526,7 +526,7 @@ class DatCollection(object):
     
 
     @classmethod
-    def initialisedDat(cls, dat_path, units=[]):
+    def initialisedDat(cls, dat_path, units=[], **kwargs):
         """Create a new ISIS .dat file with basic header info and no units.
         
         Creates the equivelant of generating a new .dat unit in the software. The
@@ -536,34 +536,52 @@ class DatCollection(object):
         A single comment unit will be be added to the file stating that it was
         created by the SHIP library at timestamp.
         
+        Example unit_kwargs. Note that first index is a placholder for no args::
+            unit_kwargs== [{}, 
+                {
+                    'ics': {rdt.FLOW: 3.0, rdt.STAGE: 15.0, rdt.ELEVATION: 14.5},
+                }
+            ]
+        
+        **kwargs:
+            unit_kwargs(list): contains a dict with the kwargs for each unit
+                that is included in units. The list must be the same length
+                as units, or not included. If no kwargs for a particular unit
+                are to be given an empty dict should be used as a placholder in
+                the list. 
+        
         Args:
             dat_path(str): the path to set for the newly created .dat file.
             
         Return:
             DatCollection - setup as an empty ISIS .dat file.
         """
-        contents = [
-                '',
-                '#REVISION#1',
-                '         0     0.750     0.900     0.100     0.001        12SI',
-                '    10.000     0.010     0.010     0.700     0.100     0.700     0.000',
-                'RAD FILE',
-                '',
-                'END GENERAL'
-                'INITIAL CONDITIONS',
-                ' label   ?      flow     stage froude no  velocity     umode    ustate         z',
-        ]
+#         contents = [
+#                 '',
+#                 '#REVISION#1',
+#                 '         0     0.750     0.900     0.100     0.001        12SI',
+#                 '    10.000     0.010     0.010     0.700     0.100     0.700     0.000',
+#                 'RAD FILE',
+#                 '',
+#                 'END GENERAL'
+#                 'INITIAL CONDITIONS',
+#                 ' label   ?      flow     stage froude no  velocity     umode    ustate         z',
+#         ]
+
+        unit_kwargs = kwargs.get('unit_kwargs', [{}]*len(units))
+        if not len(unit_kwargs) == len(units):
+            raise ValueError('unit_kwargs kwarg must be the same length as unit or not be given')
 
         path_holder = ft.PathHolder(dat_path)
         dat = cls(path_holder)
-        hunit = iuf.IsisUnitFactory.createUnit('header')
-        icunit = iuf.IsisUnitFactory.createUnit('initial_conditions')
+        hunit = iuf.FmpUnitFactory.createUnit('header')
+        icunit = iuf.FmpUnitFactory.createUnit('initial_conditions')
         cunit = CommentUnit(text=('Created by SHIP library on %s' % datetime.now().strftime('%Y-%M-%d %H:%M')))
         dat.addUnit(hunit, update_node_count=False)
         dat.addUnit(cunit, update_node_count=False)
         dat.addUnit(icunit, update_node_count=False)
-        for u in units:
-            dat.addUnit(u)
+        for i, u in enumerate(units):
+            dat.addUnit(u, **unit_kwargs[i])
         return dat
    
     

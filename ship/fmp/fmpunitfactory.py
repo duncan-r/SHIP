@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class IsisUnitFactory(object):
+class FmpUnitFactory(object):
     """Builds isisunit type objects.
     
     This is a Factory pattern object for the creation of isisunit subclasses.
@@ -97,9 +97,9 @@ class IsisUnitFactory(object):
         defines the key word used in the .dat file. This is then used to
         recognise when a unit of that type has been found.
         """
-        self.unit_keys = [k.FILE_KEY for k in IsisUnitFactory.available_units if k.FILE_KEY is not None]
+        self.unit_keys = [k.FILE_KEY for k in FmpUnitFactory.available_units if k.FILE_KEY is not None]
         self.units = {}
-        for u in IsisUnitFactory.available_units:
+        for u in FmpUnitFactory.available_units:
             if u.FILE_KEY is None: continue
             if not u.FILE_KEY in self.units.keys():
                 self.units[u.FILE_KEY] = []
@@ -183,6 +183,9 @@ class IsisUnitFactory(object):
             head_data: dict of head_data values to set in the AUnit.
             row_data: dict of row_data keys containing lists of row data to
                 set in the unit.
+            dummy_row: if no row_data is given and this is set to True it will
+                create a dummy row in all row_data. i.e. set an initial row
+                to 0's so it will load in fmp.
         
         The row_data kwarg is expected to be set out like the following::
         
@@ -212,7 +215,7 @@ class IsisUnitFactory(object):
             AUnit - the newly created unit.
         """
         u = None
-        for i in IsisUnitFactory.available_units:
+        for i in FmpUnitFactory.available_units:
             if i.UNIT_TYPE == unit_type:
                 u = i
         
@@ -224,6 +227,11 @@ class IsisUnitFactory(object):
         row_data = kwargs.get('row_data', None)
         unit.name = kwargs.get('name', 'unknown')
         unit.name_ds = kwargs.get('name_ds', 'unknown')
+        
+        if row_data is None:
+            dummy_row = kwargs.get('dummy_row', True)
+        else:
+            dummy_row = False
         
         if unit.unit_category == 'river':
             unit.reach_number = kwargs.get('reach_number', -1)
@@ -244,6 +252,8 @@ class IsisUnitFactory(object):
                     # For different rows to add
                     for entry in row_data:
                         unit.row_data[row_key].addRow(entry)
+#         elif dummy_row:
+            
         
         return unit
     

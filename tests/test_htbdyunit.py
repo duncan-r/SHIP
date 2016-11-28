@@ -4,7 +4,7 @@ import unittest
  
 from ship.fmp.datunits import htbdyunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
-from ship.fmp.isisunitfactory import IsisUnitFactory
+from ship.fmp.fmpunitfactory import FmpUnitFactory
  
 class test_HtbdyUnit(unittest.TestCase):
     """

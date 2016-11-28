@@ -28,8 +28,10 @@ logger = logging.getLogger(__name__)
 
 from ship.fmp.datunits.isisunit import AUnit
 from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures import dataobject as do
 from ship.datastructures import DATA_TYPES as dt
 from ship.fmp.headdata import HeadDataItem
+from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 
 
@@ -61,9 +63,8 @@ class RefhUnit(AUnit):
         
         self._unit_type = RefhUnit.UNIT_TYPE
         self._unit_category = RefhUnit.UNIT_CATEGORY
-        self.row_data['storm'] = []
-        self._name = 'Refh_unit'
-        
+#         self.row_data['main'] = []
+        if self._name == 'unknown': self._name = 'Refh_unit'
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
@@ -160,9 +161,15 @@ class RefhUnit(AUnit):
             'br_dcf': HeadDataItem(0.000, '{:>10}', 18, 2, dtype=dt.FLOAT, dps=3),
             'br': HeadDataItem(0.000, '{:>10}', 18, 3, dtype=dt.FLOAT, dps=3),
             'bf0': HeadDataItem(0.000, '{:>10}', 18, 4, dtype=dt.FLOAT, dps=3),
-
-
         }
+        
+        dobjs = [
+            # update_callback is called every time a value is added or updated
+            do.FloatData(rdt.RAIN, format_str='{:>10}', default=0, no_of_dps=3)
+        ]
+        dummy_row = {rdt.RAIN: 0}
+        self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
+        self.row_data['main'].setDummyRow({rdt.RAIN: 0})
     
         
     def readUnitData(self, unit_data, file_line):
@@ -267,7 +274,7 @@ class RefhUnit(AUnit):
         """
         out_line = file_line + storm_rows
         for i in range(file_line, out_line):
-            self.row_data['storm'].append(unit_data[i][0:10].strip())
+            self.row_data['main'].append(unit_data[i][0:10].strip())
         
         return out_line
     
@@ -363,9 +370,14 @@ class RefhUnit(AUnit):
     def _getStormData(self):
         """
         """
-        out_data = ['{:>10}'.format(len(self.row_data['storm']))]
-        for line in self.row_data['storm']:
-            out_data.append('{:>10}'.format(line))
+        out_data = []
+        out_data = ['{:>10}'.format(self.row_data['main'].numberOfRows())]
+        for i in range(self.row_data['main'].numberOfRows()):
+            out_data.append(self.row_data['main'].getPrintableRow(i))
+        return out_data
+#         out_data = ['{:>10}'.format(self.row_data['main'].numberOfRows())]
+#         for line in self.row_data['main']:
+#             out_data.append('{:>10}'.format(line))
             
         return out_data
     

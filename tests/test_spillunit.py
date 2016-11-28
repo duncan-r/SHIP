@@ -4,7 +4,7 @@ import unittest
  
 from ship.fmp.datunits import spillunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
-from ship.fmp.isisunitfactory import IsisUnitFactory
+from ship.fmp.fmpunitfactory import FmpUnitFactory
  
 class test_SpillUnit(unittest.TestCase):
     """
@@ -62,7 +62,7 @@ class test_SpillUnit(unittest.TestCase):
     def test_addDataRow(self):
         """Test adding a new row to 'main' data."""
         # Create a factory and load the river unit
-        ifactory = IsisUnitFactory()       
+        ifactory = FmpUnitFactory()       
         i, spill = ifactory.createUnitFromFile(self.spill_unitdata, 0, 'SPILL', 1, 1)
         
         # Add with required only args

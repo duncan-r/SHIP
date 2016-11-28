@@ -19,6 +19,14 @@ ship.fmp.datcollection module
     :undoc-members:
     :show-inheritance:
 
+ship.fmp.fmpunitfactory module
+------------------------------
+
+.. automodule:: ship.fmp.fmpunitfactory
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ship.fmp.headdata module
 ------------------------
 
@@ -31,14 +39,6 @@ ship.fmp.ief module
 -------------------
 
 .. automodule:: ship.fmp.ief
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ship.fmp.isisunitfactory module
--------------------------------
-
-.. automodule:: ship.fmp.isisunitfactory
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,6 +1,6 @@
 """
     Summary:
-        Example use of the isis package to calculate the full cross section
+        Example use of the fmp package to calculate the full cross section
         width and active cross section width of river and bridge sections in 
         an isis/fmp .dat file.
     

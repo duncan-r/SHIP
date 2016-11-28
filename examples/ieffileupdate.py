@@ -1,6 +1,6 @@
 """
     Summary:
-        Example use of the isis package to update file paths in an .ief file
+        Example use of the fmp package to update file paths in an .ief file
         and save the ief file under a new name.
     
     Author:  

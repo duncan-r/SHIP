@@ -17,10 +17,10 @@ def trimRiverSections():
     # Load the dat file into a new DatCollection object (isis_model)
     dat_path = r'C:\path\to\an\isis-fmp\datfile.dat'
     loader = fl.FileLoader()
-    isis_model = loader.loadFile(dat_path)
+    fmp_model = loader.loadFile(dat_path)
     
     # Get the river sections from the model and loop through them
-    rivers = isis_model.unitsByCategory('river')
+    rivers = fmp_model.unitsByCategory('river')
     for river in rivers:
         
         # Get the bankmarker locations as a list for this river section
@@ -39,9 +39,9 @@ def trimRiverSections():
                 deactivation_data.setValue('RIGHT', i)
     
     # Update the filename and write contents to disk
-    isis_model.path_holder.filename = isis_model.path_holder.filename + '_Updated'
-    out_path = isis_model.path_holder.absolutePath()
-    isis_model.write(out_path)
+    fmp_model.path_holder.filename = fmp_model.path_holder.filename + '_Updated'
+    out_path = fmp_model.path_holder.absolutePath()
+    fmp_model.write(out_path)
     
 
 

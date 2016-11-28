@@ -6,7 +6,7 @@ from ship.fmp.datunits import riverunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.datastructures.rowdatacollection import RowDataCollection 
 from ship.datastructures import dataobject as do
-from ship.fmp.isisunitfactory import IsisUnitFactory
+from ship.fmp.fmpunitfactory import FmpUnitFactory
 
 class RiverUnitTests(unittest.TestCase):
     '''Tests for all of the methods in the river class.
@@ -135,7 +135,7 @@ class RiverUnitTests(unittest.TestCase):
         '''Test to check the suitability of the getData() method.
         '''
         # Create a factory and load the river unit
-        ifactory = IsisUnitFactory()       
+        ifactory = FmpUnitFactory()       
         i, river = ifactory.createUnitFromFile(self.input_contents, 0, 'RIVER', 1, 1)
          
         # Setup the list that we expect to be returned from the getData() method 
@@ -173,7 +173,7 @@ class RiverUnitTests(unittest.TestCase):
     def test_addDataRow(self):
         """Test adding a new row to 'main' data."""
         # Create a factory and load the river unit
-        ifactory = IsisUnitFactory()       
+        ifactory = FmpUnitFactory()       
         i, river = ifactory.createUnitFromFile(self.input_contents, 0, 'RIVER', 1, 1)
         
         # Add with required only args

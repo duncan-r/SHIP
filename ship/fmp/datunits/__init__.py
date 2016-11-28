@@ -10,4 +10,5 @@ ROW_DATA_TYPES = uf.enum('CHAINAGE', 'ELEVATION', 'ROUGHNESS', 'PANEL_MARKER',
                          'OPEN_END', 'SPRINGING_LEVEL', 'SOFFIT_LEVEL', 
                          'INVERT', 'SOFFIT', 'AREA', 'CD_PART', 'CD_FULL', 
                          'DROWNING', 'TIME', 'LABEL', 'FLOW', 'STAGE',
-                         'FROUDE_NO', 'VELOCITY', 'UMODE', 'USTATE', 'QMARK') 
+                         'FROUDE_NO', 'VELOCITY', 'UMODE', 'USTATE', 'QMARK',
+                         'RAIN',) 

@@ -65,6 +65,7 @@ class RowDataCollection(object):
         self._min_collection = 0
         self._current_collection = 0
         self._updateCallback = kwargs.get('update_callback', None)
+        self.has_dummy = False
 
     
     @classmethod
@@ -330,6 +331,11 @@ class RowDataCollection(object):
                 break
         else:
             raise KeyError ('Key %s does not exist in collection' % (key))
+
+        # Do this after so it's not removed when something goes wrong
+        if self.has_dummy:
+            self.deleteRow(0)
+            self.has_dummy = False
         
     
     def _setValue(self, key, value, index):
@@ -465,6 +471,7 @@ class RowDataCollection(object):
         for k in vkeys:
             if not k in dataobj_keys:
                 raise KeyError('ROW_DATA_TYPE ' + str(k) + 'is not in collection')
+
         
         temp_list = None
         try:
@@ -499,6 +506,11 @@ class RowDataCollection(object):
                 for o in temp_list:
                     del o
                 del temp_list
+
+        # Do this after so it's not removed if something goes wrong
+        if self.has_dummy:
+            self.deleteRow(0)
+            self.has_dummy = False
     
     
     def deleteRow(self, index):
@@ -588,7 +600,24 @@ class RowDataCollection(object):
                 return True
         else:
             return False
-              
+        
+    
+    def setDummyRow(self, row_vals):
+        """Sets a special 'dummy row' as a placeholder until actual values.
+        
+        Sometimes it can be useful to have placeholder values in a collection.
+        This is particularly true for FMP units that will cause errors in
+        FMP if there is no data in the rows. 
+        
+        This method will add the dummy row data and set the self.has_dummy
+        flag to True. When actual row data is added to the collection it will
+        check the flag and delete the row if it's True.
+        """
+        self.addRow(row_vals)
+        if self.has_dummy:
+            self.deleteRow(0)
+        self.has_dummy = True
+               
     
     def numberOfRows(self):
         """Return the number of rows held in the collection

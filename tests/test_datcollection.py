@@ -2,7 +2,7 @@ from __future__ import unicode_literals
  
 import unittest
 from ship.fmp.datcollection import DatCollection
-from ship.fmp import isisunitfactory as iuf
+from ship.fmp import fmpunitfactory as iuf
 from ship.fmp.datunits import riverunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.utils.filetools import PathHolder
@@ -64,22 +64,22 @@ class IsisUnitCollectionTest(unittest.TestCase):
         # Create a new IsisUnitCollection object
         self.dat = DatCollection.initialisedDat(self.fake_path)
         
-        self.riv1 = iuf.IsisUnitFactory.createUnit('river', name='riv1', 
+        self.riv1 = iuf.FmpUnitFactory.createUnit('river', name='riv1', 
                                           head_data=self.riv1_head, 
                                           row_data=self.riv1_row)
-        self.riv2 = iuf.IsisUnitFactory.createUnit('river', name='riv2', 
+        self.riv2 = iuf.FmpUnitFactory.createUnit('river', name='riv2', 
                                           head_data=self.riv2_head, 
                                           row_data=self.riv2_row)
-        self.riv3 = iuf.IsisUnitFactory.createUnit('river', name='riv3', 
+        self.riv3 = iuf.FmpUnitFactory.createUnit('river', name='riv3', 
                                           head_data=self.riv3_head, 
                                           row_data=self.riv3_row)
-        self.brg1 = iuf.IsisUnitFactory.createUnit('arch', name='brg1',
+        self.brg1 = iuf.FmpUnitFactory.createUnit('arch', name='brg1',
                                                        name_ds='brg1ds',
                                                        row_data=self.brg1_row)
-        self.brg2 = iuf.IsisUnitFactory.createUnit('arch', name='brg2',
+        self.brg2 = iuf.FmpUnitFactory.createUnit('arch', name='brg2',
                                                        name_ds='brg2ds',
                                                        row_data=self.brg1_row)
-        self.brg3 = iuf.IsisUnitFactory.createUnit('usbpr', name='brg3',
+        self.brg3 = iuf.FmpUnitFactory.createUnit('usbpr', name='brg3',
                                                        name_ds='brg3ds',
                                                        row_data=self.brg1_row)
     

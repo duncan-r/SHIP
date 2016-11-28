@@ -2,7 +2,7 @@ import unittest
  
 from ship.fmp.datunits import culvertunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
-from ship.fmp.isisunitfactory import IsisUnitFactory
+from ship.fmp.fmpunitfactory import FmpUnitFactory
  
 class test_SpillUnit(unittest.TestCase):
     """
