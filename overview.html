@@ -377,8 +377,8 @@ and keys as ROW_DATA_TYPES.</li>
 <p>Note that you can also get these from the AUnit itself with:</p>
 <blockquote>
 <div><ul class="simple">
-<li>dataObj(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
-<li>dataObjAsList(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
+<li>dataObject(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
+<li>dataObjectAsList(ROW_DATA_TYPES, rowdata_key=&#8217;main&#8217;)</li>
 </ul>
 </div></blockquote>
 <p>Example:</p>
@@ -399,7 +399,7 @@ and keys as ROW_DATA_TYPES.</li>
 </div>
 <p>If you want to update the values in a DataObject or you need more control you
 you should use the DataObject itself:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rgh_obj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObj</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rgh_obj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
 
 <span class="c1"># You can now loop through data_obj and read or update each entry</span>
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rgh_obj</span><span class="p">:</span>
