@@ -125,7 +125,7 @@ class BridgeUnitTests(unittest.TestCase):
         chainage = [0.000, 0.065, 0.137, 0.391, 0.650, 0.710, 1.618, 2.694, 3.729, 4.408, 5.306, 6.441, 6.459, 6.478, 6.557]
         elevation = [37.651, 36.161, 36.122, 34.171, 34.125, 33.743, 33.543, 33.598, 33.513, 33.519, 33.553, 33.758, 34.954, 36.174, 36.229]
         roughness = [0.025, 0.025, 0.025, 0.025, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.025, 0.025]
-        marker = [False, False, False, False, 'L', False, False, False, False, False, False, False, False, 'R', False]
+        marker = ['', '', '', '', 'L', '', '', '', '', '', '', '', '', 'R', '']
 
         self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.CHAINAGE), chainage)
         self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ELEVATION), elevation)
@@ -154,7 +154,7 @@ class BridgeUnitTests(unittest.TestCase):
         chainage = [11.562, 11.587, 11.692, 12.03, 12.579, 13.475, 14.452, 15.127, 15.231, 15.256, 15.267]
         elevation = [33.961, 33.667, 32.418, 32.417, 32.426, 32.419, 32.422, 32.425, 33.667, 33.969, 34.096]
         roughness = [0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04]
-        marker = ['L', False, False, False, False, False, False, False, False, False, 'R']
+        marker = ['L', '', '', '', '', '', '', '', '', '', 'R']
 
         self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.CHAINAGE), chainage)
         self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ELEVATION), elevation)

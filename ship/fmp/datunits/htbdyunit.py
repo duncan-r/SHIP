@@ -77,8 +77,8 @@ class HtbdyUnit (AUnit):
         }
         
         dobjs = [
-            do.FloatData(0, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(1, rdt.TIME, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.TIME, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
 

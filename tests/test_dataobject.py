@@ -11,10 +11,10 @@ class DataObjectsTest(unittest.TestCase):
      
     def setUp(self):
          
-        self.flt = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3)
-        self.sym = do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False)
-        self.con = do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default='')
-        self.txt = do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~')
+        self.flt = do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3)
+        self.sym = do.SymbolData(rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False)
+        self.con = do.ConstantData(rdt.BANKMARKER, ('', 'LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default='')
+        self.txt = do.StringData(rdt.SPECIAL, format_str='{:<10}', default='~')
          
         self.data_objects = [self.flt, self.sym, self.con, self.txt] 
          
@@ -51,13 +51,17 @@ class DataObjectsTest(unittest.TestCase):
         self.assertTrue(self.con.data_collection[1] == 'RIGHT', 'BankMarker object addValue() fail')
         self.con.addValue('BED')
         self.assertTrue(self.con.data_collection[2] == 'BED', 'BankMarker object addValue() fail')
-        self.con.addValue(False)
-        self.assertTrue(self.con.data_collection[3] == False, 'BankMarker object addValue() fail')
-        self.con.addValue(5)
-        self.assertTrue(self.con.data_collection[4] == False, 'BankMarker object addValue() fail')
-        self.con.addValue('random$%%&_string')
-        self.assertTrue(self.con.data_collection[5] == False, 'BankMarker object addValue() fail')
-        self.failUnlessRaises(IndexError, lambda: self.con.addValue(True, 7))
+        self.con.addValue('')
+        self.assertTrue(self.con.data_collection[3] == '', 'BankMarker object addValue() fail')
+        with self.assertRaises(ValueError):
+            self.con.addValue(5)
+#         self.assertTrue(self.con.data_collection[4] == '', 'BankMarker object addValue() fail')
+        with self.assertRaises(ValueError):
+            self.con.addValue('random$%%&_string')
+#         self.assertTrue(self.con.data_collection[5] == '', 'BankMarker object addValue() fail')
+        with self.assertRaises(IndexError):
+            self.con.addValue('LEFT', 7)
+#             self.failUnlessRaises(IndexError, lambda: self.con.addValue(True, 7))
  
      
     def test_float_setValue(self):
@@ -89,7 +93,8 @@ class DataObjectsTest(unittest.TestCase):
         self.con.data_collection.append('')
          
         self.con.setValue('', 0)
-        self.assertTrue(self.con.data_collection[0] == False, 'Constant setValue() failure')
+        self.assertFalse(self.con.data_collection[0], 'Constant setValue() failure')
+#         self.assertTrue(self.con.data_collection[0] == False, 'Constant setValue() failure')
         self.con.setValue('RIGHT', 1)
         self.assertTrue(self.con.data_collection[1] == 'RIGHT', 'Constant setValue() failure')
         self.con.setValue('LEFT', 1)

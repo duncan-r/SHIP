@@ -1,10 +1,8 @@
 """
 
  Summary:
-    Contains the RiverUnit class.
-    This holds all of the data read in from the river units in the dat file.
-    Can be called to load in the data and read and update the contents 
-    held in the object.
+    Contains the HeadDataItem class. Used for storing data types, values,
+    formatting and location of data stored in the head_data dict.
 
  Author:  
      Duncan Runnacles
@@ -38,7 +36,27 @@ class HeadDataItem(object):
     place rather than littered around all subclasses of AUnit.
     """
     
-    def __init__(self, value, format_str, line_no, col_no, **kwargs):
+    def __init__(self, initial_value, format_str, line_no, col_no, **kwargs):
+        """Constructor.
+        
+        A few checks of the validity of the value given will be made against
+        the initial_value given.
+        
+        **kwargs:
+            dtype(int): one of the datatructures.DATA_TYPES.
+            default: a default value to apply when none is given.
+            allow_blank(bool): whether to allow blank/non-value entries.
+            update_callback(func): a function to vall when a value is updated.
+                This is not currently used.
+        
+        Args:
+            initial_value: the initial value to set.
+            format_str(str): the format to return the item with. Should be in
+                the form '{:>10}'. Use '' for no formatting.
+            line_no(int): the line number that the value occurs in the head_data.
+                0 indexed.
+            col_no(int): the column that the value occurs in - 0 indexed.
+        """
         
         kkeys = kwargs.keys()
         dtype = kwargs.get('dtype', dt.STRING)
@@ -56,7 +74,7 @@ class HeadDataItem(object):
         self.col_no = col_no
         self.kwargs = kwargs
 
-        value = self._checkValue(value)
+        value = self._checkValue(initial_value)
         self._value = value
         self._update_callback = kwargs.get('update_callback', None)
 
@@ -67,6 +85,11 @@ class HeadDataItem(object):
     
     @value.setter
     def value(self, val):
+        """Property for setting the value.
+        
+        Raises:
+            ValueError: if value is not the correct type.
+        """
         val = self._checkValue(val)
         self._value = val
     
@@ -107,6 +130,9 @@ class HeadDataItem(object):
         
         Return:
             bool - true if equal, false if not.
+        
+        Raises:
+            ValueError: if value is not the correct type.
         """
         if compare_val == self._value:
             return True

@@ -13,20 +13,17 @@ class RowDataCollectionTests(unittest.TestCase):
     def setUp(self):
         # Create some object to use and add a couple of rows
         # create chainage in position 1
-        self.obj1 = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
+        self.obj1 = do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj1.data_collection.append(0.00)
         self.obj1.data_collection.append(3.65)
-#         self.obj1.record_length = 1
         # Create elevation in position 2
-        self.obj2 = do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
+        self.obj2 = do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj2.data_collection.append(32.345)
         self.obj2.data_collection.append(33.45)
-#         self.obj2.record_length = 1
         # Create roughness in position 3
-        self.obj3 = do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=None, no_of_dps=3)
+        self.obj3 = do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=None, no_of_dps=3)
         self.obj3.data_collection.append(0.035)
         self.obj3.data_collection.append(0.035)
-#         self.obj3.record_length = 1
          
         self.testcol = rdc.RowDataCollection()
         self.testcol._collection.append(self.obj1)
@@ -38,9 +35,9 @@ class RowDataCollectionTests(unittest.TestCase):
         '''
         '''
         # Create a dummy collection
-        obj1 = do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
-        obj2 = do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
-        obj3 = do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3)
+        obj1 = do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3)
+        obj2 = do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3)
+        obj3 = do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3)
         localcol = rdc.RowDataCollection()
         localcol._collection.append(obj1)
         localcol._collection.append(obj2)
@@ -48,9 +45,9 @@ class RowDataCollectionTests(unittest.TestCase):
  
         # Initiliase a real collection
         col = rdc.RowDataCollection()
-        col.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
              
         # Check that they're the same
         col_eq, msg = self.checkCollectionEqual(localcol, col)
@@ -58,9 +55,9 @@ class RowDataCollectionTests(unittest.TestCase):
     
     def test_bulkInitCollection(self):
         objs = [
-            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3),
-            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3),
-            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3),
+            do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3),
+            do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3),
         ]
         col = rdc.RowDataCollection.bulkInitCollection(objs)
         
@@ -90,9 +87,6 @@ class RowDataCollectionTests(unittest.TestCase):
              
             if not c1._collection[i].format_str == c2._collection[i].format_str:
                 return False, 'Collections have different format_str'
- 
-            if not c1._collection[i].row_pos == c2._collection[i].row_pos:
-                return False, 'Collections have different row_pos'
  
             if not c1._collection[i].default == c2._collection[i].default:
                 return False, 'Collections have different default'
@@ -183,9 +177,9 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_addValue(self):
         # Initiliase a real collection
         col = rdc.RowDataCollection()
-        col.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
         
         col._addValue(rdt.CHAINAGE, 2.5)
         self.assertEqual(col._collection[0][0], 2.5)
@@ -193,9 +187,9 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_setValue(self):
         # Initiliase a real collection
         col = rdc.RowDataCollection()
-        col.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
         
         col._collection[0].addValue(2.5)
         self.assertEqual(col._collection[0][0], 2.5)
@@ -223,9 +217,9 @@ class RowDataCollectionTests(unittest.TestCase):
     def test_addRow(self):
         # Initiliase a real collection
         col = rdc.RowDataCollection()
-        col.initCollection(do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
-        col.initCollection(do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.CHAINAGE, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=None, no_of_dps=3))
+        col.addToCollection(do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.0, no_of_dps=3))
 
         new_row = {rdt.CHAINAGE: 3.0, rdt.ELEVATION: 41, rdt.ROUGHNESS: 0.06}
         new_row2 = {rdt.CHAINAGE: 6.0, rdt.ELEVATION: 42, rdt.ROUGHNESS: 0.07}

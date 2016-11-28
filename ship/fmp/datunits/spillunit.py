@@ -72,10 +72,10 @@ class SpillUnit (AUnit):
         self._unit_category = SpillUnit.UNIT_CATEGORY
         
         dobjs = [
-            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
-            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(2, rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.00),
-            do.FloatData(3, rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.00),
+            do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.00),
+            do.FloatData(rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.00),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
 

@@ -49,11 +49,10 @@ class ADataRowObject(object):
     
     
 #     def __init__(self, row_pos, datatype, format_str, default):
-    def __init__(self, row_pos, datatype, format_str, **kwargs):
+    def __init__(self, datatype, format_str, **kwargs):
         """Constructor
         
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str (str): Represents the format that should be used to
@@ -72,9 +71,7 @@ class ADataRowObject(object):
                     (self, value, index).
         """
         self.data_type = datatype
-#         self.record_length = 0
         self.format_str = format_str 
-        self.row_pos = row_pos
         self.default = kwargs.get('default', None)
         self.update_callback = kwargs.get('update_callback', None)
         self.has_changed = False
@@ -253,11 +250,6 @@ class ADataRowObject(object):
         
         Raises:
             IndexError: If index does not exist. 
-     
-        TODO:
-            Bit dodgy to be honest as people could start deleting random 
-            parts of one data_object without the other ones which would cock 
-            things right up.
         """
         try:
             del self.data_collection[index]
@@ -316,11 +308,10 @@ class IntData(ADataRowObject):
     """
     
 #     def __init__(self, row_pos, datatype, format_str='{}', default=None):
-    def __init__(self, row_pos, datatype, format_str='{}', **kwargs):
+    def __init__(self, datatype, format_str='{}', **kwargs):
         """Constructor.
         
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
@@ -333,7 +324,7 @@ class IntData(ADataRowObject):
                     Can be None if defaults are not allowed or '~' if the default 
                     should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
+        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -395,11 +386,10 @@ class FloatData(ADataRowObject):
     """
     
 #     def __init__(self, row_pos, datatype, format_str='{}', default=None, no_of_dps=0):
-    def __init__(self, row_pos, datatype, format_str='{}', **kwargs): #default=None, no_of_dps=0):
+    def __init__(self, datatype, format_str='{}', **kwargs): #default=None, no_of_dps=0):
         """Constructor.
         
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
@@ -415,7 +405,7 @@ class FloatData(ADataRowObject):
                        should be represented with when printed to file. 
         """
         self.no_of_dps = kwargs.get('no_of_dps', 0)
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
+        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -476,11 +466,10 @@ class StringData(ADataRowObject):
     str value. 
     """
     
-    def __init__(self, row_pos, datatype, format_str='{}', **kwargs):
+    def __init__(self, datatype, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
@@ -493,7 +482,7 @@ class StringData(ADataRowObject):
                     Can be None if defaults are not allowed or '~' if the default 
                     should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
+        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
         
     def addValue(self, value=None, index = None):
@@ -559,11 +548,10 @@ class ConstantData(ADataRowObject):
     str value from a list of predefined constants.
     """
     
-    def __init__(self, row_pos, datatype, legal_values, format_str='{}', **kwargs):
+    def __init__(self, datatype, legal_values, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             legal_values(tuple): contains the possible values that this 
@@ -584,7 +572,7 @@ class ConstantData(ADataRowObject):
         if not isinstance(legal_values, tuple):
             raise AttributeError ('legal_values is not a tuple')
         self.legal_values = legal_values
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
+        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):
@@ -593,9 +581,14 @@ class ConstantData(ADataRowObject):
         See Also:
             ADataRowObject: addValue()
         """
-        if not value == None:
+        if value is None: 
+            if self.default:
+                value = self.default
+            else:
+                raise ValueError('value cannot be None when no default is set.')
+        elif value is not None:
             if not value in self.legal_values:
-                value = False
+                raise ValueError('value %s is not included in %s' % (str(value), str(self.legal_values)))
             
         # Call the superclass part of the method to add it.
         ADataRowObject.addValue(self, value, index)
@@ -608,7 +601,7 @@ class ConstantData(ADataRowObject):
             ADataRowObject: setValue()
         """
         if not value in self.legal_values:
-            value = False
+            raise ValueError('value %S does is not included in %s' % (str(value), str(self.legal_values)))
         
         # Call the superclass to set the value
         ADataRowObject.setValue(self, value, index)
@@ -642,11 +635,10 @@ class SymbolData(ADataRowObject):
     float value instead of a string.
     """
     
-    def __init__(self, row_pos, datatype, symbol, format_str='{}', **kwargs):
+    def __init__(self, datatype, symbol, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
-            row_pos(int): the position in the datarow held by this object.
             datatype (int): The type of collection it will hold (see the enum 
                 list in the isis.datunits.ROW_DATA_TYPES.
             symbol(str): The symbol that should should be used to represent the 
@@ -668,7 +660,7 @@ class SymbolData(ADataRowObject):
         """
         self.symbol = symbol
         self.bool_type = bool # Used to test if a value is of type bool or not
-        ADataRowObject.__init__(self, row_pos, datatype, format_str, **kwargs)
+        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
          
         
     def addValue(self, value=None, index = None):

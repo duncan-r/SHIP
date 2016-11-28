@@ -80,7 +80,8 @@ class RowDataCollection(object):
         return self.numberOfRows()
     
 
-    def initCollection(self, dataobject):
+#     def initCollection(self, dataobject):
+    def addToCollection(self, dataobject, index=None):
         """Setup a new data object and add it to the collection.
         
         Args:
@@ -93,7 +94,13 @@ class RowDataCollection(object):
             ADataRowObject (and subclasses), DataTypes - all in ADataObject 
             module.
         """  
-        self._collection.append(dataobject)
+        if index is None:
+            self._collection.append(dataobject)
+        else:
+            try:
+                self._collection.insert(dataobject)
+            except IndexError:
+                raise('Index %s does not exist in collection' % index)
         self._max = len(self._collection)
     
     
@@ -358,10 +365,9 @@ class RowDataCollection(object):
     def getPrintableRow(self, index):
         """ Get the row data in printable form.
         
-        Retrieves all of the values in this RowDataObjectCollection at the
-        given index and returns the row. The order is based on the row_pos 
-        variable provided in the initCollection() method.
-        
+        Retrieves all of the values in this RowDataObjectCollection in the 
+        order that it exists in the list.        
+
         Args:
             index (int): the row collection index to access.
             
@@ -369,9 +375,6 @@ class RowDataCollection(object):
             string formatted for printing to .DAT file.
         """
         out_str = ''
-        # Sort the collection by the row_pos variable in the ADataRowObjects
-        # and loop through the collection getting a printable value.
-        self._collection.sort(key=lambda x: x.row_pos)
         for i, obj in enumerate(self._collection):
             out_str += obj.getPrintableValue(index)
                 

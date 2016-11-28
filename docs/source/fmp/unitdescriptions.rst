@@ -79,8 +79,8 @@ BridgeUnitArch
 Type and Category
 =================
 
-unit_type = 'bridge'
-unit_category = 'arch'
+unit_type = 'arch'
+unit_category = 'bridge'
 
 ic_labels
 =========
@@ -127,8 +127,8 @@ BridgeUnitUsbpr
 Type and Category
 =================
 
-unit_type = 'bridge'
-unit_category = 'usbpr'
+unit_type = 'usbpr'
+unit_category = 'bridge'
 
 ic_labels
 =========
@@ -238,7 +238,7 @@ head_data contents
 Row Data
 ========
 
-**row_data['main'] - rdt.CHAINAGE must increase*
+**row_data['main'] - rdt.CHAINAGE must increase**
    * DataObject=FloatData, key=rdt.CHAINAGE, no_of_dps=3 
    * DataObject=FloatData, key=rdt.ELEVATION, no_of_dps=3
    * DataObject=FloatData, key=rdt.EASTING, no_of_dps=2, default=0.00

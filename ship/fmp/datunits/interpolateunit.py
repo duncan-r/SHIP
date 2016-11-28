@@ -100,9 +100,12 @@ class InterpolateUnit(AUnit):
         out = []
         out.append('INTERPOLATE ' + self.head_data['comment'].value)
         out.append('\n'+'{:<12}'.format(self._name))
-        key_order = ['spill1', 'spill2', 'lateral1', 'lateral2', 'lateral3',
-                     'lateral4', 'distance', 'easting', 'northing']
-        for k in key_order:
+        key_order1 = ['spill1', 'spill2', 'lateral1', 'lateral2', 'lateral3',
+                     'lateral4']
+        for k in key_order1:
+            out.append(self.head_data[k].format())
+        key_order2 = ['distance', 'easting', 'northing']
+        for k in key_order2:
             out.append(self.head_data[k].format(True))
         out_data = ''.join(out).split('\n')
         return out_data

@@ -93,17 +93,17 @@ class RiverUnit (AUnit):
         '''
         dobjs = [
             # update_callback is called every time a value is added or updated
-            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
-            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', default=0.039, no_of_dps=3),
-            do.SymbolData(3, rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False),
-            do.FloatData(4, rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3),
-            do.ConstantData(5, rdt.BANKMARKER, ('LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''),
-            do.FloatData(6, rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2),
-            do.FloatData(7, rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2),
-            do.ConstantData(8, rdt.DEACTIVATION, ('LEFT', 'RIGHT'), format_str='{:<10}', default=''),
+            do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', default=0.039, no_of_dps=3),
+            do.SymbolData(rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False),
+            do.FloatData(rdt.RPL, format_str='{:>5}', default=1.000, no_of_dps=3),
+            do.ConstantData(rdt.BANKMARKER, ('', 'LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''),
+            do.FloatData(rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2),
+            do.FloatData(rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2),
+            do.ConstantData(rdt.DEACTIVATION, ('', 'LEFT', 'RIGHT'), format_str='{:<10}', default=''),
             # Default == '~' means to ignore formatting and apply '' when value is None
-            do.StringData(9, rdt.SPECIAL, format_str='{:<10}', default='~'),
+            do.StringData(rdt.SPECIAL, format_str='{:<10}', default='~'),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
     

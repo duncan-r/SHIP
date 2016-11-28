@@ -76,9 +76,9 @@ class RiverUnitTests(unittest.TestCase):
          '    19.420    39.133     0.080     1.000RIGHT      291388.21  86569.65RIGHT     4095      ']
         
         # Lists for each of the data objects that are created when reading the file
-        self.bankmarker = ['LEFT', False, False, False, False, 'BED', False, False, False, False, False, False, False, False, False, False, False, 'RIGHT']    
+        self.bankmarker = ['LEFT', '', '', '', '', 'BED', '', '', '', '', '', '', '', '', '', '', '', 'RIGHT']    
         self.chainage = [5.996, 6.936, 7.446, 7.635, 8.561, 9.551, 10.323, 10.904, 12.542, 13.74, 13.788, 13.944, 15.008, 16.355, 17.424, 18.449, 19.416, 19.420]    
-        self.deactivation = ['LEFT', False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, 'RIGHT']    
+        self.deactivation = ['LEFT', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'RIGHT']    
         self.easting = [291391.67, 291391.43, 291391.3, 291391.25, 291391.01, 291390.75, 291390.55, 291390.4, 291389.98, 291389.67, 291389.66, 291389.62, 291389.34, 291389.0, 291388.72, 291388.46, 291388.21, 291388.21]    
         self.elevation = [37.56, 37.197, 36.726, 35.235, 35.196, 35.19, 35.229, 35.319, 35.637, 35.593, 35.592, 36.148, 36.559, 37.542, 38.518, 39.037, 39.146, 39.133]    
         self.northing = [86582.61, 86581.7, 86581.21, 86581.03, 86580.13, 86579.18, 86578.43, 86577.87, 86576.29, 86575.13, 86575.09, 86574.93, 86573.91, 86572.6, 86571.57, 86570.58, 86569.65, 86569.65]    
@@ -180,7 +180,7 @@ class RiverUnitTests(unittest.TestCase):
         args = {rdt.CHAINAGE: 6.0, rdt.ELEVATION: 37.2}
         river.addRow(args, index=1)
         row = river.row_data['main'].rowAsList(1)
-        testrow = [6.0, 37.2, 0.039, False, 1.0, False, 0.0, 0.0, False, '~']
+        testrow = [6.0, 37.2, 0.039, False, 1.0, '', 0.0, 0.0, '', '~']
         self.assertListEqual(testrow, row)
         
         # Add with all args

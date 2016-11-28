@@ -64,15 +64,15 @@ class InitialConditionsUnit (AUnit):
 #         self.has_ics = False
         
         dobjs = [
-            do.StringData(0, rdt.LABEL, format_str='{:<12}'),
-            do.StringData(1, rdt.QMARK, format_str='{:>2}', default='y'),
-            do.FloatData(2, rdt.FLOW, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(3, rdt.STAGE, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(4, rdt.FROUDE_NO, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(5, rdt.VELOCITY, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(6, rdt.UMODE, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(7, rdt.USTATE, format_str='{:>10}', default=0.000, no_of_dps=3),
-            do.FloatData(8, rdt.ELEVATION, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.StringData(rdt.LABEL, format_str='{:<12}'),
+            do.StringData(rdt.QMARK, format_str='{:>2}', default='y'),
+            do.FloatData(rdt.FLOW, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.STAGE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.FROUDE_NO, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.VELOCITY, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.UMODE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.USTATE, format_str='{:>10}', default=0.000, no_of_dps=3),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', default=0.000, no_of_dps=3),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
      

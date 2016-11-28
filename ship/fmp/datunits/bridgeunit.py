@@ -82,18 +82,18 @@ class BridgeUnit (AUnit):
         by the constructor in cases anyone need to override them.
         """
         main_dobjs = [
-            do.FloatData(0, rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
-            do.FloatData(1, rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(2, rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.039),
-            do.ConstantData(3, rdt.EMBANKMENT, ('L', 'R'), format_str='{:>11}', default=''),
+            do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
+            do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.039),
+            do.ConstantData(rdt.EMBANKMENT, ('', 'L', 'R'), format_str='{:>11}', default=''),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(main_dobjs) 
         
         open_dobjs = [
-            do.FloatData(0, rdt.OPEN_START, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
-            do.FloatData(1, rdt.OPEN_END, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
-            do.FloatData(2, rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
-            do.FloatData(3, rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
+            do.FloatData(rdt.OPEN_START, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
+            do.FloatData(rdt.OPEN_END, format_str='{:>10}', no_of_dps=3, update_callback=self.checkOpening),
+            do.FloatData(rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
+            do.FloatData(rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
         ]
         self.row_data['opening'] = RowDataCollection.bulkInitCollection(open_dobjs) 
         
@@ -467,12 +467,12 @@ class BridgeUnitUsbpr (BridgeUnit):
 
         # Add an culvert RowCollection to self.row_data dict
         dobjs = [
-            do.FloatData(0, rdt.INVERT, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(1, rdt.SOFFIT, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(2, rdt.AREA, format_str='{:>10}', no_of_dps=3, default=0.0),
-            do.FloatData(3, rdt.CD_PART, format_str='{:>10}', no_of_dps=3, default=1.0),
-            do.FloatData(4, rdt.CD_FULL, format_str='{:>10}', no_of_dps=3, default=1.0),
-            do.FloatData(5, rdt.DROWNING, format_str='{:>10}', no_of_dps=3, default=1.0),
+            do.FloatData(rdt.INVERT, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.SOFFIT, format_str='{:>10}', no_of_dps=3),
+            do.FloatData(rdt.AREA, format_str='{:>10}', no_of_dps=3, default=0.0),
+            do.FloatData(rdt.CD_PART, format_str='{:>10}', no_of_dps=3, default=1.0),
+            do.FloatData(rdt.CD_FULL, format_str='{:>10}', no_of_dps=3, default=1.0),
+            do.FloatData(rdt.DROWNING, format_str='{:>10}', no_of_dps=3, default=1.0),
         ]
         self.row_data['culvert'] = RowDataCollection.bulkInitCollection(dobjs) 
 
