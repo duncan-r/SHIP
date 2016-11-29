@@ -208,16 +208,16 @@ def readXsFile(datafile):
         types = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
         
         # Do the first entry separately because it has a different format string
-        row_collection.initCollection(do.StringData(0, 0, format_str='{0}', default=''))
+        row_collection.addToCollection(do.StringData(0, format_str='{0}', default=''))
         for i, t in enumerate(types, 1):
             if t == 0:
-                row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
+                row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
             else:
-                row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', no_of_dps=3, default=0.00))
+                row_collection.addToCollection(do.FloatData(i, format_str=', {0}', no_of_dps=3, default=0.00))
 
         # Add a couple of extra rows to the row_collection for tracking the
         # data in the file. 
-        row_collection.initCollection(do.IntData(15, 'row_no'))
+        row_collection.addToCollection(do.IntData('row_no'))
         
         return row_collection
 
@@ -350,12 +350,12 @@ def readBcFile(datafile, args_dict={}):
     row_collection = RowDataCollection()
     for i, val in enumerate(bc_enum.ITERABLE):
         if i == 0:
-            row_collection.initCollection(do.StringData(i, i, format_str='{0}', default=''))
+            row_collection.addToCollection(do.StringData(i, format_str='{0}', default=''))
         else:
-            row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
+            row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
     
-    row_collection.initCollection(do.StringData(0, 'actual_header', format_str=', {0}', default=''))
-    row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
+    row_collection.addToCollection(do.StringData('actual_header', format_str=', {0}', default=''), index=0)
+    row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
         
     path = datafile.absolutePath()
     required_headers = ['Name', 'Source']
@@ -547,18 +547,18 @@ def readMatCsvFile(datafile, args_dict={}):
     types = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0]
     
     # Do the first entry separately because it has a different format string
-    row_collection.initCollection(do.StringData(0, 0, format_str='{0}', default=''))
+    row_collection.addToCollection(do.StringData(0, format_str='{0}', default=''))
     for i, t in enumerate(types, 1):
         if t == 0:
-            row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
+            row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
         else:
-            row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=3))
+            row_collection.addToCollection(do.FloatData(i, format_str=', {0}', default='', no_of_dps=3))
 
     # Add a couple of extra rows to the row_collection for tracking the
     # data in the file. 
-    row_collection.initCollection(do.StringData(12, 'comment', format_str='{0}', default=''))
-    row_collection.initCollection(do.StringData(13, 'actual_header', format_str='{0}', default=''))
-    row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
+    row_collection.addToCollection(do.StringData('comment', format_str='{0}', default=''))
+    row_collection.addToCollection(do.StringData('actual_header', format_str='{0}', default=''))
+    row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
 
     path = datafile.absolutePath()
     try:
@@ -739,15 +739,15 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
             # First entry doesn't want to have a comma in front when formatting.
             # but all of the others do.
             row_collection = RowDataCollection()
-            row_collection.initCollection(do.FloatData(0, 0, format_str=' {0}', default='', no_of_dps=6))
+            row_collection.addToCollection(do.FloatData(0, format_str=' {0}', default='', no_of_dps=6))
             for i in range(1, len(cols)):
                 if cols[i] == True:
-                    row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=6))
+                    row_collection.addToCollection(do.FloatData(i, format_str=', {0}', default='', no_of_dps=6))
                 else:
-                    row_collection.initCollection(do.StringData(i, i, format_str=', {0}', default=''))
+                    row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
                     
-            row_collection.initCollection(do.StringData(0, 'actual_header', format_str='{0}', default=''))
-            row_collection.initCollection(do.IntData(15, 'row_no', format_str=None, default=''))
+            row_collection.addToCollection(do.StringData('actual_header', format_str='{0}', default=''), index=0)
+            row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
 
             # Stores the comments found in the file
             comment_lines = []
@@ -805,13 +805,13 @@ def readTmfFile(datafile):
     value_order = range(11)
     
     row_collection = RowDataCollection()
-    row_collection.initCollection(do.IntData(0, 0, format_str=None, default=''))
+    row_collection.addToCollection(do.IntData(0, format_str=None, default=''))
     for i in range(1, 11):
-        row_collection.initCollection(do.FloatData(i, i, format_str=', {0}', default='', no_of_dps=3))
+        row_collection.addToCollection(do.FloatData(i, format_str=', {0}', default='', no_of_dps=3))
 
     # Keep track of any comment lines and the row numbers as well
-    row_collection.initCollection(do.StringData(11, 'comment', format_str=' ! {0}', default=''))
-    row_collection.initCollection(do.IntData(12, 'row_no', format_str=None, default=''))
+    row_collection.addToCollection(do.StringData('comment', format_str=' ! {0}', default=''))
+    row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
     
     contents = []
     logger.info('Loading data file contents from disc - %s' % (path))

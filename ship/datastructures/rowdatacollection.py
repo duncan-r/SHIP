@@ -99,7 +99,7 @@ class RowDataCollection(object):
             self._collection.append(dataobject)
         else:
             try:
-                self._collection.insert(dataobject)
+                self._collection.insert(index, dataobject)
             except IndexError:
                 raise('Index %s does not exist in collection' % index)
         self._max = len(self._collection)
