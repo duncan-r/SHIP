@@ -156,13 +156,13 @@
 #         
 # 
 # 
-# class TuflowTypesTests(unittest.TestCase):
+# class TuflowFilepartTypesTests(unittest.TestCase):
 #     """
 #     """
 #     
 #     def setUp(self):
 #         """Setup what we need"""
-#         self.types = TuflowTypes()
+#         self.types = TuflowFilepartTypes()
 #         
 #     
 #     def test_find(self):

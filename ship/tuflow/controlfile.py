@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, \
-                                       TuflowVariable, ModelFile
+                                       TuflowVariable, ModelFile, UnknownPart
 from ship.utils import filetools                                       
 
     
@@ -60,10 +60,12 @@ class ControlFile(object):
         
         TuflowPart's will be returned in order.
         
+        All kwargs are passed onto fetchPartType. See there for more details.
+        
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
                 TuflowFile types will be checked.
-            no_duplicates=True(bool): If True any duplicate paths will be 
+            no_duplicates=True(bool): If True any duplicate commands will be 
                 ignored.
             se_vals(dict): containing scenario and event values to define the
                 search criteria.
@@ -78,11 +80,13 @@ class ControlFile(object):
         """Get all the ATuflowVariable types that match the criteria.
         
         TuflowPart's will be returned in order.
+
+        All kwargs are passed onto fetchPartType. See there for more details.
         
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
                 TuflowFile types will be checked.
-            no_duplicates=True(bool): If True any duplicate paths will be 
+            no_duplicates=True(bool): If True any duplicate commands will be 
                 ignored.
             se_vals(dict): containing scenario and event values to define the
                 search criteria.
@@ -99,7 +103,7 @@ class ControlFile(object):
         vars = []
         for logic in self.logic:
             if ignore_inactive and not logic.active: continue
-            if filepart_type is not None and logic.tpart_type != filepart_type:
+            if filepart_type is not None and logic.filepart_type != filepart_type:
                 continue
             vars.append(logic)
         
@@ -111,6 +115,19 @@ class ControlFile(object):
         """Get all the TuflowPart's that match the criteria.
         
         TuflowPart's will be returned in order.
+        
+        The callback_func kwarg can be used to do any other checks on a file
+        part that you need and are not included in the given arguments. It is
+        the last check that's run and will therefore only be performed on 
+        parts that have already passed all other checks. 
+        
+        **kwargs:
+            active_only(bool): if True will only return TuflowPart's that have the
+                'active' flag set to True.
+            'callback_func'(func): if given the function will be called with
+                the part after all other logic has run. It must take a list of
+                all the parts found so far and the current part (list, TuflowPart).
+                It must return a bool, stating whether to add the part to list.
         
         Args:
             instance_type(TuflowPart): class derived from TuflowPart to restrict
@@ -124,13 +141,14 @@ class ControlFile(object):
             list - of filepaths that matched.
         """
         active_only = kwargs.get('active_only', True)
+        callback = kwargs.get('callback_func', None)
         found_commands = []
         fetch_sibling = False
         vars = []
         for part in self.parts:
             if active_only and not part.active: continue
             if not isinstance(part, instance_type): continue
-            if filepart_type is not None and part.tpart_type != filepart_type:
+            if filepart_type is not None and part.filepart_type != filepart_type:
                 continue
 
             if se_vals is not None:
@@ -149,9 +167,61 @@ class ControlFile(object):
                     else:
                         fetch_sibling = False
 
-            vars.append(part)
+            if callback:
+                take = callback(vars, part)
+                if take:
+                    vars.append(part)
+            else:
+                vars.append(part)
         
         return vars
+    
+    def customPartSearch(self, callback_func, include_unknown=False):
+        """Return TuflowPart's based on the return value of callback_func.
+        
+        Get a generator containing all of the TuflowPart's in PartHolder that
+        meet the condition of callback_func.
+        
+        callback_func must accept a TuflowPart and return a tuple of: 
+        keep-status and the return value. For example::
+        
+            # This is the callback_func that we test the TuflowPart. It is
+            # defined in your script
+            def callback_func(part):
+            
+                # In this case we check for GIS parts and return a tuple of:
+                # - bool(keep-status): True if it is a GIS filepart_type 
+                # - tuple: filename and parent.model_type. This can be 
+                #       whatever you want though
+                if part.filepart_type == fpt.GIS:
+                    return True, (part.filename, part.associates.parent.model_type)
+                
+                # Any TuflowPart's that you don't want included must return
+                # a tuple of (False, None)
+                else:
+                    return False, None
+            
+            tgc = tuflow.control_files['TGC']
+            tgc.customPartSearch(callback_func)
+        
+        Args:
+            callback_func(func): a function to run for each TuflowPart in 
+                this ControlFile's PartHolder.
+            include_unknown=False(bool): If False any UnknownPart's will be
+                ignored. If set to True it is the resonsibility of the 
+                callback_func to check for this and deal with it.
+        
+        Return:
+            generator - containing the results of the search.
+        """
+        for p in self.parts:
+            if not include_unknown and isinstance(p, UnknownPart):
+                continue
+
+            take, value = callback_func(p)
+            if take:
+                yield[value]
+            
     
     def filepaths(self, filepart_type=None, absolute=False, no_duplicates=True,
                   no_blanks=True, se_vals=None, **kwargs):
@@ -179,7 +249,7 @@ class ControlFile(object):
             if active_only and not part.active: continue
             p = None
             if not isinstance(part, TuflowFile): continue
-            if filepart_type is not None and part.tpart_type != filepart_type:
+            if filepart_type is not None and part.filepart_type != filepart_type:
                 continue
             if se_vals is not None:
                 if not self.checkPartLogic(part, se_vals): continue
@@ -716,6 +786,19 @@ class PartHolder(object):
             raise ValueError('Item must be of type TuflowPart')
         self.parts[key] = value
     
+    
+    def append(self, filepart):
+        """Adds part to the end of the parts list. 
+        
+        Most of the time you probably want to use the add() method with no
+        'before' or 'after' kwarg, which will append the TuflowPart to the end
+        of it's parent contents. Otherwise you will probably mess up the 
+        ordering of the parts.
+        """
+        if not isinstance(filepart, TuflowPart):
+            raise ValueError('filepart must be TuflowPart type')
+        self.parts.append(filepart)
+
     
     def add(self, filepart, **kwargs):
         """

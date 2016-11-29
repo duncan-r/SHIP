@@ -28,6 +28,8 @@
 
 from __future__ import unicode_literals
 
+from itertools import chain
+
 from ship.tuflow.tuflowfilepart import TuflowFile, TuflowKeyValue, TuflowUserVariable, TuflowModelVariable
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
@@ -103,6 +105,86 @@ class TuflowModel(object):
         """
         for c in self.control_files.values():
             c.updateRoot(root)
+            
+    def customPartSearch(self, control_callback, tuflow_callback=None, 
+                         include_unknown=False):
+        """Return TuflowPart's based on the return value of the callbacks.
+        
+        control_callback will be used as an argument in each of 
+        self.control_files' customPartSearch() methods. The tuflow_callback
+        will be called on the combined generators returned from that method.
+        
+        See Also:
+            ControlFile.customPartSearch
+            
+        Continuing the example in the ControlFile.customPartSearch method. This
+        time the additinal tuflow_callback function is defined as well.
+        
+        callback_func must accept a TuflowPart and return a tuple of: 
+        keep-status and the return value. For example::
+        
+            # This is the callback_func that we test the TuflowPart. It is
+            # defined in your script
+            def callback_func(part):
+            
+                # In this case we check for GIS parts and return a tuple of:
+                # - bool(keep-status): True if it is a GIS filepart_type 
+                # - tuple: filename and parent.model_type. This can be 
+                #       whatever you want though
+                if part.filepart_type == fpt.GIS:
+                    return True, (part.filename, part.associates.parent.model_type)
+                
+                # Any TuflowPart's that you don't want included must return
+                # a tuple of (False, None)
+                else:
+                    return False, None
+            
+            # Here we define a function to run after the generators are returned
+            # from callback_func. In the funcion above the return type is a 
+            # tuple, so we accept that as the arg in this function, but it will
+            # be whatever you return from callback_func above.
+            # This function checks to see if there are any duplicate filename's.
+            # Note that it must return the same tuple as the other callback.
+            # i.e. keep-status, result
+            def tuflow_callback(part_tuple):
+                found = []
+                if part_tuple[0] in found:
+                    return False, None
+                else:
+                    return True, part_tuple[0] 
+            
+            # Both callback's given this time
+            results = tuflow.customPartSearch(callback, 
+                                              tuflow_callback=tuflowCallback)
+            # You can now iteratre the results
+            for r in results:
+                print (str(r))
+        
+        Args:
+            callback_func(func): a function to run for each TuflowPart in 
+                this ControlFile's PartHolder.
+            include_unknown=False(bool): If False any UnknownPart's will be
+                ignored. If set to True it is the resonsibility of the 
+                callback_func to check for this and deal with it.
+        
+        Return:
+            generator - containing the results of the search.
+        """
+        gens = []
+        for c in self.control_files.values():
+            gens.append(
+                c.customPartSearch(control_callback, include_unknown)
+            )
+        all_gens = chain(gens[0:-1])
+        for a in all_gens:
+            for val in a:
+                if tuflow_callback:
+                    take, value = tuflow_callback(val)
+                    if take:
+                        yield[value]
+                else:
+                    yield [val]
+
         
     def removeTcfModelFile(self, model_file):
         """Remove an existing ModelFile from 'TCF' and update ControlFile.
@@ -178,6 +260,18 @@ class TuflowModel(object):
         self.control_files['TCF'].parts.add(model_file, **kwargs)
     
 
+# class TuflowUtils(object):
+#     """Utility functions for dealing with TuflowModel outputs."""
+#     
+#     def __init__(self):
+#         pass
+#     
+#     @staticmethod
+#     def resultsByParent(results):
+#         """
+#         """
+        
+    
 
 class UserVariables(object):
     """Container for all user defined variables.
@@ -354,7 +448,7 @@ class UserVariables(object):
             return self.variable[key]
 
 
-class TuflowTypes(object):
+class TuflowFilepartTypes(object):
     """Contains key words from Tuflow files for lookup.
     
     This acts as a lookup table for the TuflowLoader class more than anything

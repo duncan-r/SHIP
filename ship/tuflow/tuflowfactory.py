@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 import os
 import copy
 
-from ship.tuflow.tuflowmodel import TuflowTypes
+from ship.tuflow.tuflowmodel import TuflowFilepartTypes
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.tuflow import tuflowfilepart as tuflowpart
 from ship.utils import utilfunctions as uf
@@ -22,27 +22,29 @@ class TuflowFactory(object):
     @classmethod
     def getTuflowPart(cls, line, parent, part_type=None, logic=None):
 
-        tuflow_types = TuflowTypes()
+        filepart_types = TuflowFilepartTypes()
         line = line.strip()
         upline = line.upper()
         if part_type is None:
-            found, key = tuflow_types.find(upline)
+            found, key = filepart_types.find(upline)
         else:
-            found, key = tuflow_types.find(upline, part_type)
+            found, key = filepart_types.find(upline, part_type)
             if not found:
                 raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
 
-        vars = {'tpart_type': part_type}
+#         vars = {'filepart_type': part_type}
+        vars = {}
         if logic is not None:
             vars['logic'] = logic
             
         # Don't know what to do with it
         if not found:
-            vars['tpart_type'] = fpt.UNKNOWN
+            vars['filepart_type'] = fpt.UNKNOWN
             vars['data'] = line
             return [tuflowpart.UnknownPart(parent, **vars)]
 
         key = checkMultiTypes(line, key)
+        vars['filepart_type'] = key
 
         if key == fpt.MODEL:
             parts = TuflowFactory.createModelType(line, parent, **vars)

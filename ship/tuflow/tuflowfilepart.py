@@ -92,7 +92,7 @@ class TuflowPart(object):
         self.hash = uuid.uuid4()
         self.obj_type = obj_type
         self._active = kwargs.get('active', True)
-        self.tpart_type = kwargs.get('tpart_type', None)
+        self.filepart_type = kwargs.get('filepart_type', None)
 
         self.associates = AssociatedParts(parent, notify_active=self._parentActiveChanged)
         if 'logic' in kwargs.keys() and kwargs['logic'] is not None: 

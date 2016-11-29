@@ -9,7 +9,7 @@ import uuid
 
 from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
-from ship.tuflow.tuflowmodel import TuflowModel, TuflowTypes, UserVariables
+from ship.tuflow.tuflowmodel import TuflowModel, TuflowFilepartTypes, UserVariables
 from ship.tuflow import controlfile as control
 from ship.tuflow import tuflowfilepart as tuflowpart
 from ship.utils.fileloaders.loader import ALoader
@@ -22,7 +22,7 @@ class TuflowLoader(ALoader):
     
     def __init__(self):
         ALoader.__init__(self) 
-        self.types = TuflowTypes()
+        self.types = TuflowFilepartTypes()
 
         self.user_variables = UserVariables()
 #         self.scenario_vals = {}
@@ -169,7 +169,7 @@ class TuflowLoader(ALoader):
 
         """
         for part in _load_list:
-            self._control_files[self.current_control[-1]].parts.add(part)
+            self._control_files[self.current_control[-1]].parts.append(part)
             if part.obj_type == 'model':
                 p = part.absolutePath()
                 if not part.model_type in self._control_files.keys():
@@ -179,7 +179,7 @@ class TuflowLoader(ALoader):
                 self._control_files[part.model_type].control_files.append(part)
                 self.buildControlFiles(self._load_list[p], self._file_list[p])
 
-            elif part.associates.parent.model_type == 'TCF' and part.tpart_type == fpt.EVENT_VARIABLE:
+            elif part.associates.parent.model_type == 'TCF' and part.filepart_type == fpt.EVENT_VARIABLE:
                 self._bc_event[part.command] = part.variable
         
         self.current_control.pop()
@@ -200,17 +200,7 @@ class TuflowLoader(ALoader):
         # Keep processing control files until there are none left in the queue
         while not self._file_queue.isEmpty():
             control_part = self._file_queue.dequeue()
-            # DEBUG
-#             self.scenario_vals['s'] = 'CHEESE'
-#             self.event_vals['e2'] = 'HAM'
-#             control_part.filename = 'something_~s1~_~e2~_blah'
-            # DEBUG
             cpath = control_part.absolutePath()
-#             logger.debug('cpath before resolve: ' + cpath)
-#             print ('cpath before resolve: ' + cpath)
-#             cpath = uf.getSEResolvedFilename(cpath, {'scenario': self.scenario_vals, 'event': self.event_vals})
-# #             logger.debug('cpath after resolve: ' + cpath)
-#             print ('cpath after resolve: ' + cpath)
             raw_contents = self.getFile(cpath)
             
             # If we couldn't load the file add it to the missing list
@@ -333,7 +323,7 @@ class TuflowLoader(ALoader):
         else:
             vars['command'] = command
             vars['terms'] = None
-        vars['tpart_type'] = key
+        vars['filepart_type'] = key
         return vars
 
    
@@ -357,9 +347,9 @@ class TuflowLoader(ALoader):
         This is inline with the Tuflow manual guidance.
         
         Args:
-            part(TuflowVariable): with self.tpart_type == FILEPART_TYPE.MODEL_VARIABLE.
+            part(TuflowVariable): with self.filepart_type == FILEPART_TYPE.MODEL_VARIABLE.
         """
-        if not part.tpart_type == fpt.MODEL_VARIABLE: return
+        if not part.filepart_type == fpt.MODEL_VARIABLE: return
         if 'EVENT' in part.command.upper():
             if not self.event_vals:
                 for i, e in enumerate(part.split_variable):

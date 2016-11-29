@@ -1,7 +1,7 @@
 """
     Summary:
         Example use of the fmp package to create a new empty DatCollection 
-        object and add some units ot it.
+        object and add some units to it.
         
         In this example the data added to the new units is hardcoded into the
         script. In reality you would probably parse it from .csv files or
@@ -154,12 +154,11 @@ def createModelExample():
     '''
     units = [
         factory.createUnit('refh', name='riv1'),
-        factory.createUnit('river', name='riv1'),
         factory.createUnit('river', name='riv2'),
-        factory.createUnit('arch', name='brg1'),
-        factory.createUnit('usbpr', name='brg1'),
         factory.createUnit('river', name='riv3'),
+        factory.createUnit('arch', name='brg1'),
         factory.createUnit('river', name='riv4'),
+        factory.createUnit('river', name='riv5'),
         factory.createUnit('htbdy', name='htbdy'),
     ]
     new_path3 = "C:/path/to/fmp/model3.dat"

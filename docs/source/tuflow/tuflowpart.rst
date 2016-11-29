@@ -28,7 +28,7 @@ These members and methods include:
    
    - **hash(uuid4)**: uuid hash code unique to every part.
    - **obj_type(str)**: subclass specific str (e.g. 'model', 'gis', 'variable', etc)
-   - **tpart_type(int)**: FILEPART_TYPE value from the tuflow.__init__.py module.
+   - **filepart_type(int)**: FILEPART_TYPE value from the tuflow.__init__.py module.
    - **active(bool)**: status flag on whether the part is currently in use or not.
      This can be set to False which will have the same effect as deleting it in
      most methods.
