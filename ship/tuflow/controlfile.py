@@ -73,7 +73,8 @@ class ControlFile(object):
         Return:
             list - of TuflowFile's that matched.
         """
-        return self.fetchPartType(TuflowFile, filepart_type, no_duplicates, se_vals)
+        return self.fetchPartType(TuflowFile, filepart_type, no_duplicates, 
+                                  se_vals, **kwargs)
     
     def variables(self, filepart_type=None, no_duplicates=True, se_vals=None,
               **kwargs):
@@ -94,7 +95,8 @@ class ControlFile(object):
         Return:
             list - of ATuflowVariable types that matched.
         """
-        return self.fetchPartType(TuflowVariable, filepart_type, no_duplicates, se_vals)
+        return self.fetchPartType(TuflowVariable, filepart_type, no_duplicates,
+                                  se_vals, **kwargs)
     
     def logics(self, filepart_type=None, se_vals=None, **kwargs):
         """
@@ -128,6 +130,9 @@ class ControlFile(object):
                 the part after all other logic has run. It must take a list of
                 all the parts found so far and the current part (list, TuflowPart).
                 It must return a bool, stating whether to add the part to list.
+            'by_parent'(bool): if True it will return a dict containing lists of
+                the parts under their parent filename and extension as a key.
+                Default is False.
         
         Args:
             instance_type(TuflowPart): class derived from TuflowPart to restrict
@@ -142,9 +147,11 @@ class ControlFile(object):
         """
         active_only = kwargs.get('active_only', True)
         callback = kwargs.get('callback_func', None)
+        by_parent = kwargs.get('by_parent', False)
         found_commands = []
         fetch_sibling = False
         vars = []
+        parents = {}
         for part in self.parts:
             if active_only and not part.active: continue
             if not isinstance(part, instance_type): continue
@@ -170,11 +177,24 @@ class ControlFile(object):
             if callback:
                 take = callback(vars, part)
                 if take:
-                    vars.append(part)
+                    if by_parent:
+                        if not part.associates.parent.filenameAndExtension() in parents.keys():
+                            parents[part.associates.parent.filenameAndExtension()] = []
+                        parents[part.associates.parent.filenameAndExtension()].append(part)
+                    else:
+                        vars.append(part)
             else:
-                vars.append(part)
+                if by_parent:
+                    if not part.associates.parent.filenameAndExtension() in parents.keys():
+                        parents[part.associates.parent.filenameAndExtension()] = []
+                    parents[part.associates.parent.filenameAndExtension()].append(part)
+                else:
+                    vars.append(part)
         
-        return vars
+        if by_parent:
+            return parents
+        else:
+            return vars
     
     def customPartSearch(self, callback_func, include_unknown=False):
         """Return TuflowPart's based on the return value of callback_func.
@@ -229,6 +249,12 @@ class ControlFile(object):
         
         Filepaths will be returned in order.
         
+        **kwargs:
+            active_only: if True only the TuflowPart's with the 'active' flag
+                set to True will be returned.
+            by_parent: if True a dict where keys are parent filename and 
+                extension will be returned. Each dict value is a list of paths.
+        
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
                 TuflowFile types will be checked.
@@ -244,7 +270,9 @@ class ControlFile(object):
             list - of filepaths that matched.
         """
         active_only = kwargs.get('active_only', True)
+        by_parent = kwargs.get('by_parent', False)
         paths = []
+        parents = {}
         for part in self.parts:
             if active_only and not part.active: continue
             p = None
@@ -260,9 +288,19 @@ class ControlFile(object):
             
             if no_duplicates and p in paths: continue
             if no_blanks and p.strip() == '': continue
-            if p is not None: paths.append(p)
+            if p is not None: 
+                if by_parent:
+                    if not part.associates.parent.filenameAndExtension() in parents.keys():
+                        parents[part.associates.parent.filenameAndExtension()] = []
+                    parents[part.associates.parent.filenameAndExtension()].append(p)
+                else:
+                    paths.append(p)
 
-        return paths
+        if by_parent:
+            return parents
+        else:
+            return paths
+
     
     def checkPartLogic(self, part, se_vals):
         """Check that the part or it's parents are inside the current logic terms.
