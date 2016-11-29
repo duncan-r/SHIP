@@ -165,6 +165,8 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
 
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+
 <span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">TuflowFile</span><span class="p">,</span> <span class="n">TuflowKeyValue</span><span class="p">,</span> <span class="n">TuflowUserVariable</span><span class="p">,</span> <span class="n">TuflowModelVariable</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
@@ -240,6 +242,86 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">c</span><span class="o">.</span><span class="n">updateRoot</span><span class="p">(</span><span class="n">root</span><span class="p">)</span></div>
+            
+<div class="viewcode-block" id="TuflowModel.customPartSearch"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.customPartSearch">[docs]</a>    <span class="k">def</span> <span class="nf">customPartSearch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_callback</span><span class="p">,</span> <span class="n">tuflow_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                         <span class="n">include_unknown</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return TuflowPart&#39;s based on the return value of the callbacks.</span>
+<span class="sd">        </span>
+<span class="sd">        control_callback will be used as an argument in each of </span>
+<span class="sd">        self.control_files&#39; customPartSearch() methods. The tuflow_callback</span>
+<span class="sd">        will be called on the combined generators returned from that method.</span>
+<span class="sd">        </span>
+<span class="sd">        See Also:</span>
+<span class="sd">            ControlFile.customPartSearch</span>
+<span class="sd">            </span>
+<span class="sd">        Continuing the example in the ControlFile.customPartSearch method. This</span>
+<span class="sd">        time the additinal tuflow_callback function is defined as well.</span>
+<span class="sd">        </span>
+<span class="sd">        callback_func must accept a TuflowPart and return a tuple of: </span>
+<span class="sd">        keep-status and the return value. For example::</span>
+<span class="sd">        </span>
+<span class="sd">            # This is the callback_func that we test the TuflowPart. It is</span>
+<span class="sd">            # defined in your script</span>
+<span class="sd">            def callback_func(part):</span>
+<span class="sd">            </span>
+<span class="sd">                # In this case we check for GIS parts and return a tuple of:</span>
+<span class="sd">                # - bool(keep-status): True if it is a GIS filepart_type </span>
+<span class="sd">                # - tuple: filename and parent.model_type. This can be </span>
+<span class="sd">                #       whatever you want though</span>
+<span class="sd">                if part.filepart_type == fpt.GIS:</span>
+<span class="sd">                    return True, (part.filename, part.associates.parent.model_type)</span>
+<span class="sd">                </span>
+<span class="sd">                # Any TuflowPart&#39;s that you don&#39;t want included must return</span>
+<span class="sd">                # a tuple of (False, None)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return False, None</span>
+<span class="sd">            </span>
+<span class="sd">            # Here we define a function to run after the generators are returned</span>
+<span class="sd">            # from callback_func. In the funcion above the return type is a </span>
+<span class="sd">            # tuple, so we accept that as the arg in this function, but it will</span>
+<span class="sd">            # be whatever you return from callback_func above.</span>
+<span class="sd">            # This function checks to see if there are any duplicate filename&#39;s.</span>
+<span class="sd">            # Note that it must return the same tuple as the other callback.</span>
+<span class="sd">            # i.e. keep-status, result</span>
+<span class="sd">            def tuflow_callback(part_tuple):</span>
+<span class="sd">                found = []</span>
+<span class="sd">                if part_tuple[0] in found:</span>
+<span class="sd">                    return False, None</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return True, part_tuple[0] </span>
+<span class="sd">            </span>
+<span class="sd">            # Both callback&#39;s given this time</span>
+<span class="sd">            results = tuflow.customPartSearch(callback, </span>
+<span class="sd">                                              tuflow_callback=tuflowCallback)</span>
+<span class="sd">            # You can now iteratre the results</span>
+<span class="sd">            for r in results:</span>
+<span class="sd">                print (str(r))</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            callback_func(func): a function to run for each TuflowPart in </span>
+<span class="sd">                this ControlFile&#39;s PartHolder.</span>
+<span class="sd">            include_unknown=False(bool): If False any UnknownPart&#39;s will be</span>
+<span class="sd">                ignored. If set to True it is the resonsibility of the </span>
+<span class="sd">                callback_func to check for this and deal with it.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            generator - containing the results of the search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">gens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">customPartSearch</span><span class="p">(</span><span class="n">control_callback</span><span class="p">,</span> <span class="n">include_unknown</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">all_gens</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">gens</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_gens</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tuflow_callback</span><span class="p">:</span>
+                    <span class="n">take</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">tuflow_callback</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">take</span><span class="p">:</span>
+                        <span class="k">yield</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="p">[</span><span class="n">val</span><span class="p">]</span></div>
+
         
 <div class="viewcode-block" id="TuflowModel.removeTcfModelFile"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowModel.removeTcfModelFile">[docs]</a>    <span class="k">def</span> <span class="nf">removeTcfModelFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_file</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove an existing ModelFile from &#39;TCF&#39; and update ControlFile.</span>
@@ -315,6 +397,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model_file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
     
 
+<span class="c1"># class TuflowUtils(object):</span>
+<span class="c1">#     &quot;&quot;&quot;Utility functions for dealing with TuflowModel outputs.&quot;&quot;&quot;</span>
+<span class="c1">#     </span>
+<span class="c1">#     def __init__(self):</span>
+<span class="c1">#         pass</span>
+<span class="c1">#     </span>
+<span class="c1">#     @staticmethod</span>
+<span class="c1">#     def resultsByParent(results):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+        
+    
 
 <div class="viewcode-block" id="UserVariables"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.UserVariables">[docs]</a><span class="k">class</span> <span class="nc">UserVariables</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Container for all user defined variables.</span>
@@ -491,7 +585,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="TuflowTypes"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowTypes">[docs]</a><span class="k">class</span> <span class="nc">TuflowTypes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TuflowFilepartTypes"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowFilepartTypes">[docs]</a><span class="k">class</span> <span class="nc">TuflowFilepartTypes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Contains key words from Tuflow files for lookup.</span>
 <span class="sd">    </span>
 <span class="sd">    This acts as a lookup table for the TuflowLoader class more than anything</span>
@@ -549,7 +643,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MODEL SCENARIOS&#39;</span><span class="p">,</span> <span class="s1">&#39;MODEL EVENTS&#39;</span><span class="p">,]</span>
         
         
-<div class="viewcode-block" id="TuflowTypes.find"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowTypes.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">find_val</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="TuflowFilepartTypes.find"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowmodel.TuflowFilepartTypes.find">[docs]</a>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">find_val</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks if the given value is known or not.</span>
 <span class="sd">        </span>
 <span class="sd">        The word to look for doesn&#39;t have to be an exact match to the given</span>

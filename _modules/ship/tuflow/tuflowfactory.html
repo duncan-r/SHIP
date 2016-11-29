@@ -144,7 +144,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowmodel</span> <span class="k">import</span> <span class="n">TuflowTypes</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowmodel</span> <span class="k">import</span> <span class="n">TuflowFilepartTypes</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">tuflowfilepart</span> <span class="k">as</span> <span class="n">tuflowpart</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
@@ -159,27 +159,29 @@
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="TuflowFactory.getTuflowPart"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.tuflowfactory.TuflowFactory.getTuflowPart">[docs]</a>    <span class="k">def</span> <span class="nf">getTuflowPart</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">part_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="n">tuflow_types</span> <span class="o">=</span> <span class="n">TuflowTypes</span><span class="p">()</span>
+        <span class="n">filepart_types</span> <span class="o">=</span> <span class="n">TuflowFilepartTypes</span><span class="p">()</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="n">upline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">part_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">tuflow_types</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">upline</span><span class="p">)</span>
+            <span class="n">found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">filepart_types</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">upline</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">tuflow_types</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">upline</span><span class="p">,</span> <span class="n">part_type</span><span class="p">)</span>
+            <span class="n">found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">filepart_types</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">upline</span><span class="p">,</span> <span class="n">part_type</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Provided part type (</span><span class="si">%s</span><span class="s2">) doesn&#39;t match line (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part_type</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
 
-        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tpart_type&#39;</span><span class="p">:</span> <span class="n">part_type</span><span class="p">}</span>
+<span class="c1">#         vars = {&#39;filepart_type&#39;: part_type}</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">logic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logic</span>
             
         <span class="c1"># Don&#39;t know what to do with it</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
-            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;tpart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fpt</span><span class="o">.</span><span class="n">UNKNOWN</span>
+            <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;filepart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fpt</span><span class="o">.</span><span class="n">UNKNOWN</span>
             <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">tuflowpart</span><span class="o">.</span><span class="n">UnknownPart</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)]</span>
 
         <span class="n">key</span> <span class="o">=</span> <span class="n">checkMultiTypes</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;filepart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL</span><span class="p">:</span>
             <span class="n">parts</span> <span class="o">=</span> <span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createModelType</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>

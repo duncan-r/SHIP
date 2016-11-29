@@ -146,7 +146,7 @@
 
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">FILEPART_TYPES</span> <span class="k">as</span> <span class="n">fpt</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
-<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowmodel</span> <span class="k">import</span> <span class="n">TuflowModel</span><span class="p">,</span> <span class="n">TuflowTypes</span><span class="p">,</span> <span class="n">UserVariables</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowmodel</span> <span class="k">import</span> <span class="n">TuflowModel</span><span class="p">,</span> <span class="n">TuflowFilepartTypes</span><span class="p">,</span> <span class="n">UserVariables</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">controlfile</span> <span class="k">as</span> <span class="n">control</span>
 <span class="kn">from</span> <span class="nn">ship.tuflow</span> <span class="k">import</span> <span class="n">tuflowfilepart</span> <span class="k">as</span> <span class="n">tuflowpart</span>
 <span class="kn">from</span> <span class="nn">ship.utils.fileloaders.loader</span> <span class="k">import</span> <span class="n">ALoader</span>
@@ -159,7 +159,7 @@
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">ALoader</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">TuflowTypes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="n">TuflowFilepartTypes</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="n">UserVariables</span><span class="p">()</span>
 <span class="c1">#         self.scenario_vals = {}</span>
@@ -306,7 +306,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_load_list</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">obj_type</span> <span class="o">==</span> <span class="s1">&#39;model&#39;</span><span class="p">:</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">model_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -316,7 +316,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">control_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">buildControlFiles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_list</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_list</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
 
-            <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;TCF&#39;</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_VARIABLE</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">model_type</span> <span class="o">==</span> <span class="s1">&#39;TCF&#39;</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">EVENT_VARIABLE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_bc_event</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">variable</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div>
@@ -337,17 +337,7 @@
         <span class="c1"># Keep processing control files until there are none left in the queue</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
             <span class="n">control_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">dequeue</span><span class="p">()</span>
-            <span class="c1"># DEBUG</span>
-<span class="c1">#             self.scenario_vals[&#39;s&#39;] = &#39;CHEESE&#39;</span>
-<span class="c1">#             self.event_vals[&#39;e2&#39;] = &#39;HAM&#39;</span>
-<span class="c1">#             control_part.filename = &#39;something_~s1~_~e2~_blah&#39;</span>
-            <span class="c1"># DEBUG</span>
             <span class="n">cpath</span> <span class="o">=</span> <span class="n">control_part</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
-<span class="c1">#             logger.debug(&#39;cpath before resolve: &#39; + cpath)</span>
-<span class="c1">#             print (&#39;cpath before resolve: &#39; + cpath)</span>
-<span class="c1">#             cpath = uf.getSEResolvedFilename(cpath, {&#39;scenario&#39;: self.scenario_vals, &#39;event&#39;: self.event_vals})</span>
-<span class="c1"># #             logger.debug(&#39;cpath after resolve: &#39; + cpath)</span>
-<span class="c1">#             print (&#39;cpath after resolve: &#39; + cpath)</span>
             <span class="n">raw_contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getFile</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
             
             <span class="c1"># If we couldn&#39;t load the file add it to the missing list</span>
@@ -470,7 +460,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;command&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">command</span>
             <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;terms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;tpart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;filepart_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
         <span class="k">return</span> <span class="nb">vars</span></div>
 
    
@@ -494,9 +484,9 @@
 <span class="sd">        This is inline with the Tuflow manual guidance.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            part(TuflowVariable): with self.tpart_type == FILEPART_TYPE.MODEL_VARIABLE.</span>
+<span class="sd">            part(TuflowVariable): with self.filepart_type == FILEPART_TYPE.MODEL_VARIABLE.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">MODEL_VARIABLE</span><span class="p">:</span> <span class="k">return</span>
         <span class="k">if</span> <span class="s1">&#39;EVENT&#39;</span> <span class="ow">in</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_vals</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">split_variable</span><span class="p">):</span>

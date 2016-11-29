@@ -176,7 +176,7 @@
 <span class="sd">&quot;&quot;&quot;logging references with a __name__ set to this module.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">TuflowPart</span><span class="p">,</span> <span class="n">TuflowFile</span><span class="p">,</span> <span class="n">TuflowLogic</span><span class="p">,</span> \
-                                       <span class="n">TuflowVariable</span><span class="p">,</span> <span class="n">ModelFile</span>
+                                       <span class="n">TuflowVariable</span><span class="p">,</span> <span class="n">ModelFile</span><span class="p">,</span> <span class="n">UnknownPart</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span>                                       
 
     
@@ -197,10 +197,12 @@
 <span class="sd">        </span>
 <span class="sd">        TuflowPart&#39;s will be returned in order.</span>
 <span class="sd">        </span>
+<span class="sd">        All kwargs are passed onto fetchPartType. See there for more details.</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            filepart_type=None: the FILEPART_TYPES value to check. If None all</span>
 <span class="sd">                TuflowFile types will be checked.</span>
-<span class="sd">            no_duplicates=True(bool): If True any duplicate paths will be </span>
+<span class="sd">            no_duplicates=True(bool): If True any duplicate commands will be </span>
 <span class="sd">                ignored.</span>
 <span class="sd">            se_vals(dict): containing scenario and event values to define the</span>
 <span class="sd">                search criteria.</span>
@@ -215,11 +217,13 @@
         <span class="sd">&quot;&quot;&quot;Get all the ATuflowVariable types that match the criteria.</span>
 <span class="sd">        </span>
 <span class="sd">        TuflowPart&#39;s will be returned in order.</span>
+
+<span class="sd">        All kwargs are passed onto fetchPartType. See there for more details.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            filepart_type=None: the FILEPART_TYPES value to check. If None all</span>
 <span class="sd">                TuflowFile types will be checked.</span>
-<span class="sd">            no_duplicates=True(bool): If True any duplicate paths will be </span>
+<span class="sd">            no_duplicates=True(bool): If True any duplicate commands will be </span>
 <span class="sd">                ignored.</span>
 <span class="sd">            se_vals(dict): containing scenario and event values to define the</span>
 <span class="sd">                search criteria.</span>
@@ -236,7 +240,7 @@
         <span class="nb">vars</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">logic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logic</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ignore_inactive</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">logic</span><span class="o">.</span><span class="n">active</span><span class="p">:</span> <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logic</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logic</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">logic</span><span class="p">)</span>
         
@@ -248,6 +252,19 @@
         <span class="sd">&quot;&quot;&quot;Get all the TuflowPart&#39;s that match the criteria.</span>
 <span class="sd">        </span>
 <span class="sd">        TuflowPart&#39;s will be returned in order.</span>
+<span class="sd">        </span>
+<span class="sd">        The callback_func kwarg can be used to do any other checks on a file</span>
+<span class="sd">        part that you need and are not included in the given arguments. It is</span>
+<span class="sd">        the last check that&#39;s run and will therefore only be performed on </span>
+<span class="sd">        parts that have already passed all other checks. </span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            active_only(bool): if True will only return TuflowPart&#39;s that have the</span>
+<span class="sd">                &#39;active&#39; flag set to True.</span>
+<span class="sd">            &#39;callback_func&#39;(func): if given the function will be called with</span>
+<span class="sd">                the part after all other logic has run. It must take a list of</span>
+<span class="sd">                all the parts found so far and the current part (list, TuflowPart).</span>
+<span class="sd">                It must return a bool, stating whether to add the part to list.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            instance_type(TuflowPart): class derived from TuflowPart to restrict</span>
@@ -261,13 +278,14 @@
 <span class="sd">            list - of filepaths that matched.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">active_only</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;active_only&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;callback_func&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">found_commands</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">fetch_sibling</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="nb">vars</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">active_only</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">active</span><span class="p">:</span> <span class="k">continue</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">instance_type</span><span class="p">):</span> <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">se_vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -286,15 +304,73 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">fetch_sibling</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">callback</span><span class="p">:</span>
+                <span class="n">take</span> <span class="o">=</span> <span class="n">callback</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">take</span><span class="p">:</span>
+                    <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="nb">vars</span></div>
+    
+<div class="viewcode-block" id="ControlFile.customPartSearch"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.controlfile.ControlFile.customPartSearch">[docs]</a>    <span class="k">def</span> <span class="nf">customPartSearch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback_func</span><span class="p">,</span> <span class="n">include_unknown</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return TuflowPart&#39;s based on the return value of callback_func.</span>
+<span class="sd">        </span>
+<span class="sd">        Get a generator containing all of the TuflowPart&#39;s in PartHolder that</span>
+<span class="sd">        meet the condition of callback_func.</span>
+<span class="sd">        </span>
+<span class="sd">        callback_func must accept a TuflowPart and return a tuple of: </span>
+<span class="sd">        keep-status and the return value. For example::</span>
+<span class="sd">        </span>
+<span class="sd">            # This is the callback_func that we test the TuflowPart. It is</span>
+<span class="sd">            # defined in your script</span>
+<span class="sd">            def callback_func(part):</span>
+<span class="sd">            </span>
+<span class="sd">                # In this case we check for GIS parts and return a tuple of:</span>
+<span class="sd">                # - bool(keep-status): True if it is a GIS filepart_type </span>
+<span class="sd">                # - tuple: filename and parent.model_type. This can be </span>
+<span class="sd">                #       whatever you want though</span>
+<span class="sd">                if part.filepart_type == fpt.GIS:</span>
+<span class="sd">                    return True, (part.filename, part.associates.parent.model_type)</span>
+<span class="sd">                </span>
+<span class="sd">                # Any TuflowPart&#39;s that you don&#39;t want included must return</span>
+<span class="sd">                # a tuple of (False, None)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return False, None</span>
+<span class="sd">            </span>
+<span class="sd">            tgc = tuflow.control_files[&#39;TGC&#39;]</span>
+<span class="sd">            tgc.customPartSearch(callback_func)</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            callback_func(func): a function to run for each TuflowPart in </span>
+<span class="sd">                this ControlFile&#39;s PartHolder.</span>
+<span class="sd">            include_unknown=False(bool): If False any UnknownPart&#39;s will be</span>
+<span class="sd">                ignored. If set to True it is the resonsibility of the </span>
+<span class="sd">                callback_func to check for this and deal with it.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            generator - containing the results of the search.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">include_unknown</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">UnknownPart</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">take</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">callback_func</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">take</span><span class="p">:</span>
+                <span class="k">yield</span><span class="p">[</span><span class="n">value</span><span class="p">]</span></div>
+            
     
 <div class="viewcode-block" id="ControlFile.filepaths"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.controlfile.ControlFile.filepaths">[docs]</a>    <span class="k">def</span> <span class="nf">filepaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepart_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                   <span class="n">no_blanks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">se_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get all the TuflowFile filepaths that match the criteria.</span>
 <span class="sd">        </span>
 <span class="sd">        Filepaths will be returned in order.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            active_only: if True only the TuflowPart&#39;s with the &#39;active&#39; flag</span>
+<span class="sd">                set to True will be returned.</span>
+<span class="sd">            by_parent: if True a dict where keys are parent filename and </span>
+<span class="sd">                extension will be returned. Each dict value is a list of paths.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            filepart_type=None: the FILEPART_TYPES value to check. If None all</span>
@@ -311,12 +387,14 @@
 <span class="sd">            list - of filepaths that matched.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">active_only</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;active_only&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">by_parent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;by_parent&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">active_only</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">active</span><span class="p">:</span> <span class="k">continue</span>
             <span class="n">p</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">TuflowFile</span><span class="p">):</span> <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">tpart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filepart_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">!=</span> <span class="n">filepart_type</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">se_vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkPartLogic</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">):</span> <span class="k">continue</span>
@@ -327,9 +405,19 @@
             
             <span class="k">if</span> <span class="n">no_duplicates</span> <span class="ow">and</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span> <span class="k">continue</span>
             <span class="k">if</span> <span class="n">no_blanks</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="k">if</span> <span class="n">by_parent</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">()</span> <span class="ow">in</span> <span class="n">parents</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">parents</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">()]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">parents</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">filenameAndExtension</span><span class="p">()]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">paths</span></div>
+        <span class="k">if</span> <span class="n">by_parent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parents</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">paths</span></div>
+
     
 <div class="viewcode-block" id="ControlFile.checkPartLogic"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.controlfile.ControlFile.checkPartLogic">[docs]</a>    <span class="k">def</span> <span class="nf">checkPartLogic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">,</span> <span class="n">se_vals</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check that the part or it&#39;s parents are inside the current logic terms.</span>
@@ -853,6 +941,19 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Item must be of type TuflowPart&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     
+    
+<div class="viewcode-block" id="PartHolder.append"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.controlfile.PartHolder.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds part to the end of the parts list. </span>
+<span class="sd">        </span>
+<span class="sd">        Most of the time you probably want to use the add() method with no</span>
+<span class="sd">        &#39;before&#39; or &#39;after&#39; kwarg, which will append the TuflowPart to the end</span>
+<span class="sd">        of it&#39;s parent contents. Otherwise you will probably mess up the </span>
+<span class="sd">        ordering of the parts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepart</span><span class="p">,</span> <span class="n">TuflowPart</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;filepart must be TuflowPart type&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filepart</span><span class="p">)</span></div>
+
     
 <div class="viewcode-block" id="PartHolder.add"><a class="viewcode-back" href="../../../ship.tuflow.html#ship.tuflow.controlfile.PartHolder.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepart</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

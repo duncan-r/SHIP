@@ -390,10 +390,74 @@ provided. All keys are X_parts, X_logic, X_cfile where &#8216;X&#8217; is either
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.tuflow.controlfile.ControlFile.customPartSearch">
+<code class="descname">customPartSearch</code><span class="sig-paren">(</span><em>callback_func</em>, <em>include_unknown=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.customPartSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.customPartSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return TuflowPart&#8217;s based on the return value of callback_func.</p>
+<p>Get a generator containing all of the TuflowPart&#8217;s in PartHolder that
+meet the condition of callback_func.</p>
+<p>callback_func must accept a TuflowPart and return a tuple of:
+keep-status and the return value. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># This is the callback_func that we test the TuflowPart. It is</span>
+<span class="c1"># defined in your script</span>
+<span class="k">def</span> <span class="nf">callback_func</span><span class="p">(</span><span class="n">part</span><span class="p">):</span>
+
+    <span class="c1"># In this case we check for GIS parts and return a tuple of:</span>
+    <span class="c1"># - bool(keep-status): True if it is a GIS filepart_type</span>
+    <span class="c1"># - tuple: filename and parent.model_type. This can be</span>
+    <span class="c1">#       whatever you want though</span>
+    <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
+
+    <span class="c1"># Any TuflowPart&#39;s that you don&#39;t want included must return</span>
+    <span class="c1"># a tuple of (False, None)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">customPartSearch</span><span class="p">(</span><span class="n">callback_func</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>callback_func</strong> (<em>func</em>) &#8211; a function to run for each TuflowPart in
+this ControlFile&#8217;s PartHolder.</li>
+<li><strong>include_unknown=False</strong> (<em>bool</em>) &#8211; If False any UnknownPart&#8217;s will be
+ignored. If set to True it is the resonsibility of the
+callback_func to check for this and deal with it.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">generator - containing the results of the search.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.tuflow.controlfile.ControlFile.fetchPartType">
 <code class="descname">fetchPartType</code><span class="sig-paren">(</span><em>instance_type</em>, <em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.fetchPartType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.fetchPartType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the TuflowPart&#8217;s that match the criteria.</p>
 <p>TuflowPart&#8217;s will be returned in order.</p>
+<p>The callback_func kwarg can be used to do any other checks on a file
+part that you need and are not included in the given arguments. It is
+the last check that&#8217;s run and will therefore only be performed on
+parts that have already passed all other checks.</p>
+<dl class="docutils">
+<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>active_only(bool): if True will only return TuflowPart&#8217;s that have the</dt>
+<dd>&#8216;active&#8217; flag set to True.</dd>
+<dt>&#8216;callback_func&#8217;(func): if given the function will be called with</dt>
+<dd>the part after all other logic has run. It must take a list of
+all the parts found so far and the current part (list, TuflowPart).
+It must return a bool, stating whether to add the part to list.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -420,6 +484,16 @@ search criteria.</li>
 <code class="descname">filepaths</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>absolute=False</em>, <em>no_duplicates=True</em>, <em>no_blanks=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.filepaths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.filepaths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the TuflowFile filepaths that match the criteria.</p>
 <p>Filepaths will be returned in order.</p>
+<dl class="docutils">
+<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>active_only: if True only the TuflowPart&#8217;s with the &#8216;active&#8217; flag</dt>
+<dd>set to True will be returned.</dd>
+<dt>by_parent: if True a dict where keys are parent filename and</dt>
+<dd>extension will be returned. Each dict value is a list of paths.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -449,6 +523,7 @@ search criteria.</li>
 <code class="descname">files</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the TuflowFile types that match the criteria.</p>
 <p>TuflowPart&#8217;s will be returned in order.</p>
+<p>All kwargs are passed onto fetchPartType. See there for more details.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -456,7 +531,7 @@ search criteria.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
 TuflowFile types will be checked.</li>
-<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
+<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate commands will be
 ignored.</li>
 <li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
 search criteria.</li>
@@ -475,7 +550,7 @@ search criteria.</li>
 <code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the control files with contents formatted for writing to file.</p>
 <dl class="docutils">
-<dt><a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs:</dt>
+<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>active_only=True(bool): if True only the parts with &#8216;active&#8217; status</dt>
 <dd>set to True will be included.</dd>
@@ -580,6 +655,7 @@ exist it will raise a ValueError.</li>
 <code class="descname">variables</code><span class="sig-paren">(</span><em>filepart_type=None</em>, <em>no_duplicates=True</em>, <em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.variables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all the ATuflowVariable types that match the criteria.</p>
 <p>TuflowPart&#8217;s will be returned in order.</p>
+<p>All kwargs are passed onto fetchPartType. See there for more details.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -587,7 +663,7 @@ exist it will raise a ValueError.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
 TuflowFile types will be checked.</li>
-<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
+<li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate commands will be
 ignored.</li>
 <li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
 search criteria.</li>
@@ -608,7 +684,7 @@ search criteria.</li>
 <p>Calls the getPrintableContents function and then writes the returned
 contents to file.</p>
 <dl class="docutils">
-<dt><a href="#id11"><span class="problematic" id="id12">**</span></a>kwargs:</dt>
+<dt><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>active_only=True(bool): if True only the parts with &#8216;active&#8217; status</dt>
 <dd>set to True will be included.</dd>
@@ -664,6 +740,16 @@ file already exists.</td>
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.tuflow.controlfile.PartHolder.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>filepart</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds part to the end of the parts list.</p>
+<p>Most of the time you probably want to use the add() method with no
+&#8216;before&#8217; or &#8216;after&#8217; kwarg, which will append the TuflowPart to the end
+of it&#8217;s parent contents. Otherwise you will probably mess up the
+ordering of the parts.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.tuflow.controlfile.PartHolder.index">
 <code class="descname">index</code><span class="sig-paren">(</span><em>part</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#PartHolder.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.PartHolder.index" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -699,7 +785,7 @@ file already exists.</td>
 <code class="descname">addControlFile</code><span class="sig-paren">(</span><em>model_file</em>, <em>control_file</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#TcfControlFile.addControlFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.TcfControlFile.addControlFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the contents of a new ControlFile to this ControlFile.</p>
 <dl class="docutils">
-<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
+<dt><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>&#8216;after&#8217;: ModelFile to place the new ModelFile (model_file) after</dt>
 <dd>in terms of the ordering of the contents.</dd>
@@ -804,7 +890,7 @@ exist it will raise a ValueError.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.controlfile.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A89D10&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CDCA50&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -999,7 +1085,7 @@ was already correct.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06DB5E90&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1241,7 +1327,7 @@ there are others?</p>
 <dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
 <dl class="attribute">
 <dt id="ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE">
-<code class="descname">RESULT_TYPE</code><em class="property"> = {'log': 'LOG', 'check': 'WRITE CHECK FILE', 'output': 'OUTPUT FOLDER'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
+<code class="descname">RESULT_TYPE</code><em class="property"> = {'log': 'LOG', 'output': 'OUTPUT FOLDER', 'check': 'WRITE CHECK FILE'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1342,7 +1428,7 @@ before calling absolutePath of the PathHolder superclass.</p>
 <code class="descname">addPart</code><span class="sig-paren">(</span><em>part</em>, <em>group=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowLogic.addPart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowLogic.addPart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new TuflowPart.</p>
 <dl class="docutils">
-<dt><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs:</dt>
+<dt><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs:</dt>
 <dd><dl class="first last docutils">
 <dt>skip_callback=False(bool): if true it won&#8217;t call the callback</dt>
 <dd>function in the ControlFile. Basically don&#8217;t use this.</dd>
@@ -1787,7 +1873,7 @@ dict of current variables and update the value if found.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfilepart.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A8FD30&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CFB810&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1811,6 +1897,55 @@ order of the files in the model and key words for reading in the files.</p>
 <p>TODO:</p>
 <p>Updates:</p>
 <dl class="class">
+<dt id="ship.tuflow.tuflowmodel.TuflowFilepartTypes">
+<em class="property">class </em><code class="descname">TuflowFilepartTypes</code><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowFilepartTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowFilepartTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains key words from Tuflow files for lookup.</p>
+<p>This acts as a lookup table for the TuflowLoader class more than anything
+else. It is kept here as that seems to be most sensible.</p>
+<p>Contains methods for identifying whether a command given to it is known
+to the library and what type it is. i.e. what UNIT_CATEGORY it falls into.</p>
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowFilepartTypes.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>find_val</em>, <em>file_type='*'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowFilepartTypes.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowFilepartTypes.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the given value is known or not.</p>
+<p>The word to look for doesn&#8217;t have to be an exact match to the given
+value, it only has to start with it. This means that we don&#8217;t need to
+know whether it is a &#8216;command == something&#8217; or just &#8216;command something&#8217;
+(like: &#8216;Estry Control File Auto&#8217;) at this point.</p>
+<p>This helps to avoid unnecessary repitition. i.e. many files are like:
+&#8216;READ GIS&#8217; + another word. All of them are GIS type files so they all
+get dealt with in the same way.</p>
+<p>In some edge cases there are command that start the same. These are
+dealt with by secondary check to see if the next character is &#8216;=&#8217; or
+not.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>find_val</strong> (<em>str</em>) &#8211; the value attempt to find in the lookup table.</li>
+<li><strong>file_type</strong> (<em>int</em>) &#8211; Optional - reduce the lookup time by providing
+the type (catgory) to look for the value in. These are the
+constants (MODEL, GIS, etc).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>Tuple (Bool, int) True if found. Int is the class constant</dt>
+<dd><p class="first last">indicating what type the value was found under.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="ship.tuflow.tuflowmodel.TuflowModel">
 <em class="property">class </em><code class="descname">TuflowModel</code><span class="sig-paren">(</span><em>root</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -1827,7 +1962,7 @@ you use the standard ControlFile add/remove/replaceControlFile()
 methods these will be called automatically.</p>
 </div>
 <dl class="docutils">
-<dt><a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs:</dt>
+<dt><a href="#id21"><span class="problematic" id="id22">**</span></a>kwargs:</dt>
 <dd>after(TuflowPart): the part to add the new ModelFile after.
 before(TuflowPart): the part to add the new ModelFile before.</dd>
 </dl>
@@ -1866,6 +2001,79 @@ Types are: TCF, TGC, TBC, ECF, TEF.
 TCF is slightly different to the others as it contains an additional
 member variable &#8216;main_file_hash&#8217; to identify the main tcf file that
 was called to load the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowmodel.TuflowModel.customPartSearch">
+<code class="descname">customPartSearch</code><span class="sig-paren">(</span><em>control_callback</em>, <em>tuflow_callback=None</em>, <em>include_unknown=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowModel.customPartSearch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.customPartSearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return TuflowPart&#8217;s based on the return value of the callbacks.</p>
+<p>control_callback will be used as an argument in each of
+self.control_files&#8217; customPartSearch() methods. The tuflow_callback
+will be called on the combined generators returned from that method.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">ControlFile.customPartSearch</p>
+</div>
+<p>Continuing the example in the ControlFile.customPartSearch method. This
+time the additinal tuflow_callback function is defined as well.</p>
+<p>callback_func must accept a TuflowPart and return a tuple of:
+keep-status and the return value. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># This is the callback_func that we test the TuflowPart. It is</span>
+<span class="c1"># defined in your script</span>
+<span class="k">def</span> <span class="nf">callback_func</span><span class="p">(</span><span class="n">part</span><span class="p">):</span>
+
+    <span class="c1"># In this case we check for GIS parts and return a tuple of:</span>
+    <span class="c1"># - bool(keep-status): True if it is a GIS filepart_type</span>
+    <span class="c1"># - tuple: filename and parent.model_type. This can be</span>
+    <span class="c1">#       whatever you want though</span>
+    <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">filepart_type</span> <span class="o">==</span> <span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
+
+    <span class="c1"># Any TuflowPart&#39;s that you don&#39;t want included must return</span>
+    <span class="c1"># a tuple of (False, None)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+
+<span class="c1"># Here we define a function to run after the generators are returned</span>
+<span class="c1"># from callback_func. In the funcion above the return type is a</span>
+<span class="c1"># tuple, so we accept that as the arg in this function, but it will</span>
+<span class="c1"># be whatever you return from callback_func above.</span>
+<span class="c1"># This function checks to see if there are any duplicate filename&#39;s.</span>
+<span class="c1"># Note that it must return the same tuple as the other callback.</span>
+<span class="c1"># i.e. keep-status, result</span>
+<span class="k">def</span> <span class="nf">tuflow_callback</span><span class="p">(</span><span class="n">part_tuple</span><span class="p">):</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">part_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">part_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Both callback&#39;s given this time</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">customPartSearch</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span>
+                                  <span class="n">tuflow_callback</span><span class="o">=</span><span class="n">tuflowCallback</span><span class="p">)</span>
+<span class="c1"># You can now iteratre the results</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>callback_func</strong> (<em>func</em>) &#8211; a function to run for each TuflowPart in
+this ControlFile&#8217;s PartHolder.</li>
+<li><strong>include_unknown=False</strong> (<em>bool</em>) &#8211; If False any UnknownPart&#8217;s will be
+ignored. If set to True it is the resonsibility of the
+callback_func to check for this and deal with it.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">generator - containing the results of the search.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
@@ -1955,55 +2163,6 @@ which are usually referenced relative to each other.</p>
 <dt id="ship.tuflow.tuflowmodel.TuflowModel.user_variables">
 <code class="descname">user_variables</code><em class="property"> = None</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowModel.user_variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class containing the scenario/event/variable keys and values.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="ship.tuflow.tuflowmodel.TuflowTypes">
-<em class="property">class </em><code class="descname">TuflowTypes</code><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowTypes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Contains key words from Tuflow files for lookup.</p>
-<p>This acts as a lookup table for the TuflowLoader class more than anything
-else. It is kept here as that seems to be most sensible.</p>
-<p>Contains methods for identifying whether a command given to it is known
-to the library and what type it is. i.e. what UNIT_CATEGORY it falls into.</p>
-<dl class="method">
-<dt id="ship.tuflow.tuflowmodel.TuflowTypes.find">
-<code class="descname">find</code><span class="sig-paren">(</span><em>find_val</em>, <em>file_type='*'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowmodel.html#TuflowTypes.find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowmodel.TuflowTypes.find" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if the given value is known or not.</p>
-<p>The word to look for doesn&#8217;t have to be an exact match to the given
-value, it only has to start with it. This means that we don&#8217;t need to
-know whether it is a &#8216;command == something&#8217; or just &#8216;command something&#8217;
-(like: &#8216;Estry Control File Auto&#8217;) at this point.</p>
-<p>This helps to avoid unnecessary repitition. i.e. many files are like:
-&#8216;READ GIS&#8217; + another word. All of them are GIS type files so they all
-get dealt with in the same way.</p>
-<p>In some edge cases there are command that start the same. These are
-dealt with by secondary check to see if the next character is &#8216;=&#8217; or
-not.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>find_val</strong> (<em>str</em>) &#8211; the value attempt to find in the lookup table.</li>
-<li><strong>file_type</strong> (<em>int</em>) &#8211; Optional - reduce the lookup time by providing
-the type (catgory) to look for the value in. These are the
-constants (MODEL, GIS, etc).</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
-<dt>Tuple (Bool, int) True if found. Int is the class constant</dt>
-<dd><p class="first last">indicating what type the value was found under.</p>
-</dd>
-</dl>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </dd></dl>
@@ -2139,7 +2298,7 @@ the variables dict returned.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowmodel.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06922B70&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CEDC70&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
