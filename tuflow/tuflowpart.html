@@ -145,9 +145,9 @@ line when dealing with piped commands) in a tuflow control file.</p>
 currently three main types of TuflowPart:</p>
 <blockquote>
 <div><ul class="simple">
-<li>ATuflowVariable: for all types of variables.</li>
-<li>TuflowFile: for all types of filepath.</li>
-<li>TuflowLogic: for all if-else and define logic.</li>
+<li><strong>ATuflowVariable</strong>: for all types of variables.</li>
+<li><strong>TuflowFile</strong>: for all types of filepath.</li>
+<li><strong>TuflowLogic</strong>: for all if-else and define logic.</li>
 </ul>
 </div></blockquote>
 <div class="section" id="overview">
@@ -195,14 +195,14 @@ readable data and possible other files with additional data, like
 BC Database, Materials.csv and Materials.tmf.</li>
 </ul>
 </div></blockquote>
-<p>All includes variables of &#8216;command&#8217;, the section of a command line before the
-&#8216;==&#8217;, and &#8216;comment&#8217;, anything after a &#8216;!&#8217; on the line. The part of the line
+<p>They all include the variables: &#8216;command&#8217;, the section of a command line before
+the &#8216;==&#8217;, and &#8216;comment&#8217;, anything after a &#8216;!&#8217; on the line. The part of the line
 after the &#8216;==&#8217; is referred to by different variable names dending on the class.
 In general though if it&#8217;s a variable type it will have one called &#8216;variable&#8217;.
 If it is a file it will populate the PathHolder superclass with the path it
 reads in and will have the standard members and functions available in there:</p>
 <dl class="docutils">
-<dt>Main members:</dt>
+<dt>PathHolder - Main members:</dt>
 <dd><ul class="first last simple">
 <li>filename</li>
 <li>extension</li>
@@ -210,15 +210,16 @@ reads in and will have the standard members and functions available in there:</p
 <li>relative_root</li>
 </ul>
 </dd>
-<dt>Main methods:</dt>
+<dt>PathHolder - Main methods:</dt>
 <dd><ul class="first last simple">
-<li>getAbsolutePath()</li>
-<li>getFileName()</li>
-<li>getRelativePath()</li>
+<li>absolutePath()</li>
+<li>filename()</li>
+<li>relativePath()</li>
+<li>filenameAndExtension()</li>
 </ul>
 </dd>
 </dl>
-<p>See :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>pathholder-top`for more information.</p>
+<p>See <a class="reference internal" href="../utils/pathholder.html#pathholder-top"><span class="std std-ref">PathHolder</span></a> for more information.</p>
 </div>
 <div class="section" id="accessing-data">
 <h2>Accessing Data<a class="headerlink" href="#accessing-data" title="Permalink to this headline">¶</a></h2>
@@ -231,29 +232,35 @@ access the data it contains in the following way:</p>
 <span class="n">parent</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">parent</span>
 <span class="n">logic</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>
 
-<span class="n">sibnext</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span>
-<span class="n">sibprev</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span>
-<span class="c1"># Normally used for piped file commands, for example this line:</span>
+<span class="c1"># These are normally used for piped file commands, for example this line:</span>
 <span class="c1"># Read GIS Z Line == afile_R.shp | afile_L.shp | afile_P.shp</span>
 <span class="c1"># would be put into 3 separate TuflowFile&#39;s and afile_L would have</span>
 <span class="c1"># sibline_prev equal to part holding afile_R and sibling_nexxt to afile_P.shp</span>
+<span class="n">sibnext</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_next</span>
+<span class="n">sibprev</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">sibling_prev</span>
 
 <span class="c1"># Accessing file variables</span>
 <span class="n">filename</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">filename</span>
 <span class="n">extension</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">extension</span>
 <span class="n">root</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">root</span>
 
-<span class="c1"># Note this one is relative directory noted in the control file, for example;</span>
+<span class="c1"># This one is the relative directory noted in the control file, for example;</span>
 <span class="c1"># Read GIS Z Line == ..\gis\somefile.shp</span>
 <span class="c1"># the relative_root would be &#39;..\gis\&#39;</span>
 <span class="n">rel_root</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">relative_root</span>
 
 <span class="c1"># Get difffernt filepaths</span>
-<span class="n">abspath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="p">()</span>
-<span class="n">relpath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">getRelativePath</span><span class="p">()</span>
+<span class="n">abspath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+<span class="n">relpath</span> <span class="o">=</span> <span class="n">fpath</span><span class="o">.</span><span class="n">relativePath</span><span class="p">()</span>
 
-<span class="c1"># TODO</span>
-<span class="c1"># ... Put stuff about different functions here</span>
+<span class="c1"># Some of the PathHolder functionality has been overriden or additional</span>
+<span class="c1"># methods have been added with TuflowFile specfic behaviour such as ...</span>
+<span class="c1"># Returns an absolute path for each extension in &#39;all_types&#39;</span>
+<span class="n">all_paths</span> <span class="o">=</span> <span class="n">fpart</span><span class="o">.</span><span class="n">absolutePathsAllTypes</span><span class="p">()</span>
+
+<span class="c1"># You get all the components of the line formatted as in the tuflow control</span>
+<span class="c1"># files by doing:</span>
+<span class="n">fpart</span><span class="o">.</span><span class="n">getPrintableContents</span><span class="p">()</span>
 
 
 <span class="c1"># If we have any type of TuflowVariable, let&#39;s assume it&#39;s called vpart</span>
@@ -271,8 +278,9 @@ access the data it contains in the following way:</p>
 </div>
 <p>For additional information see the docstrings for the class you need in the
 tuflowfilepart.py module.</p>
+</div>
 <div class="section" id="user-set-variables">
-<h3>User set variables<a class="headerlink" href="#user-set-variables" title="Permalink to this headline">¶</a></h3>
+<span id="tuflowpart-uservariables"></span><h2>User set variables<a class="headerlink" href="#user-set-variables" title="Permalink to this headline">¶</a></h2>
 <p>It is possible to set variables within the control file of a Tuflow model, or
 in fact hand them in on the command line as scenario/event values. when you
 request a TuflowVariable.variable or TuflowFile.filename/absolutePath/etc it
@@ -290,9 +298,9 @@ the variablesToDict() method of UserVariables. It will return a dict like:</p>
 </pre></div>
 </div>
 <p>Note that this is a mix of all the currently set scenario and event variables
-and the user set variable (i.e. using &#8216;Set variable myvar == 10&#8217; in a control
+and the user set variables (i.e. using &#8216;Set variable myvar == 10&#8217; in a control
 file).</p>
-<p>There are a couple of ways that you can retrieve te resolved value rather than
+<p>There are a couple of ways that you can retrieve the resolved value rather than
 the one with the placeholder in:</p>
 <blockquote>
 <div><ul class="simple">
@@ -304,8 +312,9 @@ resolve the value.</li>
 </ul>
 </div></blockquote>
 <p>The first one is self explanatory. The second one can be found in methods like
-TuflowFile.absolutePath and TuflowVariable.resolveVariable. The third approach
-is great if you have a TuflowPart and want to resolve one of it&#8217;s values:</p>
+TuflowFile.absolutePath and TuflowVariable.resolveVariable (the second approac
+can also be found in some ControlFile methods, such as filepaths()). The third
+approach is great if you have a TuflowPart and want to resolve one of it&#8217;s values:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume that we have ControlFile called tgc already</span>
 <span class="c1"># Also assume we are using the user_vars dict from above</span>
 <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
@@ -332,7 +341,6 @@ check any value with it if you want:</p>
 </pre></div>
 </div>
 </div>
-</div>
 <div class="section" id="additional-tuflowfile-stuff">
 <h2>Additional TuflowFile stuff<a class="headerlink" href="#additional-tuflowfile-stuff" title="Permalink to this headline">¶</a></h2>
 <p>TuflowFile overrides some of the methods of the <a class="reference internal" href="../utils/pathholder.html#pathholder-top"><span class="std std-ref">PathHolder</span></a> class to
@@ -344,8 +352,8 @@ different extension (think mif/mid or shp/shx/dbf). This store a list of
 those file extensions.</li>
 <li><strong>has_own_root(str)</strong>: most file references in Tuflow use a relative path, but
 absolute paths can be used (and are quite common with results files). If
-this is the case has_own_root will be set to True. This is so it will be
-ignored when a global root update occurs.</li>
+this is the case has_own_root will be set to True. If you change the
+file to have a relative path you will want to set this to False.</li>
 <li>Some subclasses of TuflowFile have their own &#8216;type&#8217; variable (model_type,
 result_type, gis_type). This is a simple look up to help filter different
 forms. For example gis_type may be &#8216;mi&#8217; or &#8216;shape&#8217;, result_type may be
@@ -355,11 +363,9 @@ forms. For example gis_type may be &#8216;mi&#8217; or &#8216;shape&#8217;, resu
 <p>Some of the main methods that are overriden are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>absolutePathAll()</strong>: overides the absolutePath function to return the paths
-of all the types specified in all_types. Returns a list of strings.</li>
-<li><strong>relativePathAll()</strong>: same as absolute, but with relative path.</li>
-<li><strong>filenameAll(extension=False)</strong>: same as absolute, but for file names. If
-extension arg == True the file name will be returned with the extension.</li>
+<li><strong>absolutePathAllTypes()</strong>: overides the absolutePath function to return
+the paths of all the types specified in all_types. Returns a list of strings.</li>
+<li><strong>filenameAllTypes()</strong>: same as absolute, but for file names.</li>
 </ul>
 </div></blockquote>
 </div>
@@ -383,12 +389,9 @@ when looking up scenario and event logic, while SectionLogic isn&#8217;t.</p>
 <p>All of the logic classes contain the following member variables:</p>
 <blockquote>
 <div><ul class="simple">
-<li><strong>parts(list)</strong>: all of the TuflowParts between the opening &#8216;clause&#8217; and
-closing clause.</li>
-<li><strong>group_parts(list[list])</strong>: stores the hash codes (TuflowPart.hash) of the
-parts in a list based on which section, or clause, it is in. EventLogic
-and SectionLogic will always only have one inner list. IfLogic may have any
-number of inner lists.</li>
+<li><strong>group_parts(list[list])</strong>: stores the TuflowPart&#8217;s based on which section,
+or clause, they are in. EventLogic and SectionLogic will always only have
+one inner list. IfLogic may have any number of inner lists.</li>
 <li><strong>terms(list[list])</strong>: terms of the if-else/define/etc statement. Note there
 can be multiple terms so this, like above, is a list of lists.</li>
 <li><strong>commands(list)</strong>: part of line before the terms (e.g. &#8216;If Scenario&#8217;).</li>
@@ -419,8 +422,6 @@ removing items. Accessing parts is generally done in the following way:</p>
 
 <span class="c1"># You can access the components directly</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>
-   <span class="c1"># Will print a list of hash codes for the different part in each clause</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="p">)</span>
 
    <span class="c1"># Prints a list of terms for each group. This is the bit after the &#39;==&#39;</span>
    <span class="c1"># in, for example: If Event == evt1 | evt2 | evt3. The terms would be</span>
@@ -451,8 +452,8 @@ removing items. Accessing parts is generally done in the following way:</p>
 <p>Adding TuflowParts to a TuflowLogic clause generally uses two functions:</p>
 <blockquote>
 <div><ul class="simple">
-<li>addPart(): for adding a part to a group</li>
-<li>insertPart(): for adding a part next to an existing part.</li>
+<li><strong>addPart()</strong>: for adding a part to a group</li>
+<li><strong>insertPart()</strong>: for adding a part next to an existing part.</li>
 </ul>
 </div></blockquote>
 <p>These work like so:</p>
@@ -477,6 +478,42 @@ removing items. Accessing parts is generally done in the following way:</p>
 <span class="c1"># or logic.removePart(part.hash)</span>
 </pre></div>
 </div>
+<p>Both adding and removing TuflowPart&#8217;s from a TuflowLogic type will impact the
+order of the PartHolder in ControlFile. If a part is removed it is expected
+that it should be placed immediately below the Logic clause in the control
+file. This means that if you want to actually delete a TuflowPart from the
+ControlFile you should do that in PartHolder of simply set its &#8216;active&#8217; status
+flag to False:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Lets say that you want to have the gis file below used in all scenarios</span>
+<span class="c1"># so you call logic.removePart(part) where part is the TuflowPart containing</span>
+<span class="c1"># the gis line below and logic is the TuflowLogic.</span>
+<span class="n">IF</span> <span class="n">Scenario</span> <span class="o">==</span> <span class="n">scen1</span> <span class="o">|</span> <span class="n">scen2</span>
+   <span class="n">Timestep</span> <span class="o">=</span> <span class="mi">1</span>
+   <span class="n">Read</span> <span class="n">Gis</span> <span class="n">Z</span> <span class="n">Shape</span> <span class="o">==</span> <span class="n">gis</span>\<span class="n">somefile</span><span class="o">.</span><span class="n">shp</span>
+   <span class="n">Cell</span> <span class="n">Size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">Else</span>
+   <span class="n">Timestep</span> <span class="o">=</span> <span class="mi">2</span>
+   <span class="n">Cell</span> <span class="n">Size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">End</span> <span class="n">If</span>
+
+<span class="c1"># After calling the removePart method you would end up with this</span>
+<span class="n">IF</span> <span class="n">Scenario</span> <span class="o">==</span> <span class="n">scen1</span> <span class="o">|</span> <span class="n">scen2</span>
+   <span class="n">Timestep</span> <span class="o">=</span> <span class="mi">1</span>
+   <span class="n">Cell</span> <span class="n">Size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">Else</span>
+   <span class="n">Timestep</span> <span class="o">=</span> <span class="mi">2</span>
+   <span class="n">Cell</span> <span class="n">Size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">End</span> <span class="n">If</span>
+<span class="n">Read</span> <span class="n">Gis</span> <span class="n">Z</span> <span class="n">Shape</span> <span class="o">==</span> <span class="n">gis</span>\<span class="n">somefile</span><span class="o">.</span><span class="n">shp</span>
+</pre></div>
+</div>
+<p>There&#8217;s two things to consider here. If you have nested logic it will only be
+removed from the first one. If you want it removed from all you will need to
+keep checking the part and seeing if the logic in associates is not None. If
+it isn&#8217;t you will need to call removePart on it again. And if you want to move
+it somewhere else you will need to do that after removing from the logic. Of
+course if you want to do that you are better off just moving it to another place
+in the PartHolder to begin with as the logic will be remove for you.</p>
 </div>
 </div>
 

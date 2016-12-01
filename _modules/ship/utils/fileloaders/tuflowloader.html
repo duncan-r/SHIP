@@ -245,12 +245,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_orderModel</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
         
         <span class="c1"># Return the loaded model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">bc_event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bc_event</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">user_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">addTcfModelFile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">remove_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">removeTcfModelFile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TCF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace_callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">replaceTcfModelFile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span><span class="o">.</span><span class="n">missing_model_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_model_files</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tuflow_model</span></div>
 
 
@@ -309,6 +311,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">obj_type</span> <span class="o">==</span> <span class="s1">&#39;model&#39;</span><span class="p">:</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">absolutePath</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_model_files</span><span class="p">:</span> <span class="k">continue</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">model_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">control</span><span class="o">.</span><span class="n">ControlFile</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_control_files</span><span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">model_type</span><span class="p">]</span><span class="o">.</span><span class="n">logic</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logic_list</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
@@ -332,7 +335,7 @@
     <span class="k">def</span> <span class="nf">_fetchTuflowModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Read all of the control files into memory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">missing_model_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_model_files</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="c1"># Keep processing control files until there are none left in the queue</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_queue</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
@@ -342,7 +345,7 @@
             
             <span class="c1"># If we couldn&#39;t load the file add it to the missing list</span>
             <span class="k">if</span> <span class="n">raw_contents</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="n">missing_model_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">missing_model_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
                 <span class="k">continue</span>
 
             <span class="n">contents</span><span class="p">,</span> <span class="n">logic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readControlFile</span><span class="p">(</span><span class="n">raw_contents</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">control_part</span><span class="p">)</span>

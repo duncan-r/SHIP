@@ -91,7 +91,7 @@ or None (default is None - if None it will look in the variables dict).
 
 There are two main methods that you will probably use a lot of:
 
-   - scenarioEventValuesToDict()
+   - seValsToDict()
    - variablesToDict()
 
 The first will return a dict in the format::

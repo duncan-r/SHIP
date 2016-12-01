@@ -184,13 +184,33 @@ of the methods take similar arguments, which we&#8217;ll cover here:</p>
 <div><ul class="simple">
 <li><strong>filepart_type(int)</strong>: this accepts one of the FILEPART_TYPES enum, which can
 be found in the ship.tuflow.__init__.py file. If you want to refine your
-results to, say, only GIS files you&#8217;d use FILEPART_TYPES.GIS.</li>
+results to, say, only GIS files you&#8217;d use FILEPART_TYPES.GIS. This can also
+be a list of FILEPART_TYPES.</li>
 <li><strong>no_duplicates(bool)</strong>: sometimes the same file can be references in more than
 one place in a tuflow model. When True this will not return duplicates
 entries. It&#8217;s usually set to True by default.</li>
 <li><strong>se_vals(dict)</strong>: if you would like to restrict the results to a particular
 subset of scenario and event values. You should supply this. For more
 information see <a class="reference internal" href="tuflowmodel.html#tuflowmodel-uservariables"><span class="std std-ref">User Variables</span></a>.</li>
+</ul>
+</div></blockquote>
+<p>They also contain a number of kwargs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>active_only(bool)</strong>: if True is will only return the TuflowPart&#8217;s with an
+&#8216;active&#8217; status set to True. Default is True.</li>
+<li><strong>by_parent(bool)</strong>: If True it will return a a dict with the parent TuflowPart&#8217;s
+(i.e. the TuflowPart&#8217;s in ControlFile.control_files) filename as key and
+lists of all the TuflowParts that have that parent as value. Default is
+False.</li>
+<li><strong>exclude(list)</strong>: inverse of &#8216;filepart_type&#8217;. Any FILEPART_TYPES in this list
+will not be returned.</li>
+<li><strong>callback_func(func)</strong>: a callback function that will be called before adding
+any parts. If there are some additional bespoke checks that you would like
+to make you can do it here. The callback will be given a list of the
+currently found TuflowPart&#8217;s and the current TuflowPart and MUST return
+a tuple of (bool, TuflowPart) where the bool is True if it should be added
+and False otherwise.</li>
 </ul>
 </div></blockquote>
 <p>Most of the data access methods in ControlFile are simply convenience functions.
@@ -229,7 +249,62 @@ return a list containing subclass&#8217; of TuflowPart:</p>
 <span class="n">uservars</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">variables</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">USER_VARIABLE</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Pretty simple. Now you will probably, at some point, want to filter the returned
+<p>Pretty simple.</p>
+</div>
+<div class="section" id="finding-tuflowpart-s-containing">
+<h3>Finding TuflowPart&#8217;s containing<a class="headerlink" href="#finding-tuflowpart-s-containing" title="Permalink to this headline">¶</a></h3>
+<p>In addition to the general filepart_type searches you can also query for
+parts that contain certain values. This is done with the contains() method.
+the contains() method takes an se_vals optional argument (see below) as well
+as the following kwargs:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>command(str)</strong>: text to search for in a TuflowPart.command.</p>
+</li>
+<li><p class="first"><strong>variable(str)</strong>: characters to search for in a TuflowPart.variable.</p>
+</li>
+<li><p class="first"><strong>filename(str)</strong>: text to search for in a TuflowPart.filename.</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>parent_filename(str)</strong>: text to search for in a</dt>
+<dd><p class="first last">TuflowPart.associates.parent.filename.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>active_only(bool)</strong>: if True only parts currently set to &#8216;active&#8217; will</dt>
+<dd><p class="first last">be returned. Default is True.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>exact(bool)</strong>: Default is False. If set to True it will only return an</dt>
+<dd><p class="first last">exact match, otherwise checks if the str is &#8216;in&#8217;.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>It will return a list of all of the TuflowPart&#8217;s that meet your criterial. If
+any of the criterial that you provide are not met the part will not be returned.
+If a TuflowPart doesn&#8217;t have a value for one of the kwargs that you supply it
+will be ignored (e.g. if &#8216;variable&#8217; kwarg is given any TuflowFile parts will
+not be checked, because they don&#8217;t have a &#8216;variable&#8217; member. This means that
+you can search for different types at the same time.</p>
+<p>Finding all &#8216;zline&#8217; files with version &#8216;1-2&#8217; example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># tgc is a &#39;TGC&#39; ControlFile</span>
+<span class="n">parts</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;zline&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;1-2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finding all &#8216;timestep&#8217; variables. Note that here we set &#8216;exact&#8217; to True. If we
+didn&#8217;t any timestep with a &#8216;2&#8217; in it would be returned (e.g. &#8216;2.5&#8217;):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">parts</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;timestep&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filtering-by-scenarios-events">
+<h3>Filtering by Scenarios/Events<a class="headerlink" href="#filtering-by-scenarios-events" title="Permalink to this headline">¶</a></h3>
+<p>Now you will probably, at some point, want to filter the returned
 values by the current status of the scenario and event values.</p>
 <p><strong>Sidebar</strong>
 <em>When a tuflow model is loaded, everything in the control files will be loaded</em>
@@ -247,7 +322,7 @@ info about the setup of this dict). Here&#8217;s an example:</p>
 <span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
 
 <span class="c1"># Get the currently set scenario and event values from the UserVariables dict.</span>
-<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">scenarioEventValuesToDict</span><span class="p">()</span>
+<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">seValsToDict</span><span class="p">()</span>
 
 <span class="c1"># Only get the gis files that are in the currently set scenarios/events</span>
 <span class="n">files</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="n">filepart_type</span><span class="o">=</span><span class="n">fpt</span><span class="o">.</span><span class="n">GIS</span><span class="p">,</span> <span class="n">se_Vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
@@ -317,6 +392,9 @@ the time. It is there because in Tuflow control files the output paths (results,
 checkfiles, log files, etc) can be a folder with no filename. This means that
 when you search for filename&#8217;s they will return an empty str &#8216;&#8217;. This is usually
 not a lot of use, so it&#8217;s set to ignore these by default.</p>
+<p>filepaths() also accepts the kwarg &#8216;user_vars&#8217;; a dict containing the user
+variables to resolve with the given values. see <a class="reference internal" href="tuflowpart.html#tuflowpart-uservariables"><span class="std std-ref">User set variables</span></a>
+for more information.</p>
 </div>
 </div>
 <div class="section" id="partholder">
@@ -355,6 +433,58 @@ Read GIS Z Shape == gis\anotherfile2.shp
 tgcreadfile.trd)</p>
 <p>PartHolder contains a range of methods for accessing, adding, updating and
 removing TuflowPart&#8217;s.</p>
+<div class="section" id="adding-a-part">
+<h3>Adding a part<a class="headerlink" href="#adding-a-part" title="Permalink to this headline">¶</a></h3>
+<p>To add a new TuflowPart to the PartHolder use the add() method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span># Assume we already have a loaded TuflowModel called tuflow
+tgc = tuflow.control_files[&#39;TGC&#39;]
+
+# Import factory and create a new part
+from ship.tuflow.tuflowfactory import TuflowFactory:
+line = Read GIS Z Shape == gis\buildings_R.shp ! my comment
+gis = TuflowFactory.createTuflowPart(line)
+
+# Find an existing part to put it next to. In this example we assume that
+# there&#39;s a part somewhere in the file with the following contents:
+# Read GIS Z Line == gis\walls_L.shp
+# but it could be anything.
+# Take the 0 element as we know there&#39;s only one.
+existing = tgc.contains(filename=&#39;walls_L&#39;, exact=True)[0]
+
+# Add the new &#39;gis&#39; part next to existing in the PartHolder.
+# addPart takes either a &#39;before&#39; or &#39;after&#39; kwarg. If both are given after
+# will take precedence
+tgc.parts.add(gis, after=existing)
+
+# Note that if the part you are adding already exists in the PartHolder a
+# ValueError will be raised
+tgc.parts.addPart(gis, after=existing) # This now raises a ValueError
+</pre></div>
+</div>
+<p>To replace a part using replacePart:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Create another part to replace our other one</span>
+<span class="n">line</span> <span class="o">=</span> <span class="n">Read</span> <span class="n">GIS</span> <span class="n">Z</span> <span class="n">Shape</span> <span class="o">==</span> <span class="n">gis</span>\<span class="n">buildings_v2_R</span><span class="o">.</span><span class="n">shp</span>
+<span class="n">gis2</span> <span class="o">=</span> <span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+<span class="c1"># Replace gis with gis2</span>
+<span class="c1"># If the old part doesn&#39;t exist it will raise a ValueError</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">gis2</span><span class="p">,</span> <span class="n">gis</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Moving a part with move():</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Get the part that we want to move it next to</span>
+<span class="n">var</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s1">&#39;timestep&#39;</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Move our gis2 part from above next to the var part. This takes the &#39;before&#39;</span>
+<span class="c1"># and &#39;after&#39; kwargs like add.</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">gis2</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">var</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or get rid of a part completely with remove():</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">gis2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="logicholder">
 <h2>LogicHolder<a class="headerlink" href="#logicholder" title="Permalink to this headline">¶</a></h2>

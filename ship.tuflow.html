@@ -110,7 +110,21 @@
 <li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.tuflow package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -324,7 +338,7 @@ within certain scenario and event clauses.</td>
 
 <dl class="method">
 <dt id="ship.tuflow.controlfile.ControlFile.contains">
-<code class="descname">contains</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.contains" title="Permalink to this definition">¶</a></dt>
+<code class="descname">contains</code><span class="sig-paren">(</span><em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find TuflowPart variables that contain a particular string or value.</p>
 <p>All searches are case insensitive.</p>
 <dl class="docutils">
@@ -347,7 +361,10 @@ parent_filename(str): text to search for in a</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list - of TuflowParts that match the search term.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list - of TuflowParts that match the search term.</td>
 </tr>
 </tbody>
 </table>
@@ -455,6 +472,11 @@ parts that have already passed all other checks.</p>
 <dd>the part after all other logic has run. It must take a list of
 all the parts found so far and the current part (list, TuflowPart).
 It must return a bool, stating whether to add the part to list.</dd>
+<dt>&#8216;by_parent&#8217;(bool): if True it will return a dict containing lists of</dt>
+<dd>the parts under their parent filename and extension as a key.
+Default is False.</dd>
+<dt>exclude(list): filepart_type&#8217;s that should not be included</dt>
+<dd>in the return list.</dd>
 </dl>
 </dd>
 </dl>
@@ -466,7 +488,8 @@ It must return a bool, stating whether to add the part to list.</dd>
 <li><strong>instance_type</strong> (<a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowPart" title="ship.tuflow.tuflowfilepart.TuflowPart"><em>TuflowPart</em></a>) &#8211; class derived from TuflowPart to restrict
 the search to.</li>
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
-TuflowFile types will be checked.</li>
+TuflowFile types will be checked. You can also supply a list of
+multiple filepart_type&#8217;s.</li>
 <li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
 search criteria.</li>
 </ul>
@@ -491,6 +514,11 @@ search criteria.</li>
 <dd>set to True will be returned.</dd>
 <dt>by_parent: if True a dict where keys are parent filename and</dt>
 <dd>extension will be returned. Each dict value is a list of paths.</dd>
+<dt>exclude(list): filepart_type&#8217;s that should not be included</dt>
+<dd>in the return list.</dd>
+<dt>user_vars(dict): containing placeholder variables as keys and the</dt>
+<dd>required values as values. (see TuflowPart.resolvePlaceholder()
+for more information.</dd>
 </dl>
 </dd>
 </dl>
@@ -500,7 +528,8 @@ search criteria.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
-TuflowFile types will be checked.</li>
+TuflowFile types will be checked. You can also supply a list of
+multiple filepart_type&#8217;s.</li>
 <li><strong>absolute=False</strong> (<em>bool</em>) &#8211; If True absolute paths will be returned. If
 False only filenames will be returned.</li>
 <li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate paths will be
@@ -530,7 +559,8 @@ search criteria.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
-TuflowFile types will be checked.</li>
+TuflowFile types will be checked. You can also supply a list of
+multiple filepart_type&#8217;s.</li>
 <li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate commands will be
 ignored.</li>
 <li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
@@ -547,7 +577,7 @@ search criteria.</li>
 
 <dl class="method">
 <dt id="ship.tuflow.controlfile.ControlFile.getPrintableContents">
-<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
+<code class="descname">getPrintableContents</code><span class="sig-paren">(</span><em>se_vals=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/controlfile.html#ControlFile.getPrintableContents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.controlfile.ControlFile.getPrintableContents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the control files with contents formatted for writing to file.</p>
 <dl class="docutils">
 <dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs:</dt>
@@ -564,7 +594,10 @@ returned.</dd>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
+search criteria.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
 <dt>dict - control files paths as keys and a ordered list of Tuflow</dt>
 <dd>commands as the values.</dd>
 </dl>
@@ -662,7 +695,8 @@ exist it will raise a ValueError.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>filepart_type=None</strong> &#8211; the FILEPART_TYPES value to check. If None all
-TuflowFile types will be checked.</li>
+TuflowFile types will be checked. You can also supply a list of
+multiple filepart_type&#8217;s.</li>
 <li><strong>no_duplicates=True</strong> (<em>bool</em>) &#8211; If True any duplicate commands will be
 ignored.</li>
 <li><strong>se_vals</strong> (<em>dict</em>) &#8211; containing scenario and event values to define the
@@ -890,7 +924,7 @@ exist it will raise a ValueError.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.controlfile.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CDCA50&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A4C9D0&gt;</em><a class="headerlink" href="#ship.tuflow.controlfile.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1085,7 +1119,7 @@ was already correct.</li>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06DB5E90&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A42DD0&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1256,7 +1290,7 @@ there are others?</p>
 <dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
 <dl class="attribute">
 <dt id="ship.tuflow.tuflowfilepart.DataFile.DATA_TYPES">
-<code class="descname">DATA_TYPES</code><em class="property"> = {'CSV': ('csv',), 'TMF': ('tmf',)}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.DataFile.DATA_TYPES" title="Permalink to this definition">¶</a></dt>
+<code class="descname">DATA_TYPES</code><em class="property"> = {'TMF': ('tmf',), 'CSV': ('csv',)}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.DataFile.DATA_TYPES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1267,7 +1301,7 @@ there are others?</p>
 <dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
 <dl class="attribute">
 <dt id="ship.tuflow.tuflowfilepart.GisFile.GIS_TYPES">
-<code class="descname">GIS_TYPES</code><em class="property"> = {'shp': ('shp', 'shx', 'dbf'), 'mi': ('mif', 'mid')}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.GisFile.GIS_TYPES" title="Permalink to this definition">¶</a></dt>
+<code class="descname">GIS_TYPES</code><em class="property"> = {'mi': ('mif', 'mid'), 'shp': ('shp', 'shx', 'dbf')}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.GisFile.GIS_TYPES" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1327,7 +1361,12 @@ there are others?</p>
 <dd><p>Bases: <a class="reference internal" href="#ship.tuflow.tuflowfilepart.TuflowFile" title="ship.tuflow.tuflowfilepart.TuflowFile"><code class="xref py py-class docutils literal"><span class="pre">ship.tuflow.tuflowfilepart.TuflowFile</span></code></a></p>
 <dl class="attribute">
 <dt id="ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE">
-<code class="descname">RESULT_TYPE</code><em class="property"> = {'log': 'LOG', 'output': 'OUTPUT FOLDER', 'check': 'WRITE CHECK FILE'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
+<code class="descname">RESULT_TYPE</code><em class="property"> = {'check': 'WRITE CHECK FILE', 'output': 'OUTPUT FOLDER', 'log': 'LOG'}</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.RESULT_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.ResultFile.filenameAndExtension">
+<code class="descname">filenameAndExtension</code><span class="sig-paren">(</span><em>user_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#ResultFile.filenameAndExtension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.ResultFile.filenameAndExtension" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1385,6 +1424,16 @@ TuflowPart.resolvePlaceholder() method for more information.</td>
 <dl class="method">
 <dt id="ship.tuflow.tuflowfilepart.TuflowFile.checkPipedStatus">
 <code class="descname">checkPipedStatus</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.checkPipedStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.checkPipedStatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.filenameAllTypes">
+<code class="descname">filenameAllTypes</code><span class="sig-paren">(</span><em>user_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.filenameAllTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.filenameAllTypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ship.tuflow.tuflowfilepart.TuflowFile.filenameAndExtension">
+<code class="descname">filenameAndExtension</code><span class="sig-paren">(</span><em>user_vars=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/tuflow/tuflowfilepart.html#TuflowFile.filenameAndExtension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.tuflow.tuflowfilepart.TuflowFile.filenameAndExtension" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1873,7 +1922,7 @@ dict of current variables and update the value if found.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowfilepart.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CFB810&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06B639D0&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowfilepart.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2298,7 +2347,7 @@ the variables dict returned.</p>
 
 <dl class="data">
 <dt id="ship.tuflow.tuflowmodel.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06CEDC70&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069EADB0&gt;</em><a class="headerlink" href="#ship.tuflow.tuflowmodel.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 

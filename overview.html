@@ -777,7 +777,7 @@ for the time being) with the following scenario and event vals:</p>
 <p>And we wanted to get only the file paths that fell within our current setup for
 scenario (and event) variables, i.e. where the scenario == scen1:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
-<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">scenarioEventValuesToDict</span><span class="p">()</span>
+<span class="n">se_vals</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">user_variables</span><span class="o">.</span><span class="n">seValsToDict</span><span class="p">()</span>
 
 <span class="n">paths</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">filepaths</span><span class="p">(</span><span class="n">se_vals</span><span class="o">=</span><span class="n">se_vals</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">paths</span><span class="p">)</span>

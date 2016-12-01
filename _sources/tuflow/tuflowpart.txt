@@ -14,9 +14,9 @@ line when dealing with piped commands) in a tuflow control file.
 
 All the actual data loaded or added is stored in TuflowPart's. There are
 currently three main types of TuflowPart:
-   - ATuflowVariable: for all types of variables.
-   - TuflowFile: for all types of filepath.
-   - TuflowLogic: for all if-else and define logic.
+   - **ATuflowVariable**: for all types of variables.
+   - **TuflowFile**: for all types of filepath.
+   - **TuflowLogic**: for all if-else and define logic.
 
 
 ########
@@ -62,25 +62,26 @@ discussed later).:
      readable data and possible other files with additional data, like 
      BC Database, Materials.csv and Materials.tmf.
 
-All includes variables of 'command', the section of a command line before the
-'==', and 'comment', anything after a '!' on the line. The part of the line 
+They all include the variables: 'command', the section of a command line before 
+the '==', and 'comment', anything after a '!' on the line. The part of the line 
 after the '==' is referred to by different variable names dending on the class.
 In general though if it's a variable type it will have one called 'variable'.
 If it is a file it will populate the PathHolder superclass with the path it
 reads in and will have the standard members and functions available in there:
 
-Main members:
+PathHolder - Main members:
    - filename
    - extension
    - root
    - relative_root
 
-Main methods:
-   - getAbsolutePath()
-   - getFileName()
-   - getRelativePath()
+PathHolder - Main methods:
+   - absolutePath()
+   - filename()
+   - relativePath()
+   - filenameAndExtension()
 
-See :ref:`pathholder-top`for more information.
+See :ref:`pathholder-top` for more information.
 
 
 ##############
@@ -97,29 +98,35 @@ access the data it contains in the following way::
    parent = fpart.associates.parent
    logic = fpart.associates.logic
    
-   sibnext = fpart.associates.sibling_next
-   sibprev = fpart.associates.sibling_prev
-   # Normally used for piped file commands, for example this line:
+   # These are normally used for piped file commands, for example this line:
    # Read GIS Z Line == afile_R.shp | afile_L.shp | afile_P.shp
    # would be put into 3 separate TuflowFile's and afile_L would have
    # sibline_prev equal to part holding afile_R and sibling_nexxt to afile_P.shp
+   sibnext = fpart.associates.sibling_next
+   sibprev = fpart.associates.sibling_prev
    
    # Accessing file variables
    filename = fpath.filename
    extension = fpath.extension
    root = fpath.root
    
-   # Note this one is relative directory noted in the control file, for example;
+   # This one is the relative directory noted in the control file, for example;
    # Read GIS Z Line == ..\gis\somefile.shp
    # the relative_root would be '..\gis\'
    rel_root = fpath.relative_root
    
    # Get difffernt filepaths
-   abspath = fpath.getAbsolutePath()
-   relpath = fpath.getRelativePath()
+   abspath = fpath.absolutePath()
+   relpath = fpath.relativePath()
    
-   # TODO
-   # ... Put stuff about different functions here
+   # Some of the PathHolder functionality has been overriden or additional
+   # methods have been added with TuflowFile specfic behaviour such as ...
+   # Returns an absolute path for each extension in 'all_types'
+   all_paths = fpart.absolutePathsAllTypes() 
+   
+   # You get all the components of the line formatted as in the tuflow control
+   # files by doing:
+   fpart.getPrintableContents()
    
    
    # If we have any type of TuflowVariable, let's assume it's called vpart
@@ -137,8 +144,11 @@ access the data it contains in the following way::
 For additional information see the docstrings for the class you need in the 
 tuflowfilepart.py module.
 
+.. _tuflowpart-uservariables:
+
+##################
 User set variables
-==================
+##################
 
 It is possible to set variables within the control file of a Tuflow model, or
 in fact hand them in on the command line as scenario/event values. when you
@@ -158,10 +168,10 @@ the variablesToDict() method of UserVariables. It will return a dict like::
    }
 
 Note that this is a mix of all the currently set scenario and event variables
-and the user set variable (i.e. using 'Set variable myvar == 10' in a control
+and the user set variables (i.e. using 'Set variable myvar == 10' in a control
 file).
 
-There are a couple of ways that you can retrieve te resolved value rather than
+There are a couple of ways that you can retrieve the resolved value rather than
 the one with the placeholder in:
    - You could, of course, just get the value and replace it yourself.
    - Some methods in TuflowPart take a user_vars argument. If you give the dict
@@ -170,8 +180,9 @@ the one with the placeholder in:
      resolve the value.
      
 The first one is self explanatory. The second one can be found in methods like
-TuflowFile.absolutePath and TuflowVariable.resolveVariable. The third approach
-is great if you have a TuflowPart and want to resolve one of it's values::
+TuflowFile.absolutePath and TuflowVariable.resolveVariable (the second approac
+can also be found in some ControlFile methods, such as filepaths()). The third 
+approach is great if you have a TuflowPart and want to resolve one of it's values::
 
    # Assume that we have ControlFile called tgc already
    # Also assume we are using the user_vars dict from above
@@ -210,8 +221,8 @@ account for Tuflow specific behaviour. The main ones include:
      those file extensions.
    - **has_own_root(str)**: most file references in Tuflow use a relative path, but
      absolute paths can be used (and are quite common with results files). If
-     this is the case has_own_root will be set to True. This is so it will be
-     ignored when a global root update occurs.
+     this is the case has_own_root will be set to True. If you change the
+     file to have a relative path you will want to set this to False.
    - Some subclasses of TuflowFile have their own 'type' variable (model_type, 
      result_type, gis_type). This is a simple look up to help filter different
      forms. For example gis_type may be 'mi' or 'shape', result_type may be
@@ -219,11 +230,9 @@ account for Tuflow specific behaviour. The main ones include:
 
 Some of the main methods that are overriden are:
 
-   - **absolutePathAll()**: overides the absolutePath function to return the paths
-     of all the types specified in all_types. Returns a list of strings.
-   - **relativePathAll()**: same as absolute, but with relative path.
-   - **filenameAll(extension=False)**: same as absolute, but for file names. If
-     extension arg == True the file name will be returned with the extension. 
+   - **absolutePathAllTypes()**: overides the absolutePath function to return
+     the paths of all the types specified in all_types. Returns a list of strings.
+   - **filenameAllTypes()**: same as absolute, but for file names. 
 
 
 ###########
@@ -247,12 +256,9 @@ when looking up scenario and event logic, while SectionLogic isn't.
 
 All of the logic classes contain the following member variables:
 
-   - **parts(list)**: all of the TuflowParts between the opening 'clause' and
-     closing clause.
-   - **group_parts(list[list])**: stores the hash codes (TuflowPart.hash) of the 
-     parts in a list based on which section, or clause, it is in. EventLogic
-     and SectionLogic will always only have one inner list. IfLogic may have any
-     number of inner lists.
+   - **group_parts(list[list])**: stores the TuflowPart's based on which section, 
+     or clause, they are in. EventLogic and SectionLogic will always only have 
+     one inner list. IfLogic may have any number of inner lists.
    - **terms(list[list])**: terms of the if-else/define/etc statement. Note there
      can be multiple terms so this, like above, is a list of lists.
    - **commands(list)**: part of line before the terms (e.g. 'If Scenario').
@@ -284,8 +290,6 @@ removing items. Accessing parts is generally done in the following way::
    
    # You can access the components directly
    for i, g in enumerate(logic.group_parts):
-      # Will print a list of hash codes for the different part in each clause
-      print (g)
       
       # Prints a list of terms for each group. This is the bit after the '=='
       # in, for example: If Event == evt1 | evt2 | evt3. The terms would be
@@ -314,8 +318,8 @@ removing items. Accessing parts is generally done in the following way::
    
 Adding TuflowParts to a TuflowLogic clause generally uses two functions:
 
-   - addPart(): for adding a part to a group
-   - insertPart(): for adding a part next to an existing part.
+   - **addPart()**: for adding a part to a group
+   - **insertPart()**: for adding a part next to an existing part.
    
 These work like so::
    
@@ -340,10 +344,40 @@ Removing a TuflowPart is easy::
    # or logic.removePart(part.hash)
 
    
-     
-
-
-
+Both adding and removing TuflowPart's from a TuflowLogic type will impact the
+order of the PartHolder in ControlFile. If a part is removed it is expected 
+that it should be placed immediately below the Logic clause in the control
+file. This means that if you want to actually delete a TuflowPart from the
+ControlFile you should do that in PartHolder of simply set its 'active' status
+flag to False::
    
+   # Lets say that you want to have the gis file below used in all scenarios
+   # so you call logic.removePart(part) where part is the TuflowPart containing
+   # the gis line below and logic is the TuflowLogic.
+   IF Scenario == scen1 | scen2
+      Timestep = 1
+      Read Gis Z Shape == gis\somefile.shp
+      Cell Size = 2
+   Else 
+      Timestep = 2
+      Cell Size = 4
+   End If
    
+   # After calling the removePart method you would end up with this
+   IF Scenario == scen1 | scen2
+      Timestep = 1
+      Cell Size = 2
+   Else 
+      Timestep = 2
+      Cell Size = 4
+   End If
+   Read Gis Z Shape == gis\somefile.shp
+
+There's two things to consider here. If you have nested logic it will only be
+removed from the first one. If you want it removed from all you will need to 
+keep checking the part and seeing if the logic in associates is not None. If
+it isn't you will need to call removePart on it again. And if you want to move
+it somewhere else you will need to do that after removing from the logic. Of
+course if you want to do that you are better off just moving it to another place
+in the PartHolder to begin with as the logic will be remove for you.
    
