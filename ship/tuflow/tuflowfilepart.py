@@ -525,6 +525,30 @@ class TuflowFile(TuflowPart, PathHolder):
 
         return abs_path
     
+
+    def filenameAndExtension(self, user_vars=None):
+        if user_vars:
+            name = self.resolvePlaceholder(self.filename, user_vars)
+            if self.extension: name += '.' + self.extension
+            return name
+        else:
+            return PathHolder.filenameAndExtension(self)
+    
+    def filenameAllTypes(self, user_vars=None):
+        orig_ext = self.extension
+        names = []
+        names.append(self.filenameAndExtension(user_vars))
+        try:
+            for a in self.all_types:
+                self.extension = a
+                names.append(self.filenameAndExtension(user_vars))
+        finally:
+            self.extension = orig_ext
+        
+        return names
+
+
+    
     def getRelativeRoots(self, roots):
         """Get the relative paths of this and all parent objects.
         
@@ -605,6 +629,12 @@ class ResultFile(TuflowFile):
         for key, val in ResultFile.RESULT_TYPE.items():
             if self.command.upper().startswith(val):
                 self.result_type = key
+    
+    def filenameAndExtension(self, user_vars=None):
+        if self.filename_is_prefix:
+            return ''
+        else:
+            return TuflowFile.filenameAndExtension(self, user_vars)
 
 
 class GisFile(TuflowFile):

@@ -621,7 +621,7 @@ And we wanted to get only the file paths that fell within our current setup for
 scenario (and event) variables, i.e. where the scenario == scen1::
 
    tgc = tuflow.control_files['TGC']
-   se_vals = tuflow.user_variables.scenarioEventValuesToDict()
+   se_vals = tuflow.user_variables.seValsToDict()
    
    paths = tgc.filepaths(se_vals=se_vals)
    print (paths)

@@ -285,12 +285,12 @@ class TmfDataObject(ADataFileObject):
     def _getPrintableContents(self):
         """Format the data held by this object for writing to file."""
 
-        file_length = self.row_collection.getNumberOfRows()
+        file_length = self.row_collection.numberOfRows()
         out_contents = range(file_length)
         
-        data_rows = self.row_collection.getDataObject('row_no')
+        data_rows = self.row_collection.dataObject('row_no')
         
-        no_of_rows = self.row_collection.getNumberOfRows()
+        no_of_rows = self.row_collection.numberOfRows()
         for i in range(0, no_of_rows):
             self.row_collection.deleteDataObject('row_no')
             out_contents[data_rows.getValue(i)] = self.row_collection.getPrintableRow(i)
@@ -346,7 +346,7 @@ class BcDataObject(ADataFileObject):
             else:
                 paths.append(self.path_holder.filenameAndExtension())
                 
-        source = self.row_collection.getDataObject(self.keys.SOURCE)
+        source = self.row_collection.dataObject(self.keys.SOURCE)
         for s in source:
             if not name_only:
                 paths.append(os.path.join(self.path_holder.root, 
@@ -364,9 +364,9 @@ class BcDataObject(ADataFileObject):
     def _getPrintableContents(self):
         """Format data for printing to file"""
 
-        data_rows = self.row_collection.getDataObject('row_no')
-        header_row = self.row_collection.getDataObject('actual_header').getDataCollection()
-        no_of_rows = self.row_collection.getNumberOfRows()
+        data_rows = self.row_collection.dataObject('row_no')
+        header_row = self.row_collection.dataObject('actual_header').getDataCollection()
+        no_of_rows = self.row_collection.numberOfRows()
         out_contents = range(no_of_rows)
         
         for i in range(0, no_of_rows):
@@ -417,7 +417,7 @@ class MatCsvDataObject(ADataFileObject):
         data_rows = self.row_collection.getDataObject('row_no')
         header_row = self.row_collection.getDataObject('actual_header').getDataCollection()
         comment_row = self.row_collection.getDataObject('comment').getDataCollection()
-        no_of_rows = self.row_collection.getNumberOfRows()
+        no_of_rows = self.row_collection.numberOfRows()
         out_contents = range(no_of_rows)
         
         # Get each row in the collection. Need to delete values not written to
@@ -564,9 +564,9 @@ class DataFileSubfileMat(ADataFileSubfile):
     def _getPrintableContents(self):
         """Format data for printing to file"""
 
-        data_rows = self.row_collection.getDataObject('row_no')
-        header_row = self.row_collection.getDataObject('actual_header').getDataCollection()
-        no_of_rows = self.row_collection.getNumberOfRows()
+        data_rows = self.row_collection.dataObject('row_no')
+        header_row = self.row_collection.dataObject('actual_header').getDataCollection()
+        no_of_rows = self.row_collection.numberOfRows()
         out_contents = range(no_of_rows)
         
         for i in range(0, no_of_rows):

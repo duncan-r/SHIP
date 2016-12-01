@@ -64,7 +64,8 @@ class ControlFile(object):
         
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
-                TuflowFile types will be checked.
+                TuflowFile types will be checked. You can also supply a list of
+                multiple filepart_type's.
             no_duplicates=True(bool): If True any duplicate commands will be 
                 ignored.
             se_vals(dict): containing scenario and event values to define the
@@ -86,7 +87,8 @@ class ControlFile(object):
         
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
-                TuflowFile types will be checked.
+                TuflowFile types will be checked. You can also supply a list of
+                multiple filepart_type's.
             no_duplicates=True(bool): If True any duplicate commands will be 
                 ignored.
             se_vals(dict): containing scenario and event values to define the
@@ -133,12 +135,15 @@ class ControlFile(object):
             'by_parent'(bool): if True it will return a dict containing lists of
                 the parts under their parent filename and extension as a key.
                 Default is False.
+            exclude(list): filepart_type's that should not be included
+                in the return list.
         
         Args:
             instance_type(TuflowPart): class derived from TuflowPart to restrict
                 the search to.
             filepart_type=None: the FILEPART_TYPES value to check. If None all
-                TuflowFile types will be checked.
+                TuflowFile types will be checked. You can also supply a list of
+                multiple filepart_type's.
             se_vals(dict): containing scenario and event values to define the
                 search criteria.
             
@@ -148,6 +153,12 @@ class ControlFile(object):
         active_only = kwargs.get('active_only', True)
         callback = kwargs.get('callback_func', None)
         by_parent = kwargs.get('by_parent', False)
+        exclude = kwargs.get('exclude', [])
+        if filepart_type is None:
+            filepart_type = []
+        elif not isinstance(filepart_type, list):
+            filepart_type = [filepart_type]
+
         found_commands = []
         fetch_sibling = False
         vars = []
@@ -155,8 +166,8 @@ class ControlFile(object):
         for part in self.parts:
             if active_only and not part.active: continue
             if not isinstance(part, instance_type): continue
-            if filepart_type is not None and part.filepart_type != filepart_type:
-                continue
+            if filepart_type and not part.filepart_type in filepart_type: continue
+            if part.filepart_type in exclude: continue
 
             if se_vals is not None:
                 if not self.checkPartLogic(part, se_vals): continue
@@ -254,10 +265,16 @@ class ControlFile(object):
                 set to True will be returned.
             by_parent: if True a dict where keys are parent filename and 
                 extension will be returned. Each dict value is a list of paths.
+            exclude(list): filepart_type's that should not be included
+                in the return list.
+            user_vars(dict): containing placeholder variables as keys and the 
+                required values as values. (see TuflowPart.resolvePlaceholder() 
+                for more information.
         
         Args:
             filepart_type=None: the FILEPART_TYPES value to check. If None all
-                TuflowFile types will be checked.
+                TuflowFile types will be checked. You can also supply a list of
+                multiple filepart_type's.
             absolute=False(bool): If True absolute paths will be returned. If
                 False only filenames will be returned.
             no_duplicates=True(bool): If True any duplicate paths will be 
@@ -271,20 +288,27 @@ class ControlFile(object):
         """
         active_only = kwargs.get('active_only', True)
         by_parent = kwargs.get('by_parent', False)
+        exclude = kwargs.get('exclude', [])
+        user_vars = kwargs.get('user_vars', None)
+        if filepart_type is None:
+            filepart_type = []
+        elif not isinstance(filepart_type, list):
+            filepart_type = [filepart_type]
         paths = []
         parents = {}
         for part in self.parts:
             if active_only and not part.active: continue
             p = None
             if not isinstance(part, TuflowFile): continue
-            if filepart_type is not None and part.filepart_type != filepart_type:
-                continue
+            if filepart_type and not part.filepart_type in filepart_type: continue
+            if part.filepart_type in exclude: continue
             if se_vals is not None:
                 if not self.checkPartLogic(part, se_vals): continue
+
             if absolute:
-                p = part.absolutePath()
+                p = part.absolutePath(user_vars)
             else:
-                p = part.filenameAndExtension()
+                p = part.filenameAndExtension(user_vars)
             
             if no_duplicates and p in paths: continue
             if no_blanks and p.strip() == '': continue
@@ -350,7 +374,7 @@ class ControlFile(object):
         for part in self.parts:
             part.root = root
     
-    def getPrintableContents(self, **kwargs):
+    def getPrintableContents(self, se_vals=None, **kwargs):
         """Return the control files with contents formatted for writing to file.
         
         **kwargs:
@@ -359,6 +383,10 @@ class ControlFile(object):
             parents(list): a list of parents (tuflow control files) to return.
                 if not given all the parents in self.control_files will be
                 returned.
+
+        Args:
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
         
         Return:
             dict - control files paths as keys and a ordered list of Tuflow
@@ -380,7 +408,6 @@ class ControlFile(object):
         logic_group = {}
         cur_ctrl = None
         out = {}
-#         indent = 0
         parent_indents = {}
         open_logic = 0
          
@@ -391,7 +418,13 @@ class ControlFile(object):
             if not cur_ctrl in out.keys():
                 out[cur_ctrl] = []; logic_stack[cur_ctrl] = []; logic_group[cur_ctrl] = []
                 parent_indents[cur_ctrl] = 0
-#             indent = parent_indents[cur_ctrl]
+            
+            part_active = False
+            if active_only and p.active:
+                part_active = True
+            if se_vals is None or (se_vals is not None and \
+                                                self.checkPartLogic(p, se_vals)):
+                part_active = True
             
             # Get any logic clauses that appear above this part
             if p.associates.logic is not None:
@@ -402,11 +435,10 @@ class ControlFile(object):
                 for i, l in enumerate(logic_clause):
                     open_logic += 1 
                     out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + l)
-#                     indent += 1
                     parent_indents[cur_ctrl] += 1
 
             # Get the part
-            if not active_only or (active_only and p.active != False):
+            if part_active:
                 pout, add_to_prev = p.getPrintableContents()
                 if add_to_prev:
                     out[cur_ctrl][-1] = out[cur_ctrl][-1] + pout
@@ -416,7 +448,6 @@ class ControlFile(object):
             # Get any closing statements for logic clauses
             if p.associates.logic is not None:
                 logic_clause = p.associates.logic.getEndClause(p)
-#                 indent -= 1
                 parent_indents[cur_ctrl] -= 1
                 if logic_clause and open_logic > 0:
                     out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + logic_clause)
@@ -511,7 +542,7 @@ class ControlFile(object):
             self.parts.add(add_part, before=adjacent_part)
             
             
-    def contains(self, **kwargs):
+    def contains(self, se_vals=None, **kwargs):
         """Find TuflowPart variables that contain a particular string or value.
         
         All searches are case insensitive.
@@ -527,6 +558,10 @@ class ControlFile(object):
             exact(bool): Default is False. If set to True it will only return an
                 exact match, otherwise checks if the str is 'in'.
         
+        Args:
+            se_vals(dict): containing scenario and event values to define the
+                search criteria.
+        
         Return:
             list - of TuflowParts that match the search term.
         """
@@ -541,6 +576,8 @@ class ControlFile(object):
             out = None
             if active_only and not part.active: 
                 continue
+            if se_vals is not None:
+                if not self.checkPartLogic(part, se_vals): continue
 
             if parent_filename:
                 try:
@@ -884,7 +921,7 @@ class PartHolder(object):
         """
         index = self.parts.index(replace_part)
         if index == -1:
-            raise IndexError('part does not exist in collection')
+            raise ValueError('part does not exist in collection')
         
         part.associates.logic = replace_part.associates.logic
         self.parts.pop(index)

@@ -299,7 +299,8 @@ def checkMultiTypes(line, part_type):
     l = line.strip().upper()
     if l.startswith('SHP PROJECTION') or l.startswith('MI PROJECTION'):
         splitl = l.split('==')
-        if 'PROJECTION' in splitl[1].upper():
+        val = splitl[1].upper()
+        if 'COORDSYS' in val and 'EARTH' in val and 'PROJECTION' in val:
             return fpt.VARIABLE
     
     return part_type

@@ -4,7 +4,7 @@
 !#############################################################################
 
 ! Set the geographic location to UK projection
-SHP Projection == ..\model\gis\Projection.prj
+MI Projection == ..\model\gis\Projection.prj
 GIS Projection Check == WARNING
 !SHP Projection == CoordSys Earth Projection 8, 79, "m", -2, 49, 0.9996012717, 400000, -100000 Bounds (-7845061.1011, -15524202.1641) (8645061.1011, 4470074.53373)
 
@@ -22,7 +22,7 @@ Start Output == 0  ! start output time (hours)
 Output Interval (s) == 120  ! interval at which 1D results are recorded (seconds)
 Output Folder == ..\results\1d\estry\ ! destination of 1d results files
 !Write CSV Online == ON ! Write the spreadsheet output during simulation. If this command is ommited, csv output is only written at the end of a simulation
-Write Check Files == ..\checks\1d\  ! destination of 1d check files. Prefix them with "1d"
+Write Check Files == ..\checks\1d_  ! destination of 1d check files. Prefix them with "1d_"
 
 !#############################################################################
 ! 1D MODEL INFORMATION

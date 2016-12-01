@@ -594,8 +594,10 @@ class PathHolder(object):
             str - file name with the extension appended or a blank string if
                  the file name does not exist.
         """
-        if self.filename:
+        if self.filename and self.extension:
             return self.filename + '.' + self.extension
+        elif self.filename:
+            return self.filename
         else:
             return ''
         

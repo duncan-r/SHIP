@@ -43,32 +43,15 @@ BC Database == ..\bc_dbase\bc_dbase_shiptest_v1.csv ! boundary condition flow/he
 !#############################################################################
 ! CONTROL FILES
 !#############################################################################
-ESTRY Control File Auto !looks for an .ecf file with the same name as the .tcf file
-Geometry Control File == ..\model\test_tgc1.tgc ! reference to the geometry control file for this simulation
+Geometry Control File == ..\model\test_tgc_NOEXIST.tgc ! This file doesn't exist
+BC Control File == ..\model\test_tbc_NOEXIST.tbc ! This file doesn't exist
 
-Define Event == evnt1
-	BC Control File == ..\model\test_tbc1.tbc ! reference to the boundary control file for this simulation
-	Set IWL == -1
-End Define
-Define Event == evnt2
-	BC Control File == ..\model\test_tbc2.tbc ! reference to the boundary control file for this simulation
-	Set IWL == -2
-End Define
-!ESTRY Control File Auto !looks for an .ecf file with the same name as the .tcf file
+Set IWL == -2
+
 
 !#############################################################################
 ! DEFINE OUTPUT INFORMATION
 !#############################################################################
-
-Define Output Zone == ZoneA
-	Read GIS Output Zone == ..\model\mi\2d_oz_ZoneA_shiptest_v1_R.shp
-	Write Check Files Include == DEM_Z
-	Map Output Formats == ASC XMDF WRB
-	End Map Output == 6.0
-	Map Output Interval == 360
-	ASC Start Map Output == 0.5
-	ASC End Map Output == 4.0
-End Define
 
 ! Define what results are to be output
 Map Output Data Types == d v q h Z0 MB1 MB2 !d E F h q R t V W Z1 ZH  ! Non-default output variables
@@ -91,19 +74,4 @@ Write Check Files == ..\checks\2d\  ! destination of 2d check files.
 ! OTHER SIMULATION PARAMETERS
 !#############################################################################
 
-!Set IWL == -2
 Log Folder == log
-
-
-!-----------------------------------------------------------------------------
-! Define the location for time series output in the 2d domain
-Read GIS PO == ..\model\gis\2d_po_shiptest_v1_L.shp
-Write PO Online == on
-!Read GIS PO == ..\model\gis\2d_po_*****_001_R.shp | 2d_po_*****_001_P.shp | 2d_po_*****_001_L.shp ! plot output layer defines locations within the 2d domain where time series results should be recorded
-!Write PO Online == on ! writes the time series results from plot outputs throughout the simulation.
-
-!-----------------------------------------------------------------------------
-! Restart files
-!Read Restart File == *.trf  ! Reads restart file. If no filepath given, the .trf (and .erf if relevant) should be placed in the same file as the .tcf
-!Write Restart File at Time == 10  ! Time at which restart file will be first written
-!Write Restart File Interval == 5 ! Interval at which restart file will be written after time given in above line.

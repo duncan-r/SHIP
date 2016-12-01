@@ -108,12 +108,14 @@ class TuflowLoader(ALoader):
         self._orderModel(tcf_path)
         
         # Return the loaded model
+        self.tuflow_model.root = root
         self.tuflow_model.control_files = self._control_files
         self.tuflow_model.bc_event = self._bc_event
         self.tuflow_model.user_variables = self.user_variables
         self.tuflow_model.control_files['TCF'].add_callback = self.tuflow_model.addTcfModelFile
         self.tuflow_model.control_files['TCF'].remove_callback = self.tuflow_model.removeTcfModelFile
         self.tuflow_model.control_files['TCF'].replace_callback = self.tuflow_model.replaceTcfModelFile
+        self.tuflow_model.missing_model_files = self.missing_model_files
         return self.tuflow_model
 
 
@@ -172,6 +174,7 @@ class TuflowLoader(ALoader):
             self._control_files[self.current_control[-1]].parts.append(part)
             if part.obj_type == 'model':
                 p = part.absolutePath()
+                if p in self.missing_model_files: continue
                 if not part.model_type in self._control_files.keys():
                     self._control_files[part.model_type] = control.ControlFile(part.model_type)
                     self._control_files[part.model_type].logic.add(self._logic_list[p])
@@ -195,7 +198,7 @@ class TuflowLoader(ALoader):
     def _fetchTuflowModel(self, root): 
         """Read all of the control files into memory.
         """
-        missing_model_files = []
+        self.missing_model_files = []
         
         # Keep processing control files until there are none left in the queue
         while not self._file_queue.isEmpty():
@@ -205,7 +208,7 @@ class TuflowLoader(ALoader):
             
             # If we couldn't load the file add it to the missing list
             if raw_contents == False:
-                missing_model_files.append(cpath)
+                self.missing_model_files.append(cpath)
                 continue
 
             contents, logic = self._readControlFile(raw_contents, root, control_part)

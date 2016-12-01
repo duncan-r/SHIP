@@ -61,13 +61,31 @@ of the methods take similar arguments, which we'll cover here:
 
    - **filepart_type(int)**: this accepts one of the FILEPART_TYPES enum, which can
      be found in the ship.tuflow.__init__.py file. If you want to refine your
-     results to, say, only GIS files you'd use FILEPART_TYPES.GIS.
+     results to, say, only GIS files you'd use FILEPART_TYPES.GIS. This can also
+     be a list of FILEPART_TYPES.
    - **no_duplicates(bool)**: sometimes the same file can be references in more than
      one place in a tuflow model. When True this will not return duplicates
      entries. It's usually set to True by default.
    - **se_vals(dict)**: if you would like to restrict the results to a particular
      subset of scenario and event values. You should supply this. For more
      information see :ref:`tuflowmodel-uservariables`.
+
+They also contain a number of kwargs:
+
+   - **active_only(bool)**: if True is will only return the TuflowPart's with an
+     'active' status set to True. Default is True.
+   - **by_parent(bool)**: If True it will return a a dict with the parent TuflowPart's
+     (i.e. the TuflowPart's in ControlFile.control_files) filename as key and
+     lists of all the TuflowParts that have that parent as value. Default is
+     False.
+   - **exclude(list)**: inverse of 'filepart_type'. Any FILEPART_TYPES in this list
+     will not be returned.
+   - **callback_func(func)**: a callback function that will be called before adding
+     any parts. If there are some additional bespoke checks that you would like
+     to make you can do it here. The callback will be given a list of the 
+     currently found TuflowPart's and the current TuflowPart and MUST return
+     a tuple of (bool, TuflowPart) where the bool is True if it should be added
+     and False otherwise.
      
 Most of the data access methods in ControlFile are simply convenience functions.
 You can obviously directly access the PartHolder if you would prefer. Here's a
@@ -105,7 +123,49 @@ return a list containing subclass' of TuflowPart::
    # (These are variables set in control files with: 'Set myvar == 6'
    uservars = tgc.variables(filepart_type=fpt.USER_VARIABLE)
 
-Pretty simple. Now you will probably, at some point, want to filter the returned
+Pretty simple. 
+
+
+Finding TuflowPart's containing
+===============================
+
+In addition to the general filepart_type searches you can also query for 
+parts that contain certain values. This is done with the contains() method.
+the contains() method takes an se_vals optional argument (see below) as well
+as the following kwargs:
+
+   - **command(str)**: text to search for in a TuflowPart.command.
+   - **variable(str)**: characters to search for in a TuflowPart.variable.
+   - **filename(str)**: text to search for in a TuflowPart.filename.
+   - **parent_filename(str)**: text to search for in a 
+       TuflowPart.associates.parent.filename.
+   - **active_only(bool)**: if True only parts currently set to 'active' will
+       be returned. Default is True.
+   - **exact(bool)**: Default is False. If set to True it will only return an
+       exact match, otherwise checks if the str is 'in'.
+
+It will return a list of all of the TuflowPart's that meet your criterial. If
+any of the criterial that you provide are not met the part will not be returned.
+If a TuflowPart doesn't have a value for one of the kwargs that you supply it
+will be ignored (e.g. if 'variable' kwarg is given any TuflowFile parts will
+not be checked, because they don't have a 'variable' member. This means that
+you can search for different types at the same time.
+
+Finding all 'zline' files with version '1-2' example::
+
+   # tgc is a 'TGC' ControlFile
+   parts = tgc.contains(command='zline', filename='1-2')
+   
+Finding all 'timestep' variables. Note that here we set 'exact' to True. If we
+didn't any timestep with a '2' in it would be returned (e.g. '2.5')::
+
+   parts = tgc.contains(command='timestep', variable='2', exact=True)
+
+
+Filtering by Scenarios/Events
+=============================
+
+Now you will probably, at some point, want to filter the returned
 values by the current status of the scenario and event values.
 
 **Sidebar**
@@ -126,7 +186,7 @@ info about the setup of this dict). Here's an example::
    tgc = tuflow.control_files['TGC']
    
    # Get the currently set scenario and event values from the UserVariables dict.
-   se_vals = tuflow.user_variables.scenarioEventValuesToDict()
+   se_vals = tuflow.user_variables.seValsToDict()
 
    # Only get the gis files that are in the currently set scenarios/events
    files = tgc.files(filepart_type=fpt.GIS, se_Vals=se_vals)
@@ -195,6 +255,10 @@ checkfiles, log files, etc) can be a folder with no filename. This means that
 when you search for filename's they will return an empty str ''. This is usually
 not a lot of use, so it's set to ignore these by default.
 
+filepaths() also accepts the kwarg 'user_vars'; a dict containing the user
+variables to resolve with the given values. see :ref:`tuflowpart-uservariables`
+for more information.
+
 
 .. _controlfile-partholder:
 
@@ -235,6 +299,59 @@ tgcreadfile.trd)
 
 PartHolder contains a range of methods for accessing, adding, updating and 
 removing TuflowPart's. 
+
+Adding a part
+=============
+
+To add a new TuflowPart to the PartHolder use the add() method::
+
+   # Assume we already have a loaded TuflowModel called tuflow
+   tgc = tuflow.control_files['TGC']
+
+   # Import factory and create a new part
+   from ship.tuflow.tuflowfactory import TuflowFactory:
+   line = Read GIS Z Shape == gis\buildings_R.shp ! my comment
+   gis = TuflowFactory.createTuflowPart(line)
+   
+   # Find an existing part to put it next to. In this example we assume that
+   # there's a part somewhere in the file with the following contents:
+   # Read GIS Z Line == gis\walls_L.shp
+   # but it could be anything.
+   # Take the 0 element as we know there's only one.
+   existing = tgc.contains(filename='walls_L', exact=True)[0]
+   
+   # Add the new 'gis' part next to existing in the PartHolder.
+   # addPart takes either a 'before' or 'after' kwarg. If both are given after
+   # will take precedence
+   tgc.parts.add(gis, after=existing)
+   
+   # Note that if the part you are adding already exists in the PartHolder a
+   # ValueError will be raised
+   tgc.parts.addPart(gis, after=existing) # This now raises a ValueError
+
+To replace a part using replacePart::
+
+   # Create another part to replace our other one
+   line = Read GIS Z Shape == gis\buildings_v2_R.shp
+   gis2 = TuflowFactory.createTuflowPart(line)
+   
+   # Replace gis with gis2
+   # If the old part doesn't exist it will raise a ValueError
+   tgc.parts.replace(gis2, gis)
+
+Moving a part with move()::
+
+   # Get the part that we want to move it next to
+   var = tgc.contains(command='timestep', variable='2', exact=True)[0]
+   
+   # Move our gis2 part from above next to the var part. This takes the 'before'
+   # and 'after' kwargs like add.
+   tgc.parts.move(gis2, after=var)
+   
+Or get rid of a part completely with remove()::
+
+   tgc.parts.remove(gis2)
+   
 
 
 ###########
