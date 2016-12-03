@@ -418,7 +418,7 @@ removing items. Accessing parts is generally done in the following way:</p>
 <span class="c1"># Approach 1</span>
 <span class="n">logic</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">logic</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># say tgc is a ControlFile instance</span>
 <span class="c1"># or: Approach 2</span>
-<span class="n">logic</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>  <span class="s1">&#39; say part is a TuflowPart instance</span>
+<span class="n">logic</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">associates</span><span class="o">.</span><span class="n">logic</span>  <span class="c1"># say part is a TuflowPart instance</span>
 
 <span class="c1"># You can access the components directly</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">):</span>

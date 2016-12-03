@@ -141,8 +141,10 @@ different type of tuflow control filed loaded. This means that if multiple
 .tgc files are loaded (or .trd files within a .tgc) the contents will all be
 loaded into the same ControlFile.</p>
 <p>ControlFile&#8217;s can be of the following types: &#8216;TCF&#8217;, &#8216;TGC&#8217;, &#8216;TBC&#8217;, &#8216;ECF&#8217;, and
-&#8216;TEF&#8217;. However not all are guaranteed to exist, if there are not .tef files
-referenced by a model a ControlFile will not be created with the &#8216;TEF&#8217; key.</p>
+&#8216;TEF&#8217;. However not all are guaranteed to exist. For example, if there are no
+.tef files referenced by a model a ControlFile will not be created with the
+&#8216;TEF&#8217; key (same for &#8216;ECF&#8217;, etc). There will always be a &#8216;TCF&#8217; key and for a
+properly configured model you can expect a &#8216;TGC&#8217; and &#8216;TBC&#8217;.</p>
 <p>The &#8216;TCF&#8217; ControlFile is slightly different from the others. It is a
 subclass of ControlFile called TcfControlFile. The only difference (currently)
 is the inclusion of a &#8216;main_file&#8217; variable which contains the hash code of the
@@ -258,31 +260,16 @@ parts that contain certain values. This is done with the contains() method.
 the contains() method takes an se_vals optional argument (see below) as well
 as the following kwargs:</p>
 <blockquote>
-<div><ul>
-<li><p class="first"><strong>command(str)</strong>: text to search for in a TuflowPart.command.</p>
-</li>
-<li><p class="first"><strong>variable(str)</strong>: characters to search for in a TuflowPart.variable.</p>
-</li>
-<li><p class="first"><strong>filename(str)</strong>: text to search for in a TuflowPart.filename.</p>
-</li>
-<li><dl class="first docutils">
-<dt><strong>parent_filename(str)</strong>: text to search for in a</dt>
-<dd><p class="first last">TuflowPart.associates.parent.filename.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>active_only(bool)</strong>: if True only parts currently set to &#8216;active&#8217; will</dt>
-<dd><p class="first last">be returned. Default is True.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>exact(bool)</strong>: Default is False. If set to True it will only return an</dt>
-<dd><p class="first last">exact match, otherwise checks if the str is &#8216;in&#8217;.</p>
-</dd>
-</dl>
-</li>
+<div><ul class="simple">
+<li><strong>command(str)</strong>: text to search for in a TuflowPart.command.</li>
+<li><strong>variable(str)</strong>: characters to search for in a TuflowPart.variable.</li>
+<li><strong>filename(str)</strong>: text to search for in a TuflowPart.filename.</li>
+<li><strong>parent_filename(str)</strong>: text to search for in a
+TuflowPart.associates.parent.filename.</li>
+<li><strong>active_only(bool)</strong>: if True only parts currently set to &#8216;active&#8217; will
+be returned. Default is True.</li>
+<li><strong>exact(bool)</strong>: Default is False. If set to True it will only return an
+exact match, otherwise checks if the str is &#8216;in&#8217;.</li>
 </ul>
 </div></blockquote>
 <p>It will return a list of all of the TuflowPart&#8217;s that meet your criterial. If
@@ -387,10 +374,10 @@ to the above, with a couple of additionals:</p>
 </pre></div>
 </div>
 <p>There is an additional argument available to the filepaths() method, &#8216;no_blanks&#8217;.
-By default it is set to True. There is probably not need to change this most of
+By default it&#8217;s set to True. There is probably no need to change this most of
 the time. It is there because in Tuflow control files the output paths (results,
 checkfiles, log files, etc) can be a folder with no filename. This means that
-when you search for filename&#8217;s they will return an empty str &#8216;&#8217;. This is usually
+when you search for filename&#8217;s they will return an empty str &#8220;&#8221;. This is usually
 not a lot of use, so it&#8217;s set to ignore these by default.</p>
 <p>filepaths() also accepts the kwarg &#8216;user_vars&#8217;; a dict containing the user
 variables to resolve with the given values. see <a class="reference internal" href="tuflowpart.html#tuflowpart-uservariables"><span class="std std-ref">User set variables</span></a>
@@ -433,37 +420,41 @@ Read GIS Z Shape == gis\anotherfile2.shp
 tgcreadfile.trd)</p>
 <p>PartHolder contains a range of methods for accessing, adding, updating and
 removing TuflowPart&#8217;s.</p>
+<p><strong>Note</strong>
+<em>There is a more in depth discussion about how to add and remove various types</em>
+<em>of TuflowPart in the :ref:`addingtuflowparts-top` section. You should have a</em>
+<em>look there to get a full understanding.</em></p>
 <div class="section" id="adding-a-part">
 <h3>Adding a part<a class="headerlink" href="#adding-a-part" title="Permalink to this headline">¶</a></h3>
 <p>To add a new TuflowPart to the PartHolder use the add() method:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span># Assume we already have a loaded TuflowModel called tuflow
-tgc = tuflow.control_files[&#39;TGC&#39;]
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume we already have a loaded TuflowModel called tuflow</span>
+<span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">control_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
 
-# Import factory and create a new part
-from ship.tuflow.tuflowfactory import TuflowFactory:
-line = Read GIS Z Shape == gis\buildings_R.shp ! my comment
-gis = TuflowFactory.createTuflowPart(line)
+<span class="c1"># Import factory and create a new part</span>
+<span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfactory</span> <span class="k">import</span> <span class="n">TuflowFactory</span><span class="p">:</span>
+<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;Read GIS Z Shape == gis</span><span class="se">\b</span><span class="s2">uildings_R.shp ! my comment&quot;</span>
+<span class="n">gis</span> <span class="o">=</span> <span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-# Find an existing part to put it next to. In this example we assume that
-# there&#39;s a part somewhere in the file with the following contents:
-# Read GIS Z Line == gis\walls_L.shp
-# but it could be anything.
-# Take the 0 element as we know there&#39;s only one.
-existing = tgc.contains(filename=&#39;walls_L&#39;, exact=True)[0]
+<span class="c1"># Find an existing part to put it next to. In this example we assume that</span>
+<span class="c1"># there&#39;s a part somewhere in the file with the following contents:</span>
+<span class="c1"># Read GIS Z Line == gis\walls_L.shp</span>
+<span class="c1"># but it could be anything.</span>
+<span class="c1"># Take the 0 element as we know there&#39;s only one.</span>
+<span class="n">existing</span> <span class="o">=</span> <span class="n">tgc</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;walls_L&#39;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-# Add the new &#39;gis&#39; part next to existing in the PartHolder.
-# addPart takes either a &#39;before&#39; or &#39;after&#39; kwarg. If both are given after
-# will take precedence
-tgc.parts.add(gis, after=existing)
+<span class="c1"># Add the new &#39;gis&#39; part next to existing in the PartHolder.</span>
+<span class="c1"># addPart takes either a &#39;before&#39; or &#39;after&#39; kwarg. If both are given after</span>
+<span class="c1"># will take precedence</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gis</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">existing</span><span class="p">)</span>
 
-# Note that if the part you are adding already exists in the PartHolder a
-# ValueError will be raised
-tgc.parts.addPart(gis, after=existing) # This now raises a ValueError
+<span class="c1"># Note that if the part you are adding already exists in the PartHolder a</span>
+<span class="c1"># ValueError will be raised</span>
+<span class="n">tgc</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">addPart</span><span class="p">(</span><span class="n">gis</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">existing</span><span class="p">)</span> <span class="c1"># This now raises a ValueError</span>
 </pre></div>
 </div>
 <p>To replace a part using replacePart:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Create another part to replace our other one</span>
-<span class="n">line</span> <span class="o">=</span> <span class="n">Read</span> <span class="n">GIS</span> <span class="n">Z</span> <span class="n">Shape</span> <span class="o">==</span> <span class="n">gis</span>\<span class="n">buildings_v2_R</span><span class="o">.</span><span class="n">shp</span>
+<span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;Read GIS Z Shape == gis</span><span class="se">\b</span><span class="s2">uildings_v2_R.shp&quot;</span>
 <span class="n">gis2</span> <span class="o">=</span> <span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
 <span class="c1"># Replace gis with gis2</span>
@@ -488,6 +479,7 @@ tgc.parts.addPart(gis, after=existing) # This now raises a ValueError
 </div>
 <div class="section" id="logicholder">
 <h2>LogicHolder<a class="headerlink" href="#logicholder" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
 </div>
 </div>
 

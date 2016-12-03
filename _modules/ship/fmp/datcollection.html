@@ -481,7 +481,6 @@
         <span class="n">ft</span><span class="o">.</span><span class="n">writeFile</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span></div>
         
     
-<span class="c1">#     def getUnitsByCategory(self, unit_keys):</span>
 <div class="viewcode-block" id="DatCollection.unitsByCategory"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.unitsByCategory">[docs]</a>    <span class="k">def</span> <span class="nf">unitsByCategory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_keys</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return all the units in the requested unit(s).</span>
 <span class="sd">        </span>
@@ -513,7 +512,6 @@
         <span class="k">return</span> <span class="n">types</span></div>
     
     
-<span class="c1">#     def getUnitsByType(self, type_keys):</span>
 <div class="viewcode-block" id="DatCollection.unitsByType"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.unitsByType">[docs]</a>    <span class="k">def</span> <span class="nf">unitsByType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_keys</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return all of the units of the requested type.</span>
 <span class="sd">        </span>
@@ -550,7 +548,6 @@
         <span class="k">return</span> <span class="n">types</span></div>
     
     
-<span class="c1">#     def getAllUnits(self):</span>
 <div class="viewcode-block" id="DatCollection.allUnits"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.allUnits">[docs]</a>    <span class="k">def</span> <span class="nf">allUnits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Get all of the isisunit in the collection</span>
 <span class="sd">        </span>
@@ -568,7 +565,6 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span></div>
     
     
-<span class="c1">#     def getUnit(self, key, unit_type=None):</span>
 <div class="viewcode-block" id="DatCollection.unit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.unit">[docs]</a>    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">unit_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit_category</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fetch a unit from the collection by name.</span>
 <span class="sd">        </span>
@@ -620,7 +616,6 @@
             <span class="k">return</span> <span class="kc">False</span></div>
         
     
-<span class="c1">#     def setUnit(self, unit, unit_type=None):</span>
 <div class="viewcode-block" id="DatCollection.setUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.setUnit">[docs]</a>    <span class="k">def</span> <span class="nf">setUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace the contents of a certain unit with the given one.</span>
 <span class="sd">        </span>
@@ -652,7 +647,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit</span></div>
         
         
-<span class="c1">#     def getNoOfUnits(self): </span>
 <div class="viewcode-block" id="DatCollection.numberOfUnits"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.numberOfUnits">[docs]</a>    <span class="k">def</span> <span class="nf">numberOfUnits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;The number of units currently held in the collection.</span>
 <span class="sd">        </span>
@@ -693,18 +687,6 @@
 <span class="sd">        Return:</span>
 <span class="sd">            DatCollection - setup as an empty ISIS .dat file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-<span class="c1">#         contents = [</span>
-<span class="c1">#                 &#39;&#39;,</span>
-<span class="c1">#                 &#39;#REVISION#1&#39;,</span>
-<span class="c1">#                 &#39;         0     0.750     0.900     0.100     0.001        12SI&#39;,</span>
-<span class="c1">#                 &#39;    10.000     0.010     0.010     0.700     0.100     0.700     0.000&#39;,</span>
-<span class="c1">#                 &#39;RAD FILE&#39;,</span>
-<span class="c1">#                 &#39;&#39;,</span>
-<span class="c1">#                 &#39;END GENERAL&#39;</span>
-<span class="c1">#                 &#39;INITIAL CONDITIONS&#39;,</span>
-<span class="c1">#                 &#39; label   ?      flow     stage froude no  velocity     umode    ustate         z&#39;,</span>
-<span class="c1">#         ]</span>
-
         <span class="n">unit_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;unit_kwargs&#39;</span><span class="p">,</span> <span class="p">[{}]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">unit_kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unit_kwargs kwarg must be the same length as unit or not be given&#39;</span><span class="p">)</span>

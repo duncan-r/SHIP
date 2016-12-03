@@ -253,7 +253,7 @@ through the DatCollection or they can be grouped:</p>
 <span class="c1"># You can loop through all of the Units in the model</span>
 <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">DatCollection</span><span class="p">:</span>
    <span class="nb">print</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>       <span class="c1"># The main label for the unit.</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">unit_type</span><span class="p">)</span>  <span class="c1"># Would be &#39;Arch&#39; for a BridgeUnitArch</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">unit_type</span><span class="p">)</span>  <span class="c1"># Would be &#39;arch&#39; for a BridgeUnitArch</span>
 
 <span class="c1"># Or you can retrieve a subset of units in a variety of ways</span>
 <span class="c1"># By category. Returns a list</span>
@@ -272,24 +272,16 @@ true to that in the FMP software to ease the learning curve. There are two main
 types of data in FMP units: &#8216;head_data&#8217; and &#8216;row_data&#8217;.</p>
 <p>In keeping with the bridge example above:</p>
 <blockquote>
-<div><ul>
-<li><dl class="first docutils">
-<dt>head_data (dict):</dt>
-<dd><p class="first last">single variables used by a unit type (e.g. comment, remote_us,
+<div><ul class="simple">
+<li><strong>head_data (dict)</strong>:
+single variables used by a unit type (e.g. comment, remote_us,
 calibration_coef, etc). The naming scheme tries to remain close to those
-used in the software and the help manual, although these two vary at times!</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>row_data (dict):</dt>
-<dd><p class="first last">variable number of data entries, like geometry data in
+used in the software and the help manual, although these two vary at times!</li>
+<li><strong>row_data (dict)</strong>:
+variable number of data entries, like geometry data in
 a lot of units, and bridge opening data in bridges. All row_data have a
 &#8216;main&#8217; key, the main row data - usually geometry. The dict values are
-RowDataCollection objects.</p>
-</dd>
-</dl>
-</li>
+RowDataCollection objects.</li>
 </ul>
 </div></blockquote>
 <p>For a summary of the head_data keys, row_data keys, and the unit type and
@@ -331,7 +323,7 @@ same types of data into a single object (e.g. all the chainage, or elevation).</
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 
 <span class="c1"># Get a DataObject containing the CHAINAGE data</span>
-<span class="n">dobj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">rowDataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">rowdata_type</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
+<span class="n">dobj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">rowDataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span>
 
 <span class="c1"># Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for</span>
 <span class="c1"># a specific row index</span>
@@ -392,7 +384,7 @@ and keys as ROW_DATA_TYPES.</li>
 <span class="c1"># and the values are lists of all values in that type</span>
 <span class="n">row_stuff</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
 
-<span class="c1"># First elevation entry and first roughness entry:</span>
+<span class="c1"># First elevation entry and first roughness entry (first row):</span>
 <span class="n">elev1</span> <span class="o">=</span> <span class="n">row_stuff</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">rgh1</span> <span class="o">=</span> <span class="n">row_stuff</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -402,12 +394,12 @@ you should use the DataObject itself:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">rgh_obj</span> <span class="o">=</span> <span class="n">bridge</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObject</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">ROUGHNESS</span><span class="p">)</span>
 
 <span class="c1"># You can now loop through data_obj and read or update each entry</span>
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rgh_obj</span><span class="p">:</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">getValue</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rgh_obj</span><span class="p">):</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
    <span class="c1"># Note that rgh_obj returned above is a shallow copy so changes you make</span>
    <span class="c1"># here will also be made in the DatCollection.</span>
-   <span class="n">r</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">getValue</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">)</span>
+   <span class="n">rgh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">1.2</span>
 </pre></div>
 </div>
 <p><strong>NOTE</strong>
@@ -534,10 +526,10 @@ access some data:</p>
 
 <span class="c1"># You can loop through the returned lists to access the data in the TuflowPart</span>
 <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">variable</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gis</span><span class="p">:</span>
-   <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">command</span><span class="p">)</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">command</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There is also a really useful method in ControlFile for querying the
@@ -598,10 +590,10 @@ ControlFile through the control_files list:</p>
 with. This is done through the &#8216;associates&#8217; object. Currently these include:</p>
 <blockquote>
 <div><ul class="simple">
-<li>parent: the ModelFile that contains the TuflowPart.</li>
-<li>logic: TuflowLogic associated with this TUflowPart. This can == None.</li>
-<li>sibling_next: Another TuflowPart on the same command line as this.</li>
-<li>sibling_prev: Same as sibling_next except it is the TuflowPart to the
+<li><strong>parent</strong>: the ModelFile that contains the TuflowPart.</li>
+<li><strong>logic</strong>: TuflowLogic associated with this TUflowPart. This can == None.</li>
+<li><strong>sibling_next</strong>: Another TuflowPart on the same command line as this.</li>
+<li><strong>sibling_prev</strong>: Same as sibling_next except it is the TuflowPart to the
 left rather than the right.</li>
 </ul>
 </div></blockquote>
@@ -719,11 +711,9 @@ command line. This argument is a dict setup like so:</p>
           <span class="p">}</span>
 </pre></div>
 </div>
-<p>You do not have to include both (or either) but the main keys must be
-&#8216;scenario&#8217; and/or &#8216;event&#8217;. Anything else will be ignored. There is a
-function in utilities for converting a string version (such as that entered
-into the FMP runform (.ief). That saves you from having to convert it into a dict
-yourself:</p>
+<p>There is a function in utilities for converting a string version (such as that
+entered into the FMP runform (.ief). That saves you from having to convert it
+into a dict yourself:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the utilfunctions</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
 

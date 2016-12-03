@@ -20,6 +20,20 @@ FileLoader class::
    tcf_path = "C:/path/to/a/tcffile.tcf"
    loader = FileLoader()
    tuflow = loader.loadFile(tcf_path)
+
+After loading a TuflowModel it is usually a good idea to check that it managed
+to load all of the linked control files. It will not automatically fail and
+raise an IOError if some of the .tgc, .tbc, .tef, .ecf, or .trd files could not
+be found. This approach means that you can run it once and be aware of all 
+missing files. To check that the model was fully loaded without issues use::
+
+   # Returns a list
+   missing_files = tuflow.missing_model_files
+   
+   # If the model loaded without problems this will print an empty list
+   # If not it will print a list containing the filename's of all the control
+   # files that could not be loaded
+   print (missing_files)
    
 
 ########

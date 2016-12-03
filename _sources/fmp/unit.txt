@@ -107,9 +107,9 @@ functionality is available in the methods within the RowDataCollection itself.
 There is though a couple of convenience hooks in the AUnit interface for 
 common requests. These include:
    
-   - rowDataObject(key, rowdata_type='main'): to return one of the DataObject's in
-     the RowDataCollection.
-   - row(index, rowdata_type='main'): to return the contents of a particular
+   - **rowDataObject(key, rowdata_type='main')**: to return one of the 
+     DataObject's in the RowDataCollection.
+   - **row(index, rowdata_type='main')**: to return the contents of a particular
      row in a RowDataCollection.
      
 example::
@@ -190,5 +190,6 @@ must provide an index and an options row_data key.
 Unit specfic attributes
 #######################
 
-The docstrings within all of the AUnit classes in the datunits package contain
-class specific information about the head_data variables and row_data entries.
+You can find a summary of the main head_data keys, row_data keys, and other
+useful AUnit specific implementation details in the :ref:`unitdescriptions-top`,
+or have a look at the docstring in the API pages.

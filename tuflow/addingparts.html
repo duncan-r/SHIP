@@ -175,8 +175,14 @@ a lot of sense (or crashes).</p>
 </div></blockquote>
 <p>TuflowModel is the main &#8216;glue&#8217; that pulls all of the other components together.
 ControlFile is the main container for the data. It stores all of the parts of
-control files in two iterator classes: PartHolder and LogicHolder. The actual
-data is all stored in classes that extend the TuflowPart interface.</p>
+control files in two iterator classes:</p>
+<blockquote>
+<div><ul class="simple">
+<li>PartHolder</li>
+<li>LogicHolder</li>
+</ul>
+</div></blockquote>
+<p>The actual data is all stored in classes that extend the TuflowPart interface.</p>
 <p>It all looks a little bit like this slightly simplified diagram:</p>
 <img alt="../_images/Tuflow_Design_Simple.png" src="../_images/Tuflow_Design_Simple.png" />
 </div>
@@ -184,8 +190,8 @@ data is all stored in classes that extend the TuflowPart interface.</p>
 <h2>How it all works<a class="headerlink" href="#how-it-all-works" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="dealing-with-control-files">
 <h3>Dealing with control files<a class="headerlink" href="#dealing-with-control-files" title="Permalink to this headline">¶</a></h3>
-<p>Now we need to consider a bit about how Tuflow control files are setup and
-compare that to what the SHIP library does.</p>
+<p>We need to consider a bit about how Tuflow control files are setup and compare
+that to what the SHIP library does.</p>
 <p>In Tuflow you have a .tcf file as the main entry point for a model. Perhaps
 something like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># this might be called myrun.tcf</span>
@@ -266,7 +272,7 @@ Set Mat == 5
 </ul>
 </dd>
 </dl>
-<p>And it would store on IfLogic object in the Logic holder with two clauses
+<p>And it would store an IfLogic object in the Logic holder with two clauses
 (If Scenario and Else). All pretty obvious so far.</p>
 <p>Now what happens if you want to remove &#8216;Read GIS Whatevs&#8217; from the If logic?
 You could do this:</p>
@@ -278,8 +284,8 @@ You could do this:</p>
 <span class="c1"># Find the part we want and remove it</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">logic</span><span class="o">.</span><span class="n">parts</span><span class="p">):</span>
    <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;read gis whatevs&#39;</span><span class="p">:</span>
-      <span class="n">gindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
-      <span class="n">pindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">gindex</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+      <span class="n">gindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">getGroup</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+      <span class="n">pindex</span> <span class="o">=</span> <span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">gindex</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
       <span class="k">del</span> <span class="n">logic</span><span class="o">.</span><span class="n">group_parts</span><span class="p">[</span><span class="n">gindex</span><span class="p">][</span><span class="n">pindex</span><span class="p">]</span>
       <span class="k">del</span> <span class="n">logic</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
       <span class="k">break</span>
@@ -303,8 +309,8 @@ Set Mat == 5
 </div>
 <p>The nuances of why this happens is out of the scope of this section, but it&#8217;s
 basically because the IfLogic thinks that the TuflowPart has been removed from
-it&#8217;s scope, but neither the ControlFile, PartHolder or TuflowPart itself know
-that!</p>
+it&#8217;s scope, but neither the ControlFile, PartHolder, or the TuflowPart itself
+know about it!</p>
 </div>
 </div>
 <div class="section" id="what-you-should-do">
@@ -351,10 +357,9 @@ Set Mat == 5
 </div>
 <div class="section" id="adding-non-modelfile-parts">
 <h3>Adding non-ModelFile parts<a class="headerlink" href="#adding-non-modelfile-parts" title="Permalink to this headline">¶</a></h3>
-<p>We&#8217;ll deal with ModelFile types in a bit because they can be a little
-different depending on the circumstances.</p>
-<p>It&#8217;s pretty simple to add TuflowPart&#8217;s to a control file really. You just need
-to think a little about where you are trying to add it. PartHolder has three
+<p>We&#8217;ll deal with ModelFile types in a bit because they can be a little different.</p>
+<p>It&#8217;s pretty simple to add TuflowPart&#8217;s to a control file. You just need to
+think a little about where you are trying to add it. PartHolder has three
 methods:</p>
 <blockquote>
 <div><ul>
@@ -390,7 +395,7 @@ Essentially stops it from being used in anything, but keeps it in the list.</p>
 </div>
 <div class="section" id="adding-modelfile-parts">
 <h3>Adding ModelFile parts<a class="headerlink" href="#adding-modelfile-parts" title="Permalink to this headline">¶</a></h3>
-<p>So what about ModelFile and why are they different? Well, sometime they&#8217;re not.
+<p>So what about ModelFile and why are they different? Well, sometimes they&#8217;re not.
 If you just want to change the .tgc file being pointed to by a .tcf and then
 write the updated .tcf file to disk, it doesn&#8217;t matter. Let&#8217;s revisit the
 previous .tcf example:</p>
@@ -429,9 +434,9 @@ just do this:</p>
 </pre></div>
 </div>
 <p>Problems come in when you might want to do something with the new control file.
-With the above approach all you do is change the name of a ModelFile (TUflowPart)
-instance. Now any other TuflowPart that has that ModelFile as a parent - in this
-example it will be all of the parts in the &#8216;TGC&#8217; ControlFile. will have that new
+With the above approach all you do is change the name of a ModelFile instance.
+Now any other TuflowPart that has that ModelFile as a parent - in this example
+it will be all of the parts in the &#8216;TGC&#8217; ControlFile. will have that new
 filename for their parent. This is possibly what you want? Or possibly not?</p>
 <p>If you are changing the name to another existing .tgc file, but you want to
 amend it slightly you will want to load the contents into the &#8216;TGC&#8217; ControlFile.</p>
@@ -445,10 +450,10 @@ probably want to do it a different way.</p>
 <em>file. In that case it is best to just make whatever changes and then change the</em>
 <em>filename variables, as above. This change will be replicated wherever it&#8217;s</em>
 <em>referenced and you can save it under the new name.</em></p>
-<p>Other than the reason in SIDENOTE you will want to use either:</p>
+<p>Other than the reason in the sidenote above you will want to use either:</p>
 <blockquote>
 <div><ul class="simple">
-<li>the addModelFile method in TuflowModel.</li>
+<li>the addModelFile method in TuflowModel (you probably don&#8217;t need this).</li>
 <li>the addControlFile method in ControlFile.</li>
 </ul>
 </div></blockquote>
@@ -456,20 +461,19 @@ probably want to do it a different way.</p>
 you want and it will work the same, but there is a clause in the TcfControlFile
 that will call that method anyway. It&#8217;s probably easier to remember to use the
 addControlFile method in ControlFile all of the time.</p>
-<p>The only reason that it needs to the TuflowModel methods is because changes in
-the &#8216;TCF&#8217; ControlFile will need to notify another ControlFile, say &#8216;TGC&#8217; if the
+<p>The only reason that it needs the TuflowModel methods is because changes in the
+&#8216;TCF&#8217; ControlFile will need to notify another ControlFile, say &#8216;TGC&#8217; if the
 ModelFile being added will need to update contents in there.</p>
-<dl class="docutils">
-<dt>The addControlFile method takes three arguments:</dt>
-<dd><ul class="first last simple">
+<p>The addControlFile method takes three arguments:</p>
+<blockquote>
+<div><ul class="simple">
 <li><strong>filepart(ModelFile)</strong>: the new ModelFile to add.</li>
 <li><strong>control(ControlFile)</strong>: the newly loaded ControlFile to update the
 existing one with.</li>
 <li><strong>adjacent_part(ModelFile)</strong>: an existing ModelFile to use as an indicator
 of where the contents should go.</li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <p>Example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the tuflowloader</span>
 <span class="c1"># I might change this so you can use the FileLoader, like the others, at</span>
@@ -530,19 +534,20 @@ The first, and probably easiest, way is to copy an existing TuflowPart:</p>
 </div>
 <p>Doing it this way you get a lot for free (but some of it you want to think
 about!). If you leave the defaults it will keep the associates.parent, but remove
-the .logic and .sibling_prev/next. It will also set the .comment to &#8216;&#8217;. If you
+the .logic and .sibling_prev/next. It will also set the .comment to &#8220;&#8221;. If you
 want to keep the .logic you can set the keep_logic kwarg to True.</p>
 <p>You can also create a new TuflowPart afresh. Either just call the contructor
 of one of them:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ship.tuflow.tuflowfilepart</span> <span class="k">import</span> <span class="n">GisFile</span>
 
 <span class="c1"># you have to add these</span>
+<span class="c1"># &#39;tuflow&#39; is assumed to be a loaded TuflowModel</span>
 <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="n">root</span><span class="o">=</span><span class="n">tuflow</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s1">&#39;Read GIS Z Line&#39;</span><span class="p">,</span>
         <span class="n">path</span><span class="o">=</span><span class="s1">&#39;..\gis</span><span class="se">\2</span><span class="s1">d zln_something_L.shp&#39;</span><span class="p">}</span>
 
 <span class="c1"># add logic and/or a comment if you want</span>
 <span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">logic</span> <span class="c1"># assume some TuflowLogic you retrieved before</span>
-<span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;A comment about the part I&#39;</span><span class="n">m</span> <span class="n">making</span><span class="s1">&#39;</span>
+<span class="nb">vars</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;A comment about the part I&#39;m making&quot;</span>
 
 <span class="c1"># here &#39;parent&#39; is a ModelFile instance representing the control file that</span>
 <span class="c1"># the file will be put in</span>
@@ -566,7 +571,7 @@ make life easier and just call getTuflowPart:</p>
 <span class="n">gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">createGisType</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
 
 <span class="c1"># or the classmethod</span>
-<span class="n">gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">getTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="n">logic</span><span class="p">)</span>
+<span class="n">gisfile_list</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">TuflowFactory</span><span class="o">.</span><span class="n">getTuflowPart</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">logic</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;logic&#39;</span><span class="p">])</span>
 
 <span class="c1"># Note both of the above return a list. In this case with only a single</span>
 <span class="c1"># entry in it. If it was a piped command you would get multiple items</span>
@@ -581,14 +586,14 @@ make life easier and just call getTuflowPart:</p>
 </div>
 <div class="section" id="saving-controlfile-s">
 <span id="addingtuflowparts-saving"></span><h2>Saving ControlFile&#8217;s<a class="headerlink" href="#saving-controlfile-s" title="Permalink to this headline">¶</a></h2>
-<p>If you&#8217;ve made some changes to some of the files in a controlFile class you
+<p>If you&#8217;ve made some changes to some of the files in a ControlFile class you
 will probably want to be able to save them to disk. There are two options for
 doing this:</p>
 <blockquote>
 <div><ul class="simple">
-<li>getPrintablecontents(): returns a dict where keys are absolute paths of
+<li><strong>getPrintablecontents()</strong>: returns a dict where keys are absolute paths of
 the tuflow control file and values are list of lines in that file.</li>
-<li>write(): writes the contents of tuflow control files to disk.</li>
+<li><strong>write()</strong>: writes the contents of tuflow control files to disk.</li>
 </ul>
 </div></blockquote>
 <p>If you want more control over what happens or you want to view the contents
@@ -600,6 +605,8 @@ does involve a bit more work. It takes the following optional kwargs:</p>
 set to True will be included.</li>
 <li><strong>parents(list)</strong>: a list of parents (tuflow control files) to return.
 if not given all the parents in self.control_files will be returned.</li>
+<li><strong>se_vals(dict)</strong>: a scenario and event values dict. If given only the sections
+that fall within the given clause terms will be returned/written.</li>
 </ul>
 </div></blockquote>
 <p>Example:</p>
@@ -629,7 +636,7 @@ already exists.</li>
 </div></blockquote>
 <p>The write functions just takes some of the work out of the process for you. It
 will call getPrintableContents, if overwrite == False it will check the files
-don&#8217;t exists, then it will write the contents to file:</p>
+don&#8217;t exist, then it will write the contents to file:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Assume we have a loaded TuflowModel called tuflow.</span>
 <span class="n">tgc</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">contol_files</span><span class="p">[</span><span class="s1">&#39;TGC&#39;</span><span class="p">]</span>
 

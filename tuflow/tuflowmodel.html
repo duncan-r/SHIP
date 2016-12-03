@@ -149,6 +149,20 @@ FileLoader class:</p>
 <span class="n">tuflow</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">tcf_path</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>After loading a TuflowModel it is usually a good idea to check that it managed
+to load all of the linked control files. It will not automatically fail and
+raise an IOError if some of the .tgc, .tbc, .tef, .ecf, or .trd files could not
+be found. This approach means that you can run it once and be aware of all
+missing files. To check that the model was fully loaded without issues use:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Returns a list</span>
+<span class="n">missing_files</span> <span class="o">=</span> <span class="n">tuflow</span><span class="o">.</span><span class="n">missing_model_files</span>
+
+<span class="c1"># If the model loaded without problems this will print an empty list</span>
+<span class="c1"># If not it will print a list containing the filename&#39;s of all the control</span>
+<span class="c1"># files that could not be loaded</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">missing_files</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>

@@ -150,10 +150,16 @@ for accessing data is still quite similar, it is just set out in a slightly
 different way.</p>
 <p>Below is a list of the main changes to the isis (now fmp) package to ease the
 transition of existing code. They are ordered by module.</p>
-<p><strong>The biggest change for the isis package is the package name change from*
-***isis* to *fmp*. Although it&#8217;s probably the easiest to deal with.</strong></p>
-<p><em>The data_structures package has also been renamed to datastructures.</em>
-<em>This is to have a compatible naming convention with all the others.</em></p>
+<p><strong>The biggest changes for the isis package are:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><em>the package name change from</em> <strong>isis</strong> <em>to</em> <strong>fmp</strong></li>
+<li><em>all dict key have been converted to lowercase with &#8216;_&#8217; separators.</em>
+<em>(e.g. &#8216;initial_conditions&#8217;). Previously there was very little consistency.</em></li>
+<li><em>The data_structures package has also been renamed to datastructures.</em>
+<em>This is to have a consistent naming convention with all the others.</em></li>
+</ul>
+</div></blockquote>
 <div class="section" id="aisisunit-aunit">
 <h2>AIsisUnit/AUnit<a class="headerlink" href="#aisisunit-aunit" title="Permalink to this headline">¶</a></h2>
 <p>The abstract base class for all units in the fmp/isis package</p>

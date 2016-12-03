@@ -286,7 +286,7 @@ removing items. Accessing parts is generally done in the following way::
    # Approach 1
    logic = tgc.logic[0] # say tgc is a ControlFile instance
    # or: Approach 2
-   logic = part.associates.logic  ' say part is a TuflowPart instance
+   logic = part.associates.logic  # say part is a TuflowPart instance
    
    # You can access the components directly
    for i, g in enumerate(logic.group_parts):
