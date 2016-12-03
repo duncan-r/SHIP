@@ -24,11 +24,13 @@ different way.
 Below is a list of the main changes to the isis (now fmp) package to ease the
 transition of existing code. They are ordered by module.
 
-**The biggest change for the isis package is the package name change from*
-***isis* to *fmp*. Although it's probably the easiest to deal with.**
+**The biggest changes for the isis package are:** 
 
-*The data_structures package has also been renamed to datastructures.*
-*This is to have a compatible naming convention with all the others.*
+   - *the package name change from* **isis** *to* **fmp**
+   - *all dict key have been converted to lowercase with '_' separators.*
+     *(e.g. 'initial_conditions'). Previously there was very little consistency.*
+   - *The data_structures package has also been renamed to datastructures.*
+     *This is to have a consistent naming convention with all the others.*
 
 
 AIsisUnit/AUnit

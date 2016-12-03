@@ -274,7 +274,7 @@ class RefhUnit(AUnit):
         """
         out_line = file_line + storm_rows
         for i in range(file_line, out_line):
-            self.row_data['main'].append(unit_data[i][0:10].strip())
+            self.row_data['main'].addRow({rdt.RAIN: unit_data[i][0:10].strip()})
         
         return out_line
     

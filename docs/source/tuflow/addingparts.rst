@@ -33,8 +33,12 @@ It helps to do a quick review of the main components:
 
 TuflowModel is the main 'glue' that pulls all of the other components together.
 ControlFile is the main container for the data. It stores all of the parts of
-control files in two iterator classes: PartHolder and LogicHolder. The actual
-data is all stored in classes that extend the TuflowPart interface.
+control files in two iterator classes: 
+
+   - PartHolder
+   - LogicHolder
+   
+The actual data is all stored in classes that extend the TuflowPart interface.
 
 It all looks a little bit like this slightly simplified diagram:
 
@@ -47,8 +51,8 @@ How it all works
 Dealing with control files
 ==========================
 
-Now we need to consider a bit about how Tuflow control files are setup and 
-compare that to what the SHIP library does.
+We need to consider a bit about how Tuflow control files are setup and compare 
+that to what the SHIP library does.
 
 In Tuflow you have a .tcf file as the main entry point for a model. Perhaps
 something like this::
@@ -130,7 +134,7 @@ The 'TGC' ControlFile PartHolder would store it all in this order:
    - Read File == test_trd3.trd ! trd3
    - Set Mat == 5
 
-And it would store on IfLogic object in the Logic holder with two clauses 
+And it would store an IfLogic object in the Logic holder with two clauses 
 (If Scenario and Else). All pretty obvious so far.
 
 Now what happens if you want to remove 'Read GIS Whatevs' from the If logic?
@@ -144,8 +148,8 @@ You could do this::
    # Find the part we want and remove it
    for i, part in enumerate(logic.parts):
       if part.command.lower() == 'read gis whatevs':
-         gindex = logic.getGroup(part.hash)
-         pindex = logic.group_parts[gindex].index(part.hash)
+         gindex = logic.getGroup(part)
+         pindex = logic.group_parts[gindex].index(part)
          del logic.group_parts[gindex][pindex]
          del logic.parts[i]
          break
@@ -168,8 +172,8 @@ you went to save the tgcfile.tgc now you would get this::
 
 The nuances of why this happens is out of the scope of this section, but it's
 basically because the IfLogic thinks that the TuflowPart has been removed from
-it's scope, but neither the ControlFile, PartHolder or TuflowPart itself know
-that!
+it's scope, but neither the ControlFile, PartHolder, or the TuflowPart itself 
+know about it!
 
 
 ##################
@@ -218,11 +222,10 @@ So now it looks like this, which is hopefully what you expected::
 Adding non-ModelFile parts
 ==========================
 
-We'll deal with ModelFile types in a bit because they can be a little 
-different depending on the circumstances.
+We'll deal with ModelFile types in a bit because they can be a little different.
 
-It's pretty simple to add TuflowPart's to a control file really. You just need
-to think a little about where you are trying to add it. PartHolder has three
+It's pretty simple to add TuflowPart's to a control file. You just need to 
+think a little about where you are trying to add it. PartHolder has three
 methods:
 
    - **add(filepart, kwargs)**: add a new TuflowPart. Takes some keyword args:
@@ -247,7 +250,7 @@ methods:
 Adding ModelFile parts
 ======================
 
-So what about ModelFile and why are they different? Well, sometime they're not.
+So what about ModelFile and why are they different? Well, sometimes they're not.
 If you just want to change the .tgc file being pointed to by a .tcf and then
 write the updated .tcf file to disk, it doesn't matter. Let's revisit the 
 previous .tcf example::
@@ -286,9 +289,9 @@ just do this::
    # Some other command below ...
  
 Problems come in when you might want to do something with the new control file.
-With the above approach all you do is change the name of a ModelFile (TUflowPart)
-instance. Now any other TuflowPart that has that ModelFile as a parent - in this
-example it will be all of the parts in the 'TGC' ControlFile. will have that new
+With the above approach all you do is change the name of a ModelFile instance. 
+Now any other TuflowPart that has that ModelFile as a parent - in this example 
+it will be all of the parts in the 'TGC' ControlFile. will have that new
 filename for their parent. This is possibly what you want? Or possibly not?
 
 If you are changing the name to another existing .tgc file, but you want to
@@ -306,9 +309,9 @@ probably want to do it a different way.
 *filename variables, as above. This change will be replicated wherever it's*
 *referenced and you can save it under the new name.*
 
-Other than the reason in SIDENOTE you will want to use either:
+Other than the reason in the sidenote above you will want to use either:
 
-   - the addModelFile method in TuflowModel. 
+   - the addModelFile method in TuflowModel (you probably don't need this). 
    - the addControlFile method in ControlFile.
    
 Long story short, don't use the addModelFile method in TuflowModel. You can if
@@ -316,11 +319,12 @@ you want and it will work the same, but there is a clause in the TcfControlFile
 that will call that method anyway. It's probably easier to remember to use the
 addControlFile method in ControlFile all of the time.
 
-The only reason that it needs to the TuflowModel methods is because changes in
-the 'TCF' ControlFile will need to notify another ControlFile, say 'TGC' if the
+The only reason that it needs the TuflowModel methods is because changes in the 
+'TCF' ControlFile will need to notify another ControlFile, say 'TGC' if the 
 ModelFile being added will need to update contents in there.
 
 The addControlFile method takes three arguments:
+
    - **filepart(ModelFile)**: the new ModelFile to add.
    - **control(ControlFile)**: the newly loaded ControlFile to update the 
      existing one with.
@@ -388,7 +392,7 @@ The first, and probably easiest, way is to copy an existing TuflowPart::
 
 Doing it this way you get a lot for free (but some of it you want to think 
 about!). If you leave the defaults it will keep the associates.parent, but remove
-the .logic and .sibling_prev/next. It will also set the .comment to ''. If you
+the .logic and .sibling_prev/next. It will also set the .comment to "". If you
 want to keep the .logic you can set the keep_logic kwarg to True. 
 
 You can also create a new TuflowPart afresh. Either just call the contructor
@@ -397,12 +401,13 @@ of one of them::
    from ship.tuflow.tuflowfilepart import GisFile
 
    # you have to add these
+   # 'tuflow' is assumed to be a loaded TuflowModel
    vars = {root=tuflow.root, command='Read GIS Z Line',
            path='..\gis\2d zln_something_L.shp'}
    
    # add logic and/or a comment if you want
    vars['logic'] = logic # assume some TuflowLogic you retrieved before
-   vars['comment'] = 'A comment about the part I'm making'
+   vars['comment'] = "A comment about the part I'm making"
 
    # here 'parent' is a ModelFile instance representing the control file that
    # the file will be put in
@@ -426,7 +431,7 @@ make life easier and just call getTuflowPart::
    gisfile_list = tf.TuflowFactory.createGisType(line, parent, **args)
    
    # or the classmethod
-   gisfile_list = tf.TuflowFactory.getTuflowPart(line, parent, logic=logic)
+   gisfile_list = tf.TuflowFactory.getTuflowPart(line, parent, logic=args['logic'])
    
    # Note both of the above return a list. In this case with only a single 
    # entry in it. If it was a piped command you would get multiple items
@@ -444,13 +449,13 @@ make life easier and just call getTuflowPart::
 Saving ControlFile's
 ####################
 
-If you've made some changes to some of the files in a controlFile class you
+If you've made some changes to some of the files in a ControlFile class you
 will probably want to be able to save them to disk. There are two options for
 doing this:
 
-   - getPrintablecontents(): returns a dict where keys are absolute paths of
+   - **getPrintablecontents()**: returns a dict where keys are absolute paths of
      the tuflow control file and values are list of lines in that file.
-   - write(): writes the contents of tuflow control files to disk.
+   - **write()**: writes the contents of tuflow control files to disk.
    
 If you want more control over what happens or you want to view the contents
 that you are about to write you should use getPrintableContents. Although it
@@ -460,6 +465,8 @@ does involve a bit more work. It takes the following optional kwargs:
      set to True will be included.
    - **parents(list)**: a list of parents (tuflow control files) to return.
      if not given all the parents in self.control_files will be returned.
+   - **se_vals(dict)**: a scenario and event values dict. If given only the sections
+     that fall within the given clause terms will be returned/written.
 
 Example::
 
@@ -486,7 +493,7 @@ The write methods takes the same kwargs as above plus one extra:
 
 The write functions just takes some of the work out of the process for you. It
 will call getPrintableContents, if overwrite == False it will check the files
-don't exists, then it will write the contents to file::
+don't exist, then it will write the contents to file::
 
    # Assume we have a loaded TuflowModel called tuflow.
    tgc = tuflow.contol_files['TGC']

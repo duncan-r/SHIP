@@ -29,15 +29,31 @@
 from integration_tests import test_tuflowload as tuflowload
 from integration_tests import test_tuflowupdate as tuflowupdate
 from integration_tests import test_updatetcfmodelfile as tcfmodelfile
+from integration_tests import test_datload as datload
 from integration_tests.test_tuflowupdate import TestError
 
 if __name__ == '__main__':
     
-    print ('\nRunning tuflow package integration tests...\n')
+    # FMP
+    print ('*************************************************************')
+    print ('Running fmp package integration tests...')
+    print ('*************************************************************')
+    dl = datload.DatLoadTests().runTests()
+    
+    print ('\n*************************************************************')
+    print ('fmp package integration tests complete.')
+    print ('*************************************************************\n\n')
+    
+    # TUFLOW
+    print ('*************************************************************')
+    print ('Running tuflow package integration tests...')
+    print ('*************************************************************\n')
     tt = tuflowload.TuflowLoadTests().runTests()
     tu = tuflowupdate.TuflowUpdateTests().runTests()
     tu = tcfmodelfile.UpdateTcfModelFile().runTests()
-#     tt.runTests()
-    print ('\ntuflow package integration tests complete.\n')
+
+    print ('\n*************************************************************')
+    print ('tuflow package integration tests complete.')
+    print ('*************************************************************\n\n')
 
     

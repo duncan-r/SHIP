@@ -344,7 +344,6 @@ class DatCollection(object):
         ft.writeFile(contents, filepath)
         
     
-#     def getUnitsByCategory(self, unit_keys):
     def unitsByCategory(self, unit_keys):
         """Return all the units in the requested unit(s).
         
@@ -376,7 +375,6 @@ class DatCollection(object):
         return types
     
     
-#     def getUnitsByType(self, type_keys):
     def unitsByType(self, type_keys):
         """Return all of the units of the requested type.
         
@@ -413,7 +411,6 @@ class DatCollection(object):
         return types
     
     
-#     def getAllUnits(self):
     def allUnits(self): 
         """Get all of the isisunit in the collection
         
@@ -431,7 +428,6 @@ class DatCollection(object):
         return self.units
     
     
-#     def getUnit(self, key, unit_type=None):
     def unit(self, key, unit_type=None, unit_category=None):
         """Fetch a unit from the collection by name.
         
@@ -483,7 +479,6 @@ class DatCollection(object):
             return False
         
     
-#     def setUnit(self, unit, unit_type=None):
     def setUnit(self, unit):
         """Replace the contents of a certain unit with the given one.
         
@@ -515,7 +510,6 @@ class DatCollection(object):
                 self.units[i] = unit
         
         
-#     def getNoOfUnits(self): 
     def numberOfUnits(self): 
         """The number of units currently held in the collection.
         
@@ -556,18 +550,6 @@ class DatCollection(object):
         Return:
             DatCollection - setup as an empty ISIS .dat file.
         """
-#         contents = [
-#                 '',
-#                 '#REVISION#1',
-#                 '         0     0.750     0.900     0.100     0.001        12SI',
-#                 '    10.000     0.010     0.010     0.700     0.100     0.700     0.000',
-#                 'RAD FILE',
-#                 '',
-#                 'END GENERAL'
-#                 'INITIAL CONDITIONS',
-#                 ' label   ?      flow     stage froude no  velocity     umode    ustate         z',
-#         ]
-
         unit_kwargs = kwargs.get('unit_kwargs', [{}]*len(units))
         if not len(unit_kwargs) == len(units):
             raise ValueError('unit_kwargs kwarg must be the same length as unit or not be given')

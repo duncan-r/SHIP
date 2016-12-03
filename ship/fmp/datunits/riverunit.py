@@ -187,7 +187,7 @@ class RiverUnit (AUnit):
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
             
-        return end_line
+        return end_line + file_line
 
     def getData(self): 
         """Retrieve the data in this unit.

@@ -125,7 +125,7 @@ through the DatCollection or they can be grouped::
    # You can loop through all of the Units in the model
    for unit in DatCollection:
       print (unit.name)       # The main label for the unit.
-      print (unit.unit_type)  # Would be 'Arch' for a BridgeUnitArch
+      print (unit.unit_type)  # Would be 'arch' for a BridgeUnitArch
       
    # Or you can retrieve a subset of units in a variety of ways
    # By category. Returns a list
@@ -144,15 +144,15 @@ types of data in FMP units: 'head_data' and 'row_data'.
 
 In keeping with the bridge example above:
 
-   - head_data (dict): 
-       single variables used by a unit type (e.g. comment, remote_us,
-       calibration_coef, etc). The naming scheme tries to remain close to those
-       used in the software and the help manual, although these two vary at times!
-   - row_data (dict): 
-       variable number of data entries, like geometry data in 
-       a lot of units, and bridge opening data in bridges. All row_data have a
-       'main' key, the main row data - usually geometry. The dict values are
-       RowDataCollection objects.
+   - **head_data (dict)**: 
+     single variables used by a unit type (e.g. comment, remote_us,
+     calibration_coef, etc). The naming scheme tries to remain close to those
+     used in the software and the help manual, although these two vary at times!
+   - **row_data (dict)**: 
+     variable number of data entries, like geometry data in 
+     a lot of units, and bridge opening data in bridges. All row_data have a
+     'main' key, the main row data - usually geometry. The dict values are
+     RowDataCollection objects.
 
 For a summary of the head_data keys, row_data keys, and the unit type and
 category strings see :ref:`unitdescriptions-top`.
@@ -192,7 +192,7 @@ There's two main things you need to know:
    from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
    # Get a DataObject containing the CHAINAGE data
-   dobj = bridge.rowDataObject(rdt.CHAINAGE, rowdata_type='main')
+   dobj = bridge.rowDataObject(rdt.CHAINAGE, rowdata_key='main')
    
    # Get a specific row as a dict. Keys are ROW_DATA_TYPES and values are for
    # a specific row index
@@ -248,7 +248,7 @@ Example::
    # and the values are lists of all values in that type
    row_stuff = bridge.row_data['main'].toDict()
    
-   # First elevation entry and first roughness entry:
+   # First elevation entry and first roughness entry (first row):
    elev1 = row_stuff[rdt.ELEVATION][0]
    rgh1 = row_stuff[rdt.ROUGHNESS][0]
   
@@ -258,12 +258,12 @@ you should use the DataObject itself::
    rgh_obj = bridge.row_data['main'].dataObject(rdt.ROUGHNESS)
    
    # You can now loop through data_obj and read or update each entry
-   for r in rgh_obj:
-      print (r.getValue)
+   for i, r in enumerate(rgh_obj):
+      print (r)
       
       # Note that rgh_obj returned above is a shallow copy so changes you make
       # here will also be made in the DatCollection.
-      r.setValue(r.getValue * 1.2)
+      rgh[i] = r * 1.2
 
 **NOTE**
 *The above approach is fine if you just want to update some values, like* 
@@ -391,10 +391,10 @@ access some data::
    
    # You can loop through the returned lists to access the data in the TuflowPart
    for v in variables:
-      print (v.value, v.command)
+      print (v.command, v.variable)
    
    for g in gis:
-      print (g.filename, g.command)
+      print (g.command, g.filename)
 
 There is also a really useful method in ControlFile for querying the
 TuflowPart's that contain certain strings: the contains() method. This takes
@@ -437,10 +437,10 @@ ControlFile through the control_files list::
 TuflowParts contain reference to other objects that they have an association 
 with. This is done through the 'associates' object. Currently these include:
 
-   - parent: the ModelFile that contains the TuflowPart.
-   - logic: TuflowLogic associated with this TUflowPart. This can == None.
-   - sibling_next: Another TuflowPart on the same command line as this.
-   - sibling_prev: Same as sibling_next except it is the TuflowPart to the
+   - **parent**: the ModelFile that contains the TuflowPart.
+   - **logic**: TuflowLogic associated with this TUflowPart. This can == None.
+   - **sibling_next**: Another TuflowPart on the same command line as this.
+   - **sibling_prev**: Same as sibling_next except it is the TuflowPart to the
      left rather than the right.
      
 Continuing with the TGC ControlFile gis list from above; these are accessed like so::
@@ -562,11 +562,9 @@ command line. This argument is a dict setup like so::
                 }
              }   
 
-You do not have to include both (or either) but the main keys must be
-'scenario' and/or 'event'. Anything else will be ignored. There is a 
-function in utilities for converting a string version (such as that entered
-into the FMP runform (.ief). That saves you from having to convert it into a dict
-yourself::
+There is a function in utilities for converting a string version (such as that 
+entered into the FMP runform (.ief). That saves you from having to convert it 
+into a dict yourself::
 
    # import the utilfunctions
    from ship.utils import utilfunctions as uf

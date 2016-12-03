@@ -11,8 +11,10 @@ different type of tuflow control filed loaded. This means that if multiple
 loaded into the same ControlFile.
 
 ControlFile's can be of the following types: 'TCF', 'TGC', 'TBC', 'ECF', and 
-'TEF'. However not all are guaranteed to exist, if there are not .tef files
-referenced by a model a ControlFile will not be created with the 'TEF' key.
+'TEF'. However not all are guaranteed to exist. For example, if there are no 
+.tef files referenced by a model a ControlFile will not be created with the 
+'TEF' key (same for 'ECF', etc). There will always be a 'TCF' key and for a 
+properly configured model you can expect a 'TGC' and 'TBC'.
 
 The 'TCF' ControlFile is slightly different from the others. It is a 
 subclass of ControlFile called TcfControlFile. The only difference (currently)
@@ -138,11 +140,11 @@ as the following kwargs:
    - **variable(str)**: characters to search for in a TuflowPart.variable.
    - **filename(str)**: text to search for in a TuflowPart.filename.
    - **parent_filename(str)**: text to search for in a 
-       TuflowPart.associates.parent.filename.
+     TuflowPart.associates.parent.filename.
    - **active_only(bool)**: if True only parts currently set to 'active' will
-       be returned. Default is True.
+     be returned. Default is True.
    - **exact(bool)**: Default is False. If set to True it will only return an
-       exact match, otherwise checks if the str is 'in'.
+     exact match, otherwise checks if the str is 'in'.
 
 It will return a list of all of the TuflowPart's that meet your criterial. If
 any of the criterial that you provide are not met the part will not be returned.
@@ -249,10 +251,10 @@ to the above, with a couple of additionals::
    paths = tgc.filepaths.filepart_type=fpt.GIS, absolute=True, se_vals=se_vals)
    
 There is an additional argument available to the filepaths() method, 'no_blanks'.
-By default it is set to True. There is probably not need to change this most of
+By default it's set to True. There is probably no need to change this most of
 the time. It is there because in Tuflow control files the output paths (results,
 checkfiles, log files, etc) can be a folder with no filename. This means that
-when you search for filename's they will return an empty str ''. This is usually
+when you search for filename's they will return an empty str "". This is usually
 not a lot of use, so it's set to ignore these by default.
 
 filepaths() also accepts the kwarg 'user_vars'; a dict containing the user
@@ -300,6 +302,11 @@ tgcreadfile.trd)
 PartHolder contains a range of methods for accessing, adding, updating and 
 removing TuflowPart's. 
 
+**Note**
+*There is a more in depth discussion about how to add and remove various types*
+*of TuflowPart in the :ref:`addingtuflowparts-top` section. You should have a*
+*look there to get a full understanding.*
+
 Adding a part
 =============
 
@@ -310,7 +317,7 @@ To add a new TuflowPart to the PartHolder use the add() method::
 
    # Import factory and create a new part
    from ship.tuflow.tuflowfactory import TuflowFactory:
-   line = Read GIS Z Shape == gis\buildings_R.shp ! my comment
+   line = "Read GIS Z Shape == gis\buildings_R.shp ! my comment"
    gis = TuflowFactory.createTuflowPart(line)
    
    # Find an existing part to put it next to. In this example we assume that
@@ -332,7 +339,7 @@ To add a new TuflowPart to the PartHolder use the add() method::
 To replace a part using replacePart::
 
    # Create another part to replace our other one
-   line = Read GIS Z Shape == gis\buildings_v2_R.shp
+   line = "Read GIS Z Shape == gis\buildings_v2_R.shp"
    gis2 = TuflowFactory.createTuflowPart(line)
    
    # Replace gis with gis2
@@ -358,3 +365,4 @@ Or get rid of a part completely with remove()::
 LogicHolder
 ###########
 
+TODO
