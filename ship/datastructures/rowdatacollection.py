@@ -387,13 +387,19 @@ class RowDataCollection(object):
         return out_str
     
         
-    def updateRow(self, row_vals, index):
+    def updateRow(self, row_vals, index, **kwargs):
         """Add a new row to the units data rows.
         
         Creates a new row from the values in the supplied value dict at the location
         given by the index.
         If the index is None then the value will be appended to the end of the row
         rather than inserted.
+
+        **kwargs:
+            'no_copy'(bool): if True the deepcopy of the object will not be
+                made. This is useful if you are loading a lot of data and don't
+                want the overhead of deepcopy - like loading a new model. 
+                Default is False.
         
         Note: 
             If there is any problem while updating the values in the row all 
@@ -411,6 +417,8 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
+        no_copy = kwargs.get('no_copy', False)
+
         if index > self.row_count:
             raise IndexError
 
@@ -420,11 +428,13 @@ class RowDataCollection(object):
             if not k in dataobj_keys:
                 raise KeyError('ROW_DATA_TYPE ' + str(k) + 'is not in collection')
         
+        temp_list = None
         try:
             # Need to make a deep copy of the data_object so we can reset them back
             # to the same place if there's a problem. That way we don't get the lists
             # in the different objects out of sync.
-            temp_list = self._deepCopyDataObjects(self._collection) 
+            if not no_copy:
+                temp_list = self._deepCopyDataObjects(self._collection) 
             
             for key, val in row_vals.items():
                 self._setValue(key, val, index)
@@ -433,12 +443,13 @@ class RowDataCollection(object):
             self._resetDataObject(temp_list)
             raise err
         finally:
-            for o in temp_list:
-                del o
+            if temp_list is not None:
+                for o in temp_list:
+                    del o
             del temp_list
      
         
-    def addRow(self, row_vals, index=None):
+    def addRow(self, row_vals, index=None, **kwargs):
         """Add a new row to the units data rows.
         
         Creates a new row from the values in the supplied value dict at the location
@@ -452,6 +463,12 @@ class RowDataCollection(object):
             This ensures that they don't get out of sync if an error is found
             halfway through adding the different values. This is done by 
             creating a deep copy of the object prior to updating.
+        
+        **kwargs:
+            'no_copy'(bool): if True the deepcopy of the object will not be
+                made. This is useful if you are loading a lot of data and don't
+                want the overhead of deepcopy - like loading a new model. 
+                Default is False.
 
         Args:
             row_vals (dict): Contains the names of the data objects of
@@ -463,6 +480,8 @@ class RowDataCollection(object):
             KeyError: If any of the keys don't exist.
             IndexError: If the index doesn't exist.
         """
+        no_copy = kwargs.get('no_copy', False)
+
         if index is not None and index > self.row_count:
             raise IndexError
         
@@ -478,7 +497,8 @@ class RowDataCollection(object):
             # Need to make a deep copy of the data_object so we can reset them back
             # to the same place if there's a problem. That way we don't get the lists
             # in the different objects out of sync.
-            temp_list = self._deepCopyDataObjects(self._collection) 
+            if not no_copy:
+                temp_list = self._deepCopyDataObjects(self._collection) 
             
             for obj in self._collection:
                 if not obj.data_type in vkeys:
@@ -505,16 +525,22 @@ class RowDataCollection(object):
             if temp_list is not None:
                 for o in temp_list:
                     del o
-                del temp_list
+            del temp_list
 
         # Do this after so it's not removed if something goes wrong
         if self.has_dummy:
-            self.deleteRow(0)
+            self.deleteRow(0, no_copy=True)
             self.has_dummy = False
     
     
-    def deleteRow(self, index):
+    def deleteRow(self, index, **kwargs):
         """Delete a row from the collection.
+
+        **kwargs:
+            'no_copy'(bool): if True the deepcopy of the object will not be
+                made. This is useful if you are loading a lot of data and don't
+                want the overhead of deepcopy - like deleting the dummy row. 
+                Default is False.
         
         Args:
             index(int): the index to delete the values for.
@@ -522,14 +548,18 @@ class RowDataCollection(object):
         Raise:
             IndexError: if index is out of the bounds of the collection.
         """
+        no_copy = kwargs.get('no_copy', False)
+
         if index < 0 or index > self.row_count:
             raise IndexError
         
+        temp_list = None
         try:
             # Need to make a deep copy of the data_object so we can reset them back
             # to the same place if there's a problem. That way we don't get the lists
             # in the different objects out of sync.
-            temp_list = self._deepCopyDataObjects(self._collection) 
+            if not no_copy:
+                temp_list = self._deepCopyDataObjects(self._collection) 
             
             for obj in self._collection:
                 obj.deleteValue(index)
@@ -538,8 +568,9 @@ class RowDataCollection(object):
             self._resetDataObject(temp_list)
             raise 
         finally:
-            for o in temp_list:
-                del o
+            if temp_list is not None:
+                for o in temp_list:
+                    del o
             del temp_list
         
         
@@ -613,9 +644,9 @@ class RowDataCollection(object):
         flag to True. When actual row data is added to the collection it will
         check the flag and delete the row if it's True.
         """
-        self.addRow(row_vals)
+        self.addRow(row_vals, no_copy=True)
         if self.has_dummy:
-            self.deleteRow(0)
+            self.deleteRow(0, no_copy=True)
         self.has_dummy = True
                
     
