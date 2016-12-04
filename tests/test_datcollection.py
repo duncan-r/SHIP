@@ -244,3 +244,73 @@ class IsisUnitCollectionTest(unittest.TestCase):
         self.assertEqual(riv.name, 'riv1')
     
     
+    def test_linkedUnits(self):
+        """Test getting all of the linked units."""
+        dat = DatCollection.initialisedDat(self.fake_path)
+        riv1 = iuf.FmpUnitFactory.createUnit('river', name='riv1')
+        riv2 = iuf.FmpUnitFactory.createUnit('river', name='riv2')
+        riv3 = iuf.FmpUnitFactory.createUnit('river', name='riv3')
+        riv4 = iuf.FmpUnitFactory.createUnit('river', name='riv4')
+        riv5 = iuf.FmpUnitFactory.createUnit('river', name='riv5')
+        riv6 = iuf.FmpUnitFactory.createUnit('river', name='riv6')
+        riv7 = iuf.FmpUnitFactory.createUnit('river', name='riv7')
+        
+        brg1 = iuf.FmpUnitFactory.createUnit('arch', name='brg1_us', 
+                                             name_ds='brg1_ds')
+        brg1.head_data['remote_us'].value = 'riv3'
+        brg1.head_data['remote_ds'].value = 'riv4'
+    
+        spill1 = iuf.FmpUnitFactory.createUnit('spill', name='spill1_us',
+                                               name_ds='spill1_ds')
+        
+        junc1 = iuf.FmpUnitFactory.createUnit('junction', name='riv3')
+        junc1.head_data['names'].append('brg1_us')
+        junc1.head_data['names'].append('spill1_us')
+        junc2 = iuf.FmpUnitFactory.createUnit('junction', name='riv4')
+        junc2.head_data['names'].append('brg1_ds')
+        junc2.head_data['names'].append('spill1_ds')
+        
+        dat.addUnit(riv1)
+        dat.addUnit(riv2)
+        dat.addUnit(riv3)
+        dat.addUnit(junc1)
+        dat.addUnit(brg1)
+        dat.addUnit(spill1)
+        dat.addUnit(junc2)
+        dat.addUnit(riv4)
+        dat.addUnit(riv5)
+        dat.addUnit(riv6)
+        dat.addUnit(riv7)
+        
+        # Check for brg1 which should include everything
+        links = dat.linkedUnits(brg1)
+        self.assertEqual(links.junctions[0][0], junc1)
+        self.assertSetEqual(set(links.junctions[0][1]), set([riv3, spill1, brg1]))
+        self.assertEqual(links.junctions[1][0], junc2)
+        self.assertSetEqual(set(links.junctions[1][1]), set([riv4, spill1, brg1]))
+        self.assertSetEqual(set(links.named_units), set([riv3, riv4]))
+        self.assertEqual(links.main_unit, brg1)
+        self.assertEqual(links.us_unit, junc1)
+        self.assertEqual(links.ds_unit, spill1)
+        
+        # Check for riv4 which should only include one junction and named_unit
+        links2 = dat.linkedUnits(riv4)
+        self.assertEqual(links2.junctions[0][0], junc2)
+        self.assertSetEqual(set(links2.junctions[0][1]), set([riv4, spill1, brg1]))
+        self.assertSetEqual(set(links2.named_units), set([brg1]))
+        self.assertEqual(links2.main_unit, riv4)
+        self.assertEqual(links2.us_unit, junc2)
+        self.assertEqual(links2.ds_unit, riv5)
+        
+        # Check for riv6 which should only have us/ds unit
+        links3 = dat.linkedUnits(riv6)
+        self.assertEqual(links3.junctions, [])
+        self.assertEqual(links3.named_units, [])
+        self.assertEqual(links3.main_unit, riv6)
+        self.assertEqual(links3.us_unit, riv5)
+        self.assertEqual(links3.ds_unit, riv7)
+        
+        
+        
+        
+    

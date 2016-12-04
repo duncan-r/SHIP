@@ -14,6 +14,7 @@ class DataObjectsTest(unittest.TestCase):
         self.flt = do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3)
         self.sym = do.SymbolData(rdt.PANEL_MARKER, '*', format_str='{:<5}', default=False)
         self.con = do.ConstantData(rdt.BANKMARKER, ('', 'LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default='')
+        self.con_nodefault = do.ConstantData(rdt.BANKMARKER, ('', 'LEFT', 'RIGHT', 'BED'), format_str='{:<10}')
         self.txt = do.StringData(rdt.SPECIAL, format_str='{:<10}', default='~')
          
         self.data_objects = [self.flt, self.sym, self.con, self.txt] 
@@ -54,14 +55,11 @@ class DataObjectsTest(unittest.TestCase):
         self.con.addValue('')
         self.assertTrue(self.con.data_collection[3] == '', 'BankMarker object addValue() fail')
         with self.assertRaises(ValueError):
-            self.con.addValue(5)
-#         self.assertTrue(self.con.data_collection[4] == '', 'BankMarker object addValue() fail')
+            self.con_nodefault.addValue(5)
         with self.assertRaises(ValueError):
-            self.con.addValue('random$%%&_string')
-#         self.assertTrue(self.con.data_collection[5] == '', 'BankMarker object addValue() fail')
+            self.con_nodefault.addValue('random$%%&_string')
         with self.assertRaises(IndexError):
             self.con.addValue('LEFT', 7)
-#             self.failUnlessRaises(IndexError, lambda: self.con.addValue(True, 7))
  
      
     def test_float_setValue(self):

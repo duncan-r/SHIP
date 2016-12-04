@@ -29,11 +29,12 @@ import os
 from datetime import datetime
 
 from ship.fmp.datunits.isisunit import AUnit
-from ship.utils import filetools as ft
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.fmp.datunits.isisunit import CommentUnit
 from ship.fmp import fmpunitfactory as iuf
+from ship.fmp import unitgroups as ugroups
 from ship.utils import utilfunctions as uf
+from ship.utils import filetools as ft
 
 import logging
 logger = logging.getLogger(__name__)
@@ -95,19 +96,19 @@ class DatCollection(object):
         return self.units[key]
     
 
-    def __setitem__(self, key, value):
-        """Sets a value using index notation
-        
-        Calls the setValue() function to do the hard work.
-        
-        Args:
-            key (int): index to update.
-            value: the value to add to the units.
-        """
-        self.units[key] = value
+#     def __setitem__(self, key, value):
+#         """Sets a value using index notation
+#         
+#         Calls the setValue() function to do the hard work.
+#         
+#         Args:
+#             key (int): index to update.
+#             value: the value to add to the units.
+#         """
+#         self.units[key] = value
 
 
-    def addUnit(self, unit, index=None, **kwargs):#update_node_count=True, ics={}):
+    def addUnit(self, unit, index=None, **kwargs):
         """Adds a new isisunit type to the collection.
         
         If the index value provided is greater than the index of the 
@@ -201,7 +202,6 @@ class DatCollection(object):
                 header.head_data['node_count'].value = node_count
             
     
-#     def removeUnit(self, name_key, unit_type, update_node_count=True):
     def removeUnit(self, unit, unit_type=None, **kwargs):
         """Remove one of the units previously added to the list.
 
@@ -254,7 +254,6 @@ class DatCollection(object):
             return False
     
     
-#     def getIndex(self, unit, unit_type=None):
     def index(self, unit, unit_type=None):
         """Get the index a particular AUnit in the collection.
         
@@ -308,7 +307,7 @@ class DatCollection(object):
         # For each unit call the isisunit object and ask it
         # for its .DAT file formatted text to save to file
         for u in self.units:
-            logger.debug('Section Type: ' + u._unit_type)
+            logger.debug('Unit Type: ' + u._unit_type)
             out_data.extend(u.getData())
         
         return out_data
@@ -517,6 +516,68 @@ class DatCollection(object):
             Int Units in the collection.
         """
         return len(self.units)
+    
+    
+    def linkedUnits(self, unit):
+        """
+        """
+        linksect = ugroups.LinkedUnits(unit)
+        index = self.index(unit)
+        linksect.addLinkedUnit(self.units[index-1], 'upstream')
+        linksect.addLinkedUnit(self.units[index+1], 'downstream')
+        
+        unit_links = [val for val in unit.linkLabels().values() if val.strip() != '']
+        unit_links = set(unit_links)
+        associates = []         # Used for named_units in linksect
+        temp_junctions = []     # Store any junctions that refer to this unit
+
+        # Store the name, name_ds and index of the units in this collection
+        # so that we don't have to loop twice
+        temp_locations = {}
+        for i, u in enumerate(self.units):
+            
+            # Add the name, name_ds and index of all the units
+            # Same name's/name_ds' are stored in a list
+            if not u.name in temp_locations.keys(): 
+                temp_locations[u.name] = []
+            if u.name_ds != 'unknown' and not u.name_ds in temp_locations.keys(): 
+                temp_locations[u.name_ds] = []
+            if not i in temp_locations[u.name]:
+                temp_locations[u.name].append(i)
+            if u.name_ds != 'unknown' and not i in temp_locations[u.name_ds]:
+                temp_locations[u.name_ds].append(i)
+
+            # Check if unit is in the linkLabels of u and add to associates or
+            # temp_junctions as appropriate if it is
+            links = [val for val in u.linkLabels().values() if val.strip() != '']
+            if not unit_links.isdisjoint(links): 
+                if u.unit_type == 'junction':
+                    temp_junctions.append((u, links))
+                else:
+                    if not u == unit:
+                        associates.append(u)
+        
+        # Check all of the junction linkLabels that we found and put the actual
+        # unit in the list for each name it references
+        junctions = []
+        if temp_junctions:
+            for i, junc in enumerate(temp_junctions):
+                junctions.append((junc[0], []))
+                for link in junc[1]:
+                    for index in temp_locations[link]:
+                        if not self.units[index] in junctions[i][1] and not \
+                                    self.units[index].unit_type == 'junction':
+                            junctions[i][1].append(self.units[index])
+        
+        linksect.named_units = associates
+        linksect.junctions = junctions
+        
+        del junctions
+        del associates
+        del temp_junctions        
+        del temp_locations
+        
+        return linksect
     
 
     @classmethod

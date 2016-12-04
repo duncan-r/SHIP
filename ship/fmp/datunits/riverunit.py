@@ -75,7 +75,6 @@ class RiverUnit (AUnit):
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
             'spill1': HeadDataItem('', '{:<12}', 2, 3, dtype=dt.STRING),
             'spill2': HeadDataItem('', '{:<12}', 2, 4, dtype=dt.STRING),
-            'spill2': HeadDataItem('', '{:<12}', 2, 5, dtype=dt.STRING),
             'lateral1': HeadDataItem('', '{:<12}', 2, 6, dtype=dt.STRING),
             'lateral2': HeadDataItem('', '{:<12}', 2, 7, dtype=dt.STRING),
             'lateral3': HeadDataItem('', '{:<12}', 2, 8, dtype=dt.STRING),
@@ -111,6 +110,14 @@ class RiverUnit (AUnit):
     def icLabels(self):
         """Overriddes superclass method."""
         return [self._name]
+    
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        out = {'name': self.name}
+        for k, v in self.head_data.items():
+            if 'spill' in k or 'lateral' in k:
+                out[k] = v.value
+        return out
 
         
     def readUnitData(self, unit_data, file_line):
@@ -177,11 +184,15 @@ class RiverUnit (AUnit):
                 if north == '': north = None
                 
                 self.row_data['main'].addRow(
-                    {rdt.CHAINAGE: chain, rdt.ELEVATION: elev, rdt.ROUGHNESS: rough,
-                     rdt.RPL: rpl, rdt.PANEL_MARKER: panel, rdt.BANKMARKER: bank, 
-                     rdt.EASTING: east, rdt.NORTHING: north, 
-                     rdt.DEACTIVATION: deact, rdt.SPECIAL: special
-                }) 
+                    {   rdt.CHAINAGE: chain, rdt.ELEVATION: elev, rdt.ROUGHNESS: rough,
+                        rdt.RPL: rpl, rdt.PANEL_MARKER: panel, rdt.BANKMARKER: bank, 
+                        rdt.EASTING: east, rdt.NORTHING: north, 
+                        rdt.DEACTIVATION: deact, rdt.SPECIAL: special
+                    },
+                    # We don't need to make backup copies here. If it fails the
+                    # load fails anyway and this will just really slow us down
+                    no_copy=True
+                ) 
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')

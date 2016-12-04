@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from ship.fmp.datunits.isisunit import AUnit
 from ship.fmp.headdata import HeadDataItem
 from ship.datastructures import DATA_TYPES as dt
+from ship.utils import utilfunctions as uf
 
 import logging
 logger = logging.getLogger(__name__)
@@ -47,18 +48,41 @@ class JunctionUnit(AUnit):
         AUnit.__init__(self)
         self._unit_type = JunctionUnit.UNIT_TYPE
         self._unit_category = JunctionUnit.UNIT_CATEGORY
-        self._name = 'Junc'
         self.head_data = {
             'comment': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
             'type': HeadDataItem('OPEN', '', 0, 0, dtype=dt.CONSTANT, choices=('OPEN', 'ENERGY')),
             'names': [],
         }
-
-
+        self.name = 'Junc' # Must be after head_data here (see property below)
+    
+    '''
+    Junction overrides the name properties. This is because it deals with
+    naming in a different way to most of the other units. It doesn't actually
+    have a name itself, it's only a link for other units. These ensure that
+    updating name will always affect the first item in the names list.
+    '''
+    @property
+    def name(self):
+        return self.head_data['names'][0]
+    
+    @name.setter
+    def name(self, value):
+        if len(self.head_data['names']) < 1:
+            self.head_data['names'].append(value)
+        else:
+            self.head_data['names'][0] = value
+    
     def icLabels(self):
         """Overriddes superclass method."""
         return [self._name]
-            
+
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        out = {}
+        for i, name in enumerate(self.head_data['names']):
+            namekey = uf.encodeStr('name_' + str(i))
+            out[namekey] = name
+        return out
     
     def readUnitData(self, unit_data, file_line): 
         '''Reads the given data into the object.

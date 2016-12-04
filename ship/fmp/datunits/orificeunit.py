@@ -70,7 +70,11 @@ class OrificeUnit(AUnit):
         """Overriddes superclass method."""
         return [self._name, self._name_ds]
 
-        
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        return {'name': self.name, 'name_ds': self.name_ds}
+
+
     def readUnitData(self, unit_data, file_line): 
         '''Reads the given data into the object.
         

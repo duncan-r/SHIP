@@ -152,7 +152,7 @@ class HtbdyUnit (AUnit):
                 
                 self.row_data['main'].addRow({
                     rdt.ELEVATION: elev, rdt.TIME: time
-                })
+                }, no_copy=True)
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')

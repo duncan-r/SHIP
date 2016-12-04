@@ -84,6 +84,10 @@ class SpillUnit (AUnit):
     def icLabels(self):
         return [self._name, self._name_ds]
 
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        return {'name': self.name, 'name_ds': self.name_ds}
+
     
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
@@ -146,7 +150,7 @@ class SpillUnit (AUnit):
                 self.row_data['main'].addRow({
                     rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
                     rdt.EASTING: east, rdt.NORTHING: north
-                })
+                }, no_copy=True)
 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')

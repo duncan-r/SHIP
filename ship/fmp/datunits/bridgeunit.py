@@ -104,6 +104,11 @@ class BridgeUnit (AUnit):
     def icLabels(self):
         return [self._name, self._name_ds]
 
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        return {'name': self.name, 'name_ds': self.name_ds,
+                'remote_us': self.head_data['remote_us'].value,
+                'remote_ds': self.head_data['remote_ds'].value}
         
     def numberOfOpenings(self):
         """
@@ -167,7 +172,7 @@ class BridgeUnit (AUnit):
                 self.row_data['main'].addRow({
                     rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
                     rdt.ROUGHNESS: rough, rdt.EMBANKMENT: bank
-                })
+                }, no_copy=True)
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -547,7 +552,7 @@ class BridgeUnitUsbpr (BridgeUnit):
                 self.row_data['opening'].addRow({
                     rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
                     rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
-                })
+                }, no_copy=True)
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -586,7 +591,7 @@ class BridgeUnitUsbpr (BridgeUnit):
                     rdt.INVERT: invert, rdt.SOFFIT: soffit, rdt.AREA: area, 
                     rdt.CD_PART: cd_part, rdt.CD_FULL: cd_full, 
                     rdt.DROWNING: drowning
-                })
+                }, no_copy=True)
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -787,7 +792,7 @@ class BridgeUnitArch (BridgeUnit):
                 self.row_data['opening'].addRow({
                     rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
                     rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
-                })
+                }, no_copy=True)
                 
         except NotImplementedError:
             logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')

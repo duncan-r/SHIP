@@ -582,13 +582,16 @@ class ConstantData(ADataRowObject):
             ADataRowObject: addValue()
         """
         if value is None: 
-            if self.default:
+            if self.default is not None:
                 value = self.default
             else:
                 raise ValueError('value cannot be None when no default is set.')
         elif value is not None:
             if not value in self.legal_values:
-                raise ValueError('value %s is not included in %s' % (str(value), str(self.legal_values)))
+                if self.default is not None:
+                    value = self.default
+                else:
+                    raise ValueError('value %s is not included in %s' % (str(value), str(self.legal_values)))
             
         # Call the superclass part of the method to add it.
         ADataRowObject.addValue(self, value, index)

@@ -109,7 +109,7 @@ class InitialConditionsUnit (AUnit):
                 rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity, 
                 rdt.UMODE: umode, rdt.USTATE: ustate, 
                 rdt.ELEVATION: elevation
-            }) 
+            }, no_copy=True) 
             
         return out_line - 1
        

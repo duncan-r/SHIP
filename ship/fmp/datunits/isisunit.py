@@ -109,6 +109,8 @@ class AUnit(object):
         values that appear in set locations, usually at the top of the unit
         data in the .dat file.
         """
+        
+        
     
     @property
     def name(self):
@@ -163,7 +165,21 @@ class AUnit(object):
         Return:
             list - of intial condition label names.
         """
-        return [] 
+        return []
+    
+    def linkLabels(self):
+        """Dict of all the names that the unit references.
+        
+        For a RiverUnit this is only the self.name + spills and laterals, 
+        for a bridge it would be self.name, self.name_ds, self.remote_us, 
+        self.remote_ds and for a JunctionUnit it could be many more.
+        It can be used to identify which other units are directly associated to 
+        this one in some way.
+        
+        Return:
+            dict - containing all referenced names.
+        """
+        return {'name': self._name}
         
     def copy(self):
         """Returns a copy of this unit with it's own memory allocation."""
@@ -512,6 +528,7 @@ class HeaderUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
+#         kwargs['name'] = 'header'
         AUnit.__init__(self, **kwargs)
         self._unit_type = HeaderUnit.UNIT_TYPE
         self._unit_category = HeaderUnit.UNIT_CATEGORY
