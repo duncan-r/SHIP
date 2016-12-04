@@ -20,7 +20,7 @@
 
 from ship.utils.fileloaders import fileloader as fl
 # Used for loading tuflow data files
-from ship.tuflow.data_files import datafileloader as dfl
+from ship.tuflow.datafiles import datafileloader as dfl
 # Enum for accessing TuflowFilePart types (GIS, MODEL, RESULT, VARIABLE, DATA)
 from ship.tuflow import FILEPART_TYPES as ft
 

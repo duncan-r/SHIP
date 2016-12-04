@@ -150,10 +150,10 @@ class RowDataCollectionTests(unittest.TestCase):
         for i, o in enumerate(obj):
             self.assertEqual(o, test_vals[i])
     
-    def test_DataObjectAsList(self):
+    def test_dataObjectAsList(self):
         """Should return the contents of a DataObject as a list."""
         test_list = [0.00, 3.65]
-        obj_list = self.testcol.DataObjectAsList(rdt.CHAINAGE)
+        obj_list = self.testcol.dataObjectAsList(rdt.CHAINAGE)
         self.assertListEqual(obj_list, test_list)
     
     def test_toList(self):

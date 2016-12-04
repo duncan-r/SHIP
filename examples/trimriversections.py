@@ -14,7 +14,7 @@ def trimRiverSections():
     
     Saves the updated file to disk with _Updated appended to the filename.
     """
-    # Load the dat file into a new DatCollection object (isis_model)
+    # Load the dat file into a new DatCollection object (fmp_model)
     dat_path = r'C:\path\to\an\isis-fmp\datfile.dat'
     loader = fl.FileLoader()
     fmp_model = loader.loadFile(dat_path)
@@ -24,19 +24,19 @@ def trimRiverSections():
     for river in rivers:
         
         # Get the bankmarker locations as a list for this river section
-        bvals = river.row_data['main'].dataObjectAsList(rdt.BANKMARKER)
+        bankmarkers = river.row_data['main'].dataObjectAsList(rdt.BANKMARKER)
         
         # Get the DataObject for deactivation because we want to update it
-        deactivation_data = river.row_data['main'].dataObjectAsList(rdt.DEACTIVATION)
+        deactivation = river.row_data['main'].dataObject(rdt.DEACTIVATION)
         
         # Loop through the bankmarker values and each time we find one that's 
         # set (not False) we set the deactivation value at that index equal to 
         # the LEFT or RIGHT status of the bankmarker 
-        for i, b in enumerate(bvals):
+        for i, b in enumerate(bankmarkers):
             if b == 'LEFT':
-                deactivation_data.setValue('LEFT', i)
+                deactivation[i] = 'LEFT'
             elif b == 'RIGHT':
-                deactivation_data.setValue('RIGHT', i)
+                deactivation[i] = 'RIGHT'
     
     # Update the filename and write contents to disk
     fmp_model.path_holder.filename = fmp_model.path_holder.filename + '_Updated'

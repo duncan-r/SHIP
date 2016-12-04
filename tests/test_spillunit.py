@@ -53,10 +53,10 @@ class test_SpillUnit(unittest.TestCase):
         
         self.assertEqual(s.row_data['main'].row_count, 3)
         
-        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.CHAINAGE), self.chainage)
-        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.ELEVATION), self.elevation)
-        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.EASTING), self.easting)
-        self.assertListEqual(s.row_data['main'].DataObjectAsList(rdt.NORTHING), self.northing)
+        self.assertListEqual(s.row_data['main'].dataObjectAsList(rdt.CHAINAGE), self.chainage)
+        self.assertListEqual(s.row_data['main'].dataObjectAsList(rdt.ELEVATION), self.elevation)
+        self.assertListEqual(s.row_data['main'].dataObjectAsList(rdt.EASTING), self.easting)
+        self.assertListEqual(s.row_data['main'].dataObjectAsList(rdt.NORTHING), self.northing)
         
 
     def test_addDataRow(self):

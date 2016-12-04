@@ -127,19 +127,19 @@ class BridgeUnitTests(unittest.TestCase):
         roughness = [0.025, 0.025, 0.025, 0.025, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.040, 0.025, 0.025]
         marker = ['', '', '', '', 'L', '', '', '', '', '', '', '', '', 'R', '']
 
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.CHAINAGE), chainage)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ELEVATION), elevation)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ROUGHNESS), roughness)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.EMBANKMENT), marker)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.CHAINAGE), chainage)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.ELEVATION), elevation)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.ROUGHNESS), roughness)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.EMBANKMENT), marker)
 
         open_start = [0.71]
         open_end = [6.441]
         spring = [34.47]
         soffit = [36.0]
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.OPEN_START), open_start)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.OPEN_END), open_end)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.SPRINGING_LEVEL), spring)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.SOFFIT_LEVEL), soffit)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.OPEN_START), open_start)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.OPEN_END), open_end)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.SPRINGING_LEVEL), spring)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.SOFFIT_LEVEL), soffit)
         
 
     def test_readUnitDataUsbpr(self):
@@ -156,19 +156,19 @@ class BridgeUnitTests(unittest.TestCase):
         roughness = [0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04, 0.04]
         marker = ['L', '', '', '', '', '', '', '', '', '', 'R']
 
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.CHAINAGE), chainage)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ELEVATION), elevation)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.ROUGHNESS), roughness)
-        self.assertListEqual(b.row_data['main'].DataObjectAsList(rdt.EMBANKMENT), marker)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.CHAINAGE), chainage)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.ELEVATION), elevation)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.ROUGHNESS), roughness)
+        self.assertListEqual(b.row_data['main'].dataObjectAsList(rdt.EMBANKMENT), marker)
 
         open_start = [11.587]
         open_end = [15.231]
         spring = [33.68]
         soffit = [33.68]
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.OPEN_START), open_start)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.OPEN_END), open_end)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.SPRINGING_LEVEL), spring)
-        self.assertListEqual(b.row_data['opening'].DataObjectAsList(rdt.SOFFIT_LEVEL), soffit)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.OPEN_START), open_start)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.OPEN_END), open_end)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.SPRINGING_LEVEL), spring)
+        self.assertListEqual(b.row_data['opening'].dataObjectAsList(rdt.SOFFIT_LEVEL), soffit)
 
         # TODO - Need to add a test for culvert here
 

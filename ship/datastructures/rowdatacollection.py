@@ -192,7 +192,7 @@ class RowDataCollection(object):
             raise KeyError ('name_key %s was not found in collection' % (name_key))
     
 
-    def DataObjectAsList(self, key):
+    def dataObjectAsList(self, key):
         """Returns a DataObject as a list.
 
         This will return the row_collection DataObject referenced by the key
