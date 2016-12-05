@@ -128,7 +128,7 @@ class InitialConditionsUnit (AUnit):
     
     
 #     def updateDataRow(self, row_vals, index):
-    def updateRow(self, row_vals, index):
+    def updateRow(self, row_vals, index, **kwargs):
         """Updates the row at the given index in the row_collection.
         
         Changes the state of the values in the initial conditions list of 
@@ -149,11 +149,11 @@ class InitialConditionsUnit (AUnit):
         """
         
         # Call superclass method to add the new row
-        AUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index, **kwargs)
         
 
 #     def updateDataRowByName(self, row_vals, name):
-    def updateRowByName(self, row_vals, name):
+    def updateRowByName(self, row_vals, name, **kwargs):
         """Updates the row for the entry with the give name.
         
         Changes the state of the values in the initial conditions list for the
@@ -179,18 +179,12 @@ class InitialConditionsUnit (AUnit):
         except ValueError:
             raise KeyError('Name does not exist in initial conditions: ' + str(name))
         
-#         index = 0
-#         labels = self.row_data['main'].dataObAsList(rdt.LABEL)
-#         index = labels.index(name)
-#         if index == -1:
-#             raise AttributeError
-        
         # Call superclass method to add the new row
-        AUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index, **kwargs)
     
 
 #     def addDataRow(self, row_vals): 
-    def addRow(self, row_vals, unit_type): 
+    def addRow(self, row_vals, unit_type, **kwargs): 
         """Adds a new row to the InitialCondition units row_collection.
         
         The new row will be added at the given index. If no index is given it
@@ -234,13 +228,12 @@ class InitialConditionsUnit (AUnit):
             return self._node_count
 
         # Call superclass method to add the new row
-        AUnit.addRow(self, row_vals=row_vals, index=None)
+        AUnit.addRow(self, row_vals=row_vals, index=None, **kwargs)
         self._node_count += 1
         return self._node_count
     
 
-#     def deleteDataRowByName(self, section_name):
-    def deleteRowByName(self, unit_name, unit_type):
+    def deleteRowByName(self, unit_name, unit_type, **kwargs):
         """Delete one of the RowDataCollection objects in the row_collection.
         
         This calls the AUnit deleteRow method, but obtains the index
@@ -258,24 +251,19 @@ class InitialConditionsUnit (AUnit):
             index = labels.index(unit_name)
         except ValueError:
             raise KeyError('Name does not exist in initial conditions: ' + str(unit_name))
-#         if index == -1:
-#             raise KeyError('Name does not exist in initial conditions: ' + str(unit_name))
         
         # Delete the ic if the unit_name is the only one using it
         # Otherwise remove the type and keep the ic's as they are
-#         if unit_name in self._name_types.keys():
-#         if unit_type in self._name_types[unit_name]:
         if not unit_name in self._name_types.keys():
             return
         elif len(self._name_types[unit_name]) > 1:
             self._name_types[unit_name].remove(unit_type)
         else:
-            self.deleteRow(index)
+            self.deleteRow(index, **kwargs)
             self._node_count -= 1
             del self._name_types[unit_name]
     
     
-#     def getRowByName(self, section_name):
     def rowByName(self, section_name):
         """Get the data vals in a particular row by name.
         

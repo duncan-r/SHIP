@@ -183,9 +183,12 @@ class FmpUnitFactory(object):
             head_data: dict of head_data values to set in the AUnit.
             row_data: dict of row_data keys containing lists of row data to
                 set in the unit.
-            dummy_row: if no row_data is given and this is set to True it will
-                create a dummy row in all row_data. i.e. set an initial row
-                to 0's so it will load in fmp.
+            no_copy(bool): When adding any row_data given to a new unit the
+                no_copy flag will be given to the RowDataCollection.addRow()
+                method. When True it stops the call to deepcopy while updating
+                the rows. It's probably not needed when creating a new unit and
+                it can be time-consuming. The default is True. See 
+                RowDataCollection.addRow() for more details.
         
         The row_data kwarg is expected to be set out like the following::
         
@@ -227,11 +230,7 @@ class FmpUnitFactory(object):
         row_data = kwargs.get('row_data', None)
         unit.name = kwargs.get('name', 'unknown')
         unit.name_ds = kwargs.get('name_ds', 'unknown')
-        
-        if row_data is None:
-            dummy_row = kwargs.get('dummy_row', True)
-        else:
-            dummy_row = False
+        no_copy = kwargs.get('no_copy', True)
         
         if unit.unit_category == 'river':
             unit.reach_number = kwargs.get('reach_number', -1)
@@ -251,9 +250,7 @@ class FmpUnitFactory(object):
                 if row_key in rowdata_keys:
                     # For different rows to add
                     for entry in row_data:
-                        unit.row_data[row_key].addRow(entry)
-#         elif dummy_row:
-            
+                        unit.row_data[row_key].addRow(entry, no_copy=no_copy)
         
         return unit
     

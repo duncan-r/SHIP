@@ -223,7 +223,7 @@ class HtbdyUnit (AUnit):
             
    
 #     def addDataRow(elevation, time=None, index=None): 
-    def addRow(self, row_vals, data_key='main', index=None):
+    def addRow(self, row_vals, data_key='main', index=None, **kwargs):
         """
         
         Args:
@@ -262,9 +262,9 @@ class HtbdyUnit (AUnit):
         
         if orig_index is None:
             self.row_data['main'].addRow({rdt.TIME: time, 
-                                          rdt.ELEVATION: elevation})
+                                          rdt.ELEVATION: elevation}, **kwargs)
         else:
-            self.row_data['main'].addRow({rdt.TIME: time, 
-                                             rdt.ELEVATION: elevation}, index)
+            self.row_data['main'].addRow({rdt.TIME: time, rdt.ELEVATION: elevation}, 
+                                         index, **kwargs)
     
         

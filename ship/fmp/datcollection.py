@@ -198,7 +198,8 @@ class DatCollection(object):
             temp = unit.icLabels()
             for name in unit.icLabels():
                 ics[rdt.LABEL] = unit._name
-                node_count = self.units[self._ic_index].addRow(ics, unit._unit_type)
+                node_count = self.units[self._ic_index].addRow(ics, unit._unit_type,
+                                                               **kwargs)
                 header.head_data['node_count'].value = node_count
             
     

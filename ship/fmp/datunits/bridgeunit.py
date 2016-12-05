@@ -251,7 +251,7 @@ class BridgeUnit (AUnit):
         raise NotImplementedError
     
    
-    def updateRow(self, row_vals, index, collection_name=None):
+    def updateRow(self, row_vals, index, collection_name=None, **kwargs):
         """Updates the row at the given index in the river units row_collection.
         
         The row will be updated at the given index. 
@@ -279,10 +279,10 @@ class BridgeUnit (AUnit):
                 raise KeyError ('collection_name %s does not exist in row collection' % (collection_name))
         
         # Call superclass method to add the new row
-        AUnit.updateRow(self, index=index, row_vals=row_vals)
+        AUnit.updateRow(self, index=index, row_vals=row_vals, **kwargs)
     
    
-    def addRow(self, row_vals, rowdata_key='main', index=None): 
+    def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs): 
         """Adds a new row to one of this bridge units row_collection's.
         
         The new row will be added at the given index. If no index is given it
@@ -317,7 +317,8 @@ class BridgeUnit (AUnit):
             ADataObject and subclasses for information on the parameters.
         """
         self._checkRowKeys(row_vals, rowdata_key)
-        AUnit.addRow(self, row_vals=row_vals, rowdata_key=rowdata_key, index=index)
+        AUnit.addRow(self, row_vals=row_vals, rowdata_key=rowdata_key, index=index,
+                     **kwargs)
     
     
     def _checkRowKeys(self, row_vals, rowdata_key):

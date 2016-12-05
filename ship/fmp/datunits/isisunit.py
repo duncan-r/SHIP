@@ -271,26 +271,43 @@ class AUnit(object):
         self.head_data['all'] = data
         
     
-    def deleteRow(self, index, rowdata_key='main'):
+    def deleteRow(self, index, rowdata_key='main', **kwargs):
         """Removes a data row from the RowDataCollection.
+        
+        **kwargs:
+            These are passed onto the RowDataCollection. See there for details.
         """
         if index < 0 or index >= self.row_data[rowdata_key].numberOfRows():
             raise IndexError ('Given index is outside bounds of row_data[rowdata_key] data')
         
-        self.row_data[rowdata_key].deleteRow(index)
+        self.row_data[rowdata_key].deleteRow(index, **kwargs)
         
     
-    def updateRow(self, row_vals, index, rowdata_key='main'):
-        """
+    def updateRow(self, row_vals, index, rowdata_key='main', **kwargs):
+        """Update an existing data row in one of the RowDataCollection's.
+        
+        **kwargs:
+            These are passed onto the RowDataCollection. See there for details.
+
+        Args:
+            row_vals(dict): Named arguments required for adding a row to the 
+                collection. These will be as stipulated by the way that a 
+                concrete implementation of this class setup the collection.
+            rowdata_key='main'(str): the name of the RowDataCollection
+                held by this to add the new row to. If None it is the
+                self.row_collection. Otherwise it is the name of one of the
+                entries in the self.additional_row_collections dictionary.
+            index=None(int): the index in the RowDataObjectCollection to update
+                with the row_vals
         """
         if index >= self.row_data[rowdata_key].numberOfRows():
             raise IndexError ('Given index is outside bounds of row_collection data')
         
         # Call the row collection add row method to add the new row.
-        self.row_data[rowdata_key].updateRow(row_vals=row_vals, index=index)
+        self.row_data[rowdata_key].updateRow(row_vals=row_vals, index=index, **kwargs)
             
     
-    def addRow(self, row_vals, rowdata_key='main', index=None):
+    def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Add a new data row to one of the row data collections.
         
         Provides the basics of a function for adding additional row dat to one
@@ -305,6 +322,9 @@ class AUnit(object):
         respnsobility to ensure that these are the expected values for it's
         row collection and to set any defaults. If they are not as expected by
         the RowDataObjectCollection a ValueError will be raised.
+        
+        **kwargs:
+            These are passed onto the RowDataCollection. See there for details.
         
         Args:
             row_vals(dict): Named arguments required for adding a row to the 
@@ -324,7 +344,7 @@ class AUnit(object):
         if index is None:
             index = self.row_data[rowdata_key].numberOfRows()
         
-        self.row_data[rowdata_key].addRow(row_vals, index)
+        self.row_data[rowdata_key].addRow(row_vals, index, **kwargs)
         
     
     def checkIncreases(self, data_obj, value, index):

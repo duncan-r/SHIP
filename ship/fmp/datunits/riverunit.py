@@ -250,7 +250,7 @@ class RiverUnit (AUnit):
    
     
     # updateDataRow
-    def updateRow(self, row_vals, index):
+    def updateRow(self, row_vals, index, **kwargs):
         """Updates the row at the given index in the river units row_data.
         
         The row will be updated at the given index. 
@@ -271,11 +271,11 @@ class RiverUnit (AUnit):
         """
         
         # Call superclass method to add the new row
-        AUnit.updateRow(self, row_vals=row_vals, index=index)
+        AUnit.updateRow(self, row_vals=row_vals, index=index, **kwargs)
         
     
     # addDataRow
-    def addRow(self, row_vals, index=None): 
+    def addRow(self, row_vals, index=None, **kwargs): 
         """Adds a new row to the river units row_data.
         
         The new row will be added at the given index. If no index is given it
@@ -309,7 +309,7 @@ class RiverUnit (AUnit):
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
         # Call superclass method to add the new row
-        AUnit.addRow(self, row_vals, index=index)
+        AUnit.addRow(self, row_vals, index=index, **kwargs)
             
 
         

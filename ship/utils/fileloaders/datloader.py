@@ -211,9 +211,6 @@ class DatLoader(ATool, ALoader):
         del self.unknown_data
         return self.units 
     
-    
-    
-
 
     def createUnknownSection(self): 
         """Builds unidentified sections from the .DAT file.
@@ -247,25 +244,11 @@ class DatLoader(ATool, ALoader):
         """
         #logger.debug('In updateSubContents')
         # Don't update node count here as we aren't adding any 'new' nodes
-        self.units.addUnit(self.temp_unit, update_node_count=False)
-#         self.findIcLabels(self.temp_unit)
+        self.units.addUnit(self.temp_unit, update_node_count=False, no_copy=True)
         self.cur_no_of_units += 1
         del self.temp_unit
         self.unknown_data = []
         
-    
-#     def findIcLabels(self, unit):
-#         """
-#         """
-#         if not unit.has_ics: return
-# 
-#         ic_labels = unit.ic_labels
-#         for l in ic_labels:
-#             if not l in self._ic_name_types.keys():
-#                 self._ic_name_types[l] = [unit._unit_type]
-#             elif not unit._unit_type in self._ic_name_types[l]:
-#                 self._ic_name_types[l].append(unit._unit_type) 
-    
 
     def __loadFile(self, filepath): 
         """Load the .dat file into the contents list.

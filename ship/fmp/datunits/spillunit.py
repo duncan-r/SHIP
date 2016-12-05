@@ -205,7 +205,7 @@ class SpillUnit (AUnit):
         return out
         
 #     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): 
-    def addRow(self, row_vals, rowdata_key='main', index=None):
+    def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
 
         Ensures that certain requirements of the data rows, such as the 
@@ -234,7 +234,7 @@ class SpillUnit (AUnit):
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
         # Call superclass method to add the new row
-        AUnit.addRow(self, row_vals, index=index)
+        AUnit.addRow(self, row_vals, index=index, **kwargs)
         
     
         
