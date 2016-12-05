@@ -142,3 +142,19 @@ Parts of this library make use of the excellent dbfread project by
 Ole Martin Bjorndalen. It is a library for accessing data in DBF database
 files. You can find the project here on GitHub 
 https://github.com/olemb/dbfread
+
+Change Log
+==========
+
+v0.3.0:
+   - Ending main development stage.
+   - Major changes to the tuflow package API.
+   - Clean up and some significant changes to the fmp package API. Mainly 
+     improving consistency of variable/function/class names and making unit
+     instantiation easier. You can see a summary of the main changes here:
+     (http://duncan-r.github.io/SHIP/fmp/updatechanges.html#updatechanges-top) 
+   - Fixed issue with DatLoader load times. This was caused by a refactor of
+     the AUnit creation methods that led to RowDataCollection calling deepcopy
+     on a loop in the loading process (possibly 1000's of times). It's now been
+     resolved for loading and a 'no_copy' kwarg option has been provided for
+     generating new units with data etc. Load times are now ~100 times faster.
