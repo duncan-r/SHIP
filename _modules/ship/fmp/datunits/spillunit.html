@@ -221,6 +221,10 @@
 <div class="viewcode-block" id="SpillUnit.icLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.spillunit.SpillUnit.icLabels">[docs]</a>    <span class="k">def</span> <span class="nf">icLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_ds</span><span class="p">]</span></div>
 
+<div class="viewcode-block" id="SpillUnit.linkLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.spillunit.SpillUnit.linkLabels">[docs]</a>    <span class="k">def</span> <span class="nf">linkLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overriddes superclass method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;name_ds&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_ds</span><span class="p">}</span></div>
+
     
 <div class="viewcode-block" id="SpillUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.spillunit.SpillUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads the unit data into the geometry objects.</span>
@@ -283,7 +287,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
                     <span class="n">rdt</span><span class="o">.</span><span class="n">CHAINAGE</span><span class="p">:</span> <span class="n">chain</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elev</span><span class="p">,</span> 
                     <span class="n">rdt</span><span class="o">.</span><span class="n">EASTING</span><span class="p">:</span> <span class="n">east</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">NORTHING</span><span class="p">:</span> <span class="n">north</span>
-                <span class="p">})</span>
+                <span class="p">},</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">ERROR</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
@@ -338,7 +342,7 @@
         <span class="k">return</span> <span class="n">out</span>
         
 <span class="c1">#     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): </span>
-<div class="viewcode-block" id="SpillUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.spillunit.SpillUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpillUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.spillunit.SpillUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds a new row to the spill unit.</span>
 
 <span class="sd">        Ensures that certain requirements of the data rows, such as the </span>
@@ -367,7 +371,7 @@
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;row_vals must include CHAINAGE and ELEVATION.&#39;</span><span class="p">)</span>
         
         <span class="c1"># Call superclass method to add the new row</span>
-        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div></div>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
         
     
         

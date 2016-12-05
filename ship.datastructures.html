@@ -107,21 +107,7 @@
 <li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.datastructures package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
 </ul>
 
             
@@ -602,7 +588,7 @@ float value instead of a string.</p>
 
 <dl class="data">
 <dt id="ship.datastructures.dataobject.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x052328F0&gt;</em><a class="headerlink" href="#ship.datastructures.dataobject.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#ship.datastructures.dataobject.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -655,38 +641,8 @@ method checkRowsInSync() that can be called to verify that all of the
 data objects in this collection have the same length.</p>
 </div>
 <dl class="method">
-<dt id="ship.datastructures.rowdatacollection.RowDataCollection.DataObjectAsList">
-<code class="descname">DataObjectAsList</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.DataObjectAsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.DataObjectAsList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a DataObject as a list.</p>
-<p>This will return the row_collection DataObject referenced by the key
-provided (as a ROW_DATA_TYPES) in list form.</p>
-<p>If you intend to update the values you should use getRowDataObject
-instead as the data provided will be mutable and therefore reflected in
-the values held by the row_collection. If you just want a quick way to
-loop through the values in one of the data objects  and only intend to
-read the data then use this.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; the key for the data object requested. It is best
-to use  the class constants (i.e. RiverUnit.CHAINAGE) for this.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
-<dt>List containing the data in the DataObject that the key points</dt>
-<dd>to. Returns false if there is no row collection.</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; If key does not exist.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new row to the units data rows.</p>
 <p>Creates a new row from the values in the supplied value dict at the location
 given by the index.
@@ -700,6 +656,16 @@ This ensures that they don&#8217;t get out of sync if an error is found
 halfway through adding the different values. This is done by
 creating a deep copy of the object prior to updating.</p>
 </div>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;no_copy&#8217;(bool): if True the deepcopy of the object will not be</dt>
+<dd>made. This is useful if you are loading a lot of data and don&#8217;t
+want the overhead of deepcopy - like loading a new model.
+Default is False.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -824,6 +790,36 @@ getDataObjectCopy().</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.datastructures.rowdatacollection.RowDataCollection.dataObjectAsList">
+<code class="descname">dataObjectAsList</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.dataObjectAsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.dataObjectAsList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataObject as a list.</p>
+<p>This will return the row_collection DataObject referenced by the key
+provided (as a ROW_DATA_TYPES) in list form.</p>
+<p>If you intend to update the values you should use getRowDataObject
+instead as the data provided will be mutable and therefore reflected in
+the values held by the row_collection. If you just want a quick way to
+loop through the values in one of the data objects  and only intend to
+read the data then use this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key</strong> (<em>str</em>) &#8211; the key for the data object requested. It is best
+to use  the class constants (i.e. RiverUnit.CHAINAGE) for this.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>List containing the data in the DataObject that the key points</dt>
+<dd>to. Returns false if there is no row collection.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">KeyError</span></code> &#8211; If key does not exist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.dataObjectCopy">
 <code class="descname">dataObjectCopy</code><span class="sig-paren">(</span><em>name_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.dataObjectCopy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.dataObjectCopy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the ADataRowObject instance requested.</p>
@@ -891,8 +887,18 @@ collection.</td>
 
 <dl class="method">
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.deleteRow">
-<code class="descname">deleteRow</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.deleteRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">deleteRow</code><span class="sig-paren">(</span><em>index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.deleteRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a row from the collection.</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;no_copy&#8217;(bool): if True the deepcopy of the object will not be</dt>
+<dd>made. This is useful if you are loading a lot of data and don&#8217;t
+want the overhead of deepcopy - like deleting the dummy row.
+Default is False.</dd>
+</dl>
+</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1067,12 +1073,22 @@ ADataObject.</p>
 
 <dl class="method">
 <dt id="ship.datastructures.rowdatacollection.RowDataCollection.updateRow">
-<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.updateRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/datastructures/rowdatacollection.html#RowDataCollection.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.datastructures.rowdatacollection.RowDataCollection.updateRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new row to the units data rows.</p>
 <p>Creates a new row from the values in the supplied value dict at the location
 given by the index.
 If the index is None then the value will be appended to the end of the row
 rather than inserted.</p>
+<dl class="docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;no_copy&#8217;(bool): if True the deepcopy of the object will not be</dt>
+<dd>made. This is useful if you are loading a lot of data and don&#8217;t
+want the overhead of deepcopy - like loading a new model.
+Default is False.</dd>
+</dl>
+</dd>
+</dl>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">If there is any problem while updating the values in the row all

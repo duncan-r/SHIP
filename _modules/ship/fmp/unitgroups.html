@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ship.fmp.unitgroups &mdash; SHIP 0.3.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="SHIP 0.3.0 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> SHIP
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installing the Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#topics">Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ship.html">ship package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">ship-0.3.0.dev0</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">SHIP</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>ship.fmp.unitgroups</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for ship.fmp.unitgroups</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd"> Summary:</span>
+<span class="sd">    Contains classes for grouping AUnit types based on certain conditions.</span>
+<span class="sd">    </span>
+<span class="sd">    Currently contains:</span>
+<span class="sd">        </span>
+<span class="sd">        - LinkedUnits:</span>
+<span class="sd">            Stores all of the direct associates of a particular unit. See the</span>
+<span class="sd">            linkedUnits() method in DatCollection for more information.</span>
+
+<span class="sd"> Author:  </span>
+<span class="sd">     Duncan Runnacles</span>
+
+<span class="sd"> Created:  </span>
+<span class="sd">     02 Dec 2016</span>
+
+<span class="sd"> Copyright:  </span>
+<span class="sd">     Duncan Runnacles 2016</span>
+
+<span class="sd"> TODO:</span>
+
+<span class="sd"> Updates:</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+
+<div class="viewcode-block" id="LinkedUnits"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.unitgroups.LinkedUnits">[docs]</a><span class="k">class</span> <span class="nc">LinkedUnits</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stores all units directly associated to a specific unit.</span>
+<span class="sd">    </span>
+<span class="sd">    main_unit: the unit to derive associates from.</span>
+<span class="sd">    us_unit: the unit immediately above main_unit in the .dat/.ied file.</span>
+<span class="sd">    ds_unit: the unit immediately below main_unit in the .dat/.ied file.</span>
+<span class="sd">    named_units: all units that are specifically referenced by the main_unit</span>
+<span class="sd">        within it&#39;s head_data (e.g. remote_us and remote_ds in bridge units).</span>
+<span class="sd">    junctions: a list of all of the junctions that refer to the main_unit. Each</span>
+<span class="sd">        list entry contains a tuple where [0] is the JunctionUnit and [1] is a</span>
+<span class="sd">        list of units referenced by that junction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_unit</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_unit</span> <span class="o">=</span> <span class="n">main_unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">us_unit</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds_unit</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">named_unit</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">junctions</span> <span class="o">=</span> <span class="p">[]</span>
+        
+
+<div class="viewcode-block" id="LinkedUnits.addLinkedUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.unitgroups.LinkedUnits.addLinkedUnit">[docs]</a>    <span class="k">def</span> <span class="nf">addLinkedUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">link_type</span><span class="p">,</span> <span class="n">additionals</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a unit to this LinkedUnits contents.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            unit: the unit to add.</span>
+<span class="sd">            link_type(str): the type of unit being added. Includes: &#39;upstream&#39;,</span>
+<span class="sd">                &#39;downstream&#39;, &#39;named&#39; and &#39;junction&#39;.</span>
+<span class="sd">            additionals=None(list): used when link_type == &#39;junction&#39; contains</span>
+<span class="sd">                a list of all of the units referened by the JunctionUnit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">link_type</span> <span class="o">==</span> <span class="s1">&#39;upstream&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">us_unit</span> <span class="o">=</span> <span class="n">unit</span>
+        <span class="k">if</span> <span class="n">link_type</span> <span class="o">==</span> <span class="s1">&#39;downstream&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ds_unit</span> <span class="o">=</span> <span class="n">unit</span>
+        <span class="k">if</span> <span class="n">link_type</span> <span class="o">==</span> <span class="s1">&#39;named&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">named_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">link_type</span> <span class="o">==</span> <span class="s1">&#39;junction&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">junctions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">unit</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">additionals</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">junctions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">additionals</span></div></div>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Duncan Runnacles.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

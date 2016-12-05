@@ -43,6 +43,14 @@ ship.fmp.ief module
     :undoc-members:
     :show-inheritance:
 
+ship.fmp.unitgroups module
+--------------------------
+
+.. automodule:: ship.fmp.unitgroups
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

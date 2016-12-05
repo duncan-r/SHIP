@@ -159,6 +159,7 @@
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.headdata</span> <span class="k">import</span> <span class="n">HeadDataItem</span>
 <span class="kn">from</span> <span class="nn">ship.datastructures</span> <span class="k">import</span> <span class="n">DATA_TYPES</span> <span class="k">as</span> <span class="n">dt</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -184,18 +185,41 @@
         <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">JunctionUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">JunctionUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;Junc&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">STRING</span><span class="p">),</span>
             <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">HeadDataItem</span><span class="p">(</span><span class="s1">&#39;OPEN&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;OPEN&#39;</span><span class="p">,</span> <span class="s1">&#39;ENERGY&#39;</span><span class="p">)),</span>
             <span class="s1">&#39;names&#39;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
-
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Junc&#39;</span> <span class="c1"># Must be after head_data here (see property below)</span>
+    
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Junction overrides the name properties. This is because it deals with</span>
+<span class="sd">    naming in a different way to most of the other units. It doesn&#39;t actually</span>
+<span class="sd">    have a name itself, it&#39;s only a link for other units. These ensure that</span>
+<span class="sd">    updating name will always affect the first item in the names list.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    
 <div class="viewcode-block" id="JunctionUnit.icLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.junctionunit.JunctionUnit.icLabels">[docs]</a>    <span class="k">def</span> <span class="nf">icLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overriddes superclass method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span></div>
-            
+
+<div class="viewcode-block" id="JunctionUnit.linkLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.junctionunit.JunctionUnit.linkLabels">[docs]</a>    <span class="k">def</span> <span class="nf">linkLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overriddes superclass method.&quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;names&#39;</span><span class="p">]):</span>
+            <span class="n">namekey</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">encodeStr</span><span class="p">(</span><span class="s1">&#39;name_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">namekey</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="n">out</span></div>
     
 <div class="viewcode-block" id="JunctionUnit.readUnitData"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.junctionunit.JunctionUnit.readUnitData">[docs]</a>    <span class="k">def</span> <span class="nf">readUnitData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_data</span><span class="p">,</span> <span class="n">file_line</span><span class="p">):</span> 
         <span class="sd">&#39;&#39;&#39;Reads the given data into the object.</span>

@@ -100,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.fmpunitfactory">ship.fmp.fmpunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.ief">ship.fmp.ief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp.unitgroups">ship.fmp.unitgroups module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ship.fmp.html#module-ship.fmp">Module contents</a></li>
 </ul>
 </li>
@@ -110,21 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="ship.fmp.html">ship.fmp package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
 </ul>
 
             
@@ -238,7 +225,7 @@ are available.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a new row to one of this bridge units row_collection&#8217;s.</p>
 <p>The new row will be added at the given index. If no index is given it
 will be appended to the end of the collection.</p>
@@ -350,6 +337,12 @@ OPEN_END must be &gt; OPEN_START on a previous row.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.numberOfOpenings">
 <code class="descname">numberOfOpenings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.numberOfOpenings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.numberOfOpenings" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -383,7 +376,7 @@ by the constructor in cases anyone need to override them.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow">
-<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>collection_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>collection_name=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/bridgeunit.html#BridgeUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.BridgeUnit.updateRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the row at the given index in the river units row_collection.</p>
 <p>The row will be updated at the given index.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -485,7 +478,7 @@ and file read/write behaviour.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.bridgeunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D1D70&gt;</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A91610&gt;</em><a class="headerlink" href="#ship.fmp.datunits.bridgeunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -670,7 +663,7 @@ held in the object.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.culvertunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D6950&gt;</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06AA4350&gt;</em><a class="headerlink" href="#ship.fmp.datunits.culvertunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -749,7 +742,7 @@ be an UnknownSection.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.gisinfounit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069B4CD0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A91270&gt;</em><a class="headerlink" href="#ship.fmp.datunits.gisinfounit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -810,7 +803,7 @@ are available.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>data_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>data_key='main'</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/htbdyunit.html#HtbdyUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Args:</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -874,7 +867,7 @@ this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.htbdyunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D6A70&gt;</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06AA4650&gt;</em><a class="headerlink" href="#ship.fmp.datunits.htbdyunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -926,7 +919,7 @@ of the dat file.</dd>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>unit_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>unit_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a new row to the InitialCondition units row_collection.</p>
 <p>The new row will be added at the given index. If no index is given it
 will be appended to the end of the collection.</p>
@@ -964,7 +957,7 @@ be included.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName">
-<code class="descname">deleteRowByName</code><span class="sig-paren">(</span><em>unit_name</em>, <em>unit_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.deleteRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName" title="Permalink to this definition">¶</a></dt>
+<code class="descname">deleteRowByName</code><span class="sig-paren">(</span><em>unit_name</em>, <em>unit_type</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.deleteRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete one of the RowDataCollection objects in the row_collection.</p>
 <p>This calls the AUnit deleteRow method, but obtains the index
 of the row to be deleted from the name first.</p>
@@ -1019,7 +1012,7 @@ the initial conditions.</td>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow">
-<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the row at the given index in the row_collection.</p>
 <p>Changes the state of the values in the initial conditions list of
 the .dat file at the given index.</p>
@@ -1051,7 +1044,7 @@ be included.</li>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName">
-<code class="descname">updateRowByName</code><span class="sig-paren">(</span><em>row_vals</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName" title="Permalink to this definition">¶</a></dt>
+<code class="descname">updateRowByName</code><span class="sig-paren">(</span><em>row_vals</em>, <em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/initialconditionsunit.html#InitialConditionsUnit.updateRowByName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the row for the entry with the give name.</p>
 <p>Changes the state of the values in the initial conditions list for the
 the .dat file for the unit with the given name.</p>
@@ -1170,7 +1163,7 @@ file.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.interpolateunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D6B70&gt;</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06AA4750&gt;</em><a class="headerlink" href="#ship.fmp.datunits.interpolateunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1220,7 +1213,7 @@ throw errors.</p>
 </div>
 <dl class="method">
 <dt id="ship.fmp.datunits.isisunit.AUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new data row to one of the row data collections.</p>
 <p>Provides the basics of a function for adding additional row dat to one
 of the RowDataCollection&#8217;s held by an AUnit type.</p>
@@ -1232,6 +1225,10 @@ addNewRow function. It is the concrete class implementations
 respnsobility to ensure that these are the expected values for it&#8217;s
 row collection and to set any defaults. If they are not as expected by
 the RowDataObjectCollection a ValueError will be raised.</p>
+<dl class="docutils">
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs:</dt>
+<dd>These are passed onto the RowDataCollection. See there for details.</dd>
+</dl>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1294,8 +1291,12 @@ it will assume the index is the last on in the list.</li>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.isisunit.AUnit.deleteRow">
-<code class="descname">deleteRow</code><span class="sig-paren">(</span><em>index</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.deleteRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.deleteRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">deleteRow</code><span class="sig-paren">(</span><em>index</em>, <em>rowdata_key='main'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.deleteRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.deleteRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes a data row from the RowDataCollection.</p>
+<dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs:</dt>
+<dd>These are passed onto the RowDataCollection. See there for details.</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1352,6 +1353,25 @@ the upstream and downstream label names.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list - of intial condition label names.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.isisunit.AUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict of all the names that the unit references.</p>
+<p>For a RiverUnit this is only the self.name + spills and laterals,
+for a bridge it would be self.name, self.name_ds, self.remote_us,
+self.remote_ds and for a JunctionUnit it could be many more.
+It can be used to identify which other units are directly associated to
+this one in some way.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict - containing all referenced names.</td>
 </tr>
 </tbody>
 </table>
@@ -1475,8 +1495,32 @@ containing the CHAINAGE, ELEVATION, etc.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.isisunit.AUnit.updateRow">
-<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>rowdata_key='main'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.updateRow" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>rowdata_key='main'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/isisunit.html#AUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.isisunit.AUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update an existing data row in one of the RowDataCollection&#8217;s.</p>
+<dl class="docutils">
+<dt><a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs:</dt>
+<dd>These are passed onto the RowDataCollection. See there for details.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>row_vals</strong> (<em>dict</em>) &#8211; Named arguments required for adding a row to the
+collection. These will be as stipulated by the way that a
+concrete implementation of this class setup the collection.</li>
+<li><strong>rowdata_key='main'</strong> (<em>str</em>) &#8211; the name of the RowDataCollection
+held by this to add the new row to. If None it is the
+self.row_collection. Otherwise it is the name of one of the
+entries in the self.additional_row_collections dictionary.</li>
+<li><strong>index=None</strong> (<em>int</em>) &#8211; the index in the RowDataObjectCollection to update
+with the row_vals</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -1601,7 +1645,7 @@ for the other unit objects because it is not necessarily a single unit. It
 could be many different units.</p>
 <p>It is created whenever the DatLoader finds
 parts of the dat file that it doesn&#8217;t Know how to load (i.e. there is no
-<a href="#id1"><span class="problematic" id="id2">*</span></a>Unit defined for it. It will then put all the dat file data in one of these
+<a href="#id7"><span class="problematic" id="id8">*</span></a>Unit defined for it. It will then put all the dat file data in one of these
 until it reaches a part of the file that it does recognise.</p>
 <dl class="attribute">
 <dt id="ship.fmp.datunits.isisunit.UnknownUnit.FILE_KEY">
@@ -1627,7 +1671,7 @@ until it reaches a part of the file that it does recognise.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.isisunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069CC7B0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A78BF0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.isisunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1697,6 +1741,17 @@ held in the object.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ship.fmp.datunits.junctionunit.JunctionUnit.name">
+<code class="descname">name</code><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ship.fmp.datunits.junctionunit.JunctionUnit.readUnitData">
 <code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/junctionunit.html#JunctionUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.junctionunit.JunctionUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the given data into the object.</p>
@@ -1718,7 +1773,7 @@ held in the object.</dd>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.junctionunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069B4390&gt;</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A7AFD0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.junctionunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1820,6 +1875,12 @@ as the .dat file setup goes.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.fmp.datunits.orificeunit.OrificeUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.fmp.datunits.orificeunit.OrificeUnit.readUnitData">
 <code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/orificeunit.html#OrificeUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.orificeunit.OrificeUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the given data into the object.</p>
@@ -1870,7 +1931,7 @@ as the .dat file setup goes.</p>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.orificeunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D6670&gt;</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06AA4070&gt;</em><a class="headerlink" href="#ship.fmp.datunits.orificeunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1970,7 +2031,7 @@ to this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.refhunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069D6450&gt;</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A91E30&gt;</em><a class="headerlink" href="#ship.fmp.datunits.refhunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2033,7 +2094,7 @@ are available.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.riverunit.RiverUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a new row to the river units row_data.</p>
 <p>The new row will be added at the given index. If no index is given it
 will be appended to the end of the collection.</p>
@@ -2094,12 +2155,18 @@ of the .dat file.</p>
 <code class="descname">head_data</code><em class="property"> = None</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.head_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the new row data types to the object collection
 All of them must have type, output format, and position
-in the row all other arguments are excepted as <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs.</p>
+in the row all other arguments are excepted as <a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.riverunit.RiverUnit.icLabels">
 <code class="descname">icLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.icLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.icLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="ship.fmp.datunits.riverunit.RiverUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overriddes superclass method.</p>
 </dd></dl>
 
@@ -2124,7 +2191,7 @@ to this section</td>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.riverunit.RiverUnit.updateRow">
-<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.updateRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">updateRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/riverunit.html#RiverUnit.updateRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.riverunit.RiverUnit.updateRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the row at the given index in the river units row_data.</p>
 <p>The row will be updated at the given index.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2158,7 +2225,7 @@ be included.</li>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.riverunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069A8290&gt;</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A7AE10&gt;</em><a class="headerlink" href="#ship.fmp.datunits.riverunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -2220,7 +2287,7 @@ are available.</p>
 
 <dl class="method">
 <dt id="ship.fmp.datunits.spillunit.SpillUnit.addRow">
-<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.addRow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">addRow</code><span class="sig-paren">(</span><em>row_vals</em>, <em>rowdata_key='main'</em>, <em>index=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.addRow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.addRow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a new row to the spill unit.</p>
 <p>Ensures that certain requirements of the data rows, such as the
 chainage needing to increase for each row down are met, then call the
@@ -2277,6 +2344,12 @@ of the .dat file.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="ship.fmp.datunits.spillunit.SpillUnit.linkLabels">
+<code class="descname">linkLabels</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.linkLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.linkLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriddes superclass method.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="ship.fmp.datunits.spillunit.SpillUnit.readUnitData">
 <code class="descname">readUnitData</code><span class="sig-paren">(</span><em>unit_data</em>, <em>file_line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datunits/spillunit.html#SpillUnit.readUnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datunits.spillunit.SpillUnit.readUnitData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads the unit data into the geometry objects.</p>
@@ -2299,7 +2372,7 @@ this section</td>
 
 <dl class="data">
 <dt id="ship.fmp.datunits.spillunit.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069CFA10&gt;</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A7A9D0&gt;</em><a class="headerlink" href="#ship.fmp.datunits.spillunit.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 

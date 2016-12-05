@@ -348,9 +348,6 @@
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span> </div>
     
-    
-    
-
 
 <div class="viewcode-block" id="DatLoader.createUnknownSection"><a class="viewcode-back" href="../../../../ship.utils.fileloaders.html#ship.utils.fileloaders.datloader.DatLoader.createUnknownSection">[docs]</a>    <span class="k">def</span> <span class="nf">createUnknownSection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Builds unidentified sections from the .DAT file.</span>
@@ -384,25 +381,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#logger.debug(&#39;In updateSubContents&#39;)</span>
         <span class="c1"># Don&#39;t update node count here as we aren&#39;t adding any &#39;new&#39; nodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="c1">#         self.findIcLabels(self.temp_unit)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">addUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span><span class="p">,</span> <span class="n">update_node_count</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cur_no_of_units</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_unit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unknown_data</span> <span class="o">=</span> <span class="p">[]</span></div>
         
-    
-<span class="c1">#     def findIcLabels(self, unit):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         if not unit.has_ics: return</span>
-<span class="c1"># </span>
-<span class="c1">#         ic_labels = unit.ic_labels</span>
-<span class="c1">#         for l in ic_labels:</span>
-<span class="c1">#             if not l in self._ic_name_types.keys():</span>
-<span class="c1">#                 self._ic_name_types[l] = [unit._unit_type]</span>
-<span class="c1">#             elif not unit._unit_type in self._ic_name_types[l]:</span>
-<span class="c1">#                 self._ic_name_types[l].append(unit._unit_type) </span>
-    
 
     <span class="k">def</span> <span class="nf">__loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Load the .dat file into the contents list.</span>

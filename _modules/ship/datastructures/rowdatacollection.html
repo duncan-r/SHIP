@@ -329,7 +329,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span> <span class="p">(</span><span class="s1">&#39;name_key </span><span class="si">%s</span><span class="s1"> was not found in collection&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name_key</span><span class="p">))</span></div>
     
 
-<div class="viewcode-block" id="RowDataCollection.DataObjectAsList"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.DataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">DataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="RowDataCollection.dataObjectAsList"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.dataObjectAsList">[docs]</a>    <span class="k">def</span> <span class="nf">dataObjectAsList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a DataObject as a list.</span>
 
 <span class="sd">        This will return the row_collection DataObject referenced by the key</span>
@@ -524,13 +524,19 @@
         <span class="k">return</span> <span class="n">out_str</span></div>
     
         
-<div class="viewcode-block" id="RowDataCollection.updateRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="RowDataCollection.updateRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new row to the units data rows.</span>
 <span class="sd">        </span>
 <span class="sd">        Creates a new row from the values in the supplied value dict at the location</span>
 <span class="sd">        given by the index.</span>
 <span class="sd">        If the index is None then the value will be appended to the end of the row</span>
 <span class="sd">        rather than inserted.</span>
+
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;no_copy&#39;(bool): if True the deepcopy of the object will not be</span>
+<span class="sd">                made. This is useful if you are loading a lot of data and don&#39;t</span>
+<span class="sd">                want the overhead of deepcopy - like loading a new model. </span>
+<span class="sd">                Default is False.</span>
 <span class="sd">        </span>
 <span class="sd">        Note: </span>
 <span class="sd">            If there is any problem while updating the values in the row all </span>
@@ -548,6 +554,8 @@
 <span class="sd">            KeyError: If any of the keys don&#39;t exist.</span>
 <span class="sd">            IndexError: If the index doesn&#39;t exist.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">no_copy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_copy&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span>
 
@@ -557,11 +565,13 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dataobj_keys</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;ROW_DATA_TYPE &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;is not in collection&#39;</span><span class="p">)</span>
         
+        <span class="n">temp_list</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
             <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
             <span class="c1"># in the different objects out of sync.</span>
-            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">no_copy</span><span class="p">:</span>
+                <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
             
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row_vals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_setValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
@@ -570,12 +580,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">err</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
-                <span class="k">del</span> <span class="n">o</span>
+            <span class="k">if</span> <span class="n">temp_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">o</span>
             <span class="k">del</span> <span class="n">temp_list</span></div>
      
         
-<div class="viewcode-block" id="RowDataCollection.addRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RowDataCollection.addRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new row to the units data rows.</span>
 <span class="sd">        </span>
 <span class="sd">        Creates a new row from the values in the supplied value dict at the location</span>
@@ -589,6 +600,12 @@
 <span class="sd">            This ensures that they don&#39;t get out of sync if an error is found</span>
 <span class="sd">            halfway through adding the different values. This is done by </span>
 <span class="sd">            creating a deep copy of the object prior to updating.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;no_copy&#39;(bool): if True the deepcopy of the object will not be</span>
+<span class="sd">                made. This is useful if you are loading a lot of data and don&#39;t</span>
+<span class="sd">                want the overhead of deepcopy - like loading a new model. </span>
+<span class="sd">                Default is False.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            row_vals (dict): Contains the names of the data objects of</span>
@@ -600,6 +617,8 @@
 <span class="sd">            KeyError: If any of the keys don&#39;t exist.</span>
 <span class="sd">            IndexError: If the index doesn&#39;t exist.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">no_copy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_copy&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span>
         
@@ -615,7 +634,8 @@
             <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
             <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
             <span class="c1"># in the different objects out of sync.</span>
-            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">no_copy</span><span class="p">:</span>
+                <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
             
             <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">data_type</span> <span class="ow">in</span> <span class="n">vkeys</span><span class="p">:</span>
@@ -642,16 +662,22 @@
             <span class="k">if</span> <span class="n">temp_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
                     <span class="k">del</span> <span class="n">o</span>
-                <span class="k">del</span> <span class="n">temp_list</span>
+            <span class="k">del</span> <span class="n">temp_list</span>
 
         <span class="c1"># Do this after so it&#39;s not removed if something goes wrong</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">False</span></div>
     
     
-<div class="viewcode-block" id="RowDataCollection.deleteRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="RowDataCollection.deleteRow"><a class="viewcode-back" href="../../../ship.datastructures.html#ship.datastructures.rowdatacollection.RowDataCollection.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Delete a row from the collection.</span>
+
+<span class="sd">        **kwargs:</span>
+<span class="sd">            &#39;no_copy&#39;(bool): if True the deepcopy of the object will not be</span>
+<span class="sd">                made. This is useful if you are loading a lot of data and don&#39;t</span>
+<span class="sd">                want the overhead of deepcopy - like deleting the dummy row. </span>
+<span class="sd">                Default is False.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            index(int): the index to delete the values for.</span>
@@ -659,14 +685,18 @@
 <span class="sd">        Raise:</span>
 <span class="sd">            IndexError: if index is out of the bounds of the collection.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">no_copy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_copy&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span>
         
+        <span class="n">temp_list</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Need to make a deep copy of the data_object so we can reset them back</span>
             <span class="c1"># to the same place if there&#39;s a problem. That way we don&#39;t get the lists</span>
             <span class="c1"># in the different objects out of sync.</span>
-            <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">no_copy</span><span class="p">:</span>
+                <span class="n">temp_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deepCopyDataObjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">)</span> 
             
             <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="p">:</span>
                 <span class="n">obj</span><span class="o">.</span><span class="n">deleteValue</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
@@ -675,8 +705,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_resetDataObject</span><span class="p">(</span><span class="n">temp_list</span><span class="p">)</span>
             <span class="k">raise</span> 
         <span class="k">finally</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
-                <span class="k">del</span> <span class="n">o</span>
+            <span class="k">if</span> <span class="n">temp_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">temp_list</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">o</span>
             <span class="k">del</span> <span class="n">temp_list</span></div>
         
         
@@ -750,9 +781,9 @@
 <span class="sd">        flag to True. When actual row data is added to the collection it will</span>
 <span class="sd">        check the flag and delete the row if it&#39;s True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">has_dummy</span> <span class="o">=</span> <span class="kc">True</span></div>
                
     

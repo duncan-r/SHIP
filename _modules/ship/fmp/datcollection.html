@@ -166,11 +166,12 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">AUnit</span>
-<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ft</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits</span> <span class="k">import</span> <span class="n">ROW_DATA_TYPES</span> <span class="k">as</span> <span class="n">rdt</span>
 <span class="kn">from</span> <span class="nn">ship.fmp.datunits.isisunit</span> <span class="k">import</span> <span class="n">CommentUnit</span>
 <span class="kn">from</span> <span class="nn">ship.fmp</span> <span class="k">import</span> <span class="n">fmpunitfactory</span> <span class="k">as</span> <span class="n">iuf</span>
+<span class="kn">from</span> <span class="nn">ship.fmp</span> <span class="k">import</span> <span class="n">unitgroups</span> <span class="k">as</span> <span class="n">ugroups</span>
 <span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">utilfunctions</span> <span class="k">as</span> <span class="n">uf</span>
+<span class="kn">from</span> <span class="nn">ship.utils</span> <span class="k">import</span> <span class="n">filetools</span> <span class="k">as</span> <span class="n">ft</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
@@ -232,19 +233,19 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     
 
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sets a value using index notation</span>
-<span class="sd">        </span>
-<span class="sd">        Calls the setValue() function to do the hard work.</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            key (int): index to update.</span>
-<span class="sd">            value: the value to add to the units.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+<span class="c1">#     def __setitem__(self, key, value):</span>
+<span class="c1">#         &quot;&quot;&quot;Sets a value using index notation</span>
+<span class="c1">#         </span>
+<span class="c1">#         Calls the setValue() function to do the hard work.</span>
+<span class="c1">#         </span>
+<span class="c1">#         Args:</span>
+<span class="c1">#             key (int): index to update.</span>
+<span class="c1">#             value: the value to add to the units.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         self.units[key] = value</span>
 
 
-<div class="viewcode-block" id="DatCollection.addUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.addUnit">[docs]</a>    <span class="k">def</span> <span class="nf">addUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span><span class="c1">#update_node_count=True, ics={}):</span>
+<div class="viewcode-block" id="DatCollection.addUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.addUnit">[docs]</a>    <span class="k">def</span> <span class="nf">addUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds a new isisunit type to the collection.</span>
 <span class="sd">        </span>
 <span class="sd">        If the index value provided is greater than the index of the </span>
@@ -334,11 +335,11 @@
             <span class="n">temp</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">icLabels</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">unit</span><span class="o">.</span><span class="n">icLabels</span><span class="p">():</span>
                 <span class="n">ics</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">_name</span>
-                <span class="n">node_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ic_index</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">ics</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">)</span>
+                <span class="n">node_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ic_index</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">ics</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">,</span>
+                                                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">header</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;node_count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">node_count</span></div>
             
     
-<span class="c1">#     def removeUnit(self, name_key, unit_type, update_node_count=True):</span>
 <div class="viewcode-block" id="DatCollection.removeUnit"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.removeUnit">[docs]</a>    <span class="k">def</span> <span class="nf">removeUnit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">unit_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove one of the units previously added to the list.</span>
 
@@ -391,7 +392,6 @@
             <span class="k">return</span> <span class="kc">False</span></div>
     
     
-<span class="c1">#     def getIndex(self, unit, unit_type=None):</span>
 <div class="viewcode-block" id="DatCollection.index"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">unit_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the index a particular AUnit in the collection.</span>
 <span class="sd">        </span>
@@ -445,7 +445,7 @@
         <span class="c1"># For each unit call the isisunit object and ask it</span>
         <span class="c1"># for its .DAT file formatted text to save to file</span>
         <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Section Type: &#39;</span> <span class="o">+</span> <span class="n">u</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Unit Type: &#39;</span> <span class="o">+</span> <span class="n">u</span><span class="o">.</span><span class="n">_unit_type</span><span class="p">)</span>
             <span class="n">out_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">getData</span><span class="p">())</span>
         
         <span class="k">return</span> <span class="n">out_data</span></div>
@@ -654,6 +654,68 @@
 <span class="sd">            Int Units in the collection.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="DatCollection.linkedUnits"><a class="viewcode-back" href="../../../ship.fmp.html#ship.fmp.datcollection.DatCollection.linkedUnits">[docs]</a>    <span class="k">def</span> <span class="nf">linkedUnits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">linksect</span> <span class="o">=</span> <span class="n">ugroups</span><span class="o">.</span><span class="n">LinkedUnits</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="n">linksect</span><span class="o">.</span><span class="n">addLinkedUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;upstream&#39;</span><span class="p">)</span>
+        <span class="n">linksect</span><span class="o">.</span><span class="n">addLinkedUnit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;downstream&#39;</span><span class="p">)</span>
+        
+        <span class="n">unit_links</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">unit</span><span class="o">.</span><span class="n">linkLabels</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">unit_links</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">unit_links</span><span class="p">)</span>
+        <span class="n">associates</span> <span class="o">=</span> <span class="p">[]</span>         <span class="c1"># Used for named_units in linksect</span>
+        <span class="n">temp_junctions</span> <span class="o">=</span> <span class="p">[]</span>     <span class="c1"># Store any junctions that refer to this unit</span>
+
+        <span class="c1"># Store the name, name_ds and index of the units in this collection</span>
+        <span class="c1"># so that we don&#39;t have to loop twice</span>
+        <span class="n">temp_locations</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">u</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">):</span>
+            
+            <span class="c1"># Add the name, name_ds and index of all the units</span>
+            <span class="c1"># Same name&#39;s/name_ds&#39; are stored in a list</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">temp_locations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+                <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">name_ds</span> <span class="o">!=</span> <span class="s1">&#39;unknown&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">u</span><span class="o">.</span><span class="n">name_ds</span> <span class="ow">in</span> <span class="n">temp_locations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> 
+                <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name_ds</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">]:</span>
+                <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">name_ds</span> <span class="o">!=</span> <span class="s1">&#39;unknown&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name_ds</span><span class="p">]:</span>
+                <span class="n">temp_locations</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name_ds</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+            <span class="c1"># Check if unit is in the linkLabels of u and add to associates or</span>
+            <span class="c1"># temp_junctions as appropriate if it is</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">linkLabels</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_links</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">links</span><span class="p">):</span> 
+                <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">unit_type</span> <span class="o">==</span> <span class="s1">&#39;junction&#39;</span><span class="p">:</span>
+                    <span class="n">temp_junctions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">links</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">u</span> <span class="o">==</span> <span class="n">unit</span><span class="p">:</span>
+                        <span class="n">associates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        
+        <span class="c1"># Check all of the junction linkLabels that we found and put the actual</span>
+        <span class="c1"># unit in the list for each name it references</span>
+        <span class="n">junctions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">temp_junctions</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">junc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">temp_junctions</span><span class="p">):</span>
+                <span class="n">junctions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">junc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[]))</span>
+                <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">junc</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">temp_locations</span><span class="p">[</span><span class="n">link</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="ow">in</span> <span class="n">junctions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> \
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">unit_type</span> <span class="o">==</span> <span class="s1">&#39;junction&#39;</span><span class="p">:</span>
+                            <span class="n">junctions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+        
+        <span class="n">linksect</span><span class="o">.</span><span class="n">named_units</span> <span class="o">=</span> <span class="n">associates</span>
+        <span class="n">linksect</span><span class="o">.</span><span class="n">junctions</span> <span class="o">=</span> <span class="n">junctions</span>
+        
+        <span class="k">del</span> <span class="n">junctions</span>
+        <span class="k">del</span> <span class="n">associates</span>
+        <span class="k">del</span> <span class="n">temp_junctions</span>        
+        <span class="k">del</span> <span class="n">temp_locations</span>
+        
+        <span class="k">return</span> <span class="n">linksect</span></div>
     
 
     <span class="nd">@classmethod</span>

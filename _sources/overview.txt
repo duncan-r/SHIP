@@ -263,7 +263,7 @@ you should use the DataObject itself::
       
       # Note that rgh_obj returned above is a shallow copy so changes you make
       # here will also be made in the DatCollection.
-      rgh[i] = r * 1.2
+      rgh_obj[i] = r * 1.2
 
 **NOTE**
 *The above approach is fine if you just want to update some values, like* 
@@ -283,7 +283,7 @@ task.
 Other row_data key's are specific to what they do. For example with a
 UsbprBridge::
    
-   culver_rows = usbpr.row_data['culvert'] # bridge culvert data
+   culvert_rows = usbpr.row_data['culvert'] # bridge culvert data
    opening_rows = usbpr.row_data['opening'] # bridge opening data
    
 That's the end of this short introduction on the fmp package. There's obviously

@@ -246,7 +246,7 @@
                 <span class="n">rdt</span><span class="o">.</span><span class="n">STAGE</span><span class="p">:</span> <span class="n">stage</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">FROUDE_NO</span><span class="p">:</span> <span class="n">froude_no</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">VELOCITY</span><span class="p">:</span> <span class="n">velocity</span><span class="p">,</span> 
                 <span class="n">rdt</span><span class="o">.</span><span class="n">UMODE</span><span class="p">:</span> <span class="n">umode</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">USTATE</span><span class="p">:</span> <span class="n">ustate</span><span class="p">,</span> 
                 <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span>
-            <span class="p">})</span> 
+            <span class="p">},</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
             
         <span class="k">return</span> <span class="n">out_line</span> <span class="o">-</span> <span class="mi">1</span></div>
        
@@ -265,7 +265,7 @@
     
     
 <span class="c1">#     def updateDataRow(self, row_vals, index):</span>
-<div class="viewcode-block" id="InitialConditionsUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates the row at the given index in the row_collection.</span>
 <span class="sd">        </span>
 <span class="sd">        Changes the state of the values in the initial conditions list of </span>
@@ -286,11 +286,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1"># Call superclass method to add the new row</span>
-        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
         
 
 <span class="c1">#     def updateDataRowByName(self, row_vals, name):</span>
-<div class="viewcode-block" id="InitialConditionsUnit.updateRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">updateRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.updateRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.updateRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">updateRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates the row for the entry with the give name.</span>
 <span class="sd">        </span>
 <span class="sd">        Changes the state of the values in the initial conditions list for the</span>
@@ -310,24 +310,18 @@
 <span class="sd">        See Also:</span>
 <span class="sd">            ADataObject and subclasses for information on the parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Name does not exist in initial conditions: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         
-<span class="c1">#         index = 0</span>
-<span class="c1">#         labels = self.row_data[&#39;main&#39;].dataObAsList(rdt.LABEL)</span>
-<span class="c1">#         index = labels.index(name)</span>
-<span class="c1">#         if index == -1:</span>
-<span class="c1">#             raise AttributeError</span>
-        
         <span class="c1"># Call superclass method to add the new row</span>
-        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
     
 
 <span class="c1">#     def addDataRow(self, row_vals): </span>
-<div class="viewcode-block" id="InitialConditionsUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">):</span> 
+<div class="viewcode-block" id="InitialConditionsUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Adds a new row to the InitialCondition units row_collection.</span>
 <span class="sd">        </span>
 <span class="sd">        The new row will be added at the given index. If no index is given it</span>
@@ -366,18 +360,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit_type</span><span class="p">]</span>
 
         <span class="c1"># Don&#39;t add the same ic&#39;s in twice</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">row_vals</span><span class="p">[</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">]</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span>
 
         <span class="c1"># Call superclass method to add the new row</span>
-        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">AUnit</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span></div>
     
 
-<span class="c1">#     def deleteDataRowByName(self, section_name):</span>
-<div class="viewcode-block" id="InitialConditionsUnit.deleteRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">):</span>
+<div class="viewcode-block" id="InitialConditionsUnit.deleteRowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.deleteRowByName">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="n">unit_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Delete one of the RowDataCollection objects in the row_collection.</span>
 <span class="sd">        </span>
 <span class="sd">        This calls the AUnit deleteRow method, but obtains the index</span>
@@ -390,29 +383,24 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            KeyError - if section_name does not exist.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Name does not exist in initial conditions: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">unit_name</span><span class="p">))</span>
-<span class="c1">#         if index == -1:</span>
-<span class="c1">#             raise KeyError(&#39;Name does not exist in initial conditions: &#39; + str(unit_name))</span>
         
         <span class="c1"># Delete the ic if the unit_name is the only one using it</span>
         <span class="c1"># Otherwise remove the type and keep the ic&#39;s as they are</span>
-<span class="c1">#         if unit_name in self._name_types.keys():</span>
-<span class="c1">#         if unit_type in self._name_types[unit_name]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">unit_type</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_node_count</span> <span class="o">-=</span> <span class="mi">1</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_types</span><span class="p">[</span><span class="n">unit_name</span><span class="p">]</span></div>
     
     
-<span class="c1">#     def getRowByName(self, section_name):</span>
 <div class="viewcode-block" id="InitialConditionsUnit.rowByName"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.initialconditionsunit.InitialConditionsUnit.rowByName">[docs]</a>    <span class="k">def</span> <span class="nf">rowByName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the data vals in a particular row by name.</span>
 <span class="sd">        </span>
@@ -428,7 +416,7 @@
 <span class="sd">        Return:</span>
 <span class="sd">            dict - containing the values for the requested row.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">DataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dataObjectAsList</span><span class="p">(</span><span class="n">rdt</span><span class="o">.</span><span class="n">LABEL</span><span class="p">)</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">section_name</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>

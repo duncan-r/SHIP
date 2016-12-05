@@ -399,7 +399,7 @@ you should use the DataObject itself:</p>
 
    <span class="c1"># Note that rgh_obj returned above is a shallow copy so changes you make</span>
    <span class="c1"># here will also be made in the DatCollection.</span>
-   <span class="n">rgh</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">1.2</span>
+   <span class="n">rgh_obj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="mf">1.2</span>
 </pre></div>
 </div>
 <p><strong>NOTE</strong>
@@ -418,7 +418,7 @@ and it helps not having to remember lots of different key names for a common
 task.
 Other row_data key&#8217;s are specific to what they do. For example with a
 UsbprBridge:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">culver_rows</span> <span class="o">=</span> <span class="n">usbpr</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span> <span class="c1"># bridge culvert data</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">culvert_rows</span> <span class="o">=</span> <span class="n">usbpr</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;culvert&#39;</span><span class="p">]</span> <span class="c1"># bridge culvert data</span>
 <span class="n">opening_rows</span> <span class="o">=</span> <span class="n">usbpr</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;opening&#39;</span><span class="p">]</span> <span class="c1"># bridge opening data</span>
 </pre></div>
 </div>

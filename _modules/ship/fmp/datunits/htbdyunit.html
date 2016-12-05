@@ -289,7 +289,7 @@
                 
                 <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span>
                     <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elev</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span>
-                <span class="p">})</span>
+                <span class="p">},</span> <span class="n">no_copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 
         <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">ERROR</span><span class="p">(</span><span class="s1">&#39;Unable to read Unit Data(dataRowObject creation) - NotImplementedError&#39;</span><span class="p">)</span>
@@ -360,7 +360,7 @@
             
    
 <span class="c1">#     def addDataRow(elevation, time=None, index=None): </span>
-<div class="viewcode-block" id="HtbdyUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">data_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="HtbdyUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.htbdyunit.HtbdyUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">data_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
@@ -399,10 +399,10 @@
         
         <span class="k">if</span> <span class="n">orig_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> 
-                                          <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">})</span>
+                                          <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> 
-                                             <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">},</span> <span class="n">index</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">({</span><span class="n">rdt</span><span class="o">.</span><span class="n">TIME</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="n">rdt</span><span class="o">.</span><span class="n">ELEVATION</span><span class="p">:</span> <span class="n">elevation</span><span class="p">},</span> 
+                                         <span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
     
         
 </pre></div>

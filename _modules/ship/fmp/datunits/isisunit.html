@@ -246,6 +246,8 @@
 <span class="sd">        values that appear in set locations, usually at the top of the unit</span>
 <span class="sd">        data in the .dat file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
+        
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -300,7 +302,21 @@
 <span class="sd">        Return:</span>
 <span class="sd">            list - of intial condition label names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[]</span> </div>
+        <span class="k">return</span> <span class="p">[]</span></div>
+    
+<div class="viewcode-block" id="AUnit.linkLabels"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.linkLabels">[docs]</a>    <span class="k">def</span> <span class="nf">linkLabels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dict of all the names that the unit references.</span>
+<span class="sd">        </span>
+<span class="sd">        For a RiverUnit this is only the self.name + spills and laterals, </span>
+<span class="sd">        for a bridge it would be self.name, self.name_ds, self.remote_us, </span>
+<span class="sd">        self.remote_ds and for a JunctionUnit it could be many more.</span>
+<span class="sd">        It can be used to identify which other units are directly associated to </span>
+<span class="sd">        this one in some way.</span>
+<span class="sd">        </span>
+<span class="sd">        Return:</span>
+<span class="sd">            dict - containing all referenced names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">}</span></div>
         
 <div class="viewcode-block" id="AUnit.copy"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a copy of this unit with it&#39;s own memory allocation.&quot;&quot;&quot;</span>
@@ -392,26 +408,43 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">head_data</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span></div>
         
     
-<div class="viewcode-block" id="AUnit.deleteRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AUnit.deleteRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.deleteRow">[docs]</a>    <span class="k">def</span> <span class="nf">deleteRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes a data row from the RowDataCollection.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            These are passed onto the RowDataCollection. See there for details.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">IndexError</span> <span class="p">(</span><span class="s1">&#39;Given index is outside bounds of row_data[rowdata_key] data&#39;</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">deleteRow</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
         
     
-<div class="viewcode-block" id="AUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AUnit.updateRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.updateRow">[docs]</a>    <span class="k">def</span> <span class="nf">updateRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update an existing data row in one of the RowDataCollection&#39;s.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            These are passed onto the RowDataCollection. See there for details.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            row_vals(dict): Named arguments required for adding a row to the </span>
+<span class="sd">                collection. These will be as stipulated by the way that a </span>
+<span class="sd">                concrete implementation of this class setup the collection.</span>
+<span class="sd">            rowdata_key=&#39;main&#39;(str): the name of the RowDataCollection</span>
+<span class="sd">                held by this to add the new row to. If None it is the</span>
+<span class="sd">                self.row_collection. Otherwise it is the name of one of the</span>
+<span class="sd">                entries in the self.additional_row_collections dictionary.</span>
+<span class="sd">            index=None(int): the index in the RowDataObjectCollection to update</span>
+<span class="sd">                with the row_vals</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">IndexError</span> <span class="p">(</span><span class="s1">&#39;Given index is outside bounds of row_collection data&#39;</span><span class="p">)</span>
         
         <span class="c1"># Call the row collection add row method to add the new row.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">updateRow</span><span class="p">(</span><span class="n">row_vals</span><span class="o">=</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
             
     
-<div class="viewcode-block" id="AUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AUnit.addRow"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.addRow">[docs]</a>    <span class="k">def</span> <span class="nf">addRow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_vals</span><span class="p">,</span> <span class="n">rowdata_key</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new data row to one of the row data collections.</span>
 <span class="sd">        </span>
 <span class="sd">        Provides the basics of a function for adding additional row dat to one</span>
@@ -426,6 +459,9 @@
 <span class="sd">        respnsobility to ensure that these are the expected values for it&#39;s</span>
 <span class="sd">        row collection and to set any defaults. If they are not as expected by</span>
 <span class="sd">        the RowDataObjectCollection a ValueError will be raised.</span>
+<span class="sd">        </span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            These are passed onto the RowDataCollection. See there for details.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            row_vals(dict): Named arguments required for adding a row to the </span>
@@ -445,7 +481,7 @@
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">numberOfRows</span><span class="p">()</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_data</span><span class="p">[</span><span class="n">rowdata_key</span><span class="p">]</span><span class="o">.</span><span class="n">addRow</span><span class="p">(</span><span class="n">row_vals</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
         
     
 <div class="viewcode-block" id="AUnit.checkIncreases"><a class="viewcode-back" href="../../../../ship.fmp.datunits.html#ship.fmp.datunits.isisunit.AUnit.checkIncreases">[docs]</a>    <span class="k">def</span> <span class="nf">checkIncreases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_obj</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -649,6 +685,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+<span class="c1">#         kwargs[&#39;name&#39;] = &#39;header&#39;</span>
         <span class="n">AUnit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type</span> <span class="o">=</span> <span class="n">HeaderUnit</span><span class="o">.</span><span class="n">UNIT_TYPE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_unit_category</span> <span class="o">=</span> <span class="n">HeaderUnit</span><span class="o">.</span><span class="n">UNIT_CATEGORY</span>

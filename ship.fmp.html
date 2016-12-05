@@ -100,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.fmpunitfactory">ship.fmp.fmpunitfactory module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.headdata">ship.fmp.headdata module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.ief">ship.fmp.ief module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp.unitgroups">ship.fmp.unitgroups module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-ship.fmp">Module contents</a></li>
 </ul>
 </li>
@@ -110,21 +111,7 @@
 <li class="toctree-l2"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="ship.html">ship package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="ship.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="ship.datastructures.html">ship.datastructures package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">ship.fmp package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.tuflow.html">ship.tuflow package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ship.utils.html">ship.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="ship.html#module-ship">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">ship-0.3.0.dev0</a></li>
 </ul>
 
             
@@ -401,6 +388,11 @@ the list.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="ship.fmp.datcollection.DatCollection.linkedUnits">
+<code class="descname">linkedUnits</code><span class="sig-paren">(</span><em>unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.linkedUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.linkedUnits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="ship.fmp.datcollection.DatCollection.numberOfUnits">
 <code class="descname">numberOfUnits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/datcollection.html#DatCollection.numberOfUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.datcollection.DatCollection.numberOfUnits" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of units currently held in the collection.</p>
@@ -607,7 +599,7 @@ an IOError.</li>
 
 <dl class="data">
 <dt id="ship.fmp.datcollection.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A4D710&gt;</em><a class="headerlink" href="#ship.fmp.datcollection.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -667,9 +659,12 @@ row_data: dict of row_data keys containing lists of row data to</p>
 <blockquote>
 <div>set in the unit.</div></blockquote>
 <dl class="last docutils">
-<dt>dummy_row: if no row_data is given and this is set to True it will</dt>
-<dd>create a dummy row in all row_data. i.e. set an initial row
-to 0&#8217;s so it will load in fmp.</dd>
+<dt>no_copy(bool): When adding any row_data given to a new unit the</dt>
+<dd>no_copy flag will be given to the RowDataCollection.addRow()
+method. When True it stops the call to deepcopy while updating
+the rows. It&#8217;s probably not needed when creating a new unit and
+it can be time-consuming. The default is True. See
+RowDataCollection.addRow() for more details.</dd>
 </dl>
 </dd>
 </dl>
@@ -735,7 +730,7 @@ that have been defined, when loading the dat file.</p>
 
 <dl class="data">
 <dt id="ship.fmp.fmpunitfactory.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x069C3F30&gt;</em><a class="headerlink" href="#ship.fmp.fmpunitfactory.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A790B0&gt;</em><a class="headerlink" href="#ship.fmp.fmpunitfactory.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -807,7 +802,7 @@ place rather than littered around all subclasses of AUnit.</p>
 
 <dl class="data">
 <dt id="ship.fmp.headdata.logger">
-<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06951F30&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logger</code><em class="property"> = &lt;logging.Logger object at 0x06A79BD0&gt;</em><a class="headerlink" href="#ship.fmp.headdata.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
 </dd></dl>
 
@@ -1089,6 +1084,73 @@ an IOError.</li>
 <dt id="ship.fmp.ief.logger">
 <code class="descname">logger</code><em class="property"> = &lt;logging.Logger object&gt;</em><a class="headerlink" href="#ship.fmp.ief.logger" title="Permalink to this definition">¶</a></dt>
 <dd><p>logging references with a __name__ set to this module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-ship.fmp.unitgroups">
+<span id="ship-fmp-unitgroups-module"></span><h2>ship.fmp.unitgroups module<a class="headerlink" href="#module-ship.fmp.unitgroups" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Summary:</dt>
+<dd><p class="first">Contains classes for grouping AUnit types based on certain conditions.</p>
+<p>Currently contains:</p>
+<blockquote class="last">
+<div><ul>
+<li><dl class="first docutils">
+<dt>LinkedUnits:</dt>
+<dd><p class="first last">Stores all of the direct associates of a particular unit. See the
+linkedUnits() method in DatCollection for more information.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>Author:</dt>
+<dd>Duncan Runnacles</dd>
+<dt>Created:</dt>
+<dd>02 Dec 2016</dd>
+<dt>Copyright:</dt>
+<dd>Duncan Runnacles 2016</dd>
+</dl>
+<p>TODO:</p>
+<p>Updates:</p>
+<dl class="class">
+<dt id="ship.fmp.unitgroups.LinkedUnits">
+<em class="property">class </em><code class="descname">LinkedUnits</code><span class="sig-paren">(</span><em>main_unit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/unitgroups.html#LinkedUnits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.unitgroups.LinkedUnits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Stores all units directly associated to a specific unit.</p>
+<p>main_unit: the unit to derive associates from.
+us_unit: the unit immediately above main_unit in the .dat/.ied file.
+ds_unit: the unit immediately below main_unit in the .dat/.ied file.
+named_units: all units that are specifically referenced by the main_unit</p>
+<blockquote>
+<div>within it&#8217;s head_data (e.g. remote_us and remote_ds in bridge units).</div></blockquote>
+<dl class="docutils">
+<dt>junctions: a list of all of the junctions that refer to the main_unit. Each</dt>
+<dd>list entry contains a tuple where [0] is the JunctionUnit and [1] is a
+list of units referenced by that junction.</dd>
+</dl>
+<dl class="method">
+<dt id="ship.fmp.unitgroups.LinkedUnits.addLinkedUnit">
+<code class="descname">addLinkedUnit</code><span class="sig-paren">(</span><em>unit</em>, <em>link_type</em>, <em>additionals=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ship/fmp/unitgroups.html#LinkedUnits.addLinkedUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ship.fmp.unitgroups.LinkedUnits.addLinkedUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a unit to this LinkedUnits contents.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>unit</strong> &#8211; the unit to add.</li>
+<li><strong>link_type</strong> (<em>str</em>) &#8211; the type of unit being added. Includes: &#8216;upstream&#8217;,
+&#8216;downstream&#8217;, &#8216;named&#8217; and &#8216;junction&#8217;.</li>
+<li><strong>additionals=None</strong> (<em>list</em>) &#8211; used when link_type == &#8216;junction&#8217; contains
+a list of all of the units referened by the JunctionUnit.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
