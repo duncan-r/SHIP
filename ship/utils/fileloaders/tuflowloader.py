@@ -68,18 +68,18 @@ class TuflowLoader(ALoader):
         if 'scenario' in arg_dict.keys():
             self._has_scenario = True 
 
-            self.user_Variables.has_cmd_vals = True
+            self.user_variables.has_cmd_vals = True
             self.scenario_vals = arg_dict['scenario']
             for key, val in arg_dict['scenario'].items():
-                self.user_variables.addVariable(tuflowpart.TuflowModelVariable.noParent(key, val), 'scen')
+                self.user_variables.add(tuflowpart.TuflowModelVariable.noParent(key, val), 'scen')
         
         if 'event' in arg_dict.keys(): 
             self._has_event = True 
 
-            self.user_Variables.has_cmd_vals = True
+            self.user_variables.has_cmd_vals = True
             self.event_vals = arg_dict['event']
             for key, val in arg_dict['event'].items():
-                self.user_variables.addVariable(tuflowpart.TuflowModelVariable.noParent(key, val), 'evnt')
+                self.user_variables.add(tuflowpart.TuflowModelVariable.noParent(key, val), 'evnt')
 
         # Check that the tcf exists
         if not os.path.exists(tcf_path):
