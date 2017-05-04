@@ -195,8 +195,7 @@ class CulvertUnitOutlet(CulvertUnit):
         out.append('\nOUTLET')
         out.append('\n'+'{:>12}'.format(self._name) + '{:>12}'.format(self._name_ds))
         
-        key_order = ['loss_coef', 'reverse_floe_model', 'reverse_flow_model', 
-                     'headloss_type', 'trash_screen_height']
+        key_order = ['loss_coef', 'reverse_flow_model', 'headloss_type']
         for k in key_order:
             out.append(self.head_data[k].format(True))
         out_data = ''.join(out).split('\n')

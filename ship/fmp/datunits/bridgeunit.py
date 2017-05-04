@@ -613,7 +613,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         out.append('\n' + '{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds) +
                         self.head_data['remote_us'].format() + self.head_data['remote_ds'].format())
         key_order = [
-            'roughness_type', 'calibration_coef', 'skew_angle', 'width', 'dual_distance', 'num_of_orifices',
+            'roughness_type', 'calibration_coef', 'skew_angle', 'width', 'dual_distance', 'pier_width',
             'orifice_flag', 'op_lower', 'op_upper', 'op_cd', 'abutment_type',
             'num_of_piers', 'pier_shape', 'pier_shape_2', 'pier_calibration_coef',
             'abutment_align',
