@@ -79,9 +79,9 @@ class RiverUnit (AUnit):
             'lateral2': HeadDataItem('', '{:<12}', 2, 7, dtype=dt.STRING),
             'lateral3': HeadDataItem('', '{:<12}', 2, 8, dtype=dt.STRING),
             'lateral4': HeadDataItem('', '{:<12}', 2, 9, dtype=dt.STRING),
-            'distance': HeadDataItem(0.0, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
-            'slope': HeadDataItem(0.0001, '{:>20}', 3, 1, dtype=dt.FLOAT, dps=4),
-            'density': HeadDataItem(1000, '{:>10}', 3, 2, dtype=dt.INT),
+            'distance': HeadDataItem(0.0, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3, default=0),
+            'slope': HeadDataItem(0.0001, '{:>20}', 3, 1, dtype=dt.FLOAT, dps=4, default=0.0001),
+            'density': HeadDataItem(1000, '{:>10}', 3, 2, dtype=dt.INT, default=1000),
         }
         
         '''

@@ -155,7 +155,7 @@ class RefhUnit(AUnit):
 #             'uh_fct': HeadDataItem(0.000, '{:>10}', 14, 10, dtype=dt.FLOAT, dps=3),
             'bl_flag': HeadDataItem('DESIGN', '{:>10}', 17, 0, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'br_flag': HeadDataItem('DESIGN', '{:>10}', 17, 1, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
-            'br0_flag': HeadDataItem('DESIGN', '{:>10}', 17, 2, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
+            'bf0_flag': HeadDataItem('DESIGN', '{:>10}', 17, 2, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'bl_dcf': HeadDataItem(0.000, '{:>10}', 18, 0, dtype=dt.FLOAT, dps=3),
             'bl': HeadDataItem(0.000, '{:>10}', 18, 1, dtype=dt.FLOAT, dps=3),
             'br_dcf': HeadDataItem(0.000, '{:>10}', 18, 2, dtype=dt.FLOAT, dps=3),
@@ -171,6 +171,22 @@ class RefhUnit(AUnit):
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
         self.row_data['main'].setDummyRow({rdt.RAIN: 0})
     
+
+    def useUrban(self, activate):
+        """
+        Args:
+            turn_on(bool): if True urban refh will be turned on if false it
+                will be turned off.
+        """
+        if activate:
+            self.head_data['urban'].value = 'URBANREFH'
+            self.head_data['revision'].value = '2'
+            self.has_urban = True
+        else:
+            self.head_data['urban'].value = ''
+            self.head_data['revision'].value = '1'
+            self.has_urban = False
+
         
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
@@ -308,7 +324,7 @@ class RefhUnit(AUnit):
         self.head_data['uh_rows'].value = unit_data[file_line+4][0:10].strip()
         self.head_data['bl_flag'].value = unit_data[file_line+5][0:10].strip()
         self.head_data['br_flag'].value = unit_data[file_line+5][10:20].strip()
-        self.head_data['br0_flag'].value = unit_data[file_line+5][20:30].strip()
+        self.head_data['bf0_flag'].value = unit_data[file_line+5][20:30].strip()
         self.head_data['bl_dcf'].value = unit_data[file_line+6][0:10].strip()
         self.head_data['bl'].value = unit_data[file_line+6][10:20].strip()
         self.head_data['br_dcf'].value = unit_data[file_line+6][20:30].strip()
@@ -350,7 +366,7 @@ class RefhUnit(AUnit):
         
         if self.head_data['urban'].compare('URBANREFH'):
             key_order = ['subarea_1', 'dplbar_1', 'suburbext_1', 'calibration_1',
-                         'subarea_1', 'dplbar_1', 'suburbext_1', 'calibration_1',
+                         'subarea_2', 'dplbar_2', 'suburbext_2', 'calibration_2',
                          'subrunoff_2', 'sewer_rp_2', 'sewer_depth_2', 
                          'sewer_lossvolume_2', 'subarea_3', 'dplbar_3', 
                          'suburbext_3', 'calibration_3', 'subrunoff_3']
@@ -394,10 +410,9 @@ class RefhUnit(AUnit):
             'cini_flag', 'alpha_flag', 'models_comment', 'cm_dcf', 
             'cmax', 'cini', 'alpha', 'bfihost', 'uh_flag' , 'tp_flag', 'up_flag',
             'uk_flag', 'tp_dcf', 'tp0', 'tpt', 'dplbar', 'dpsbar', 'propwet',
-            'up', 'uk', 'uh_rows', 'bl_flag', 'br_flag', 'br0_flag', 'bl_dcf',
+            'up', 'uk', 'uh_rows', 'bl_flag', 'br_flag', 'bf0_flag', 'bl_dcf',
             'bl', 'br_dcf', 'br', 'bf0'
         ]
-        out = []
         for k in key_order:
             out.append(self.head_data[k].format(True))
         out = ''.join(out).split('\n')

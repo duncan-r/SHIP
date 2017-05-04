@@ -175,7 +175,7 @@ class CulvertUnitOutlet(CulvertUnit):
         self.head_data['comment'].value = unit_data[file_line][8:].strip() 
         self._name = unit_data[file_line + 2][:12].strip()
         self._name_ds = unit_data[file_line + 2][12:].strip()
-        self.head_data['loss_coefficient'].value = unit_data[file_line + 3][:10].strip()
+        self.head_data['loss_coef'].value = unit_data[file_line + 3][:10].strip()
         self.head_data['reverse_flow_model'].value = unit_data[file_line + 3][10:20].strip()
         self.head_data['headloss_type'].value = unit_data[file_line + 3][20:].strip()
         return file_line + 3

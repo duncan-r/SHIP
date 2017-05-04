@@ -112,24 +112,34 @@ class HtbdyUnit (AUnit):
 
         l = unit_data[file_line+2]
         rows = 1
-        if 'LUNAR MONTHS' in l:
-            l = l.replace('LUNAR MONTHS', 'LUNAR-MONTHS')
-            l = ' '.join(l.split())
-            vars = l.split()
-            vars[1] = 'LUNAR MONTHS'
-        else:
-            l = ' '.join(l.split())
-            vars = l.split()
-
-        rows = int(vars[0])
-        if uf.isNumeric(vars[1]):
-            self.head_data['time_units'].value = 'USER SET'
-            self.head_data['multiplier'].value = vars[1]
-        else:
-            self.head_data['time_units'].value = vars[1]
         
-        self.head_data['extending_method'].value = vars[2] 
-        self.head_data['interpolation'].value = vars[3] 
+        # The default in FMP when a new unit is created is:
+        # "         1                         HOURS"
+        # But this is interpretted as EXTEND, LINEAR, SECONDS??!!
+        # If we find this line we need to convert to those explicitely
+        if l.strip() == '1                         HOURS':
+            self.head_data['time_units'].value = 'SECONDS'
+            self.head_data['extending_method'].value = 'EXTEND'
+            self.head_data['interpolation'].value = 'LINEAR'
+        else:
+            if 'LUNAR MONTHS' in l:
+                l = l.replace('LUNAR MONTHS', 'LUNAR-MONTHS')
+                l = ' '.join(l.split())
+                vars = l.split()
+                vars[1] = 'LUNAR MONTHS'
+            else:
+                l = ' '.join(l.split())
+                vars = l.split()
+
+            rows = int(vars[0])
+            if uf.isNumeric(vars[1]):
+                self.head_data['time_units'].value = 'USER SET'
+                self.head_data['multiplier'].value = vars[1]
+            else:
+                self.head_data['time_units'].value = vars[1]
+            
+            self.head_data['extending_method'].value = vars[2] 
+            self.head_data['interpolation'].value = vars[3] 
 
         return file_line + 3, rows
 

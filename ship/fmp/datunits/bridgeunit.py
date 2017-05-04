@@ -461,15 +461,15 @@ class BridgeUnitUsbpr (BridgeUnit):
             'skew_angle': HeadDataItem(0.000, '{:>10}', 4, 1, dtype=dt.FLOAT, dps=3),
             'width': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
             'dual_distance': HeadDataItem(0.000, '{:>10}', 4, 3, dtype=dt.FLOAT, dps=3),
-            'num_of_orifices': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.INT),
+            'pier_width': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.FLOAT),
             'orifice_flag': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'ORIFICE')),
             'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3),
             'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3),
             'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3),
             'abutment_type': HeadDataItem('3', '{:>10}', 5, 0, dtype=dt.CONSTANT, choices=('1', '2', '3')),
             'num_of_piers': HeadDataItem(0, '{:>10}', 6, 0, dtype=dt.INT),
-            'pier_shape': HeadDataItem('FLAT', '{:<10}', 6, 1, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH')),
-            'pier_shape_2': HeadDataItem('', '{:<10}', 6, 2, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH'), allow_blank=True),
+            'pier_shape': HeadDataItem('FLAT', '{:<10}', 6, 1, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH', 'CYLINDER', 'RECTANGLE', 'SQUARE', 'IBEAM')),
+            'pier_shape_2': HeadDataItem('', '{:<10}', 6, 2, dtype=dt.CONSTANT, choices=('STREAMLINE', 'SEMICIRCLE', 'TRIANGLE', 'DIAPHRAGM'), allow_blank=True),
             'pier_calibration_coef': HeadDataItem('', '{:>10}', 6, 3, dtype=dt.FLOAT, dps=3, allow_blank=True),
             'abutment_align': HeadDataItem('ALIGNED', '{:>10}', 7, 0, dtype=dt.CONSTANT, choices=('ALIGNED', 'SKEW')),
         }
@@ -503,7 +503,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         self.head_data['skew_angle'].value = unit_data[file_line + 4][10:20].strip()
         self.head_data['width'].value = unit_data[file_line + 4][20:30].strip()
         self.head_data['dual_distance'].value = unit_data[file_line + 4][30:40].strip()
-        self.head_data['num_of_orifices'].value = unit_data[file_line + 4][40:50].strip()
+        self.head_data['pier_width'].value = unit_data[file_line + 4][40:50].strip()
         self.head_data['orifice_flag'].value = unit_data[file_line + 4][50:60].strip()
         self.head_data['op_lower'].value = unit_data[file_line + 4][60:70].strip()
         self.head_data['op_upper'].value = unit_data[file_line + 4][70:80].strip()

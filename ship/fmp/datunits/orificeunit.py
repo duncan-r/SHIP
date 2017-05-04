@@ -59,7 +59,7 @@ class OrificeUnit(AUnit):
             'bore_area': HeadDataItem(0.000, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
             'us_sill_level': HeadDataItem(0.000, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'ds_sill_level': HeadDataItem(0.000, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-            'shape': HeadDataItem('RECTANGLE', '{:>10}', 2, 5, dtype=dt.CONSTANT, choices=('RECTANGLE', 'CIRCULAR')),
+            'shape': HeadDataItem('RECTANGLE', '{:>10}', 2, 5, dtype=dt.CONSTANT, choices=('', 'RECTANGLE', 'CIRCULAR')),
             'weir_flow': HeadDataItem(0.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'surcharged_flow': HeadDataItem(0.000, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'modular_limit': HeadDataItem(0.000, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
