@@ -107,6 +107,11 @@ class DatCollection(object):
 #         """
 #         self.units[key] = value
 
+    @property
+    def node_count(self):
+        header = self.units[0]
+        return header.head_data['node_count'].value
+
 
     def addUnit(self, unit, index=None, **kwargs):
         """Adds a new isisunit type to the collection.
