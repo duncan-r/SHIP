@@ -83,7 +83,7 @@ class CulvertUnitInlet(CulvertUnit):
     
     def icLabels(self):
         """Overriddes superclass method."""
-        return [self._name]
+        return [self._name, self._name_ds]
 
         
     def readUnitData(self, unit_data, file_line): 
@@ -160,7 +160,7 @@ class CulvertUnitOutlet(CulvertUnit):
         
     def icLabels(self):
         """Overriddes superclass method."""
-        return [self._name]
+        return [self._name, self._name_ds]
 
     
     def readUnitData(self, unit_data, file_line): 

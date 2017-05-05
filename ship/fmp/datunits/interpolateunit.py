@@ -63,6 +63,11 @@ class InterpolateUnit(AUnit):
             'easting': HeadDataItem(0.00, '{:<10}', 2, 1, dtype=dt.FLOAT, dps=3, default=0.00),
             'northing': HeadDataItem(0.00, '{:<10}', 2, 2, dtype=dt.FLOAT, dps=3, default=0.00),
         }
+
+
+    def icLabels(self):
+        """Overriddes superclass method."""
+        return [self._name]
             
     
     def readUnitData(self, unit_data, file_line): 

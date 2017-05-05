@@ -659,7 +659,10 @@ class RowDataCollection(object):
         if not self.checkRowsInSync():
             raise RuntimeError('RowCollection objects are not in sync')
 
-        return len(self._collection[0])
+        if self.has_dummy:
+            return 0
+        else:
+            return len(self._collection[0])
     
     
     def checkRowsInSync(self):

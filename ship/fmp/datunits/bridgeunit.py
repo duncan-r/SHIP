@@ -113,7 +113,7 @@ class BridgeUnit (AUnit):
     def numberOfOpenings(self):
         """
         """
-        return self.row_data['opening'].numberOfRows()
+        return self.row_data['opening'].row_count
     
     
     def readUnitData(self, unit_data, file_line):
@@ -222,7 +222,7 @@ class BridgeUnit (AUnit):
             list - containing the formatted unit rows.
         """
         out_data = []
-        no_of_rows = self.row_data['main'].numberOfRows()
+        no_of_rows = self.row_data['main'].row_count
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
         for i in range(0, no_of_rows): 
             out_data.append(self.row_data['main'].getPrintableRow(i))
@@ -633,12 +633,12 @@ class BridgeUnitUsbpr (BridgeUnit):
         """
         out_data = []
 
-        no_of_rows = self.row_data['opening'].numberOfRows()
+        no_of_rows = self.row_data['opening'].row_count
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
         for i in range(0, no_of_rows):
             out_data.append(self.row_data['opening'].getPrintableRow(i))
         
-        no_of_rows = self.row_data['culvert'].numberOfRows()
+        no_of_rows = self.row_data['culvert'].row_count
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
         for i in range(0, no_of_rows):
             out_data.append(self.row_data['culvert'].getPrintableRow(i))
@@ -809,7 +809,7 @@ class BridgeUnitArch (BridgeUnit):
             list - containing additional row data.
         """
         out_data = []
-        no_of_rows = self.row_data['opening'].numberOfRows()
+        no_of_rows = self.row_data['opening'].row_count
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
         for i in range(0, no_of_rows):
             out_data.append(self.row_data['opening'].getPrintableRow(i))

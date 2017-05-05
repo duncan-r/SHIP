@@ -101,7 +101,6 @@ class BridgeUnitTests(unittest.TestCase):
         self.assertEqual(b.head_data['skew_angle'].value, 0.000)
         self.assertEqual(b.head_data['width'].value, 0.000)
         self.assertEqual(b.head_data['dual_distance'].value, 0.000 )
-        self.assertEqual(b.head_data['num_of_orifices'].value, 0)
         self.assertEqual(b.head_data['orifice_flag'].value, 'ORIFICE')
         self.assertEqual(b.head_data['op_lower'].value, 0.1)
         self.assertEqual(b.head_data['op_upper'].value, 0.1)
@@ -220,7 +219,7 @@ class BridgeUnitTests(unittest.TestCase):
                          'USBPR1978',
                          '1.042_BU    1.042_BD    1.042_US    1.042_DS    ',
                          'MANNING',
-                         '     1.000     0.000     0.000     0.000         0   ORIFICE     0.100     0.100     1.000',
+                         '     1.000     0.000     0.000     0.000       0.0   ORIFICE     0.100     0.100     1.000',
                          '         3',
                          '         0FLAT      ',
                          '   ALIGNED',
@@ -238,8 +237,7 @@ class BridgeUnitTests(unittest.TestCase):
                          '    15.267    34.096     0.040          R',
                          '         1',
                          '    11.587    15.231    33.680    33.680',
-                         '         1',
-                         '     0.000     0.000     0.000     1.000     1.000     1.000']
+                         '         0']
 
         output = b.getData()
         self.assertListEqual(test_output, output)
