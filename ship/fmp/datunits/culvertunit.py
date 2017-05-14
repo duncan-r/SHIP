@@ -45,7 +45,16 @@ class CulvertUnit(AUnit):
         AUnit.__init__(self)
         self._unit_type = CulvertUnit.UNIT_TYPE
         self._unit_category = CulvertUnit.UNIT_CATEGORY
+    
+    
+    def icLabels(self):
+        """Overriddes superclass method."""
+        return [self._name, self._name_ds]
 
+
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        return {'name': self.name, 'name_ds': self.name_ds}
 
 
 class CulvertUnitInlet(CulvertUnit):
@@ -79,11 +88,6 @@ class CulvertUnitInlet(CulvertUnit):
             'headloss_type': HeadDataItem('STATIC', '{:>10}', 3, 5, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL')),
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 3, 6, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
         }    
-    
-    
-    def icLabels(self):
-        """Overriddes superclass method."""
-        return [self._name, self._name_ds]
 
         
     def readUnitData(self, unit_data, file_line): 
@@ -156,11 +160,6 @@ class CulvertUnitOutlet(CulvertUnit):
             'headloss_type': HeadDataItem('STATIC', '{:>10}', 2, 1, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL')),
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 2, 2, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
         }
-        
-        
-    def icLabels(self):
-        """Overriddes superclass method."""
-        return [self._name, self._name_ds]
 
     
     def readUnitData(self, unit_data, file_line): 

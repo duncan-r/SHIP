@@ -102,7 +102,12 @@ class BridgeUnit (AUnit):
         
     
     def icLabels(self):
-        return [self._name, self._name_ds]
+        ics = [self._name, self._name_ds]
+        if self.head_data['remote_us'].value.strip() != '':
+            ics.append(self.head_data['remote_us'].value.strip())
+        if self.head_data['remote_ds'].value.strip() != '':
+            ics.append(self.head_data['remote_ds'].value.strip())
+        return ics
 
     def linkLabels(self):
         """Overriddes superclass method."""

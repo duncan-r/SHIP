@@ -172,6 +172,16 @@ class RefhUnit(AUnit):
         self.row_data['main'].setDummyRow({rdt.RAIN: 0})
     
 
+    def icLabels(self):
+        """Overriddes superclass method."""
+        return [self._name]
+
+
+    def linkLabels(self):
+        """Overriddes superclass method."""
+        return {'name': self.name}
+
+
     def useUrban(self, activate):
         """
         Args:

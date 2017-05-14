@@ -109,7 +109,15 @@ class RiverUnit (AUnit):
     
     def icLabels(self):
         """Overriddes superclass method."""
-        return [self._name]
+        ics = [self._name]
+        possibles = [
+            'spill1', 'spill2', 'lateral1', 'lateral2', 'lateral3', 'lateral4'
+        ]
+        for p in possibles:
+            val = self.head_data[p].value.strip()
+            if val != '':
+                ics.append(val)
+        return ics
     
     def linkLabels(self):
         """Overriddes superclass method."""

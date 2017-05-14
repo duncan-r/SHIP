@@ -74,7 +74,7 @@ class JunctionUnit(AUnit):
     
     def icLabels(self):
         """Overriddes superclass method."""
-        return [self._name]
+        return self.head_data['names']
 
     def linkLabels(self):
         """Overriddes superclass method."""

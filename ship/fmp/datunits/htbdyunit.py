@@ -85,7 +85,7 @@ class HtbdyUnit (AUnit):
 
 
     def icLabels(self):
-        return [] #[self._name]
+        return [self._name]
     
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
