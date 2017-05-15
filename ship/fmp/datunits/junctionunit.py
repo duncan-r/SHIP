@@ -97,8 +97,13 @@ class JunctionUnit(AUnit):
         self.head_data['type'].value = unit_data[file_line + 1].strip()
 
         # Get rid of multiple whitespace and then split
-        names = ' '.join(unit_data[file_line + 2].split())
-        names = names.split(' ')
+#         names = ' '.join(unit_data[file_line + 2].split())
+#         names = names.split(' ')
+
+        # Break line into list for every 12th character
+        line = unit_data[file_line + 2]
+        names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
+
         self.head_data['names'] = names
         self._name = names[0]
         return file_line + 2

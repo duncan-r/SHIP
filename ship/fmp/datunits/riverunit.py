@@ -250,8 +250,19 @@ class RiverUnit (AUnit):
         for k in key_order:
             out.append(self.head_data[k].format())
         out = ''.join(out).split('\n')
+
         out.append('{:>10}'.format(row_count))
-        out.insert(0, self._name)
+
+        names = []
+        name_order = [
+            'spill1', 'spill2', 'lateral1', 'lateral2', 'lateral3', 'lateral4'
+        ]
+        for n in name_order:
+            names.append(self.head_data[n].format())
+        names = '{:<12}'.format(self._name) + ''.join(names)
+        names = names.rstrip()
+        out.insert(0, names)
+
         out.insert(0, 'SECTION')
         out.insert(0, 'RIVER ' + self.head_data['comment'].value)
         return out

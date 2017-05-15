@@ -59,9 +59,9 @@ class InterpolateUnit(AUnit):
             'lateral2': HeadDataItem('', '{:<12}', 1, 3, dtype=dt.STRING),
             'lateral3': HeadDataItem('', '{:<12}', 1, 4, dtype=dt.STRING),
             'lateral4': HeadDataItem('', '{:<12}', 1, 5, dtype=dt.STRING),
-            'distance': HeadDataItem(0.00, '{:<10}', 2, 0, dtype=dt.FLOAT, dps=3),
-            'easting': HeadDataItem(0.00, '{:<10}', 2, 1, dtype=dt.FLOAT, dps=3, default=0.00),
-            'northing': HeadDataItem(0.00, '{:<10}', 2, 2, dtype=dt.FLOAT, dps=3, default=0.00),
+            'distance': HeadDataItem(0.00, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=3),
+            'easting': HeadDataItem(0.00, '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3, default=0.00),
+            'northing': HeadDataItem(0.00, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3, default=0.00),
         }
 
 

@@ -25,7 +25,7 @@ class RiverUnitTests(unittest.TestCase):
         self.input_contents = \
         ['RIVER (Culvert Exit) CH:7932 - Trimmed to BT\n',
          'SECTION\n',
-         '1.069\n',
+         '1.069       Spill1      Spill2      Lat1\n',
          '    15.078            1.111111      1000\n',
          '        18\n',
          '     5.996    37.560     0.080     1.000LEFT       291391.67  86582.61LEFT      16        \n',
@@ -142,7 +142,7 @@ class RiverUnitTests(unittest.TestCase):
         out_data = \
         ['RIVER (Culvert Exit) CH:7932 - Trimmed to BT',
          'SECTION',
-         '1.069',
+         '1.069       Spill1      Spill2      Lat1',
          '    15.078              1.1111      1000',
          '        18',
          '     5.996    37.560     0.080     1.000LEFT       291391.67  86582.61LEFT      16        ',
