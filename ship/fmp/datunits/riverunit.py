@@ -119,11 +119,30 @@ class RiverUnit (AUnit):
                 ics.append(val)
         return ics
     
+
     def linkLabels(self):
         """Overriddes superclass method."""
         out = {'name': self.name}
         for k, v in self.head_data.items():
             if 'spill' in k or 'lateral' in k:
+                out[k] = v.value
+        return out
+    
+
+    @property
+    def active_laterals(self):
+        out = {}
+        for k, v in self.head_data.items():
+            if 'lateral' in k and v.value.strip() != '':
+                out[k] = v.value
+        return out
+
+
+    @property
+    def active_spills(self):
+        out = {}
+        for k, v in self.head_data.items():
+            if 'spill' in k and v.value.strip() != '':
                 out[k] = v.value
         return out
 
