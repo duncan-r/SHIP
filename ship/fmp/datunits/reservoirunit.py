@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class SpillUnit (AUnit): 
+class ReservoirUnit (AUnit): 
     """Concrete implementation of AUnit storing Isis Reservoir Unit data.
 
     Contains a reference to a rowdatacollection for storing and
@@ -59,33 +59,50 @@ class SpillUnit (AUnit):
         """
         AUnit.__init__(self, **kwargs)
 
-        self._name = 'Spl'
-        self._name_ds = 'SplDS'
+        self._name = 'Res'
+        self._name_ds = 'ResDS'
         self.head_data = {
+            'revision': HeadDataItem(0, '{:<1}', 0, 0, dtype=dt.INT, allow_blank=True),
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
-            'weir_coef': HeadDataItem(1.700, '{:>10}', 1, 0, dtype=dt.FLOAT, dps=3),
-            'modular_limit': HeadDataItem(0.700, '{:>10}', 1, 2, dtype=dt.FLOAT, dps=3),
+            'easting': HeadDataItem('', '{:>10}', 1, 0, dtype=dt.STRING), 
+            'northing': HeadDataItem('', '{:>10}', 1, 1, dtype=dt.STRING),
+            'runoff_factor': HeadDataItem(0.000, '{:>10}', 1, 2, dtype=dt.FLOAT, dps=3),
+            'lateral1': HeadDataItem('', '{:<12}', 2, 0, dtype=dt.STRING),
+            'lateral2': HeadDataItem('', '{:<12}', 2, 1, dtype=dt.STRING),
+            'lateral3': HeadDataItem('', '{:<12}', 2, 2, dtype=dt.STRING),
+            'lateral4': HeadDataItem('', '{:<12}', 2, 3, dtype=dt.STRING),
+            'names': []
         }
 
-        self._unit_type = SpillUnit.UNIT_TYPE
-        self._unit_category = SpillUnit.UNIT_CATEGORY
+        self._unit_type = ReservoirUnit.UNIT_TYPE
+        self._unit_category = ReservoirUnit.UNIT_CATEGORY
         
         dobjs = [
-            do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
-            do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
-            do.FloatData(rdt.EASTING, format_str='{:>10}', no_of_dps=2, default=0.00),
-            do.FloatData(rdt.NORTHING, format_str='{:>10}', no_of_dps=2, default=0.00),
+            do.FloatData(
+                rdt.ELEVATION, format_str='{:>10}', no_of_dps=3, use_sn=1000000, 
+                update_callback=self.checkIncreases
+            ),
+            do.FloatData(rdt.AREA, format_str='{:>10}', no_of_dps=3, use_sn=1000000),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
-        self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION: 0})
+        self.row_data['main'].setDummyRow({rdt.ELEVATION: 0, rdt.AREA: 0})
 
 
     def icLabels(self):
-        return [self._name, self._name_ds]
+        return []
 
     def linkLabels(self):
-        """Overriddes superclass method."""
-        return {'name': self.name, 'name_ds': self.name_ds}
+        names = {}
+        for i, n in enumerate(self.head_data['names']):
+            names['name' + str(i)] = n
+        laterals = {
+            'lateral1': self.head_data['lateral1'].value,
+            'lateral2': self.head_data['lateral2'].value,
+            'lateral3': self.head_data['lateral3'].value,
+            'lateral4': self.head_data['lateral4'].value
+        }
+        names.update(laterals)
+        return names
 
     
     def readUnitData(self, unit_data, file_line):
@@ -100,6 +117,8 @@ class SpillUnit (AUnit):
         """
         file_line = self._readHeadData(unit_data, file_line)
         file_line = self._readRowData(unit_data, file_line)
+        if self.head_data['revision'].value > 0:
+            file_line = self._readPostRowData(unit_data, file_line)
         return file_line - 1
 
     def _readHeadData(self, unit_data, file_line):            
@@ -108,12 +127,31 @@ class SpillUnit (AUnit):
         Args:
             unit_data (list): contains data for this unit.
         """
-        self.head_data['comment'].value = unit_data[file_line][5:].strip()
-        self._name = unit_data[file_line + 1][:12].strip()
-        self._name_ds = unit_data[file_line + 1][12:24].strip()
-        self.head_data['weir_coef'].value = unit_data[file_line + 2][:10].strip()
-        self.head_data['modular_limit'].value = unit_data[file_line + 2][10:20].strip()
+        if '#revision#' in unit_data[file_line]:
+            self.head_data['revision'].value = unit_data[file_line][20:21]
+            self.head_data['comment'].value = unit_data[file_line][23:].strip()
+        else:
+            self.head_data['comment'].value = unit_data[file_line][11:]
+        
+        line = unit_data[file_line+1]
+        names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
+        self.head_data['names'] = names
+        
+        if self.head_data['revision'].value > 0:
+            line = unit_data[file_line+2]
+            names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
+            for i, n in enumerate(names):
+                if i > 3: break
+                self.head_data['lateral' + str(i+1)].value = n.strip()
+        
         return file_line + 3
+    
+    
+    def _readPostRowData(self, unit_data, file_line):
+        self.head_data['easting'].value = unit_data[file_line][:10].strip()
+        self.head_data['northing'].value = unit_data[file_line][10:20].strip()
+        self.head_data['runoff_factor'].value = unit_data[file_line][20:].strip()
+        return file_line + 1
 
 
     def _readRowData(self, unit_data, file_line):
@@ -131,24 +169,11 @@ class SpillUnit (AUnit):
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
-                
-                chain  = unit_data[i][0:10].strip()
-                elev   = unit_data[i][10:20].strip()
-                east   = None
-                north  = None
-
-                '''
-                In some edge cases there are no values set in the file for the
-                easting and northing, so use defaults. this actually checks 
-                that they are both there, e starts at 21, n starts at 31
-                '''
-                if len(unit_data[i]) > 31:
-                    east   = unit_data[i][20:30].strip()
-                    north  = unit_data[i][30:40].strip()
+                elev   = unit_data[i][0:10].strip()
+                area   = unit_data[i][10:20].strip()
                 
                 self.row_data['main'].addRow({
-                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
-                    rdt.EASTING: east, rdt.NORTHING: north
+                    rdt.ELEVATION: elev, rdt.AREA: area, 
                 }, no_copy=True)
 
         except NotImplementedError:
@@ -170,7 +195,7 @@ class SpillUnit (AUnit):
         num_rows = self.row_data['main'].numberOfRows()
         out_data = self._getHeadData(num_rows)
         out_data.extend(self._getRowData(num_rows)) 
-        
+        out_data.extend(self._getPostRowData())
         return out_data
   
   
@@ -184,9 +209,9 @@ class SpillUnit (AUnit):
             list containing the formatted unit rows.
         """
         out_data = []
+        out_data.append('{:>10}'.format(num_rows))
         for i in range(0, num_rows): 
             out_data.append(self.row_data['main'].getPrintableRow(i))
-        
         return out_data
    
   
@@ -197,13 +222,37 @@ class SpillUnit (AUnit):
             list - contining the formatted head data.
         """
         out = []
-        out.append('SPILL ' + self.head_data['comment'].value)
-        out.append('{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
-        out.append(self.head_data['weir_coef'].format() + self.head_data['modular_limit'].format())
-        out.append('{:>10}'.format(num_rows))
+        if self.head_data['revision'].value > 0:
+            out.append('RESERVOIR ' + '#revision#' + str(self.head_data['revision'].value) + 
+                       ' ' + self.head_data['comment'].value)
+        else:
+            out.append('RESERVOIR ' + self.head_data['comment'].value)
+        names = []
+        for n in self.head_data['names']:
+            names.append('{:<12}'.format(n))
+        out.append(''.join(names))
+        lats = []
+        if self.head_data['revision'].value > 0:
+            lats.append(self.head_data['lateral1'].format())
+            lats.append(self.head_data['lateral2'].format())
+            lats.append(self.head_data['lateral3'].format())
+            lats.append(self.head_data['lateral4'].format())
+        out.append(''.join(lats))
         return out
+    
+
+    def _getPostRowData(self):
+        out = []
+        if self.head_data['revision'].value > 0:
+            out.append(self.head_data['easting'].format())
+            out.append(self.head_data['northing'].format())
+            out.append(self.head_data['runoff_factor'].format())
+            out = ''.join(out)
+            return [out]
+        else:
+            return out
+    
         
-#     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): 
     def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
 
@@ -229,7 +278,7 @@ class SpillUnit (AUnit):
             ADataObject and subclasses for information on the parameters.
         """
         keys = row_vals.keys()
-        if not rdt.CHAINAGE in keys or not rdt.ELEVATION in keys:
+        if not rdt.ELEVATION in keys or not rdt.AREA in keys:
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
         
         # Call superclass method to add the new row
