@@ -1,9 +1,6 @@
 from __future__ import unicode_literals
 
 import logging
-logger = logging.getLogger(__name__)
-"""logging references with a __name__ set to this module."""
-
 import os
 import copy
 
@@ -12,11 +9,10 @@ from ship.tuflow import FILEPART_TYPES as fpt
 from ship.tuflow import tuflowfilepart as tuflowpart
 from ship.utils import utilfunctions as uf
 
+logger = logging.getLogger(__name__)
+"""logging references with a __name__ set to this module."""
 
 class TuflowFactory(object):
-
-    def __init__(self):
-        pass
 
     @classmethod
     def getTuflowPart(cls, line, parent, part_type=None, logic=None):
@@ -31,45 +27,31 @@ class TuflowFactory(object):
             if not found:
                 raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
 
-#         vars = {'filepart_type': part_type}
-        vars = {}
+        kwargs = {}
         if logic is not None:
-            vars['logic'] = logic
+            kwargs['logic'] = logic
 
         # Don't know what to do with it
         if not found:
-            vars['filepart_type'] = fpt.UNKNOWN
-            vars['data'] = line
-            return [tuflowpart.UnknownPart(parent, **vars)]
+            kwargs['filepart_type'] = fpt.UNKNOWN
+            kwargs['data'] = line
+            return [tuflowpart.UnknownPart(parent, **kwargs)]
 
         key = checkMultiTypes(line, key)
-        vars['filepart_type'] = key
+        kwargs['filepart_type'] = key
 
-        if key == fpt.MODEL:
-            parts = TuflowFactory.createModelType(line, parent, **vars)
-
-        elif key == fpt.GIS:
-            parts = TuflowFactory.createGisType(line, parent, **vars)
-
-        elif key == fpt.RESULT:
-            parts = TuflowFactory.createResultType(line, parent, **vars)
-
-        elif key == fpt.DATA:
-            parts = TuflowFactory.createDataType(line, parent, **vars)
-
-        elif key == fpt.VARIABLE:
-            parts = TuflowFactory.createVariableType(line, parent, **vars)
-
-        elif key == fpt.MODEL_VARIABLE:
-            parts = TuflowFactory.createModelVariableType(line, parent, **vars)
-
-        elif key == fpt.EVENT_VARIABLE:
-            parts = TuflowFactory.createBcEventVariable(line, parent, **vars)
-
-        elif key == fpt.USER_VARIABLE:
-            parts = TuflowFactory.createUserVariableType(line, parent, **vars)
-
-        return parts
+        factory_methods = {
+            fpt.MODEL: TuflowFactory.createModelType,
+            fpt.GIS: TuflowFactory.createGisType,
+            fpt.RESULT: TuflowFactory.createResultType,
+            fpt.DATA: TuflowFactory.createDataType,
+            fpt.VARIABLE: TuflowFactory.createVariableType,
+            fpt.MODEL_VARIABLE: TuflowFactory.createModelVariableType,
+            fpt.EVENT_VARIABLE: TuflowFactory.createBcEventVariable,
+            fpt.USER_VARIABLE: TuflowFactory.createUserVariableType
+        }
+        method = factory_methods[key]
+        return method(line, parent, **kwargs)
 
     '''
         #
@@ -78,11 +60,10 @@ class TuflowFactory(object):
     '''
     @staticmethod
     def createModelVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], variable = breakLine(command)
+        comment, command, variable = _cleanse_line(line)
         split_var = variable.split('|')
 
-        if 'MODEL SCENARIOS' in kwargs['command'].upper():
+        if 'MODEL SCENARIOS' in command.upper():
             prefix = 's'
         else:
             prefix = 'e'
@@ -92,8 +73,8 @@ class TuflowFactory(object):
             s = s.strip()
             name = prefix + uf.encodeStr(str(i + 1))
             parts.append(tuflowpart.TuflowModelVariable(parent, **{
-                'logic': kwargs.get('logic', None), 'command': kwargs['command'],
-                'comment': kwargs['comment'], 'variable': s, 'name': name
+                'logic': kwargs.get('logic', None), 'command': command,
+                'comment': comment, 'variable': s, 'name': name
             }))
 
         parts = assignSiblings(parts)
@@ -101,8 +82,7 @@ class TuflowFactory(object):
 
     @staticmethod
     def createUserVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['variable'] = _cleanse_line(line)
         part = tuflowpart.TuflowUserVariable(parent, **kwargs)
         return [part]
 
@@ -118,30 +98,26 @@ class TuflowFactory(object):
 
     @staticmethod
     def createVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['variable'] = _cleanse_line(line)
         part = tuflowpart.TuflowVariable(parent, **kwargs)
         return [part]
 
     @staticmethod
     def createKeyValueType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['variable'] = _cleanse_line(line)
         part = tuflowpart.TuflowKeyValue(parent, **kwargs)
         return [part]
 
     @staticmethod
     def createDataType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['path'] = _cleanse_line(line)
         kwargs['root'] = parent.root
         part = tuflowpart.DataFile(parent, **kwargs)
         return [part]
 
     @staticmethod
     def createResultType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['path'] = _cleanse_line(line)
         kwargs['root'] = parent.root
         part = tuflowpart.ResultFile(parent, **kwargs)
         part = resolveResult(part)
@@ -149,8 +125,7 @@ class TuflowFactory(object):
 
     @staticmethod
     def createGisType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
+        kwargs['comment'], kwargs['command'], kwargs['path'] = _cleanse_line(line)
         kwargs['root'] = parent.root
 
         if '|' in kwargs['path']:
@@ -161,7 +136,7 @@ class TuflowFactory(object):
 
     @staticmethod
     def createModelType(line, parent, **kwargs):
-        command, kwargs['comment'], cchar = separateComment(line)
+        command, kwargs['comment'], _ = separateComment(line)
 
         # Check for Estry auto command
         command, has_auto = checkEstryAuto(command, parent)
@@ -200,8 +175,8 @@ class TuflowFactory(object):
         iflogic = None
         for i, c in enumerate(commands):
             if i == 0:
-                vars = {'command': c, 'terms': terms[i], 'comment': comments[i]}
-                iflogic = tuflowpart.IfLogic(parent, **vars)
+                kwargs = {'command': c, 'terms': terms[i], 'comment': comments[i]}
+                iflogic = tuflowpart.IfLogic(parent, **kwargs)
             else:
                 iflogic.addClause(c, terms[i], comments[i])
 
@@ -221,8 +196,8 @@ class TuflowFactory(object):
         Return:
             BlockLogic - created with given args.
         """
-        vars = {'command': commands, 'terms': terms, 'comment': comments}
-        blocklogic = tuflowpart.BlockLogic(parent, **vars)
+        kwargs = {'command': commands, 'terms': terms, 'comment': comments}
+        blocklogic = tuflowpart.BlockLogic(parent, **kwargs)
 
         return blocklogic
 
@@ -248,11 +223,11 @@ def partsFromPipedFiles(part_type, parent, **kwargs):
     split_var = kwargs['path'].split('|')
 
     parts = []
-    for i, s in enumerate(split_var):
-        vars = copy.deepcopy(kwargs)
+    for s in split_var:
+        kwargs = copy.deepcopy(kwargs)
         s = s.strip()
-        vars['path'] = s
-        parts.append(part_type(parent, **vars))
+        kwargs['path'] = s
+        parts.append(part_type(parent, **kwargs))
 
     parts = assignSiblings(parts)
     return parts
@@ -268,7 +243,7 @@ def assignSiblings(parts):
         parts(list) - with sibling_next and sibling_prev objects set to
             adjacent parts in the provided list.
     """
-    for i, p in enumerate(parts):
+    for i, _ in enumerate(parts):
         if i == 0:
             if len(parts) > 1:
                 parts[i].associates.sibling_next = parts[i + 1]
@@ -314,28 +289,26 @@ def checkEstryAuto(line, parent):
 
 
 def checkIsComment(line):
-    if line.strip().startswith('!') or line.strip().startswith('#'):
-        return True
-    else:
-        return False
-
+    return bool(line.strip().startswith('!') or line.strip().startswith('#'))
 
 def takeParentType(path):
     types = ['TCF', 'TBC', 'TGC', 'TEF', 'ECF']
     ext = getExtension(path)
     if ext in types:
         return False
-    else:
-        return True
+    return True
 
 
 def getExtension(path, upper=True):
     ext = os.path.splitext(path)[1][1:].upper()
-    if upper == True:
+    if upper:
         return ext.upper()
-    else:
-        return ext.lower()
+    return ext.lower()
 
+def _cleanse_line(line):
+    cleansed_line, comment, _ = separateComment(line)
+    command, variable = breakLine(cleansed_line)
+    return comment, command, variable
 
 def breakLine(line):
     """Breaks a file line into it's command/instruction components.
@@ -417,7 +390,6 @@ def resolveResult(result_part):
     rtype = result_part.result_type.upper()
 
     is_absolute = os.path.isabs(result_part.path_as_read)
-    basename = os.path.basename(result_part.path_as_read)
     final_char = result_part.path_as_read[-1]
     trailing_slash = final_char == '\\' or final_char == '/'
 
@@ -452,7 +424,6 @@ def resolveResult(result_part):
 
     result_part.filename = ''
     result_part.extension = ''
-#         result_part.filename_is_prefix = False
 
     # A trailing string is a prefix in check files so set that up here
     if rtype == 'CHECK':
