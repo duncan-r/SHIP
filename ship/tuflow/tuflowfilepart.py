@@ -1,5 +1,4 @@
 """
-
  Summary:
      Contains all of the TuflowPart type classes used to store the data within
      Tuflow control files.
@@ -12,11 +11,6 @@
 
  Copyright:
      Duncan Runnacles 2016
-
- TODO:
-
- Updates:
-
 """
 from __future__ import unicode_literals
 
@@ -25,9 +19,7 @@ import uuid
 import os
 
 from ship.utils.filetools import PathHolder
-from ship.tuflow import FILEPART_TYPES as fpt
 from ship.utils import utilfunctions as uf
-# from ship.tuflow.tuflowmodel import EventSourceData
 
 import logging
 logger = logging.getLogger(__name__)
@@ -121,7 +113,7 @@ class TuflowPart(object):
 
     @active.setter
     def active(self, value):
-        if not value == False:
+        if value != False:
             value = True
         self._active = value
         for o in self.observers:
@@ -243,8 +235,6 @@ class TuflowPart(object):
         return value
 
     def getPrintableContents(self, **kwargs):
-        """
-        """
         raise NotImplementedError
 
     def buildPrintline(self, command, instruction, comment=''):
@@ -257,12 +247,9 @@ class TuflowPart(object):
         return isinstance(other, TuflowPart) and other.hash == self.hash
 
     @classmethod
-    def copy(self, **kwargs):
+    def copy(self, strip_unique=True, keep_logic=False):
         new_version = copy.deepcopy(self)
-
         new_version.hash = uuid.uuid4()
-        strip_unique = kwargs('strip_unique', True)
-        keep_logic = kwargs('keep_logic', False)
         if strip_unique:
             new_version.sibling_next = None
             new_version.sibling_prev = None
@@ -277,7 +264,7 @@ class UnknownPart(TuflowPart):
 
     def __init__(self, parent, **kwargs):
         self.TOP_CLASS = 'unknown'
-        TuflowPart.__init__(self, parent, 'unknown', **kwargs)
+        super(UnknownPart, self).__init__(parent, 'unknown', **kwargs)
         self.data = kwargs['data']  # raises keyerror
 
     def getPrintableContents(self, **kwargs):
@@ -287,7 +274,7 @@ class UnknownPart(TuflowPart):
 class ATuflowVariable(TuflowPart):
 
     def __init__(self, parent, obj_type='variable', **kwargs):
-        TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        super(ATuflowVariable, self).__init__(parent, obj_type, **kwargs)
         self.TOP_CLASS = 'avariable'
         self.command = kwargs['command']  # raise valuerror
         self._variable = kwargs['variable'].strip()
@@ -310,9 +297,6 @@ class ATuflowVariable(TuflowPart):
 
 
 class TuflowVariable(ATuflowVariable):
-    """
-    """
-
     def __init__(self, parent, **kwargs):
         """
         kwargs(dict): the component of this parts command line::
@@ -320,9 +304,14 @@ class TuflowVariable(ATuflowVariable):
             - 'command': 'command string'
             - 'comment': 'comment at end of command'
         """
-        ATuflowVariable.__init__(self, parent, 'variable', **kwargs)
+        super(TuflowVariable, self).__init__(parent, 'variable', **kwargs)
         self.split_char = kwargs.get('split_char', ' ')
         self.split_char = self.split_char.replace('\s', ' ')
+
+         # Needs to be defined in init,
+         # otherwise will raise attribute error
+         #  if variable is accessed before set
+        self._split_variable = None
         self._createSplitVariable(self.variable)
 
     @property
@@ -365,8 +354,8 @@ class TuflowUserVariable(ATuflowVariable):
 
     @classmethod
     def noParent(cls, key, variable):
-        vars = {'command': '', 'variable': variable}
-        uv = cls(None, vars)
+        kwargs = {'command': '', 'variable': variable}
+        uv = cls(None, **kwargs)
         uv._variable_name = key
         return uv
 
@@ -395,8 +384,8 @@ class TuflowModelVariable(ATuflowVariable):
 
     @classmethod
     def noParent(cls, key, variable):
-        vars = {'command': key, 'variable': variable, 'name': key}
-        mv = cls(None, **vars)
+        kwargs = {'command': key, 'variable': variable, 'name': key}
+        mv = cls(None, **kwargs)
         return mv
 
     @property
@@ -429,9 +418,6 @@ class TuflowModelVariable(ATuflowVariable):
 
 
 class TuflowKeyValue(ATuflowVariable):
-    """
-    """
-
     def __init__(self, parent, **kwargs):
         ATuflowVariable.__init__(self, parent, 'keyvalue', **kwargs)
         keyval = self._variable.split('|')
@@ -444,8 +430,6 @@ class TuflowKeyValue(ATuflowVariable):
 
 
 class TuflowFile(TuflowPart, PathHolder):
-    """
-    """
 
     def __init__(self, parent, obj_type='file', **kwargs):
         """Constructor.
@@ -469,7 +453,7 @@ class TuflowFile(TuflowPart, PathHolder):
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
         PathHolder.__init__(self, path, root)
         self.TOP_CLASS = 'file'
-        self.all_types = None
+        self.all_types = []
         self.has_own_root = False
 
     def absolutePathAllTypes(self, user_vars=None):
@@ -582,9 +566,9 @@ class TuflowFile(TuflowPart, PathHolder):
             return [], False
 
     def getPrintableContents(self, **kwargs):
-        if not self.relative_root == None and not self.has_own_root:
+        if self.relative_root is not None and not self.has_own_root:
             path = self.relativePath()
-        elif not self.root == None:
+        elif self.root is not None:
             path = os.path.join(self.root, self.filenameAndExtension())
         else:
             path = self.filenameAndExtension()
@@ -692,10 +676,11 @@ class TuflowLogic(TuflowPart):
         self.comments = []
         self._top_written = False
 
-        self.remove_callback = None
+        # TODO: should really have a default callback implementation
+        self.remove_callback = lambda x, y: None
         """Function called when a TuflowPart is removed."""
 
-        self.add_callback = None
+        self.add_callback = lambda x, y: None
         """Function called when a TuflowPart is added."""
 
         self.check_sevals = False
@@ -886,7 +871,7 @@ class TuflowLogic(TuflowPart):
                 found = set(all_terms).isdisjoint(set(se_vals['scenario']))
             elif 'event' in se_keys:
                 found = set(all_terms).isdisjoint(set(se_vals['event']))
-            if found == True:
+            if found:
                 retval = True
 
         # Otherwise we need to check if this groups terms are in the se_vals
@@ -1068,7 +1053,7 @@ class SectionLogic(BlockLogic):
         Args:
             parent(ModelFile): that contains this TuflowLogic.
         """
-        TuflowLogic.__init__(self, parent, 'sectionlogic', **kwargs)
+        super(SectionLogic, self).__init__(parent, 'sectionlogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:
             self.terms = [[i.strip() for i in kwargs['terms']]]
