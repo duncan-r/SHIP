@@ -18,26 +18,26 @@ from ship.tuflow import tuflowfactory as tfactory
 
 
 class TuflowLoader(ALoader):
-    
-    
+
+
     def __init__(self):
-        ALoader.__init__(self) 
+        ALoader.__init__(self)
         self.types = TuflowFilepartTypes()
 
         self.user_variables = UserVariables()
 #         self.scenario_vals = {}
 #         """Any scenario values that are passed through."""
-#         
+#
 #         self.event_vals = {}
         """Any event values that are passed through."""
-    
+
         self.tuflow_model = None
         """TuflowModel class instance"""
-        
+
         # Internal stuff
         self._resetLoader()
-        
-    
+
+
     def _resetLoader(self):
         self._file_queue = uf.FileQueue()
         self.user_variables = UserVariables()
@@ -49,32 +49,32 @@ class TuflowLoader(ALoader):
 #         self.event_vals = {}
         self.tuflow_model = None
         self._control_files = []
-        
-        
+
+
     def loadFile(self, tcf_path, arg_dict={}):
         """Main loader function defined by the ALoader interface.
-        
+
         The presumption with this loader is that a .tcf file (i.e. the root of
         all tuflow models will be given as a starting point. The rest of the
         model can then be accessed from there.
         """
         return self.loadModel(tcf_path, arg_dict)
-    
-    
+
+
     def loadModel(self, tcf_path, arg_dict={}):
         """Load a full tuflow model from the given tcf path."""
         self._resetLoader()
-        
+
         if 'scenario' in arg_dict.keys():
-            self._has_scenario = True 
+            self._has_scenario = True
 
             self.user_variables.has_cmd_vals = True
             self.scenario_vals = arg_dict['scenario']
             for key, val in arg_dict['scenario'].items():
                 self.user_variables.add(tuflowpart.TuflowModelVariable.noParent(key, val), 'scen')
-        
-        if 'event' in arg_dict.keys(): 
-            self._has_event = True 
+
+        if 'event' in arg_dict.keys():
+            self._has_event = True
 
             self.user_variables.has_cmd_vals = True
             self.event_vals = arg_dict['event']
@@ -90,23 +90,23 @@ class TuflowLoader(ALoader):
         tcf_name = uf.encodeStr(tcf_name)
 
         self.tuflow_model = TuflowModel(root)
-        
+
         # Parse the tuflow control files
         main_file = tuflowpart.ModelFile(None, **{'path': tcf_name, 'command': None,
                                                 'comment': None, 'model_type': 'TCF',
                                                 'root': root})
         tcf_path = main_file.absolutePath()
 #         self.tuflow_model.main_file = main_file
-        
+
         # Setup the file and object holders
         self._file_queue.enqueue(main_file)
-        
+
         # Read the control files and their contents into memory
         self._fetchTuflowModel(root)
-        
+
         # Order the input and create the actual ControlFile objects
         self._orderModel(tcf_path)
-        
+
         # Return the loaded model
         self.tuflow_model.root = root
         self.tuflow_model.control_files = self._control_files
@@ -119,18 +119,18 @@ class TuflowLoader(ALoader):
         return self.tuflow_model
 
 
-    def loadControlFile(self, model_file): 
+    def loadControlFile(self, model_file):
         """
         """
         path = model_file.absolutePath()
         if not os.path.exists(path):
             raise IOError('model_file path does not exists at: ' + path)
-    
+
         self._resetLoader()
         root = model_file.root
         self._file_queue.enqueue(model_file)
         self._fetchTuflowModel(root)
-        _load_list = self._load_list[path] 
+        _load_list = self._load_list[path]
         model = self._file_list[path]
         mtype = model_file.model_type
 
@@ -140,31 +140,31 @@ class TuflowLoader(ALoader):
         self._control_files[mtype].control_files.append(model_file)
         self.buildControlFiles(_load_list, model)
         return self._control_files[mtype]
-    
-    
+
+
     def _orderModel(self, tcf_path):
         """Setup the ControlFile's with ordered TuflowFilepart's.
-        
+
         There will always be a tcf file as an entry point, so that is setup
         first. Then builControlFiles is called to deal with all the others.
         """
-        _load_list = self._load_list[tcf_path] 
+        _load_list = self._load_list[tcf_path]
         model = self._file_list[tcf_path]
         self.current_control = ['TCF']
         self._control_files = {'TCF': control.TcfControlFile(model)}
         self._control_files['TCF'].logic.add(self._logic_list[tcf_path])
         self._control_files['TCF'].control_files.append(model)
         self.buildControlFiles(_load_list, model)
-        
-    
+
+
     def buildControlFiles(self, _load_list, model):
         """Add TuflowFilepart's to the correct ControlFile's.
-        
+
         Loops through the list of TuflowFilePart's created when parsing the
-        tuflow input files. When it finds a TuflowFilepart containing a 
+        tuflow input files. When it finds a TuflowFilepart containing a
         reference to a tuflow control file it will recursively call itself and
-        start adding parts to the ControlFile for that type instead. It will 
-        either find another control file and, again, make a recursive call, or 
+        start adding parts to the ControlFile for that type instead. It will
+        either find another control file and, again, make a recursive call, or
         will finish adding the TuflowFileparts to the ControlFile and drop back
         into the previous function call (recursive) to continue reading the
         previous list of TuflowFilepart's.
@@ -184,28 +184,28 @@ class TuflowLoader(ALoader):
 
             elif part.associates.parent.model_type == 'TCF' and part.filepart_type == fpt.EVENT_VARIABLE:
                 self._bc_event[part.command] = part.variable
-        
+
         self.current_control.pop()
 
-    
-    
+
+
     '''
         #
         Control file parsers.
         #
     '''
-        
-    def _fetchTuflowModel(self, root): 
+
+    def _fetchTuflowModel(self, root):
         """Read all of the control files into memory.
         """
         self.missing_model_files = []
-        
+
         # Keep processing control files until there are none left in the queue
         while not self._file_queue.isEmpty():
             control_part = self._file_queue.dequeue()
             cpath = control_part.absolutePath()
             raw_contents = self.getFile(cpath)
-            
+
             # If we couldn't load the file add it to the missing list
             if raw_contents == False:
                 self.missing_model_files.append(cpath)
@@ -215,10 +215,10 @@ class TuflowLoader(ALoader):
             self._load_list[cpath] = contents
             self._logic_list[cpath] = logic
             self._file_list[cpath] = control_part
-        
+
         del self._file_queue
-        
-        
+
+
     def _readControlFile(self, raw_contents, root, control_part):
         """Load the content of a control file.
         """
@@ -236,27 +236,27 @@ class TuflowLoader(ALoader):
                 vars['logic'] = l
                 contents.append(tuflowpart.UnknownPart(control_part, **vars))
             return []
-        
+
         def addLogicAssociate(lpart, logic_stack):
             if logic:
                 lpart.associates.logic = logic[-1]
                 logic[-1].addPart(lpart, skip_callback=True)
             logic.append(lpart)
             return logic
-        
-        
+
+
         for line in raw_contents:
 
             current_logic = logic[-1] if logic else None
             line = line.strip()
             upline = line.upper()
-            
+
             if tfactory.checkIsComment(line):
                 unknown_store.append(line)
                 continue
 
             found, key = self.types.find(upline)
-            
+
             # If we don't know what it is
             if not found:
                 unknown_store.append(line)
@@ -264,7 +264,7 @@ class TuflowLoader(ALoader):
             else:
                 unknown_store = createUnknown(unknown_store, current_logic)
 
-            # Build logic types 
+            # Build logic types
             if key == fpt.IF_LOGIC:
                 vars = self.parseIfLogic(line, control_part, root, key)
                 if vars['command'].upper().strip().startswith('IF'):
@@ -287,7 +287,7 @@ class TuflowLoader(ALoader):
                         dfile = tuflowpart.SectionLogic(control_part, **vars)
                     logic = addLogicAssociate(dfile, logic)
                 continue
-            
+
             # All other FilePart types
             else:
                 parts = factory.getTuflowPart(line, control_part, key, current_logic)
@@ -301,17 +301,17 @@ class TuflowLoader(ALoader):
                 if key == fpt.USER_VARIABLE:
                     for p in parts:
                         self.user_variables.add(p)
-                        
+
             for p in parts:
                 contents.append(p)
                 if logic:
                     current_logic.addPart(p, skip_callback=True)
-        
+
         unknown_store = createUnknown(unknown_store, current_logic)
         return contents, logic_done
-                
-    
-    
+
+
+
     '''
         #
         TuflowFilepart type builders.
@@ -329,7 +329,7 @@ class TuflowLoader(ALoader):
         vars['filepart_type'] = key
         return vars
 
-   
+
     def parseIfLogic(self, line, parent, root, key):
         vars = {}
         command, vars['comment'], cchar = tfactory.separateComment(line)
@@ -342,13 +342,13 @@ class TuflowLoader(ALoader):
         vars['type'] = key
         return vars
 
-    
+
     def _addModelVariable(self, part):
         """Adds any model variables read in to the global variables dict.
-        
+
         The dict will only be updated if there are no values in it already.
         This is inline with the Tuflow manual guidance.
-        
+
         Args:
             part(TuflowVariable): with self.filepart_type == FILEPART_TYPE.MODEL_VARIABLE.
         """
@@ -361,8 +361,8 @@ class TuflowLoader(ALoader):
             if not self.scenario_vals:
                 for i, s in enumerate(part.split_variable):
                     self.scenario_vals['s' + uf.encodeStr(i+1)] = s
-    
-    
+
+
     '''
         #
         File processing methods
@@ -372,21 +372,20 @@ class TuflowLoader(ALoader):
         """Load the file into the contents list.
 
         Args:
-            file_path (str): path to the required file. 
-        
+            file_path (str): path to the required file.
+
         Returns:
             True if loaded ok, False otherwise.
         """
         logger.debug('loading File: ' + path)
-        try: 
+        try:
             raw_contents = filetools.getFile(path)
-        except IOError: 
+        except IOError:
             logger.error('IOError - Unable to load file')
             return False
-            
-        if(raw_contents == None): 
+
+        if(raw_contents == None):
             logger.error('model file is empty at: ' + path)
             return False
-                
+
         return raw_contents
-        

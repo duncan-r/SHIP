@@ -8,9 +8,9 @@ from ship.utils import filetools as ft
 
 
 class DatLoadTests(object):
-    
+
     def runTests(self):
-        
+
         cwd = os.getcwd()
         path = "integration_tests/test_data/model1/fmp/ship_test_v1-1.DAT"
         main_path = os.path.normpath(os.path.join(cwd, path))
@@ -19,13 +19,13 @@ class DatLoadTests(object):
         self.test_unitCounts()
         self.test_icsSetup()
         self.test_datWrite()
-    
+
     def loadDatModel(self, path):
         print ('Loading FMP .dat model...')
         loader = fileloader.FileLoader()
         self.dat = loader.loadFile(path)
         print ('FMP model load complete.')
-        
+
     def test_unitCounts(self):
 
         print ('Test unit counts...')
@@ -42,7 +42,7 @@ class DatLoadTests(object):
         unknowns = self.dat.unitsByType('unknown')
         ics = self.dat.unitsByType('initial_conditions')
         gis = self.dat.unitsByType('gis_info')
-        
+
         assert(len(headers) == 1)
         assert(len(comments) == 1)
         assert(len(refhs) == 1)
@@ -54,21 +54,21 @@ class DatLoadTests(object):
         assert(len(unknowns) == 1)
         assert(len(ics) == 1)
         assert(len(gis) == 1)
-        
+
         print ('pass')
-    
+
     def test_icsSetup(self):
         print ('Test ics setup...')
         ics = self.dat.unit('initial_conditions')
         assert(len(ics.row_data['main']._collection[0].data_collection) == 14)
         print('pass')
-        
-    
+
+
     def test_datWrite(self):
         print ('Test writing DatCollection model...')
         cwd = os.path.join(os.getcwd(), 'integration_tests', 'test_output')
         need_dirs = [cwd,
-                     os.path.join(cwd, 'asread'), 
+                     os.path.join(cwd, 'asread'),
                      os.path.join(cwd, 'asread/model1'),
                      os.path.join(cwd, 'asread/model1/fmp'),
                     ]
@@ -79,19 +79,19 @@ class DatLoadTests(object):
         except IOError:
             print ('\t Could not make test directeries - aborting test')
             print ('\nFail!\n')
-        
-        outpath = os.path.join(need_dirs[-1], self.dat.path_holder.filenameAndExtension()) 
-        
+
+        outpath = os.path.join(need_dirs[-1], self.dat.path_holder.filenameAndExtension())
+
         error_raised = False
         try:
             self.dat.write(outpath)
         except IOError:
             error_raised = True
-        
-        assert(error_raised == True) 
+
+        assert(error_raised == True)
         self.dat.write(outpath, overwrite=True)
-        
+
         print ('pass')
-        
-        
-        
+
+
+

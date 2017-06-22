@@ -8,9 +8,9 @@ from ship.utils import filetools as ft
 
 
 class TuflowLoadTests(object):
-    
+
     def runTests(self):
-        
+
         cwd = os.getcwd()
         path1 = "integration_tests/test_data/model1/tuflow/runs/test_run1.tcf"
         path2 = "integration_tests/test_data/model1/tuflow/runs/test_run_noexist.tcf"
@@ -30,16 +30,16 @@ class TuflowLoadTests(object):
         self.test_variables()
         self.test_files()
         self.test_seVals()
-    
+
     def loadTuflowModel(self, path):
         print ('Loading tuflow model...')
         loader = fileloader.FileLoader()
         self.tuflow = loader.loadFile(path)
         print ('Tuflow model load complete.')
-    
+
     def test_nonExistingControlFiles(self):
         """Checks that a model still loads and returns the missing files.
-        
+
         When a TuflowModel is loaded but can't find one or more of the control
         files on disk it should finish the load and set the missing_model_files
         variables to a list with the missing file paths.
@@ -49,10 +49,10 @@ class TuflowLoadTests(object):
             os.path.normpath(os.path.join(self.tuflow.root, "..\\model\\test_tbc_NOEXIST.tbc")),
         ]
         assert(set(self.tuflow.missing_model_files) == set(test_files))
-    
+
     def test_writeTuflowModel(self):
         """Note this will write the outputs of the tuflow model to disk.
-        
+
         No comparisons of the data are done here. It's just a convenience so
         that you can check the output files and make sure that they look like
         they should.
@@ -61,7 +61,7 @@ class TuflowLoadTests(object):
         print ('Test writing tuflow model...')
         cwd = os.path.join(os.getcwd(), 'integration_tests', 'test_output')
         need_dirs = [cwd,
-                     os.path.join(cwd, 'asread'), 
+                     os.path.join(cwd, 'asread'),
                      os.path.join(cwd, 'asread/model1'),
                      os.path.join(cwd, 'asread/model1/tuflow'),
                      os.path.join(cwd, 'asread/model1/tuflow/runs'),
@@ -88,14 +88,14 @@ class TuflowLoadTests(object):
 #                 print ('tkey:         ' + tkey)
                 assert(root_compare in tkey)
                 contents[ckey][tkey] = tval
-        
+
         for ctype, c in contents.items():
             for pkey, val in c.items():
                 ft.writeFile(val, pkey)
 
         del tuflow
         print ('pass')
-    
+
     def test_deactiveLogic(self):
         pass
 #         print ('Test deactivation logic...')
@@ -121,7 +121,7 @@ class TuflowLoadTests(object):
         test_keys = ['TCF', 'ECF', 'TGC', 'TBC']
         assert(set(ckeys) == set(test_keys))
         print ('pass')
-    
+
     def test_seVals(self):
         print ('Testing se_vals filepaths keys...')
         se_vals = self.tuflow.user_variables.seValsToDict()
@@ -147,13 +147,13 @@ class TuflowLoadTests(object):
         paths = self.tuflow.control_files['TGC'].filepaths(se_vals=se_vals)
         assert(set(test_paths) == set(paths))
         print ('pass')
-        
+
         print ('Testing se_vals variables count...')
         vars = self.tuflow.control_files['TGC'].variables(se_vals=se_vals)
         assert(len(vars) == 6)
         print ('pass')
 
-    
+
     def test_files(self):
         print ('Testing no_duplicates=True files count...')
         test_filecounts = {
@@ -183,7 +183,7 @@ class TuflowLoadTests(object):
                                     "%s file lengths differ" % key
         print ('pass')
 
-    
+
     def test_variables(self):
         print ('Testing no_duplicates=True variables count...')
         test_varcounts = {
@@ -212,7 +212,7 @@ class TuflowLoadTests(object):
             assert(len(vars) == test_varcounts[key]), \
                                     "%s variable lengths differ" % key
         print ('pass')
-    
+
     def  test_allFilepaths(self):
         print ('Testing all filepaths...')
         test_paths = {

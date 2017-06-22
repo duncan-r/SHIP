@@ -5,13 +5,13 @@
     At the moment this is pretty simplistic. It just contains a simple
     formatter and allows for setting a global library debug level.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:

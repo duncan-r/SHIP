@@ -2,14 +2,14 @@
     Summary:
         Example use of the tuflow package to identify all of the gis files
         and boundary condition database files referenced by a tuflow model.
-    
-    Author:  
+
+    Author:
         Duncan Runnacles
 
-    Created:  
+    Created:
         01 Apr 2016
 
-    Copyright:  
+    Copyright:
         Duncan Runnacles 2016
 
     TODO:
@@ -26,7 +26,7 @@ from ship.tuflow import FILEPART_TYPES as ft
 
 def tuflowFileExample():
     """Find all gis and bc database files referenced by a tuflow model.
-    
+
     Uses a .tcf file to load a tuflow model and find all of the gis files and
     BC Database files referenced by it. Also identifies any additional files
     referenced by the BC Database files.
@@ -35,7 +35,7 @@ def tuflowFileExample():
     tcf_file = r'C:\path\to\a\tuflow\tcffile.tcf'
     loader = fl.FileLoader()
     tuflow_model = loader.loadFile(tcf_file)
-    
+
     data_files = []
     names = []
     paths = []
@@ -54,26 +54,26 @@ def tuflowFileExample():
 
 
     gis_combined = dict(zip(names, paths))
-    
-    
-    # Loop through the data_objs and extract the names and file sources for 
+
+
+    # Loop through the data_objs and extract the names and file sources for
     # each of the BC Database type files
     bc_combined = []
     for data in data_files:
         if data.command.upper() == 'BC DATABASE':
-            
+
             bc = dfl.loadDataFile(data)
             names = bc.dataObjectAsList(bc.keys.NAME)
             sources = bc.dataObjectAsList(bc.keys.SOURCE)
             bc_combined.append((data.filenameAndExtension(), dict(zip(names, sources))))
-        
+
     print ('GIS files in model:')
-    for name, path in gis_combined.items(): 
+    for name, path in gis_combined.items():
         print (name + ':\n' + path)
     print ('\nBC Database files in model:')
     for b in bc_combined:
         print (b[0])
-        for x in b[1].values(): 
+        for x in b[1].values():
             print (x)
 
 

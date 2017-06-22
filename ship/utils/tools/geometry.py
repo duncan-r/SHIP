@@ -4,13 +4,13 @@
      Contains tools used to calculate geoemtric properties, such as polygon
      area and perimiter.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -21,15 +21,15 @@
 
 def polygonArea(xy_vals):
     """Calculate the area of an irregular polygon.
-    
+
     Args:
-        xy_vals(list): containing a tuple in each element with the x and y 
+        xy_vals(list): containing a tuple in each element with the x and y
             values for the geometry data.
-    
+
     Return:
         double - the area of the polygon.
     """
-    n = len(xy_vals) 
+    n = len(xy_vals)
     area = 0.0
     for i in range(n):
         j = (i + 1) % n
