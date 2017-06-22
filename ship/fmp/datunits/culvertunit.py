@@ -87,10 +87,10 @@ class CulvertUnitInlet(CulvertUnit):
             'trashscreen_height': HeadDataItem(0.000, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
             'headloss_type': HeadDataItem('STATIC', '{:>10}', 3, 5, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL')),
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 3, 6, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
-        }    
+        }
 
         
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
         
         See Also:
@@ -99,7 +99,7 @@ class CulvertUnitInlet(CulvertUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][8:].strip() 
+        self.head_data['comment'].value = unit_data[file_line][8:].strip()
         self._name = unit_data[file_line + 2][:12].strip()
         self._name_ds = unit_data[file_line + 2][12:].strip()
         self.head_data['k'].value = unit_data[file_line + 3][:10].strip()
@@ -162,7 +162,7 @@ class CulvertUnitOutlet(CulvertUnit):
         }
 
     
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
         
         See Also:
@@ -171,7 +171,7 @@ class CulvertUnitOutlet(CulvertUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][8:].strip() 
+        self.head_data['comment'].value = unit_data[file_line][8:].strip()
         self._name = unit_data[file_line + 2][:12].strip()
         self._name_ds = unit_data[file_line + 2][12:].strip()
         self.head_data['loss_coef'].value = unit_data[file_line + 3][:10].strip()

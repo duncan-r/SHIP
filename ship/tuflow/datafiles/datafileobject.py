@@ -52,7 +52,7 @@ class ADataFileObject(object):
     """
     
     def __init__(self, row_collection, file_part, comment_lines=[], args_dict={}):
-        self.row_collection = row_collection 
+        self.row_collection = row_collection
         self.path_holder = file_part
         self.type = self.path_holder.extension
         self.command = self.path_holder.command
@@ -127,7 +127,7 @@ class ADataFileObject(object):
         except IOError:
             logger.error('Could not write contents for %s file to %s' %
                 (self.path_holder.extension, self.path_holder.absolutePath()))
-            raise IOError ('Unable to write file to disc')  
+            raise IOError ('Unable to write file to disc')
         
         if self.subfiles and plus_subfiles:
             for subfile in self.subfiles:
@@ -137,7 +137,7 @@ class ADataFileObject(object):
                 except IOError:
                     logger.error('Could not write contents for %s file to %s' %
                         (subfile.path_holder.absolutePath()))
-                    raise 
+                    raise
     
     
     def addSubfile(self, subfile):
@@ -267,7 +267,7 @@ class TmfDataObject(ADataFileObject):
     """Concrete implementation of the ADataFileObject class.
     
     Used for reading/writing tuflow .tmf materials files.
-    """ 
+    """
     
     def __init__(self, row_collection, file_part, comment_lines):
         """Constructor
@@ -349,14 +349,14 @@ class BcDataObject(ADataFileObject):
         source = self.row_collection.dataObject(self.keys.SOURCE)
         for s in source:
             if not name_only:
-                paths.append(os.path.join(self.path_holder.root, 
-                                      self.path_holder.parent_relative_root, 
+                paths.append(os.path.join(self.path_holder.root,
+                                      self.path_holder.parent_relative_root,
                                       self.path_holder.relative_root, s))
             else:
                 paths.append(s)
         
         if resolve_paths:
-            paths = self.resolveEvtSrc(paths) 
+            paths = self.resolveEvtSrc(paths)
             
         return paths
     
@@ -382,14 +382,14 @@ class BcDataObject(ADataFileObject):
             if not c is None:
                 out_contents.insert(i, ' ,'.join(c))
         
-        return out_contents 
+        return out_contents
 
 
 class MatCsvEnum(object):
     """Enum for accessing data in MatCsvDataObject
     """
     ID, MANNINGS, N1, Y1, N2, Y2, SUBFILE_NAME, HEADER1, HEADER2, IL, CL, \
-    HAZARD_ID = range(12) 
+    HAZARD_ID = range(12)
     ITERABLE = range(12)
     
 class MatCsvDataObject(ADataFileObject):
@@ -478,7 +478,7 @@ class MatCsvDataObject(ADataFileObject):
          
         # otherwise it's multiple mannings n and depth values
         elif not data_row[2] == ' ':
-            out_row[1] = '\"' + data_row[2].strip() + ',' + data_row[3].strip() + ',' + data_row[4].strip() + ',' + data_row[5].strip() + '\"' 
+            out_row[1] = '\"' + data_row[2].strip() + ',' + data_row[3].strip() + ',' + data_row[4].strip() + ',' + data_row[5].strip() + '\"'
         
         # Or finally it could be file name and headers
         else:
@@ -519,7 +519,7 @@ class ADataFileSubfile(object):
                 do not need accessing from within the row data.
         """
         self.path_holder = path_holder
-        self.row_collection = row_collection 
+        self.row_collection = row_collection
         self.keys = None
         self.filename = filename
         self.comment_lines = comment_lines
@@ -537,7 +537,7 @@ class SubfileMatEnum(object):
 class DataFileSubfileMat(ADataFileSubfile):
     """Concrete instance of ADataFileSubfile"""
     
-    def __init__(self, path_holder, row_collection, comment_lines, filename, 
+    def __init__(self, path_holder, row_collection, comment_lines, filename,
                                         head1_location, head2_location):
         """Constructor.
         
@@ -582,6 +582,6 @@ class DataFileSubfileMat(ADataFileSubfile):
             if not c is None:
                 out_contents.insert(i, ' ,'.join(c))
         
-        return out_contents 
+        return out_contents
 
 

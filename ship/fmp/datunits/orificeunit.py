@@ -75,7 +75,7 @@ class OrificeUnit(AUnit):
         return {'name': self.name, 'name_ds': self.name_ds}
 
 
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
         
         See Also:
@@ -84,7 +84,7 @@ class OrificeUnit(AUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][8:].strip() 
+        self.head_data['comment'].value = unit_data[file_line][8:].strip()
         self.head_data['type'].value = unit_data[file_line + 1].strip()
         self._name = unit_data[file_line + 2][:12].strip()
         self._name_ds = unit_data[file_line + 2][12:].strip()

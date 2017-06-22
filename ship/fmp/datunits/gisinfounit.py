@@ -81,7 +81,7 @@ class GisInfoUnit (AUnit):
         return len(unit_data)
 
 
-    def getData(self): 
+    def getData(self):
         return self.head_data['all']
         
         

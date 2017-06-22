@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 from ship.fmp.datunits.isisunit import AUnit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.datastructures import dataobject as do
-from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.utils import utilfunctions as uf
 from ship.fmp.headdata import HeadDataItem
 from ship.datastructures import DATA_TYPES as dt
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class HtbdyUnit (AUnit): 
+class HtbdyUnit (AUnit):
     """Concrete implementation of AUnit storing Isis HTBDY Unit data.
 
     Contains a reference to a rowdatacollection for storing and
@@ -52,7 +52,7 @@ class HtbdyUnit (AUnit):
     FILE_KEY2 = None
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         
         Args:
@@ -101,7 +101,7 @@ class HtbdyUnit (AUnit):
         file_line = self._readRowData(unit_data, file_line, rows)
         return file_line - 1
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Reads the data in the file header section into the class.
         
         Args:
@@ -138,8 +138,8 @@ class HtbdyUnit (AUnit):
             else:
                 self.head_data['time_units'].value = vars[1]
             
-            self.head_data['extending_method'].value = vars[2] 
-            self.head_data['interpolation'].value = vars[3] 
+            self.head_data['extending_method'].value = vars[2]
+            self.head_data['interpolation'].value = vars[3]
 
         return file_line + 3, rows
 
@@ -152,7 +152,7 @@ class HtbdyUnit (AUnit):
         
         Args:
             unit_data: the data pertaining to this unit.
-        """ 
+        """
         out_line = file_line + rows
         try:
             # Load the geometry data
@@ -171,7 +171,7 @@ class HtbdyUnit (AUnit):
         return out_line
     
 
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
@@ -181,7 +181,7 @@ class HtbdyUnit (AUnit):
             list of output data formated the same as in the .DAT file.
         """
         out_data = self._getHeadData()
-        out_data.extend(self._getRowData()) 
+        out_data.extend(self._getRowData())
         return out_data
   
   
@@ -195,7 +195,7 @@ class HtbdyUnit (AUnit):
             list containing the formatted unit rows.
         """
         out_data = []
-        for i in range(0, self.row_data['main'].numberOfRows()): 
+        for i in range(0, self.row_data['main'].numberOfRows()):
             out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
@@ -232,7 +232,7 @@ class HtbdyUnit (AUnit):
         return final_out
             
    
-#     def addDataRow(elevation, time=None, index=None): 
+#     def addDataRow(elevation, time=None, index=None):
     def addRow(self, row_vals, data_key='main', index=None, **kwargs):
         """
         
@@ -271,10 +271,10 @@ class HtbdyUnit (AUnit):
             time = t1 + (t1 - t2)
         
         if orig_index is None:
-            self.row_data['main'].addRow({rdt.TIME: time, 
+            self.row_data['main'].addRow({rdt.TIME: time,
                                           rdt.ELEVATION: elevation}, **kwargs)
         else:
-            self.row_data['main'].addRow({rdt.TIME: time, rdt.ELEVATION: elevation}, 
+            self.row_data['main'].addRow({rdt.TIME: time, rdt.ELEVATION: elevation},
                                          index, **kwargs)
     
         

@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
     
-class AUnit(object): 
+class AUnit(object):
     """Abstract base class for all Dat file units.
     
     This class must be inherited by all classes representing an isis
@@ -81,7 +81,7 @@ class AUnit(object):
         self._name = kwargs.get('name', 'unknown')       # Unit label
         self._name_ds = kwargs.get('name_ds', 'unknown') # Unit downstream label
         
-        self._data = None                       
+        self._data = None
         """This is used for catch-all data storage.
         
         Used in units such as UnknownSection.
@@ -95,7 +95,7 @@ class AUnit(object):
         self._unit_category = 'Unknown'
         """The ISIS unit category - e.g. for type 'Usbpr' it would be 'Bridge'"""
         
-        self.row_data = {} 
+        self.row_data = {}
         """Collection containing all of the ADataRow objects.
         
         This is the main collection for row data in any unit that contains it.
@@ -228,7 +228,7 @@ class AUnit(object):
         return self.row_data[rowdata_key].rowAsDict(index)
     
      
-    def getData(self): 
+    def getData(self):
         """Getter for the unit data.
   
         Return the file geometry data formatted ready for saving in the style
@@ -267,7 +267,7 @@ class AUnit(object):
             RiverSection for an example of overriding this method with a 
                 concrete class. 
               
-        """ 
+        """
         self.head_data['all'] = data
         
     
@@ -410,15 +410,15 @@ class AUnit(object):
 
         if index < 0:
             raise ValueError('Index must be > 0')
-        if index > 0: 
+        if index > 0:
             prev_index = index - 1
             prev_value = data_obj[prev_index]
-        if index < data_obj._max: 
+        if index < data_obj._max:
             next_index = index + 1
             next_value = data_obj[next_index]
 
         retvals = {'index': index,
-                   'prev_value': prev_value, 'prev_index': prev_index, 
+                   'prev_value': prev_value, 'prev_index': prev_index,
                    'next_value': next_value, 'next_index': next_index}
         return retvals
 
@@ -449,10 +449,10 @@ class UnknownUnit(AUnit):
     FILE_KEY = 'UNKNOWN'
     FILE_KEY2 = None
      
-    def __init__ (self, **kwargs): 
+    def __init__ (self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs) 
+        AUnit.__init__(self, **kwargs)
         self._unit_type = 'unknown'
         self._unit_category = 'unknown'
         self._name = 'unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest()) # str(uuid.uuid4())
@@ -483,7 +483,7 @@ class CommentUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs) 
+        AUnit.__init__(self, **kwargs)
         
         text = kwargs.get('text', '')
         self._unit_type = CommentUnit.UNIT_TYPE
@@ -511,7 +511,7 @@ class CommentUnit(AUnit):
             self.data.append(data[file_line].strip())
             file_line += 1
 
-        return file_line -1 
+        return file_line -1
     
     def getData(self):
         """
@@ -561,19 +561,19 @@ class HeaderUnit(AUnit):
             'fr_upper': HeadDataItem(0.900, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
             'min_depth': HeadDataItem(0.100, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'direct_method': HeadDataItem(0.001, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-            'unknown': HeadDataItem('12', '{:>10}', 2, 5, dtype=dt.STRING), 
+            'unknown': HeadDataItem('12', '{:>10}', 2, 5, dtype=dt.STRING),
             'water_temp': HeadDataItem(10.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'flow': HeadDataItem(0.010, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'head': HeadDataItem(0.010, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
             'math_damp': HeadDataItem(0.700, '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
             'pivot': HeadDataItem(0.100, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
             'relax': HeadDataItem(0.700, '{:>10}', 3, 5, dtype=dt.FLOAT, dps=3),
-            'dummy': HeadDataItem(0.000, '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3), 
-            'roughness': HeadDataItem('', '{:>10}', 5, 0, dtype=dt.STRING), 
+            'dummy': HeadDataItem(0.000, '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3),
+            'roughness': HeadDataItem('', '{:>10}', 5, 0, dtype=dt.STRING),
         }
             
     
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         """Reads the given data into the object.
         
         Args:
@@ -587,15 +587,15 @@ class HeaderUnit(AUnit):
             'fr_upper': HeadDataItem(unit_data[2][20:30].strip(), '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
             'min_depth': HeadDataItem(unit_data[2][30:40].strip(), '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
             'direct_method': HeadDataItem(unit_data[2][40:50].strip(), '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-            'unknown': HeadDataItem(unit_data[2][50:60].strip(), '{:>10}', 2, 5, dtype=dt.STRING), 
+            'unknown': HeadDataItem(unit_data[2][50:60].strip(), '{:>10}', 2, 5, dtype=dt.STRING),
             'water_temp': HeadDataItem(unit_data[3][:10].strip(), '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'flow': HeadDataItem(unit_data[3][10:20].strip(), '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'head': HeadDataItem(unit_data[3][20:30].strip(), '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
             'math_damp': HeadDataItem(unit_data[3][30:40].strip(), '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
             'pivot': HeadDataItem(unit_data[3][40:50].strip(), '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
             'relax': HeadDataItem(unit_data[3][50:60].strip(), '{:>10}', 3, 5, dtype=dt.FLOAT, dps=3),
-            'dummy': HeadDataItem(unit_data[3][60:70].strip(), '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3), 
-            'roughness': HeadDataItem(unit_data[5].strip(), '{:>10}', 5, 0, dtype=dt.STRING), 
+            'dummy': HeadDataItem(unit_data[3][60:70].strip(), '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3),
+            'roughness': HeadDataItem(unit_data[5].strip(), '{:>10}', 5, 0, dtype=dt.STRING),
         }
         
         return file_line + 7

@@ -143,7 +143,7 @@ class DB3MemoFile(MemoFile):
             # \x1a\x1a
             # \x0d\x0a
 
-        return data[:eom]        
+        return data[:eom]
 
 class DB4MemoFile(MemoFile):
     """dBase IV memo file"""

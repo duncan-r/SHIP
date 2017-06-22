@@ -41,7 +41,7 @@ from ship.datastructures import DATA_TYPES as dt
 
 
 
-class BridgeUnit (AUnit): 
+class BridgeUnit (AUnit):
     """Subclass of AUnit storing Isis Bridge Unit data.
 
     Note:
@@ -61,7 +61,7 @@ class BridgeUnit (AUnit):
     FILE_KEY2 = None
     
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         """
         AUnit.__init__(self, **kwargs)
@@ -87,7 +87,7 @@ class BridgeUnit (AUnit):
             do.FloatData(rdt.ROUGHNESS, format_str='{:>10}', no_of_dps=3, default=0.039),
             do.ConstantData(rdt.EMBANKMENT, ('', 'L', 'R'), format_str='{:>11}', default=''),
         ]
-        self.row_data['main'] = RowDataCollection.bulkInitCollection(main_dobjs) 
+        self.row_data['main'] = RowDataCollection.bulkInitCollection(main_dobjs)
         self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION: 0,
                                            rdt.ROUGHNESS: 0})
         
@@ -97,7 +97,7 @@ class BridgeUnit (AUnit):
             do.FloatData(rdt.SPRINGING_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
             do.FloatData(rdt.SOFFIT_LEVEL, format_str='{:>10}', no_of_dps=3, default=0.0),
         ]
-        self.row_data['opening'] = RowDataCollection.bulkInitCollection(open_dobjs) 
+        self.row_data['opening'] = RowDataCollection.bulkInitCollection(open_dobjs)
         self.row_data['opening'].setDummyRow({rdt.OPEN_START: 0, rdt.OPEN_END: 0})
         
     
@@ -138,7 +138,7 @@ class BridgeUnit (AUnit):
         return file_line
         
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
         
         Note:
@@ -158,7 +158,7 @@ class BridgeUnit (AUnit):
         
         Args:
             unit_data (list): the data pertaining to this unit.
-        """ 
+        """
         no_of_chainage_rows = int(unit_data[file_line].strip())
         file_line += 1
         out_line = file_line + no_of_chainage_rows
@@ -175,7 +175,7 @@ class BridgeUnit (AUnit):
                     bank = None
                 
                 self.row_data['main'].addRow({
-                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
+                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev,
                     rdt.ROUGHNESS: rough, rdt.EMBANKMENT: bank
                 }, no_copy=True)
                 
@@ -186,7 +186,7 @@ class BridgeUnit (AUnit):
         return out_line
     
 
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         See Also:
@@ -196,7 +196,7 @@ class BridgeUnit (AUnit):
             String list - output data formated the same as in the .DAT file.
         """
         out_data = self._getHeadData()
-        out_data.extend(self._getRowData()) 
+        out_data.extend(self._getRowData())
         out_data.extend(self._getAdditionalRowData())
         return out_data
     
@@ -229,7 +229,7 @@ class BridgeUnit (AUnit):
         out_data = []
         no_of_rows = self.row_data['main'].row_count
         out_data.append(self._formatDataItem(no_of_rows, 10, is_head_item=False))
-        for i in range(0, no_of_rows): 
+        for i in range(0, no_of_rows):
             out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
@@ -287,7 +287,7 @@ class BridgeUnit (AUnit):
         AUnit.updateRow(self, index=index, row_vals=row_vals, **kwargs)
     
    
-    def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs): 
+    def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to one of this bridge units row_collection's.
         
         The new row will be added at the given index. If no index is given it
@@ -416,22 +416,22 @@ class BridgeUnit (AUnit):
 #         opening_data = self.additional_row_collections['Opening']
 #         x_vals = self.row_collection.getRowDataAsList(rdt.CHAINAGE)
 #         y_vals = self.row_collection.getRowDataAsList(rdt.ELEVATION)
-#         
+#
 #         start_vals = opening_data.getRowDataAsList(rdt.OPEN_START)
 #         end_vals = opening_data.getRowDataAsList(rdt.OPEN_END)
 #         soffit_vals = opening_data.getRowDataAsList(rdt.SOFFIT_LEVEL)
 #         springing_vals = opening_data.getRowDataAsList(rdt.SPRINGING_LEVEL)
 #         openings = zip(start_vals, end_vals, soffit_vals, springing_vals)
-#         
+#
 #         for i, x in enumerate(x_vals):
-#             
-#             if math.fabs(x - ) 
-#         
-#         
+#
+#             if math.fabs(x - )
+#
+#
 #         i=0
 
 
-class BridgeUnitUsbpr (BridgeUnit): 
+class BridgeUnitUsbpr (BridgeUnit):
     """Concrete implementation of BridgeUnit for USBPR type bridges.
     
     Contains methods that override superclass with USBPR specific variables
@@ -444,7 +444,7 @@ class BridgeUnitUsbpr (BridgeUnit):
     FILE_KEY2 = 'USBPR1978'
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         
         See Also:
@@ -488,12 +488,12 @@ class BridgeUnitUsbpr (BridgeUnit):
             do.FloatData(rdt.CD_FULL, format_str='{:>10}', no_of_dps=3, default=1.0),
             do.FloatData(rdt.DROWNING, format_str='{:>10}', no_of_dps=3, default=1.0),
         ]
-        self.row_data['culvert'] = RowDataCollection.bulkInitCollection(dobjs) 
+        self.row_data['culvert'] = RowDataCollection.bulkInitCollection(dobjs)
         self.row_data['culvert'].setDummyRow({rdt.INVERT: 0, rdt.SOFFIT: 0})
 
     
     
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
         
         See Also:
@@ -531,7 +531,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         """
         file_line = self._readArchRowData(unit_data, file_line)
         file_line = self._readCulvertRowData(unit_data, file_line)
-        return file_line 
+        return file_line
     
 
     def _readArchRowData(self, unit_data, file_line):
@@ -542,7 +542,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             
         TODO:
             Change the name of this function to _readOpeningRowData.
-        """ 
+        """
         no_of_opening_rows = int(unit_data[file_line].strip())
         file_line += 1
         out_line = file_line + no_of_opening_rows
@@ -556,7 +556,7 @@ class BridgeUnitUsbpr (BridgeUnit):
                 soffit   = unit_data[i][30:40].strip()
                 
                 self.row_data['opening'].addRow({
-                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
+                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend,
                     rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
                 }, no_copy=True)
                 
@@ -578,7 +578,7 @@ class BridgeUnitUsbpr (BridgeUnit):
             RowDataCollections being accessed. Perhaps these should be made a
             little more relevant by raising a different error. Or they could
             be dealt with better here.
-        """ 
+        """
         no_of_culvert_rows = int(unit_data[file_line].strip())
         file_line += 1
         out_line = file_line + no_of_culvert_rows
@@ -594,8 +594,8 @@ class BridgeUnitUsbpr (BridgeUnit):
                 drowning    = unit_data[i][50:60].strip()
                 
                 self.row_data['culvert'].addRow({
-                    rdt.INVERT: invert, rdt.SOFFIT: soffit, rdt.AREA: area, 
-                    rdt.CD_PART: cd_part, rdt.CD_FULL: cd_full, 
+                    rdt.INVERT: invert, rdt.SOFFIT: soffit, rdt.AREA: area,
+                    rdt.CD_PART: cd_part, rdt.CD_FULL: cd_full,
                     rdt.DROWNING: drowning
                 }, no_copy=True)
                 
@@ -676,7 +676,7 @@ class BridgeUnitUsbpr (BridgeUnit):
 
         
 
-class BridgeUnitArch (BridgeUnit): 
+class BridgeUnitArch (BridgeUnit):
     """Concrete implementation of BridgeUnit for USBPR type bridges.
     
     Contains methods that override superclass with USBPR specific variables
@@ -690,7 +690,7 @@ class BridgeUnitArch (BridgeUnit):
     FILE_KEY2 = 'ARCH'
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         
         See Also:
@@ -742,7 +742,7 @@ class BridgeUnitArch (BridgeUnit):
         return out
         
     
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
         
         See Also:
@@ -782,7 +782,7 @@ class BridgeUnitArch (BridgeUnit):
             
         TODO:
             Change the name of this function to _readOpeningRowData.
-        """ 
+        """
         no_of_opening_rows = int(unit_data[file_line].strip())
         file_line += 1
         out_line = file_line + no_of_opening_rows
@@ -796,7 +796,7 @@ class BridgeUnitArch (BridgeUnit):
                 soffit   = unit_data[i][30:40].strip()
                 
                 self.row_data['opening'].addRow({
-                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend, 
+                    rdt.OPEN_START: ostart, rdt.OPEN_END: oend,
                     rdt.SPRINGING_LEVEL: spring, rdt.SOFFIT_LEVEL: soffit
                 }, no_copy=True)
                 

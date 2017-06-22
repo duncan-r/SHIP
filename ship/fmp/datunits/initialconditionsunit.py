@@ -106,10 +106,10 @@ class InitialConditionsUnit (AUnit):
 
             self.row_data['main'].addRow({
                 rdt.LABEL: label, rdt.QMARK: qmark, rdt.FLOW: flow,
-                rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity, 
-                rdt.UMODE: umode, rdt.USTATE: ustate, 
+                rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity,
+                rdt.UMODE: umode, rdt.USTATE: ustate,
                 rdt.ELEVATION: elevation
-            }, no_copy=True) 
+            }, no_copy=True)
             
         return out_line - 1
        
@@ -183,8 +183,8 @@ class InitialConditionsUnit (AUnit):
         AUnit.updateRow(self, row_vals=row_vals, index=index, **kwargs)
     
 
-#     def addDataRow(self, row_vals): 
-    def addRow(self, row_vals, unit_type, **kwargs): 
+#     def addDataRow(self, row_vals):
+    def addRow(self, row_vals, unit_type, **kwargs):
         """Adds a new row to the InitialCondition units row_collection.
         
         The new row will be added at the given index. If no index is given it
@@ -211,9 +211,9 @@ class InitialConditionsUnit (AUnit):
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
-        if not rdt.LABEL in row_vals.keys(): 
+        if not rdt.LABEL in row_vals.keys():
             logger.error('Required values of LABEL not given')
-            raise  AttributeError ("Required value 'LABEL' not given") 
+            raise  AttributeError ("Required value 'LABEL' not given")
         
         # Keep a record of multiple unit types under the same name
         if row_vals[rdt.LABEL] in self._name_types.keys():

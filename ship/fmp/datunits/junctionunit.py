@@ -84,7 +84,7 @@ class JunctionUnit(AUnit):
             out[namekey] = name
         return out
     
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
         
         See Also:
@@ -93,7 +93,7 @@ class JunctionUnit(AUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][8:].strip() 
+        self.head_data['comment'].value = unit_data[file_line][8:].strip()
         self.head_data['type'].value = unit_data[file_line + 1].strip()
 
         # Get rid of multiple whitespace and then split

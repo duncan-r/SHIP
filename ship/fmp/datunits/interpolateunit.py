@@ -70,7 +70,7 @@ class InterpolateUnit(AUnit):
         return [self._name]
             
     
-    def readUnitData(self, unit_data, file_line): 
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
         
         See Also:
@@ -79,7 +79,7 @@ class InterpolateUnit(AUnit):
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][12:].strip() 
+        self.head_data['comment'].value = unit_data[file_line][12:].strip()
         self._name = unit_data[file_line+1][:12].strip()
         self.head_data['spill1'].value = unit_data[file_line+1][12:24].strip()
         self.head_data['spill2'].value = unit_data[file_line+1][24:36].strip()

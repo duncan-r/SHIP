@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 from ship.fmp.datunits.isisunit import AUnit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.datastructures import dataobject as do
-from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.fmp.headdata import HeadDataItem
 from ship.datastructures import DATA_TYPES as dt
 
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class SpillUnit (AUnit): 
+class SpillUnit (AUnit):
     """Concrete implementation of AUnit storing Isis Spill Unit data.
 
     Contains a reference to a rowdatacollection for storing and
@@ -52,7 +52,7 @@ class SpillUnit (AUnit):
     FILE_KEY2 = None
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         
         Args:
@@ -103,7 +103,7 @@ class SpillUnit (AUnit):
         file_line = self._readRowData(unit_data, file_line)
         return file_line - 1
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Reads the data in the file header section into the class.
         
         Args:
@@ -125,7 +125,7 @@ class SpillUnit (AUnit):
         
         Args:
             unit_data: the data pertaining to this unit.
-        """ 
+        """
         self.unit_length = int(unit_data[file_line].strip())
         file_line += 1
         out_line = file_line + self.unit_length
@@ -148,7 +148,7 @@ class SpillUnit (AUnit):
                     north  = unit_data[i][30:40].strip()
                 
                 self.row_data['main'].addRow({
-                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev, 
+                    rdt.CHAINAGE: chain, rdt.ELEVATION: elev,
                     rdt.EASTING: east, rdt.NORTHING: north
                 }, no_copy=True)
 
@@ -159,7 +159,7 @@ class SpillUnit (AUnit):
         return out_line
     
 
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
@@ -170,7 +170,7 @@ class SpillUnit (AUnit):
         """
         num_rows = self.row_data['main'].numberOfRows()
         out_data = self._getHeadData(num_rows)
-        out_data.extend(self._getRowData(num_rows)) 
+        out_data.extend(self._getRowData(num_rows))
         
         return out_data
   
@@ -185,7 +185,7 @@ class SpillUnit (AUnit):
             list containing the formatted unit rows.
         """
         out_data = []
-        for i in range(0, num_rows): 
+        for i in range(0, num_rows):
             out_data.append(self.row_data['main'].getPrintableRow(i))
         
         return out_data
@@ -204,7 +204,7 @@ class SpillUnit (AUnit):
         out.append('{:>10}'.format(num_rows))
         return out
         
-#     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00): 
+#     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00):
     def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
 

@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 
 from ship.fmp.datunits.isisunit import AUnit
 from ship.datastructures import dataobject as do
-from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.fmp.headdata import HeadDataItem
 from ship.datastructures import DATA_TYPES as dt
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class RiverUnit (AUnit): 
+class RiverUnit (AUnit):
     """Concrete implementation of AUnit storing Isis River Unit
     data.
 
@@ -56,7 +56,7 @@ class RiverUnit (AUnit):
     FILE_KEY2 = 'SECTION'
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         
         Args:
@@ -158,11 +158,11 @@ class RiverUnit (AUnit):
                 to this section 
         """
         file_line = self._readHeadData(unit_data, file_line)
-        file_line = self._readRowData(unit_data, file_line) 
+        file_line = self._readRowData(unit_data, file_line)
         return file_line - 1
         
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
         
         Args:
@@ -190,7 +190,7 @@ class RiverUnit (AUnit):
         
         Args:
             unit_data (list): the data pertaining to this unit.
-        """ 
+        """
         end_line = int(unit_data[file_line].strip())
         file_line += 1
         try:
@@ -212,14 +212,14 @@ class RiverUnit (AUnit):
                 
                 self.row_data['main'].addRow(
                     {   rdt.CHAINAGE: chain, rdt.ELEVATION: elev, rdt.ROUGHNESS: rough,
-                        rdt.RPL: rpl, rdt.PANEL_MARKER: panel, rdt.BANKMARKER: bank, 
-                        rdt.EASTING: east, rdt.NORTHING: north, 
+                        rdt.RPL: rpl, rdt.PANEL_MARKER: panel, rdt.BANKMARKER: bank,
+                        rdt.EASTING: east, rdt.NORTHING: north,
                         rdt.DEACTIVATION: deact, rdt.SPECIAL: special
                     },
                     # We don't need to make backup copies here. If it fails the
                     # load fails anyway and this will just really slow us down
                     no_copy=True
-                ) 
+                )
                 
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
@@ -227,7 +227,7 @@ class RiverUnit (AUnit):
             
         return end_line + file_line
 
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
@@ -238,7 +238,7 @@ class RiverUnit (AUnit):
         """
         row_count = self.row_data['main'].numberOfRows()
         out_data = self._getHeadData(row_count)
-        out_data.extend(self._getRowData(row_count)) 
+        out_data.extend(self._getRowData(row_count))
         
         return out_data
   
@@ -313,7 +313,7 @@ class RiverUnit (AUnit):
         
     
     # addDataRow
-    def addRow(self, row_vals, index=None, **kwargs): 
+    def addRow(self, row_vals, index=None, **kwargs):
         """Adds a new row to the river units row_data.
         
         The new row will be added at the given index. If no index is given it

@@ -127,12 +127,12 @@ def loadDataFile(datafile, args_dict={}):
     elif command == 'BC DATABASE':
         row_data, comments = readBcFile(datafile, args_dict)
         bc = dataobj.BcDataObject(row_data, datafile, comments, args_dict)
-        return bc 
+        return bc
     
     else:
-        logger.error('Command type (%s) with extension (%s) is not currently supported' 
+        logger.error('Command type (%s) with extension (%s) is not currently supported'
                                     % (datafile.command, datafile.extension))
-        raise ValueError ('Command type (%s) with extension (%s) is not currently supported' 
+        raise ValueError ('Command type (%s) with extension (%s) is not currently supported'
                                     % (datafile.command, datafile.extension))
 
 
@@ -216,7 +216,7 @@ def readXsFile(datafile):
                 row_collection.addToCollection(do.FloatData(i, format_str=', {0}', no_of_dps=3, default=0.00))
 
         # Add a couple of extra rows to the row_collection for tracking the
-        # data in the file. 
+        # data in the file.
         row_collection.addToCollection(do.IntData('row_no'))
         
         return row_collection
@@ -239,7 +239,7 @@ def readXsFile(datafile):
         row_collection = loadMapinfoFile(file_path, row_collection)
     
     # If we're loading a Shapefile
-    elif ext == 'shp' or ext == 'dbf': 
+    elif ext == 'shp' or ext == 'dbf':
 
         if ext == 'shp':
             dir, name = os.path.split(file_path)
@@ -296,7 +296,7 @@ def readBcFile(datafile, args_dict={}):
             if not r in row:
                 head_check = False
         if not head_check:
-            logger.warning('Required header (' + r + ') not' + 
+            logger.warning('Required header (' + r + ') not' +
                 'found in file: ' + path)
         return head_check
 
@@ -318,12 +318,12 @@ def readBcFile(datafile, args_dict={}):
         head_check = _checkHeaders(row, required_headers)
         for i, v in enumerate(bc_enum.ITERABLE):
             if i < row_length:
-                row_collection._addValue('actual_header', row[i]) 
+                row_collection._addValue('actual_header', row[i])
         
         return row_collection
 
 
-    def _loadRowData(row, row_count, row_collection): 
+    def _loadRowData(row, row_count, row_collection):
         """Loads the data in a specific row of the file.
         
         Args:
@@ -386,7 +386,7 @@ def readBcFile(datafile, args_dict={}):
                     else:
                         row_collection = _loadRowData(line, i, row_collection)
                         row_collection._addValue('row_no', row_count)
-                        row_count += 1                        
+                        row_count += 1
                     
                     comment_lines.append(None)
     
@@ -438,7 +438,7 @@ def readMatCsvFile(datafile, args_dict={}):
         row_length = len(new_row)
         for i, v in enumerate(new_row):
             if i < row_length:
-                row_collection._addValue('actual_header', new_row[i]) 
+                row_collection._addValue('actual_header', new_row[i])
         
         return row_collection
 
@@ -482,7 +482,7 @@ def readMatCsvFile(datafile, args_dict={}):
                 if uuf.isNumeric(splitval[0]):
                     new_row[1] = splitval[0]
              
-                # Otherwise it's a filename. These can be further separated 
+                # Otherwise it's a filename. These can be further separated
                 # into two column headers to read from the sub files.
                 else:
                     strsplit = splitval[0].split('|')
@@ -517,7 +517,7 @@ def readMatCsvFile(datafile, args_dict={}):
         return new_row
 
 
-    def _loadRowData(row, row_count, row_collection): 
+    def _loadRowData(row, row_count, row_collection):
         """Loads the data in a specific row of the file.
         
         Args:
@@ -555,7 +555,7 @@ def readMatCsvFile(datafile, args_dict={}):
             row_collection.addToCollection(do.FloatData(i, format_str=', {0}', default='', no_of_dps=3))
 
     # Add a couple of extra rows to the row_collection for tracking the
-    # data in the file. 
+    # data in the file.
     row_collection.addToCollection(do.StringData('comment', format_str='{0}', default=''))
     row_collection.addToCollection(do.StringData('actual_header', format_str='{0}', default=''))
     row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
@@ -612,7 +612,7 @@ def readMatCsvFile(datafile, args_dict={}):
     return row_collection, comment_lines, subfile_details
 
 
-def readMatSubfile(main_datafile, filename, header_list, args_dict): 
+def readMatSubfile(main_datafile, filename, header_list, args_dict):
     """
     """
     value_separator = ','
@@ -645,8 +645,8 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
                  int:  length of the cols list.
                  list: containing all of the first row column data
                  int:  first row with usable data on.
-        """ 
-        logger.debug('Scanning Materials file - %s' 
+        """
+        logger.debug('Scanning Materials file - %s'
                                         % (filepath))
              
         with open(filepath, 'rb') as csv_file:
@@ -656,7 +656,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
             cols = []
             head_list = []
             start_row = -1
-            for i, row in enumerate(csv_file, 0): 
+            for i, row in enumerate(csv_file, 0):
                 if "".join(row).strip() == "":
                     break
  
@@ -679,7 +679,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
         """
         new_row = [None] * 12
 
-        comment_indices, length = uuf.findSubstringInList('!', row)  
+        comment_indices, length = uuf.findSubstringInList('!', row)
         comment_lines.append(None)
 
         head1_location = -1
@@ -692,12 +692,12 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
                     head1_location = i
                 if entry == header2:
                     head2_location = i
-                row_collection._addValue('actual_header', entry) 
+                row_collection._addValue('actual_header', entry)
         
         return row_collection, head1_location, head2_location
     
 
-    def _loadRowData(row, row_count, row_collection, comment_lines, col_length, start_row): 
+    def _loadRowData(row, row_count, row_collection, comment_lines, col_length, start_row):
         """Loads the data in a specific row of the file.
         
         Args:
@@ -761,7 +761,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
 
                 # If we have a line that isn't a comment or a blank then it is going
                 # to contain materials entries.
-                else:                    
+                else:
                     # First non-comment is the headers
                     if first_data_line == False:
                         first_data_line = True
@@ -776,7 +776,7 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
         raise IOError ('Cannot load file at: ' + path)
     
     path_holder = filetools.PathHolder(path, root)
-    mat_sub = dataobj.DataFileSubfileMat(path_holder, row_collection, comment_lines, 
+    mat_sub = dataobj.DataFileSubfileMat(path_holder, row_collection, comment_lines,
                                          path_holder.filename, head1_loc,
                                          head2_loc)
     return mat_sub
@@ -833,7 +833,7 @@ def readTmfFile(datafile):
         # to contain materials entries.
         else:
             comment_lines.append(None)
-            row_collection = _loadRowData(line, row_count, row_collection, tmf_enum.ITERABLE, 
+            row_collection = _loadRowData(line, row_count, row_collection, tmf_enum.ITERABLE,
                                             comment_types, value_separator)
             row_count += 1
     
@@ -896,7 +896,7 @@ def _loadFileFromDisc(path):
     
     Raises:
         IOError: if the file could not be loaded for some reason.
-   """ 
+   """
     contents = []
     try:
         logger.info('Loading file contents from disc')
@@ -904,9 +904,9 @@ def _loadFileFromDisc(path):
                     
     except IOError:
         logger.warning('ADataFileComponent cannot load file - IOError')
-        raise 
+        raise
     
-    return contents 
+    return contents
 
 
 def hasCommentOnlyLine(line, comment_types):
@@ -936,7 +936,7 @@ def _extractInlineComment(line, comment_types):
     Return:
         tuple containing the line without the comment parts and the
             rest of the data values on the line (comment, rest-of-line)
-   """ 
+   """
     comment = None
     for c in comment_types:
         if c in line:

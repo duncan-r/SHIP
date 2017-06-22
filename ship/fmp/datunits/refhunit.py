@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 from ship.fmp.datunits.isisunit import AUnit
-from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.datastructures import dataobject as do
 from ship.datastructures import DATA_TYPES as dt
 from ship.fmp.headdata import HeadDataItem
@@ -35,7 +35,7 @@ from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 
 
-class RefhUnit(AUnit): 
+class RefhUnit(AUnit):
     """Concrete implementation of AUnit storing Isis River Unit
     data.
 
@@ -56,7 +56,7 @@ class RefhUnit(AUnit):
     FILE_KEY2 = None
 
 
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         """
         AUnit.__init__(self, **kwargs)
@@ -72,7 +72,7 @@ class RefhUnit(AUnit):
             'revision': HeadDataItem(1, '{:<1}', 0, 0, dtype=dt.INT),
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
             'z': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=3),
-            'easting': HeadDataItem('', '{:>10}', 2, 1, dtype=dt.STRING), 
+            'easting': HeadDataItem('', '{:>10}', 2, 1, dtype=dt.STRING),
             'northing': HeadDataItem('', '{:>10}', 2, 2, dtype=dt.STRING),
             'time_delay': HeadDataItem(0.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'time_step': HeadDataItem(1.0, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=1),
@@ -214,7 +214,7 @@ class RefhUnit(AUnit):
         return file_line
         
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
         
         Args:
@@ -344,7 +344,7 @@ class RefhUnit(AUnit):
         return file_line + 6
 
 
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
@@ -354,8 +354,8 @@ class RefhUnit(AUnit):
             List of strings formated for writing to .dat file.
         """
         out_data = self._getHeadData()
-        out_data.extend(self._getStormData()) 
-        out_data.extend(self._getSuffix()) 
+        out_data.extend(self._getStormData())
+        out_data.extend(self._getSuffix())
         
         return out_data
     
@@ -368,8 +368,8 @@ class RefhUnit(AUnit):
         out.append('\n' + self._name)
         
         key_order = ['z', 'easting', 'northing', 'time_delay', 'time_step',
-                     'bf_only', 'sc_flag', 'scale_factor', 'hydrograph_mode', 
-                     'hydrograph_scaling', 'min_flow', 'catchment_area', 'saar', 
+                     'bf_only', 'sc_flag', 'scale_factor', 'hydrograph_mode',
+                     'hydrograph_scaling', 'min_flow', 'catchment_area', 'saar',
                      'urbext', 'season', 'published_report', 'urban']
         for k in key_order:
             out.append(self.head_data[k].format(True))
@@ -377,15 +377,15 @@ class RefhUnit(AUnit):
         if self.head_data['urban'].compare('URBANREFH'):
             key_order = ['subarea_1', 'dplbar_1', 'suburbext_1', 'calibration_1',
                          'subarea_2', 'dplbar_2', 'suburbext_2', 'calibration_2',
-                         'subrunoff_2', 'sewer_rp_2', 'sewer_depth_2', 
-                         'sewer_lossvolume_2', 'subarea_3', 'dplbar_3', 
+                         'subrunoff_2', 'sewer_rp_2', 'sewer_depth_2',
+                         'sewer_lossvolume_2', 'subarea_3', 'dplbar_3',
                          'suburbext_3', 'calibration_3', 'subrunoff_3']
             for k in key_order:
                 out.append(self.head_data[k].format(True))
         
         key_order = ['storm_area', 'storm_duration', 'sn_rate', 'rainfall_flag',
-        'arf_flag', 'rainfall_comment', 'rainfall_odepth', 'return_period', 'arf', 
-        'c', 'd1', 'd2', 'd3', 'e', 'f', 'rp_flag', 'scf_flag', 'scf', 
+        'arf_flag', 'rainfall_comment', 'rainfall_odepth', 'return_period', 'arf',
+        'c', 'd1', 'd2', 'd3', 'e', 'f', 'rp_flag', 'scf_flag', 'scf',
         'use_refined_rainfall']
         for k in key_order:
             out.append(self.head_data[k].format(True))
@@ -417,7 +417,7 @@ class RefhUnit(AUnit):
         # Add this heere to avoid an additional newline
         out.append(self.head_data['cmax_flag'].format())
         key_order = [
-            'cini_flag', 'alpha_flag', 'models_comment', 'cm_dcf', 
+            'cini_flag', 'alpha_flag', 'models_comment', 'cm_dcf',
             'cmax', 'cini', 'alpha', 'bfihost', 'uh_flag' , 'tp_flag', 'up_flag',
             'uk_flag', 'tp_dcf', 'tp0', 'tpt', 'dplbar', 'dpsbar', 'propwet',
             'up', 'uk', 'uh_rows', 'bl_flag', 'br_flag', 'bf0_flag', 'bl_dcf',
