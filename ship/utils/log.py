@@ -5,13 +5,13 @@
     At the moment this is pretty simplistic. It just contains a simple
     formatter and allows for setting a global library debug level.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -22,6 +22,7 @@
 
 
 import logging
+
 
 def setup_custom_logger(name):
     formatter = logging.Formatter(fmt='%(asctime)s - %(levelname)s - %(module)s - %(message)s')

@@ -11,7 +11,7 @@ class TestError(ValueError):
 
 
 class TuflowUpdateTests(object):
-    
+
     def runTests(self):
         self.loadTuflowModel()
         self.test_changeActiveStatus()
@@ -20,7 +20,7 @@ class TuflowUpdateTests(object):
         self.test_addPartToLogicHolder()
         self.test_removePartFromLogicHolder()
 
-    
+
     def loadTuflowModel(self):
         print ('Loading tuflow model...')
         path = "integration_tests/test_data/model1/tuflow/runs/test_run1.tcf"
@@ -29,7 +29,7 @@ class TuflowUpdateTests(object):
         self.tuflow = loader.loadFile(path)
         assert(self.tuflow.missing_model_files == [])
         print ('Tuflow model load complete.')
-    
+
     def test_changeActiveStatus(self):
         print ('Testing update active status...')
         tuflow = copy.deepcopy(self.tuflow)
@@ -51,7 +51,7 @@ class TuflowUpdateTests(object):
         zln_part = control.contains(command="Z Line THIN", filename="zln_shiptest_trd_v2")
         parts = zpt_part + zln_part
         assert(len(parts) == 0)
-        
+
         print ('pass')
 
     def test_addPartToPartHolder(self):
@@ -62,7 +62,7 @@ class TuflowUpdateTests(object):
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c
-        
+
         line = "Timestep == 12 ! timestep 12 comment"
         varpart = factory.TuflowFactory.getTuflowPart(line, tgc)[0]
         line2 = "Timestep == 22 ! timestep 22 comment"
@@ -85,40 +85,40 @@ class TuflowUpdateTests(object):
                 assert(control.parts[i-1].associates.logic == existing_part.associates.logic)
         if not found:
             raise TestError('Failed to add part to PartHolder')
-        
-        
+
+
         assert(control.parts[-1] != varpart3)
         assert(varpart3.associates.parent != tgc)
-        
+
         trd_index = control.parts.lastIndexOfParent(varpart3.associates.parent)
         assert(control.parts[trd_index] == varpart3)
-        
+
         print ('pass')
-    
+
     def test_removePartFromPartHolder(self):
         print ('Testing remove part to LogicHolder...')
-        
+
 #         tuflow = copy.deepcopy(self.tuflow)
         tuflow = self.tuflow
         control = tuflow.control_files['TGC']
-        
+
         part1 = control.contains(command='Timestep', variable='12')[0]
         part2 = control.contains(command='Timestep', variable='22')[0]
         part3 = control.contains(command='Timestep', variable='32')[0]
         control.parts.remove(part1)
         control.parts.remove(part2)
         control.parts.remove(part3)
-        
+
         index = control.parts.index(part1)
         index2 = control.parts.index(part2)
         index3 = control.parts.index(part3)
         assert(index == -1)
         assert(index2 == -1)
         assert(index3 == -1)
-        
+
         print ('pass')
 
-                
+
     def test_addPartToLogicHolder(self):
         print ('Testing add part to LogicHolder...')
 
@@ -128,22 +128,22 @@ class TuflowUpdateTests(object):
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c
-        
+
         part1 = control.contains(filename='whatevs_shiptest_tgc_v1_P')[0]
         logic1 = part1.associates.logic
-        
+
         line = "Timestep == 12 ! timestep 12 comment"
         varpart = factory.TuflowFactory.getTuflowPart(line, tgc)[0]
         logic1.insertPart(varpart, part1)
-        
+
         assert(varpart.associates.logic == part1.associates.logic)
-        
+
         part1_index = control.parts.index(part1)
         assert(control.parts.index(varpart) == part1_index + 1)
 
         print ('pass')
-    
-    
+
+
     def test_removePartFromLogicHolder(self):
         print ('Testing remove part to LogicHolder...')
 
@@ -153,15 +153,15 @@ class TuflowUpdateTests(object):
         tgc = None
         for c in control.control_files:
             if c.filename == 'test_tgc1': tgc = c
-        
+
         part1 = control.contains(command='Timestep', variable='12')[0]
         logic1 = part1.associates.logic
         group = logic1.getGroup(part1)
-        
+
         logic1.removePart(part1)
-        
+
         part1_index = control.parts.index(part1)
-        
+
         last_part = logic1.group_parts[-1][-1]
         last_index = control.parts.index(last_part)
         assert(logic1.getGroup(part1) == -1)
@@ -170,8 +170,7 @@ class TuflowUpdateTests(object):
 
 
         print ('pass')
-        
-        
-        
-        
-        
+
+
+
+

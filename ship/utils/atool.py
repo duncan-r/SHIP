@@ -1,7 +1,7 @@
 """
 
  Summary:
-    Contains the ATool class an interface that all tools (i.e. file loaders, 
+    Contains the ATool class an interface that all tools (i.e. file loaders,
     etc) should inherit.
 
     This was a integral part of these tools when they were written in Java
@@ -13,13 +13,13 @@
     because I'm sure there will be a need to have all similar tools grouped
     at some point.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -38,10 +38,10 @@ logger = logging.getLogger(__name__)
 
 class ATool(object):
     """Abstract base class for all tools.
-    
+
     Any class that functions as a tool for processing the files etc should
     implement this.
-    
+
     Note:
         This is not currently used in any part of the software at the moment.
         It was needed in the original Java implementation in order to allow
@@ -52,73 +52,65 @@ class ATool(object):
         of thing very simple.
 
         Re-visit whether an Observer pattern is required once we have some
-        threading setup. Although Qt does that all so well I very much 
+        threading setup. Although Qt does that all so well I very much
         doubt that this interface is required.
     """
-    
+
     __metaclass__ = ABCMeta
-    
-    def init(self, observer = None): 
+
+    def init(self, observer=None):
         """Constructor.
 
-        Takes in an instance of an observer to register it. 
-        
+        Takes in an instance of an observer to register it.
+
         Args:
             observer(object): the class that want to be notified.
-        """ 
-        # A collection of the Observer object passed to the 
+        """
+        # A collection of the Observer object passed to the
         # concrete class.
         self.observers = []
-        self.registerObserver(observer);
-     
+        self.registerObserver(observer)
 
-    def registerObserver(self, observer): 
+    def registerObserver(self, observer):
         """Add an observer to the collection of observers in the list.
-        
+
         Args:
-            observer(object): object to add to the observer list 
+            observer(object): object to add to the observer list
         """
-        self.observers.append(observer);
-    
-    
-    def unregisterObserver(self, o): 
+        self.observers.append(observer)
+
+    def unregisterObserver(self, o):
         """Remove an observer from the list of observers.
-        
+
         Args:
-            o (object): an object that no longer wants to be notified. 
+            o (object): an object that no longer wants to be notified.
         """
         self.observers.remove(o)
-    
-    
-    def notifyObserversProgress(self, progress): 
-        """Notify all the current observers of a progress update"""
-        for o in self.observers: 
-            o.updateObserver(progress)
-        
 
-    def updateObserversTotal(self, progress): 
+    def notifyObserversProgress(self, progress):
+        """Notify all the current observers of a progress update"""
+        for o in self.observers:
+            o.updateObserver(progress)
+
+    def updateObserversTotal(self, progress):
         """Notify all of the current observers of what we expect the total
         progress to be.
-        
+
         Args:
             progress (int): The total progress expected.
         """
         for o in self.observers:
             o.updateObserverTotal(progress)
-        
-    
+
     def notifyObserversProgressName(self, name):
         """Notify all Observers of the name of the current progress.
 
-        This name may also be a description. It is used to display on the 
+        This name may also be a description. It is used to display on the
         user interface to tell users what is happening when this tools is
         called.
-        
+
         Args:
             name (str): the name of the progress.
         """
         for o in self.observers:
             o.updateObserverProcessName(name)
-        
-        
- 
