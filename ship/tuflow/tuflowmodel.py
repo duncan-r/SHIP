@@ -7,9 +7,6 @@
      There are several other classes in here that are used to determine the
      order of the files in the model and key words for reading in the files.
 
-
-
-
  Author:
      Duncan Runnacles
 
@@ -18,22 +15,14 @@
 
  Copyright:
      Duncan Runnacles 2016
-
- TODO:
-
- Updates:
-
-
 """
 
 from __future__ import unicode_literals
 
 from itertools import chain
 
-from ship.tuflow.tuflowfilepart import TuflowFile, TuflowKeyValue, TuflowUserVariable, TuflowModelVariable
+from ship.tuflow.tuflowfilepart import TuflowUserVariable, TuflowModelVariable
 from ship.tuflow import FILEPART_TYPES as fpt
-from ship.utils import utilfunctions as uf
-
 
 import logging
 logger = logging.getLogger(__name__)
@@ -252,19 +241,6 @@ class TuflowModel(object):
         self.control_files[model_file.model_type].addControlFile(
             model_file, control_file, **kwargs)
         self.control_files['TCF'].parts.add(model_file, **kwargs)
-
-
-# class TuflowUtils(object):
-#     """Utility functions for dealing with TuflowModel outputs."""
-#
-#     def __init__(self):
-#         pass
-#
-#     @staticmethod
-#     def resultsByParent(results):
-#         """
-#         """
-
 
 class UserVariables(object):
     """Container for all user defined variables.

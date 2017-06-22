@@ -1,33 +1,28 @@
 """
-
  Summary:
      Deals with loading all data from ADataObject type files.
-     
+
      This process can get quite messy so it seems sensible to have a separate
      factory to deal with it.
-     
+
      See Also:
          ADataObject, TmfDataObject, TmfCsvDataObject, DcDataObject
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Created:  
+ Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
      Need to add a subfile loader for the materials csv file loader.
-     
+
      This module needs some cleaning up still. There is quite a bit of repeated
      code around that could be pulled out into module level functions and used
      by all of the loader.
-
- Updates:
-
-
 """
 
 from __future__ import unicode_literals
@@ -54,13 +49,13 @@ def loadDataFile(datafile, args_dict={}):
     Loads the contents of the DataFileObject based on the composition of the
     given object and returns the newly created DataFileObject of that type.
 
-    The args_dict is a dict of key-value pairs where the key represents a 
+    The args_dict is a dict of key-value pairs where the key represents a
     placeholder used within one of the data files and the value reprents the
     variables that should be used to replace that value. This is common in
     bc_dbase file for instance where '__event__' may be used as a place holder
     with BC Event Text and BC Event Name used in the control files to define
-    what should be used. Other options are the use of scenario and event 
-    definitions. Within these BC Event Source can be defined to associate 
+    what should be used. Other options are the use of scenario and event
+    definitions. Within these BC Event Source can be defined to associate
     certain placeholders with values e.g.::
 
         Define Event == 8hr
@@ -68,15 +63,15 @@ def loadDataFile(datafile, args_dict={}):
             BC Database == ..\bc_dbase\my_bcdbase.csv
         End Define
 
-    These are stored in the tuflow model when loaded and can be passed when 
+    These are stored in the tuflow model when loaded and can be passed when
     loading data files to use.
 
     Args:
         datafile(TuflowFile): FilePart to create the DataFileObject from.
-        args_dict={}(dict): This is a dictionary of keywords and associated 
+        args_dict={}(dict): This is a dictionary of keywords and associated
             values that can be used to identify and replace placeholders in the
             source file names or column names within data files. NOTE CURRENTLY
-            NOT USED. 
+            NOT USED.
 
     Return:
         DataFileObject: of type identified from the composition of the given
@@ -138,8 +133,6 @@ def loadDataFile(datafile, args_dict={}):
 def readXsFile(datafile):
     """Loads the contents of the estry 1d_xs file reference by datafile.
     """
-    value_separator = ','
-    comment_types = []
     xs_enum = dataobj.XsEnum()
 
     def loadShapeFile(file_path, row_collection):
@@ -165,9 +158,7 @@ def readXsFile(datafile):
                 for k in range(count, len(xs_enum.ITERABLE)):
                     row_collection._addValue(k)
 
-#             print t['Source'] + ' : ' + t['Type'] + ' : ' + t['Column_1']
             row_collection._addValue('row_no', i)
-
         return row_collection
 
     def loadMapinfoFile(file_path, row_collection):
@@ -186,8 +177,6 @@ def readXsFile(datafile):
                         logger.info('1d_xs does not have skew column - adding deafult value')
                         for k in range(len(row), len(xs_enum.ITERABLE)):
                             row_collection._addValue(k)
-
-    #                 print row[0] + ' : ' + row[1] + ' : ' + row[3]
                     row_collection._addValue('row_no', i)
 
         except IOError:
@@ -209,7 +198,9 @@ def readXsFile(datafile):
             if t == 0:
                 row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
             else:
-                row_collection.addToCollection(do.FloatData(i, format_str=', {0}', no_of_dps=3, default=0.00))
+                row_collection.addToCollection(
+                    do.FloatData(i, format_str=', {0}', no_of_dps=3, default=0.00)
+                )
 
         # Add a couple of extra rows to the row_collection for tracking the
         # data in the file.
@@ -228,9 +219,9 @@ def readXsFile(datafile):
     if ext == 'mif' or ext == 'mid':
 
         if ext == 'mif':
-            dir, name = os.path.split(file_path)
+            dirpath, name = os.path.split(file_path)
             name, ext = os.path.splitext(name)
-            file_path = os.path.join(dir, name + '.mid')
+            file_path = os.path.join(dirpath, name + '.mid')
 
         row_collection = loadMapinfoFile(file_path, row_collection)
 
@@ -238,15 +229,19 @@ def readXsFile(datafile):
     elif ext == 'shp' or ext == 'dbf':
 
         if ext == 'shp':
-            dir, name = os.path.split(file_path)
+            dirpath, name = os.path.split(file_path)
             name, ext = os.path.splitext(name)
-            file_path = os.path.join(dir, name + '.dbf')
+            file_path = os.path.join(dirpath, name + '.dbf')
 
         row_collection = loadShapeFile(file_path, row_collection)
 
     else:
-        logger.warning('Invalid file extension for XS type in file: ' + datafile.filenameAndExtension())
-        raise ValueError('Invalid file extension for XS type in file: ' + datafile.filenameAndExtension())
+        logger.warning(
+            'Invalid file extension for XS type in file: ' + datafile.filenameAndExtension()
+        )
+        raise ValueError(
+            'Invalid file extension for XS type in file: ' + datafile.filenameAndExtension()
+        )
 
     # Always return an empty comments list because there will never be any.
     return row_collection, []
@@ -267,10 +262,8 @@ def readBcFile(datafile, args_dict={}):
     See Also:
         :class:'rowdatacollection'.
     """
-    value_seperator = ','
     comment_types = ['#', '!']
     bc_enum = dataobj.BcEnum()
-    bc_event_data = args_dict
 
     def _checkHeaders(row, required_headers):
         """Checks that any required headers can be found.
@@ -340,13 +333,15 @@ def readBcFile(datafile, args_dict={}):
 
     # Initialise the RowDataOjectCollection object with currect setup
     row_collection = RowDataCollection()
-    for i, val in enumerate(bc_enum.ITERABLE):
+    for i, _ in enumerate(bc_enum.ITERABLE):
         if i == 0:
             row_collection.addToCollection(do.StringData(i, format_str='{0}', default=''))
         else:
             row_collection.addToCollection(do.StringData(i, format_str=', {0}', default=''))
 
-    row_collection.addToCollection(do.StringData('actual_header', format_str=', {0}', default=''), index=0)
+    row_collection.addToCollection(
+        do.StringData('actual_header', format_str=', {0}', default=''), index=0
+    )
     row_collection.addToCollection(do.IntData('row_no', format_str=None, default=''))
 
     path = datafile.absolutePath()
@@ -371,7 +366,7 @@ def readBcFile(datafile, args_dict={}):
                 # to contain materials entries.
                 else:
                     # First non-comment is the headers
-                    if first_data_line == False:
+                    if first_data_line is False:
                         first_data_line = True
                         row_collection = _loadHeadData(line, row_collection, required_headers)
                     else:
@@ -408,7 +403,6 @@ def readMatCsvFile(datafile, args_dict={}):
     See Also:
         :class:'rowdatacollection'.
     """
-    value_seperator = ','
     comment_types = ['#', '!']
     csv_enum = dataobj.MatCsvEnum()
     subfile_details = {}
@@ -427,7 +421,7 @@ def readMatCsvFile(datafile, args_dict={}):
         new_row[11] = row[3]
 
         row_length = len(new_row)
-        for i, v in enumerate(new_row):
+        for i, _ in enumerate(new_row):
             if i < row_length:
                 row_collection._addValue('actual_header', new_row[i])
 
@@ -455,8 +449,6 @@ def readMatCsvFile(datafile, args_dict={}):
             but perhaps creating an xml converter could work quite will and
             make dealing with the file a bit easier?
         """
-        made_change = False
-
         # Put in ID and Hazard as normal
         if col_no == 0:
             new_row[0] = entry
@@ -599,11 +591,7 @@ def readMatCsvFile(datafile, args_dict={}):
 
 
 def readMatSubfile(main_datafile, filename, header_list, args_dict):
-    """
-    """
-    value_separator = ','
     comment_types = ['#', '!']
-    mat_subfile_enum = dataobj.SubfileMatEnum()
     path = os.path.join(main_datafile.root, filename)
     root = main_datafile.root
 
@@ -661,9 +649,6 @@ def readMatSubfile(main_datafile, filename, header_list, args_dict):
     def _loadHeadData(row, row_collection, col_length):
         """
         """
-        new_row = [None] * 12
-
-        comment_indices, length = uuf.findSubstringInList('!', row)
         comment_lines.append(None)
 
         head1_location = -1
@@ -803,7 +788,6 @@ def readTmfFile(datafile):
     comment_lines = []
 
     # Loop through the contents list loaded from file line-by-line.
-    first_data_line = False
     row_count = 0
     for i, line in enumerate(contents, 0):
 
