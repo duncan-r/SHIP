@@ -44,7 +44,6 @@ class FileLoader(object):
 
         self.warnings = []
 
-
     def loadFile(self, filepath, arg_dict={}):
         """Load a file from disk.
 
@@ -72,7 +71,7 @@ class FileLoader(object):
         ext = uuf.fileExtensionWithoutPeriod(filepath)
         if not ext.lower() in self._known_files:
             logger.error('File type %s is not currently supported for loading' % ext)
-            raise AttributeError ('File type %s is not currently supported for loading' % ext)
+            raise AttributeError('File type %s is not currently supported for loading' % ext)
 
         loader = self._known_files[ext]()
         contents = loader.loadFile(filepath, arg_dict)
@@ -80,14 +79,3 @@ class FileLoader(object):
 
         del loader
         return contents
-
-
-
-
-
-
-
-
-
-
-

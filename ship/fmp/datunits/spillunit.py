@@ -42,7 +42,7 @@ class SpillUnit (AUnit):
     containing the chainage, elevation, etc values.
     Methods for accessing the data in these objects and adding removing rows
     are available.
-    
+
     See Also:
         AUnit
     """
@@ -51,10 +51,9 @@ class SpillUnit (AUnit):
     FILE_KEY = 'SPILL'
     FILE_KEY2 = None
 
-
     def __init__(self, **kwargs):
         """Constructor.
-        
+
         Args:
             fileOrder (int): The location of this unit in the file.
         """
@@ -70,7 +69,7 @@ class SpillUnit (AUnit):
 
         self._unit_type = SpillUnit.UNIT_TYPE
         self._unit_category = SpillUnit.UNIT_CATEGORY
-        
+
         dobjs = [
             do.FloatData(rdt.CHAINAGE, format_str='{:>10}', no_of_dps=3, update_callback=self.checkIncreases),
             do.FloatData(rdt.ELEVATION, format_str='{:>10}', no_of_dps=3),
@@ -80,7 +79,6 @@ class SpillUnit (AUnit):
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
         self.row_data['main'].setDummyRow({rdt.CHAINAGE: 0, rdt.ELEVATION: 0})
 
-
     def icLabels(self):
         return [self._name, self._name_ds]
 
@@ -88,14 +86,13 @@ class SpillUnit (AUnit):
         """Overriddes superclass method."""
         return {'name': self.name, 'name_ds': self.name_ds}
 
-    
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
-        
+
         Args:
             unit_data (list): The part of the isis dat file pertaining to 
                 this section 
-        
+
         See Also:
             AUnit - readUnitData()
         """
@@ -105,7 +102,7 @@ class SpillUnit (AUnit):
 
     def _readHeadData(self, unit_data, file_line):
         """Reads the data in the file header section into the class.
-        
+
         Args:
             unit_data (list): contains data for this unit.
         """
@@ -116,13 +113,12 @@ class SpillUnit (AUnit):
         self.head_data['modular_limit'].value = unit_data[file_line + 2][10:20].strip()
         return file_line + 3
 
-
     def _readRowData(self, unit_data, file_line):
         """Reads the units rows into the row collection.
 
         This is all the geometry data that occurs after the no of rows variable in
         the Spill Units of the dat file.
-        
+
         Args:
             unit_data: the data pertaining to this unit.
         """
@@ -132,11 +128,11 @@ class SpillUnit (AUnit):
         try:
             # Load the geometry data
             for i in range(file_line, out_line):
-                
-                chain  = unit_data[i][0:10].strip()
-                elev   = unit_data[i][10:20].strip()
-                east   = None
-                north  = None
+
+                chain = unit_data[i][0:10].strip()
+                elev = unit_data[i][10:20].strip()
+                east = None
+                north = None
 
                 '''
                 In some edge cases there are no values set in the file for the
@@ -144,9 +140,9 @@ class SpillUnit (AUnit):
                 that they are both there, e starts at 21, n starts at 31
                 '''
                 if len(unit_data[i]) > 31:
-                    east   = unit_data[i][20:30].strip()
-                    north  = unit_data[i][30:40].strip()
-                
+                    east = unit_data[i][20:30].strip()
+                    north = unit_data[i][30:40].strip()
+
                 self.row_data['main'].addRow({
                     rdt.CHAINAGE: chain, rdt.ELEVATION: elev,
                     rdt.EASTING: east, rdt.NORTHING: north
@@ -155,45 +151,42 @@ class SpillUnit (AUnit):
         except NotImplementedError:
             logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
-            
+
         return out_line
-    
 
     def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
         of the .dat file.
-        
+
         Returns:
             list of output data formated the same as in the .DAT file.
         """
         num_rows = self.row_data['main'].numberOfRows()
         out_data = self._getHeadData(num_rows)
         out_data.extend(self._getRowData(num_rows))
-        
+
         return out_data
-  
-  
+
     def _getRowData(self, num_rows):
         """Get the data in the row collection.
-        
+
         For all the rows in the spill geometry section get the data from
         the rowdatacollection class.
-        
+
         Returns:
             list containing the formatted unit rows.
         """
         out_data = []
         for i in range(0, num_rows):
             out_data.append(self.row_data['main'].getPrintableRow(i))
-        
+
         return out_data
-   
-  
+
     def _getHeadData(self, num_rows):
         """Get the header data formatted for printing out.
-        
+
         Returns:
             list - contining the formatted head data.
         """
@@ -203,7 +196,7 @@ class SpillUnit (AUnit):
         out.append(self.head_data['weir_coef'].format() + self.head_data['modular_limit'].format())
         out.append('{:>10}'.format(num_rows))
         return out
-        
+
 #     def addDataRow(self, chainage, elevation, index=None, easting = 0.00, northing = 0.00):
     def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
@@ -211,7 +204,7 @@ class SpillUnit (AUnit):
         Ensures that certain requirements of the data rows, such as the 
         chainage needing to increase for each row down are met, then call the 
         addNewRow() method in the row_collection.
-        
+
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
                 value assigned for the DataType. Chainage and Elevation MUST
@@ -221,20 +214,17 @@ class SpillUnit (AUnit):
 
         Returns:
             False if the addNewRow() method is unsuccessful.
-        
+
         Raises:
             IndexError: If the index does not exist.
             ValueError: If the given value is not accepted by the DataObjects. 
-            
+
         See Also:
             ADataObject and subclasses for information on the parameters.
         """
         keys = row_vals.keys()
         if not rdt.CHAINAGE in keys or not rdt.ELEVATION in keys:
             raise AttributeError('row_vals must include CHAINAGE and ELEVATION.')
-        
+
         # Call superclass method to add the new row
         AUnit.addRow(self, row_vals, index=index, **kwargs)
-        
-    
-        

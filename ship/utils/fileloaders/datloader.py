@@ -56,7 +56,7 @@ class DatLoader(ATool, ALoader):
     aren't being used yet.
     """
 
-    def __init__ (self):
+    def __init__(self):
         """Constructor."""
 
         ATool.__init__(self)
@@ -74,8 +74,7 @@ class DatLoader(ATool, ALoader):
         # [0] = counter - iterated every time a new reach is started.
         # [1] = same reach status - keeps track of whether it's in an existing
         #       reach or starting a new one.
-        self.reach_info = { 'reach_number': 0, 'same_reach': False }
-
+        self.reach_info = {'reach_number': 0, 'same_reach': False}
 
     def loadFile(self, file_path, arg_dict={}):
         """Loads the ISIS .DAT file.
@@ -122,16 +121,15 @@ class DatLoader(ATool, ALoader):
         if not uf.checkFileType(file_path, ext=['.dat', '.DAT']):
             if not uf.checkFileType(file_path, ext=['.ied', '.IED']):
                 logger.error('Illegal File Error: ' + file_path + '\nDoes not have extension (.dat, .DAT, .ied, .IED)')
-                raise AttributeError ('Illegal File Error: ' + file_path + '\nDoes not have extension (.dat, .DAT, .ied, .IED)')
+                raise AttributeError('Illegal File Error: ' + file_path + '\nDoes not have extension (.dat, .DAT, .ied, .IED)')
             else:
                 self.is_ied = True
 
         contents = self.__loadFile(file_path)
         if(contents == False):
-            raise IOError ('Unable to load file at: ' + file_path)
+            raise IOError('Unable to load file at: ' + file_path)
 
         return self.buildDat(contents, arg_dict)
-
 
     def buildDat(self, contents, arg_dict={}):
         """
@@ -185,8 +183,8 @@ class DatLoader(ATool, ALoader):
 #                 i, self.temp_unit = unit_factory.createUnit(self.contents, i,
 #                         unit_vars[first_word], self.cur_no_of_units)
                 i, self.temp_unit = unit_factory.createUnitFromFile(self.contents, i,
-                                                            first_word,
-                                                            self.cur_no_of_units)
+                                                                    first_word,
+                                                                    self.cur_no_of_units)
 
                 '''In case we got in but found something wasn't supported.
                 it's i-1 because we can't return onto the same line that was
@@ -211,7 +209,6 @@ class DatLoader(ATool, ALoader):
         del self.unknown_data
         return self.units
 
-
     def createUnknownSection(self):
         """Builds unidentified sections from the .DAT file.
 
@@ -223,7 +220,6 @@ class DatLoader(ATool, ALoader):
         self.temp_unit = UnknownUnit()
         self.temp_unit.readUnitData(self.unknown_data)
 
-
     def getUnits(self):
         """Getter for imported units
 
@@ -234,7 +230,6 @@ class DatLoader(ATool, ALoader):
             IsisUnitCollection - The units loaded from the dat file.
         """
         return self.units
-
 
     def updateSubContents(self):
         """Updates the self.units.
@@ -249,7 +244,6 @@ class DatLoader(ATool, ALoader):
         del self.temp_unit
         self.unknown_data = []
 
-
     def __loadFile(self, filepath):
         """Load the .dat file into the contents list.
 
@@ -262,7 +256,7 @@ class DatLoader(ATool, ALoader):
         logger.info('loading File: ' + filepath)
         contents = []
         try:
-            contents = ftools.getFile(filepath);
+            contents = ftools.getFile(filepath)
         except IOError:
             logger.error('IOError - Unable to load file')
             return False
@@ -272,5 +266,3 @@ class DatLoader(ATool, ALoader):
             return False
 
         return contents
-
-

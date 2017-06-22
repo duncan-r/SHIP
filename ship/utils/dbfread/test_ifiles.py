@@ -8,4 +8,3 @@ assert ifnmatch('CAMELCASE/CamelCase', 'CamelCase/UPPERCASE') == False
 
 # Pattern with
 # assert ipat('[A]') == '[[Aa]]'
-

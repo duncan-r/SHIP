@@ -16,16 +16,19 @@ else:
 
 
 class InvalidValue(bytes):
+
     def __repr__(self):
         text = bytes.__repr__(self)
         if PY2:
             # Make sure the string starts with "b'" in
             # "InvalidValue(b'value here')".
             text = 'b' + text
-            
+
         return 'InvalidValue({})'.format(text)
 
+
 class FieldParser:
+
     def __init__(self, table, memofile=None):
         """Create a new field parser
 
@@ -93,7 +96,7 @@ class FieldParser:
                 return None
             else:
                 raise ValueError('invalid date {!r}'.format(data))
-    
+
     def parseF(self, field, data):
         """Parse float field and return float or None"""
         if data.strip():
@@ -195,13 +198,13 @@ class FieldParser:
             day, msec = struct.unpack('<LL', data)
             if day:
                 dt = datetime.datetime.fromordinal(day - offset)
-                delta = datetime.timedelta(seconds=msec/1000)
+                delta = datetime.timedelta(seconds=msec / 1000)
                 return dt + delta
             else:
                 return None
         else:
             return None
-            
+
     def parseY(self, field, data):
         """Parse currency field (Y) and return decimal.Decimal.
 
@@ -211,7 +214,6 @@ class FieldParser:
 
         # Currency fields are stored with 4 points of precision
         return Decimal(value) / 10000
-
 
     def parseB(self, field, data):
         """Binary memo field or double precision floating point number
@@ -236,7 +238,6 @@ class FieldParser:
 
         The raw data is returned as a binary string."""
         return self.get_memo(self._parse_memo_index(data))
-
 
     # Autoincrement field ('+')
     parse2B = parseI

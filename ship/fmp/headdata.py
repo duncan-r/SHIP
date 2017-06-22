@@ -28,7 +28,6 @@ from ship.datastructures import DATA_TYPES as dt
 from ship.utils import utilfunctions as uf
 
 
-
 class HeadDataItem(object):
     """Objects stored in the head_data dict in AUnit's.
 
@@ -78,7 +77,6 @@ class HeadDataItem(object):
         self._value = value
         self._update_callback = kwargs.get('update_callback', None)
 
-
     @property
     def value(self):
         return self._value
@@ -111,7 +109,7 @@ class HeadDataItem(object):
         if self.dtype == dt.FLOAT:
             dps = self.kwargs.get('dps', 1)
             decimal_format = '%0.' + str(dps) + 'f'
-            value =  decimal_format % float(self._value)
+            value = decimal_format % float(self._value)
             out = self.format_str.format(value)
         else:
             out = self.format_str.format(self._value)
@@ -120,7 +118,6 @@ class HeadDataItem(object):
             out = '\n' + out
 
         return self.format_str.format(out)
-
 
     def compare(self, compare_val):
         """Check equality of given value against self.value.
@@ -139,27 +136,30 @@ class HeadDataItem(object):
         else:
             return False
 
-
     def _checkValue(self, value, **kwargs):
-        if self.allow_blank and value == '': return value
+        if self.allow_blank and value == '':
+            return value
         dtype = self.kwargs.get('dtype', dt.STRING)
         default = self.kwargs.get('default', None)
 
         if dtype == dt.STRING:
             if not uf.isString(value):
-                if default is not None: return default
+                if default is not None:
+                    return default
                 raise ValueError('value %s is not compatible with dtype STRING' % value)
             else:
                 return value
         if dtype == dt.INT:
             if not uf.isNumeric(value):
-                if default is not None: return default
+                if default is not None:
+                    return default
                 raise ValueError('value %s is not compatible with dtype INT' % value)
             else:
                 return int(value)
         if dtype == dt.FLOAT:
             if not uf.isNumeric(value):
-                if default is not None: return default
+                if default is not None:
+                    return default
                 raise ValueError('value %s is not compatible with dtype FLOAT' % value)
             else:
                 return float(value)
@@ -168,8 +168,4 @@ class HeadDataItem(object):
             if not value in choices:
                 raise ValueError("value %s is not in CONSTANT 'choices' tuple %s" % (value, choices))
             else:
-                return  value
-
-
-
-
+                return value

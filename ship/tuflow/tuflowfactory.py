@@ -13,7 +13,6 @@ from ship.tuflow import tuflowfilepart as tuflowpart
 from ship.utils import utilfunctions as uf
 
 
-
 class TuflowFactory(object):
 
     def __init__(self):
@@ -72,7 +71,6 @@ class TuflowFactory(object):
 
         return parts
 
-
     '''
         #
         TuflowFilepart type builders.
@@ -92,15 +90,14 @@ class TuflowFactory(object):
         parts = []
         for i, s in enumerate(split_var):
             s = s.strip()
-            name = prefix + uf.encodeStr(str(i+1))
+            name = prefix + uf.encodeStr(str(i + 1))
             parts.append(tuflowpart.TuflowModelVariable(parent, **{
-                    'logic': kwargs.get('logic', None), 'command': kwargs['command'],
-                    'comment': kwargs['comment'], 'variable': s, 'name': name
+                'logic': kwargs.get('logic', None), 'command': kwargs['command'],
+                'comment': kwargs['comment'], 'variable': s, 'name': name
             }))
 
         parts = assignSiblings(parts)
         return parts
-
 
     @staticmethod
     def createUserVariableType(line, parent, **kwargs):
@@ -274,11 +271,11 @@ def assignSiblings(parts):
     for i, p in enumerate(parts):
         if i == 0:
             if len(parts) > 1:
-                parts[i].associates.sibling_next = parts[i+1]
+                parts[i].associates.sibling_next = parts[i + 1]
         if i > 0:
-            parts[i].associates.sibling_prev = parts[i-1]
+            parts[i].associates.sibling_prev = parts[i - 1]
         if i < len(parts) - 1:
-            parts[i].associates.sibling_next = parts[i+1]
+            parts[i].associates.sibling_next = parts[i + 1]
 
     return parts
 
@@ -314,7 +311,6 @@ def checkEstryAuto(line, parent):
             has_auto = True
             line = 'Estry Control File == ' + parent.filename + '.ecf'
     return line, has_auto
-
 
 
 def checkIsComment(line):
@@ -443,7 +439,8 @@ def resolveResult(result_part):
     else:
         # This shouldn't ever happen, but in case it does we set it to
         # '' here so it doesn't catch anyone out later
-        if result_part.root is None: result_part.root = ''
+        if result_part.root is None:
+            result_part.root = ''
 
         result_part.has_own_root = False
         if trailing_slash:
@@ -466,4 +463,3 @@ def resolveResult(result_part):
             result_part.filename = os.path.basename(result_part.path_as_read)
 
     return result_part
-

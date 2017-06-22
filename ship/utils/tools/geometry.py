@@ -19,6 +19,7 @@
 
 """
 
+
 def polygonArea(xy_vals):
     """Calculate the area of an irregular polygon.
 

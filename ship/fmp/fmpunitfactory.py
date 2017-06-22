@@ -87,8 +87,7 @@ class FmpUnitFactory(object):
         except Exception as err:
             logger.exception(err)
             logger.error('UNIT_VARS incorrectly set in some classes')
-            raise Exception ('UNIT_KEYS incorrectly set in some classes')
-
+            raise Exception('UNIT_KEYS incorrectly set in some classes')
 
     def _getFileKeys(self):
         """Get the file keys for the available units.
@@ -100,13 +99,13 @@ class FmpUnitFactory(object):
         self.unit_keys = [k.FILE_KEY for k in FmpUnitFactory.available_units if k.FILE_KEY is not None]
         self.units = {}
         for u in FmpUnitFactory.available_units:
-            if u.FILE_KEY is None: continue
+            if u.FILE_KEY is None:
+                continue
             if not u.FILE_KEY in self.units.keys():
                 self.units[u.FILE_KEY] = []
             self.units[u.FILE_KEY].append((u.FILE_KEY2, u))
 
-
-    def createUnitFromFile(self, contents, file_line, file_key, file_order, reach_number = None):
+    def createUnitFromFile(self, contents, file_line, file_key, file_order, reach_number=None):
         """
         """
         # Update reach number info
@@ -169,7 +168,6 @@ class FmpUnitFactory(object):
             self.findIcLabels(unit)
 
         return file_line, unit
-
 
     @staticmethod
     def createUnit(unit_type, **kwargs):
@@ -254,11 +252,11 @@ class FmpUnitFactory(object):
 
         return unit
 
-
     def findIcLabels(self, unit):
         """
         """
-        if not unit.has_ics: return
+        if not unit.has_ics:
+            return
 
         ic_labels = unit.icLabels()
         for l in ic_labels:
@@ -266,7 +264,6 @@ class FmpUnitFactory(object):
                 self._ic_name_types[l] = [unit._unit_type]
             elif not unit._unit_type in self._ic_name_types[l]:
                 self._ic_name_types[l].append(unit._unit_type)
-
 
     def _getReachNumber(self, reach_number):
         """Find whether we need to increase the reach number or not.
@@ -293,7 +290,6 @@ class FmpUnitFactory(object):
         else:
             return self.reach_number
 
-
     def getUnitIdentifiers(self):
         """Returns all the unit identifiers that the object holds.
 
@@ -304,14 +300,3 @@ class FmpUnitFactory(object):
             Dict - unit_identifers dictionary.
         """
         return self.unit_keys
-
-
-
-
-
-
-
-
-
-
-

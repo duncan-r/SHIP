@@ -40,7 +40,6 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-
 class TuflowModel(object):
     """Container for the entire loaded tuflow model.
     """
@@ -71,7 +70,6 @@ class TuflowModel(object):
         self.user_variables = None
         """Class containing the scenario/event/variable keys and values."""
 
-
     @property
     def root(self):
         return self._root
@@ -80,7 +78,6 @@ class TuflowModel(object):
     def root(self, value):
         self._root = value
         self.updateRoot(value)
-
 
     def checkPathsExist(self):
         """Test that all of the filepaths in the TuflowModel exist."""
@@ -185,7 +182,6 @@ class TuflowModel(object):
                 else:
                     yield [val]
 
-
     def removeTcfModelFile(self, model_file):
         """Remove an existing ModelFile from 'TCF' and update ControlFile.
 
@@ -203,7 +199,6 @@ class TuflowModel(object):
 
         self.control_files[model_file.model_type].removeControlFile(model_file)
         self.control_files['TCF'].parts.remove(model_file)
-
 
     def replaceTcfModelFile(self, model_file, control_file, replace_file):
         """Replace an existing ModelFile in 'TCF' and update ControlFile.
@@ -224,9 +219,8 @@ class TuflowModel(object):
             raise AttributeError('model_file already exists in this ControlFile')
 
         self.control_files[replace_file.model_type].replaceControlFile(
-                                    model_file, control_file, replace_file)
+            model_file, control_file, replace_file)
         self.control_files['TCF'].parts.replace(model_file, replace_file)
-
 
     def addTcfModelFile(self, model_file, control_file, **kwargs):
         """Add a new ModelFile instance to a TCF type ControlFile.
@@ -256,7 +250,7 @@ class TuflowModel(object):
             raise AttributeError('model_file already exists in this ControlFile')
 
         self.control_files[model_file.model_type].addControlFile(
-                                        model_file, control_file, **kwargs)
+            model_file, control_file, **kwargs)
         self.control_files['TCF'].parts.add(model_file, **kwargs)
 
 
@@ -270,7 +264,6 @@ class TuflowModel(object):
 #     def resultsByParent(results):
 #         """
 #         """
-
 
 
 class UserVariables(object):
@@ -375,7 +368,6 @@ class UserVariables(object):
             del self.variable[temp_name]
             self.add(filepart)
 
-
     def variablesToDict(self):
         """Get the values of the variables.
 
@@ -391,7 +383,6 @@ class UserVariables(object):
         for vkey, vval in self.variable.items():
             out[vkey] = vval.variable
         return out
-
 
     def seValsToDict(self):
         """Get the values of the scenario and event variables.
@@ -470,15 +461,15 @@ class TuflowFilepartTypes(object):
 
         self.types = {}
         self.types[fpt.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
-                                'READ FILE', 'ESTRY CONTROL FILE',
-                                'EVENT FILE']
+                                 'READ FILE', 'ESTRY CONTROL FILE',
+                                 'EVENT FILE']
         self.types[fpt.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
-                                 'LOG FOLDER']
+                                  'LOG FOLDER']
         self.types[fpt.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
-                              'SHP PROJECTION', 'MI PROJECTION']
-        self.types[fpt.DATA] =  ['READ MATERIALS FILE',
+                               'SHP PROJECTION', 'MI PROJECTION']
+        self.types[fpt.DATA] = ['READ MATERIALS FILE',
                                 'BC DATABASE']
-        self.types[fpt.VARIABLE] =  ['START TIME', 'END TIME', 'TIMESTEP',
+        self.types[fpt.VARIABLE] = ['START TIME', 'END TIME', 'TIMESTEP',
                                     'SET IWL', 'MAP OUTPUT INTERVAL',
                                     'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
                                     'CELL SIDE WET/DRY DEPTH', 'SET IWL',
@@ -502,9 +493,8 @@ class TuflowFilepartTypes(object):
         self.types[fpt.SECTION_LOGIC] = ['DEFINE OUTPUT ZONE', 'END DEFINE']
         self.types[fpt.USER_VARIABLE] = ['SET VARIABLE']
         self.types[fpt.EVENT_VARIABLE] = ['BC EVENT TEXT', 'BC EVENT NAME',
-                                           'BC EVENT SOURCE',]
-        self.types[fpt.MODEL_VARIABLE] = ['MODEL SCENARIOS', 'MODEL EVENTS',]
-
+                                          'BC EVENT SOURCE', ]
+        self.types[fpt.MODEL_VARIABLE] = ['MODEL SCENARIOS', 'MODEL EVENTS', ]
 
     def find(self, find_val, file_type='*'):
         """Checks if the given value is known or not.
@@ -548,7 +538,6 @@ class TuflowFilepartTypes(object):
                 return True, file_type
             return (False, None)
 
-
     def _checkAmbiguity(self, found, find_val, key):
         """Resolves any ambiguity in the keys."""
         f = find_val.replace(' ', '')
@@ -557,4 +546,3 @@ class TuflowFilepartTypes(object):
             return key
         else:
             return self.ambiguous[found][1]
-

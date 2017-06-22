@@ -82,7 +82,6 @@ class ADataRowObject(object):
         self._max = len(self.data_collection)
         self._current = 0
 
-
     @property
     def record_length(self):
         return len(self.data_collection)
@@ -94,7 +93,6 @@ class ADataRowObject(object):
         """Return an iterator for the data_collection list"""
         return iter(self.data_collection)
 
-
     def __next__(self):
         """Iterate to the next item in data_collection list"""
         if self._current > self._max or self._current < self._min:
@@ -103,7 +101,6 @@ class ADataRowObject(object):
             self._current += 1
             return self.data_collection[self._current]
 
-
     def __getitem__(self, key):
         """Gets a value from data_collection using index notation.
 
@@ -111,7 +108,6 @@ class ADataRowObject(object):
             contents of the data_collection element at index.
         """
         return self.data_collection[key]
-
 
     def __setitem__(self, index, value):
         """Sets a value using index notation
@@ -124,7 +120,6 @@ class ADataRowObject(object):
         """
         self.setValue(value, index)
 
-
     def getValue(self, index):
         """Getter for retrieving the value at the supplied index.
 
@@ -135,7 +130,6 @@ class ADataRowObject(object):
             The value at the supplied index.
         """
         return self.data_collection[index]
-
 
     def getPrintableValue(self, index):
         """Getter for the formatted printable value at the supplied index.
@@ -176,7 +170,6 @@ class ADataRowObject(object):
 
         return out_value
 
-
     def addValue(self, value=None, index=None):
         """Adds a value to the data_collection.
 
@@ -192,7 +185,8 @@ class ADataRowObject(object):
         Raises:
             IndexError: If index does not exist.
         """
-        if value == None: value = self.default
+        if value == None:
+            value = self.default
 
         if self.update_callback is not None:
             self.update_callback(self, value, index)
@@ -207,12 +201,11 @@ class ADataRowObject(object):
                 self.data_collection.insert(index, value)
             except IndexError:
                 logger.error('DataObject addValue() index out of bounds')
-                raise IndexError ('DataObject addValue() index out of bounds')
+                raise IndexError('DataObject addValue() index out of bounds')
 
         self.has_changed = True
 #         self.record_length += 1
         self._max = len(self.data_collection)
-
 
     def setValue(self, value, index):
         """Changes the value at the given index
@@ -237,10 +230,9 @@ class ADataRowObject(object):
                 self.data_collection[index] = value
             except IndexError:
                 logger.error('DataObject setValue() index out of bounds')
-                raise IndexError ('DataObject setValue() index out of bounds')
+                raise IndexError('DataObject setValue() index out of bounds')
 
         self.has_changed = True
-
 
     def deleteValue(self, index):
         """Delete value at supplied position in unit.
@@ -255,23 +247,20 @@ class ADataRowObject(object):
             del self.data_collection[index]
         except IndexError:
             logger.error('DataObject deleteValue() index out of bounds')
-            raise IndexError ('DataObject deleteValue() index out of bounds')
+            raise IndexError('DataObject deleteValue() index out of bounds')
 
         self.has_changed = True
 #         self.record_length -= 1
         self._max = len(self.data_collection)
 
-
     def getDataCollection(self):
         return self.data_collection
-
 
     def checkDefault(self, value):
         if self.default == '~' and value == self.default:
             return True
         else:
             return False
-
 
     @abstractmethod
     def formatPrintString(self, value):
@@ -326,8 +315,7 @@ class IntData(ADataRowObject):
         """
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
-
-    def addValue(self, value=None, index = None):
+    def addValue(self, value=None, index=None):
         """Adds a value to the collection.
 
         See Also:
@@ -338,10 +326,9 @@ class IntData(ADataRowObject):
                 value = int(value)
             except ValueError:
                 logger.error('Attempted to add invalid value to IntDataObject')
-                raise ValueError ('Attempted to add invalid value to IntDataObject')
+                raise ValueError('Attempted to add invalid value to IntDataObject')
 
         ADataRowObject.addValue(self, value, index)
-
 
     def setValue(self, value, index):
         """Changes the value at the given index
@@ -353,10 +340,9 @@ class IntData(ADataRowObject):
             value = int(value)
         except ValueError:
             logger.error('Attempted to add invalid value to IntDataObject')
-            raise ValueError ('Attempted to add invalid value to IntDataObject')
+            raise ValueError('Attempted to add invalid value to IntDataObject')
 
         ADataRowObject.setValue(self, value, index)
-
 
     def formatPrintString(self, value):
         """Method for formatting the value to be printed in the .DAT file.
@@ -374,10 +360,9 @@ class IntData(ADataRowObject):
             value = ''
         else:
             integer_format = '%0d'
-            value =  integer_format % int(value)
+            value = integer_format % int(value)
             value = self.format_str.format(value)
         return value
-
 
 
 class FloatData(ADataRowObject):
@@ -386,7 +371,7 @@ class FloatData(ADataRowObject):
     """
 
 #     def __init__(self, row_pos, datatype, format_str='{}', default=None, no_of_dps=0):
-    def __init__(self, datatype, format_str='{}', **kwargs): #default=None, no_of_dps=0):
+    def __init__(self, datatype, format_str='{}', **kwargs):  # default=None, no_of_dps=0):
         """Constructor.
 
         Args:
@@ -407,8 +392,7 @@ class FloatData(ADataRowObject):
         self.no_of_dps = kwargs.get('no_of_dps', 0)
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
-
-    def addValue(self, value=None, index = None):
+    def addValue(self, value=None, index=None):
         """Adds a value to the collection.
 
         See Also:
@@ -419,10 +403,9 @@ class FloatData(ADataRowObject):
                 value = float(value)
             except ValueError:
                 logger.error('Attempted to add invalid value to FloatDataObject')
-                raise ValueError ('Attempted to add invalid value to FloatDataObject')
+                raise ValueError('Attempted to add invalid value to FloatDataObject')
 
         ADataRowObject.addValue(self, value, index)
-
 
     def setValue(self, value, index):
         """Changes the value at the given index
@@ -434,10 +417,9 @@ class FloatData(ADataRowObject):
             value = float(value)
         except ValueError:
             logger.error('Attempted to add invalid value to FloatDataObject')
-            raise ValueError ('Attempted to add invalid value to FloatDataObject')
+            raise ValueError('Attempted to add invalid value to FloatDataObject')
 
         ADataRowObject.setValue(self, value, index)
-
 
     def formatPrintString(self, value):
         """Method for formatting the value to be printed in the .DAT file.
@@ -455,10 +437,9 @@ class FloatData(ADataRowObject):
             value = ''
         else:
             decimal_format = '%0.' + str(self.no_of_dps) + 'f'
-            value =  decimal_format % float(value)
+            value = decimal_format % float(value)
             value = self.format_str.format(value)
         return value
-
 
 
 class StringData(ADataRowObject):
@@ -484,8 +465,7 @@ class StringData(ADataRowObject):
         """
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
-
-    def addValue(self, value=None, index = None):
+    def addValue(self, value=None, index=None):
         """Adds a value to the collection.
 
         See Also:
@@ -496,14 +476,13 @@ class StringData(ADataRowObject):
                 value = str(value)
             except ValueError:
                 logger.error('Attempted to add invalid value to StringDataObject')
-                raise ValueError ('Attempted to add invalid value to StringDataObject')
+                raise ValueError('Attempted to add invalid value to StringDataObject')
 
             # Strip any whitespace off
             value = value.strip()
 
         # Call the superclass part of the method to add it.
         ADataRowObject.addValue(self, value, index)
-
 
     def setValue(self, value, index):
         """Changes the value at the given index
@@ -522,7 +501,6 @@ class StringData(ADataRowObject):
         # Call the superclass to set the value
         ADataRowObject.setValue(self, value, index)
 
-
     def formatPrintString(self, value):
         """Method for formatting the value to be printed in the .DAT file.
 
@@ -540,7 +518,6 @@ class StringData(ADataRowObject):
         else:
             value = self.format_str.format(value)
         return value
-
 
 
 class ConstantData(ADataRowObject):
@@ -570,12 +547,11 @@ class ConstantData(ADataRowObject):
             AttributeError: if legal_values in not a valid tuple.
         """
         if not isinstance(legal_values, tuple):
-            raise AttributeError ('legal_values is not a tuple')
+            raise AttributeError('legal_values is not a tuple')
         self.legal_values = legal_values
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
-
-    def addValue(self, value=None, index = None):
+    def addValue(self, value=None, index=None):
         """Adds a value to the collection.
 
         See Also:
@@ -596,7 +572,6 @@ class ConstantData(ADataRowObject):
         # Call the superclass part of the method to add it.
         ADataRowObject.addValue(self, value, index)
 
-
     def setValue(self, value, index):
         """Changes the value at the given index
 
@@ -608,7 +583,6 @@ class ConstantData(ADataRowObject):
 
         # Call the superclass to set the value
         ADataRowObject.setValue(self, value, index)
-
 
     def formatPrintString(self, value):
         """Method for formatting the value to be printed in the .DAT file.
@@ -630,7 +604,6 @@ class ConstantData(ADataRowObject):
         else:
             value = self.format_str.format(value)
         return value
-
 
 
 class SymbolData(ADataRowObject):
@@ -662,11 +635,10 @@ class SymbolData(ADataRowObject):
             AttributeError: if legal_values in not a valid tuple.
         """
         self.symbol = symbol
-        self.bool_type = bool # Used to test if a value is of type bool or not
+        self.bool_type = bool  # Used to test if a value is of type bool or not
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
-
-    def addValue(self, value=None, index = None):
+    def addValue(self, value=None, index=None):
         """Adds a value to the collection.
 
         See Also:
@@ -681,11 +653,10 @@ class SymbolData(ADataRowObject):
             # Make sure that we are adding a bool type
             if not isinstance(value, self.bool_type):
                 logger.error('Attempted to add invalid value to SymbolDataObject')
-                raise ValueError ('Attempted to add invalid value to SymbolDataObject')
+                raise ValueError('Attempted to add invalid value to SymbolDataObject')
 
         # Call superclass to add the value
         ADataRowObject.addValue(self, value, index)
-
 
     def setValue(self, value, index):
         """Changes the value at the given index
@@ -701,11 +672,10 @@ class SymbolData(ADataRowObject):
         # Make sure that we are adding a bool type
         if not isinstance(value, self.bool_type):
             logger.error('Attempted to add invalid value to SymbolDataObject')
-            raise ValueError ('Attempted to add invalid value to SymbolDataObject')
+            raise ValueError('Attempted to add invalid value to SymbolDataObject')
 
         # Call the superclass to set the value
         ADataRowObject.setValue(self, value, index)
-
 
     def formatPrintString(self, value):
         """Method for formatting the value to be printed in the .DAT file.
@@ -729,5 +699,3 @@ class SymbolData(ADataRowObject):
         else:
             value = self.format_str.format(value)
         return value
-
-

@@ -58,7 +58,6 @@ class RowDataCollection(object):
           data objects in this collection have the same length.
     """
 
-
     def __init__(self, **kwargs):
         """Create a reference to the collection list."""
         self._collection = []
@@ -66,7 +65,6 @@ class RowDataCollection(object):
         self._current_collection = 0
         self._updateCallback = kwargs.get('update_callback', None)
         self.has_dummy = False
-
 
     @classmethod
     def bulkInitCollection(cls, dataobjects, **kwargs):
@@ -104,7 +102,6 @@ class RowDataCollection(object):
                 raise('Index %s does not exist in collection' % index)
         self._max = len(self._collection)
 
-
     def indexOfDataObject(self, key):
         """Get the index of the DataObject with data_type equal to key.
         """
@@ -133,7 +130,6 @@ class RowDataCollection(object):
             for i in range(0, self.row_count):
                 yield self._collection[index].getValue(i)
 
-
     def rowAsDict(self, index):
         """Get the data vals in a particular row by index.
 
@@ -149,7 +145,6 @@ class RowDataCollection(object):
 
         return output
 
-
     def rowAsList(self, index):
         """Get the data vals in a particular row by index.
 
@@ -164,7 +159,6 @@ class RowDataCollection(object):
             output.append(obj.getValue(index))
 
         return output
-
 
     def dataObject(self, name_key):
         """Return the ADataRowObject instance requested.
@@ -189,8 +183,7 @@ class RowDataCollection(object):
             if obj.data_type == name_key:
                 return obj
         else:
-            raise KeyError ('name_key %s was not found in collection' % (name_key))
-
+            raise KeyError('name_key %s was not found in collection' % (name_key))
 
     def dataObjectAsList(self, key):
         """Returns a DataObject as a list.
@@ -217,7 +210,8 @@ class RowDataCollection(object):
         """
         try:
             data_col = self.dataObject(key)
-            if data_col == False: raise KeyError ('Key %s does not exist in collection' % (key))
+            if data_col == False:
+                raise KeyError('Key %s does not exist in collection' % (key))
 
             vals = []
             for i in data_col:
@@ -225,7 +219,6 @@ class RowDataCollection(object):
             return vals
         except KeyError:
             raise
-
 
     def toList(self):
         """Returns the row data a list.
@@ -257,7 +250,6 @@ class RowDataCollection(object):
             outlist.append(innerlist)
         return outlist
 
-
     def toDict(self):
         """Returns the row data object as a dict.
 
@@ -280,7 +272,6 @@ class RowDataCollection(object):
             vals[c.data_type] = inner
         return vals
 
-
     def dataValue(self, key, index):
         """Get the value in a DataObject at index.
 
@@ -301,7 +292,6 @@ class RowDataCollection(object):
                 return val
         else:
             raise KeyError('DataObject %s does not exist in collection' % key)
-
 
     def _addValue(self, key, value=None):
         """Add a new value to the data object in the collection as referenced by
@@ -330,13 +320,12 @@ class RowDataCollection(object):
                 c.addValue(value)
                 break
         else:
-            raise KeyError ('Key %s does not exist in collection' % (key))
+            raise KeyError('Key %s does not exist in collection' % (key))
 
         # Do this after so it's not removed when something goes wrong
         if self.has_dummy:
             self.deleteRow(0)
             self.has_dummy = False
-
 
     def _setValue(self, key, value, index):
         """Set the value to the data object in the collection.
@@ -365,8 +354,7 @@ class RowDataCollection(object):
                 except ValueError:
                     raise
         else:
-            raise KeyError ('Key %s does not exist in collection' % (key))
-
+            raise KeyError('Key %s does not exist in collection' % (key))
 
     def getPrintableRow(self, index):
         """ Get the row data in printable form.
@@ -385,7 +373,6 @@ class RowDataCollection(object):
             out_str += obj.getPrintableValue(index)
 
         return out_str
-
 
     def updateRow(self, row_vals, index, **kwargs):
         """Add a new row to the units data rows.
@@ -448,7 +435,6 @@ class RowDataCollection(object):
                     del o
             del temp_list
 
-
     def addRow(self, row_vals, index=None, **kwargs):
         """Add a new row to the units data rows.
 
@@ -491,7 +477,6 @@ class RowDataCollection(object):
             if not k in dataobj_keys:
                 raise KeyError('ROW_DATA_TYPE ' + str(k) + 'is not in collection')
 
-
         temp_list = None
         try:
             # Need to make a deep copy of the data_object so we can reset them back
@@ -531,7 +516,6 @@ class RowDataCollection(object):
         if self.has_dummy:
             self.deleteRow(0, no_copy=True)
             self.has_dummy = False
-
 
     def deleteRow(self, index, **kwargs):
         """Delete a row from the collection.
@@ -573,7 +557,6 @@ class RowDataCollection(object):
                     del o
             del temp_list
 
-
     def collectionTypes(self):
         """Get a list of the types (names) of all the objects in the collection.
 
@@ -588,7 +571,6 @@ class RowDataCollection(object):
             keys.append(obj.data_type)
 
         return keys
-
 
     def dataObjectCopy(self, name_key):
         """Return the ADataRowObject instance requested.
@@ -611,8 +593,7 @@ class RowDataCollection(object):
                 obj_copy = self._deepCopyDataObjects(obj)
                 return obj_copy
         else:
-            raise KeyError ('name_key %s was not found in collection' % (name_key))
-
+            raise KeyError('name_key %s was not found in collection' % (name_key))
 
     def deleteDataObject(self, name_key):
         """Delete the ADataRowObject instance requested.
@@ -632,7 +613,6 @@ class RowDataCollection(object):
         else:
             return False
 
-
     def setDummyRow(self, row_vals):
         """Sets a special 'dummy row' as a placeholder until actual values.
 
@@ -649,7 +629,6 @@ class RowDataCollection(object):
             self.deleteRow(0, no_copy=True)
         self.has_dummy = True
 
-
     def numberOfRows(self):
         """Return the number of rows held in the collection
 
@@ -663,7 +642,6 @@ class RowDataCollection(object):
             return 0
         else:
             return len(self._collection[0])
-
 
     def checkRowsInSync(self):
         """Checks that the data objects in the collection are in sync.
@@ -687,7 +665,6 @@ class RowDataCollection(object):
 
         return lengths[1:] == lengths[:-1]
 
-
     def _resetDataObject(self, temp_list):
         """Reset the data_objects list to its previous state.
 
@@ -703,13 +680,9 @@ class RowDataCollection(object):
             del o
         del temp_list
 
-
     def _deepCopyDataObjects(self, obj):
         """Create a deep copy of the data_objects
 
         """
         object_copy = copy.deepcopy(obj)
         return object_copy
-
-
-

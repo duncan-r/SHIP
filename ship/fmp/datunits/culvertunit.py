@@ -37,7 +37,6 @@ class CulvertUnit(AUnit):
     UNIT_CATEGORY = 'culvert'
     FILE_KEY = 'CULVERT'
     FILE_KEY2 = None
-    
 
     def __init__(self):
         '''Constructor.
@@ -45,12 +44,10 @@ class CulvertUnit(AUnit):
         AUnit.__init__(self)
         self._unit_type = CulvertUnit.UNIT_TYPE
         self._unit_category = CulvertUnit.UNIT_CATEGORY
-    
-    
+
     def icLabels(self):
         """Overriddes superclass method."""
         return [self._name, self._name_ds]
-
 
     def linkLabels(self):
         """Overriddes superclass method."""
@@ -58,20 +55,20 @@ class CulvertUnit(AUnit):
 
 
 class CulvertUnitInlet(CulvertUnit):
-    
+
     # Class constants
     UNIT_TYPE = 'culvert_inlet'
     UNIT_CATEGORY = 'culvert'
     FILE_KEY = 'CULVERT'
     FILE_KEY2 = 'INLET'
-    
+
     def __init__(self, **kwargs):
         '''Constructor.
         '''
         CulvertUnit.__init__(self, **kwargs)
         self._unit_type = CulvertUnitInlet.UNIT_TYPE
         self._unit_category = CulvertUnitInlet.UNIT_CATEGORY
-        
+
         self.head_data = {
             'comment': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
             'k': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=4),
@@ -89,13 +86,12 @@ class CulvertUnitInlet(CulvertUnit):
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 3, 6, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
         }
 
-        
     def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
-        
+
         See Also:
             isisunit.
-        
+
         Args:
             unit_data (list): The raw file data to be processed.
         '''
@@ -116,22 +112,21 @@ class CulvertUnitInlet(CulvertUnit):
         self.head_data['headloss_type'].value = unit_data[file_line + 4][50:60].strip()
         self.head_data['trashscreen_height'].value = unit_data[file_line + 4][60:].strip()
         return file_line + 4
-        
-        
+
     def getData(self):
         '''Returns the formatted data for this unit. 
-        
+
         See Also:
             isisunit.
-        
+
         Returns:
             List of strings formatted for writing to the new dat file.
         '''
         out = []
         out.append('CULVERT ' + self.head_data['comment'].value)
         out.append('\nINLET')
-        out.append('\n'+'{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
-        
+        out.append('\n' + '{:<12}'.format(self._name) + '{:<12}'.format(self._name_ds))
+
         key_order = ['k', 'm', 'c', 'y', 'ki', 'conduit_type', 'screen_width',
                      'bar_proportion', 'debris_proportion', 'loss_coef',
                      'reverse_flow_model', 'headloss_type', 'trashscreen_height']
@@ -142,13 +137,13 @@ class CulvertUnitInlet(CulvertUnit):
 
 
 class CulvertUnitOutlet(CulvertUnit):
-    
+
     # Class constants
     UNIT_TYPE = 'culvert_outlet'
     CATEGORY = 'culvert'
     FILE_KEY = 'CULVERT'
-    FILE_KEY2= 'OUTLET'
-    
+    FILE_KEY2 = 'OUTLET'
+
     def __init__(self):
         CulvertUnit.__init__(self)
         self._unit_type = CulvertUnitOutlet.UNIT_TYPE
@@ -161,13 +156,12 @@ class CulvertUnitOutlet(CulvertUnit):
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 2, 2, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
         }
 
-    
     def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
-        
+
         See Also:
             isisunit.
-        
+
         Args:
             unit_data (list): The raw file data to be processed.
         '''
@@ -178,28 +172,23 @@ class CulvertUnitOutlet(CulvertUnit):
         self.head_data['reverse_flow_model'].value = unit_data[file_line + 3][10:20].strip()
         self.head_data['headloss_type'].value = unit_data[file_line + 3][20:].strip()
         return file_line + 3
-        
-        
+
     def getData(self):
         '''Returns the formatted data for this unit. 
-        
+
         See Also:
             isisunit.
-        
+
         Returns:
             List of strings formatted for writing to the new dat file.
         '''
         out = []
         out.append('CULVERT ' + self.head_data['comment'].value)
         out.append('\nOUTLET')
-        out.append('\n'+'{:>12}'.format(self._name) + '{:>12}'.format(self._name_ds))
-        
+        out.append('\n' + '{:>12}'.format(self._name) + '{:>12}'.format(self._name_ds))
+
         key_order = ['loss_coef', 'reverse_flow_model', 'headloss_type']
         for k in key_order:
             out.append(self.head_data[k].format(True))
         out_data = ''.join(out).split('\n')
         return out_data
-    
-    
-        
-        

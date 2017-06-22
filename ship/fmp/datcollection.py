@@ -66,17 +66,15 @@ class DatCollection(object):
         """
         self.units = []
         self.path_holder = path_holder
-        self._ic_index  = -999 # DON'T MESS WITH THIS!
-        self._gis_index = -999 # DON'T MESS WITH THIS!
+        self._ic_index = -999  # DON'T MESS WITH THIS!
+        self._gis_index = -999  # DON'T MESS WITH THIS!
         self._min = 0
         self._max = len(self.units)
         self._current = 0
 
-
     def __iter__(self):
         """Return an iterator for the units list"""
         return iter(self.units)
-
 
     def __next__(self):
         """Iterate to the next unit"""
@@ -85,7 +83,6 @@ class DatCollection(object):
         else:
             self._current += 1
             return self.units[self._current]
-
 
     def __getitem__(self, key):
         """Gets a value from units using index notation.
@@ -112,7 +109,6 @@ class DatCollection(object):
         header = self.units[0]
         return header.head_data['node_count'].value
 
-
     def addUnit(self, unit, index=None, **kwargs):
         """Adds a new isisunit type to the collection.
 
@@ -137,7 +133,7 @@ class DatCollection(object):
             AttributeError: When a non-isisunit type is given.
         """
         if not isinstance(unit, AUnit):
-            raise AttributeError ('Given unit is not of type AUnit')
+            raise AttributeError('Given unit is not of type AUnit')
         update_node_count = kwargs.get('update_node_count', True)
         ics = kwargs.get('ics', {})
 
@@ -146,7 +142,7 @@ class DatCollection(object):
             They are always at the top and bottom af the file.
         '''
         if unit._unit_type == 'header' or unit._unit_type == 'gis_info' or \
-                                          unit._unit_type == 'initial_conditions':
+                unit._unit_type == 'initial_conditions':
             if unit._unit_type == 'header':
                 if self.units and self.units[0]._unit_type == 'header':
                     self.units[0] = unit
@@ -156,7 +152,7 @@ class DatCollection(object):
             elif unit._unit_type == 'gis_info':
                 if self._gis_index == -999:
                     self.units.append(unit)
-                    self._gis_index = len(self.units) -1
+                    self._gis_index = len(self.units) - 1
                 else:
                     self.units[self._gis_index] = unit
 
@@ -169,7 +165,7 @@ class DatCollection(object):
                     # goes on the end
                     if self._gis_index == -999:
                         self.units.append(unit)
-                        self._ic_index = len(self.units) -1
+                        self._ic_index = len(self.units) - 1
                     else:
                         self.units.insert(self._gis_index, unit)
                         self._ic_index = self._gis_index - 1
@@ -180,7 +176,8 @@ class DatCollection(object):
         '''
             All the others.
         '''
-        if index is None: index = len(self.units)
+        if index is None:
+            index = len(self.units)
 
         # Check if we need to go in front of ic and gis end of file units
         if self._ic_index != -999 and index > self._ic_index:
@@ -193,8 +190,10 @@ class DatCollection(object):
 
         if index is not None:
             self.units.insert(index, unit)
-            if self._ic_index != -999: self._ic_index += 1
-            if self._gis_index != -999: self._gis_index += 1
+            if self._ic_index != -999:
+                self._ic_index += 1
+            if self._gis_index != -999:
+                self._gis_index += 1
 
         self._max = len(self.units)
 
@@ -206,7 +205,6 @@ class DatCollection(object):
                 node_count = self.units[self._ic_index].addRow(ics, unit._unit_type,
                                                                **kwargs)
                 header.head_data['node_count'].value = node_count
-
 
     def removeUnit(self, unit, unit_type=None, **kwargs):
         """Remove one of the units previously added to the list.
@@ -259,7 +257,6 @@ class DatCollection(object):
         else:
             return False
 
-
     def index(self, unit, unit_type=None):
         """Get the index a particular AUnit in the collection.
 
@@ -296,7 +293,6 @@ class DatCollection(object):
 
         return index
 
-
     def getPrintableContents(self):
         """Get the formatted contents of each isisunit in the collection.
 
@@ -317,7 +313,6 @@ class DatCollection(object):
             out_data.extend(u.getData())
 
         return out_data
-
 
     def write(self, filepath=None, overwrite=False):
         """Write the contents of this file to disk.
@@ -348,7 +343,6 @@ class DatCollection(object):
         contents = self.getPrintableContents()
         ft.writeFile(contents, filepath)
 
-
     def unitsByCategory(self, unit_keys):
         """Return all the units in the requested unit(s).
 
@@ -378,7 +372,6 @@ class DatCollection(object):
                 types.append(u)
 
         return types
-
 
     def unitsByType(self, type_keys):
         """Return all of the units of the requested type.
@@ -415,7 +408,6 @@ class DatCollection(object):
 
         return types
 
-
     def allUnits(self):
         """Get all of the isisunit in the collection
 
@@ -431,7 +423,6 @@ class DatCollection(object):
             by setting up a property if needed.
         """
         return self.units
-
 
     def unit(self, key, unit_type=None, unit_category=None):
         """Fetch a unit from the collection by name.
@@ -483,7 +474,6 @@ class DatCollection(object):
         else:
             return False
 
-
     def setUnit(self, unit):
         """Replace the contents of a certain unit with the given one.
 
@@ -514,7 +504,6 @@ class DatCollection(object):
             if u.name == unit.name:
                 self.units[i] = unit
 
-
     def numberOfUnits(self):
         """The number of units currently held in the collection.
 
@@ -523,14 +512,13 @@ class DatCollection(object):
         """
         return len(self.units)
 
-
     def linkedUnits(self, unit):
         """
         """
         linksect = ugroups.LinkedUnits(unit)
         index = self.index(unit)
-        linksect.addLinkedUnit(self.units[index-1], 'upstream')
-        linksect.addLinkedUnit(self.units[index+1], 'downstream')
+        linksect.addLinkedUnit(self.units[index - 1], 'upstream')
+        linksect.addLinkedUnit(self.units[index + 1], 'downstream')
 
         unit_links = [val for val in unit.linkLabels().values() if val.strip() != '']
         unit_links = set(unit_links)
@@ -572,7 +560,7 @@ class DatCollection(object):
                 for link in junc[1]:
                     for index in temp_locations[link]:
                         if not self.units[index] in junctions[i][1] and not \
-                                    self.units[index].unit_type == 'junction':
+                                self.units[index].unit_type == 'junction':
                             junctions[i][1].append(self.units[index])
 
         linksect.named_units = associates
@@ -584,7 +572,6 @@ class DatCollection(object):
         del temp_locations
 
         return linksect
-
 
     @classmethod
     def initialisedDat(cls, dat_path, units=[], **kwargs):
@@ -617,7 +604,7 @@ class DatCollection(object):
         Return:
             DatCollection - setup as an empty ISIS .dat file.
         """
-        unit_kwargs = kwargs.get('unit_kwargs', [{}]*len(units))
+        unit_kwargs = kwargs.get('unit_kwargs', [{}] * len(units))
         if not len(unit_kwargs) == len(units):
             raise ValueError('unit_kwargs kwarg must be the same length as unit or not be given')
 
@@ -632,4 +619,3 @@ class DatCollection(object):
         for i, u in enumerate(units):
             dat.addUnit(u, **unit_kwargs[i])
         return dat
-

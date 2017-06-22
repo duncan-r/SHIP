@@ -58,7 +58,7 @@ class ATool(object):
 
     __metaclass__ = ABCMeta
 
-    def init(self, observer = None):
+    def init(self, observer=None):
         """Constructor.
 
         Takes in an instance of an observer to register it.
@@ -69,8 +69,7 @@ class ATool(object):
         # A collection of the Observer object passed to the
         # concrete class.
         self.observers = []
-        self.registerObserver(observer);
-
+        self.registerObserver(observer)
 
     def registerObserver(self, observer):
         """Add an observer to the collection of observers in the list.
@@ -78,8 +77,7 @@ class ATool(object):
         Args:
             observer(object): object to add to the observer list
         """
-        self.observers.append(observer);
-
+        self.observers.append(observer)
 
     def unregisterObserver(self, o):
         """Remove an observer from the list of observers.
@@ -89,12 +87,10 @@ class ATool(object):
         """
         self.observers.remove(o)
 
-
     def notifyObserversProgress(self, progress):
         """Notify all the current observers of a progress update"""
         for o in self.observers:
             o.updateObserver(progress)
-
 
     def updateObserversTotal(self, progress):
         """Notify all of the current observers of what we expect the total
@@ -105,7 +101,6 @@ class ATool(object):
         """
         for o in self.observers:
             o.updateObserverTotal(progress)
-
 
     def notifyObserversProgressName(self, name):
         """Notify all Observers of the name of the current progress.
@@ -119,5 +114,3 @@ class ATool(object):
         """
         for o in self.observers:
             o.updateObserverProcessName(name)
-
-

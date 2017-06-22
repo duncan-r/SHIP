@@ -50,6 +50,7 @@ except Exception:
     logger.warning('Unable to load Qt modules - cannot launch file dialogues')
     HAS_QT = False
 
+
 class MyFileDialogs(QtGui.QFileDialog):
     """Class for launching file dialogs.
 
@@ -100,7 +101,6 @@ class MyFileDialogs(QtGui.QFileDialog):
                 logger.info('User cancelled file open process')
                 return False
 
-
     def saveFileDialog(self, path='', file_types='ALL (*.*)'):
         """Launches an save-file dialog
 
@@ -122,7 +122,6 @@ class MyFileDialogs(QtGui.QFileDialog):
             logger.info('User cancelled file save process')
             return False
 
-
     def dirFileDialog(self, path=''):
         """Launches a dialog to choose directories from.
 
@@ -133,8 +132,8 @@ class MyFileDialogs(QtGui.QFileDialog):
             str - containing the chosen file path or False if cancelled.
         """
         file_path = str(QtGui.QFileDialog.getExistingDirectory(self,
-                    caption='Select Directory', directory=path,
-                    options=QtGui.QFileDialog.ShowDirsOnly))
+                                                               caption='Select Directory', directory=path,
+                                                               options=QtGui.QFileDialog.ShowDirsOnly))
 
         if not file_path == '':
             logger.info('Selected directory: Filepath = ' + file_path)
@@ -144,7 +143,6 @@ class MyFileDialogs(QtGui.QFileDialog):
             return False
 
 
-
 class QNumericSortTableWidgetItem (QtGui.QTableWidgetItem):
     """Custom implementation of the QTableWidgetItem class.
 
@@ -152,10 +150,10 @@ class QNumericSortTableWidgetItem (QtGui.QTableWidgetItem):
     operator to do a numerical comparision.
     """
 
-    def __init__ (self, value):
+    def __init__(self, value):
         super(QNumericSortTableWidgetItem, self).__init__(QtCore.QString('%s' % value))
 
-    def __lt__ (self, other):
+    def __lt__(self, other):
         """Check order of two values.
 
         Tries to convert the value to a float. If successful it will return
@@ -172,7 +170,7 @@ class QNumericSortTableWidgetItem (QtGui.QTableWidgetItem):
         """
         if (isinstance(other, QNumericSortTableWidgetItem)):
             try:
-                self_data_value  = float(self.data(QtCore.Qt.EditRole).toString())
+                self_data_value = float(self.data(QtCore.Qt.EditRole).toString())
                 other_data_value = float(other.data(QtCore.Qt.EditRole).toString())
             except:
                 return QtGui.QTableWidgetItem.__lt__(self, other)

@@ -42,7 +42,7 @@ def interpolateGaps(y_vals, space):
     depths = sorted(y_vals)
     location = len(y_vals) - 1
     while location > 0:
-        diff = depths[location] - depths[location-1]
+        diff = depths[location] - depths[location - 1]
         if diff > space:
             no_insert = int(diff / space)
 
@@ -57,7 +57,7 @@ def interpolateGaps(y_vals, space):
 
 
 def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
-                        no_panels=False, interpolate_space=0, tolerance=0.0):
+                   no_panels=False, interpolate_space=0, tolerance=0.0):
     """Calculate conveyance over a range of depths from min to max elevation.
 
     Args:
@@ -108,12 +108,11 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         # If not n vals supplied set up some defaults
         if not isinstance(n_vals, list):
             if not n_vals == None:
-                n_vals= [n_vals] * len(x_vals)
+                n_vals = [n_vals] * len(x_vals)
             else:
                 n_vals = [0.04] * len(x_vals)
 
         return depths, n_vals
-
 
     def buildSections(x_vals, y_vals, n_vals, panel_vals, no_panels):
         """Create the section setups needed based on the inputs
@@ -137,17 +136,17 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         # of the data provided. Otherwise create multiple sections split on
         # panel markers indices
         if len(panel_vals) < 1 or no_panels == True:
-                x_arr = x_vals
-                y_arr = y_vals
-                n_arr = n_vals
-                all_sections.append([x_arr, y_arr, n_arr])
+            x_arr = x_vals
+            y_arr = y_vals
+            n_arr = n_vals
+            all_sections.append([x_arr, y_arr, n_arr])
 
         else:
             indices = [i for i, x in enumerate(panel_vals) if x == True]
             start = 0
             for i in indices:
-                x_arr = x_vals[start:i+1]
-                y_arr = y_vals[start:i+1]
+                x_arr = x_vals[start:i + 1]
+                y_arr = y_vals[start:i + 1]
                 n_arr = n_vals[start:i]
                 all_sections.append([x_arr, y_arr, n_arr])
                 start = i
@@ -158,7 +157,6 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
             all_sections.append([x_arr, y_arr, n_arr])
 
         return all_sections
-
 
     def calcSectionK(section, depth):
         """Calculate conveyance (K) for each section at the given depth.
@@ -189,10 +187,10 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         for i in range(1, len(section[0])):
 
             x1 = section[0][i]
-            x2 = section[0][i-1]
+            x2 = section[0][i - 1]
             y1 = section[1][i]
-            y2 = section[1][i-1]
-            n = section[2][i-1]
+            y2 = section[1][i - 1]
+            n = section[2][i - 1]
 
             miny, maxy, same_val = utilfunc.findMax(y1, y2)
 
@@ -202,7 +200,7 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
 
             else:
                 height = maxy - miny
-                width = abs(x1-x2)
+                width = abs(x1 - x2)
 
                 # Need to scale the triangle because the depth is lower than
                 # the top of the x/y triangle. Reduce x by the same factor as
@@ -232,9 +230,8 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
                 # panel calcs list.
                 nxwp = n * wp
                 addToPanel(area, wp, nxwp)
-                #print 'Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f' % (depth, area, wp, nxwp)
+                # print 'Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f' % (depth, area, wp, nxwp)
         return panel_data
-
 
     depths, n_vals = checkVars(x_vals, n_vals, depths)
     all_sections = buildSections(x_vals, y_vals, n_vals, panel_vals, no_panels)
@@ -253,15 +250,15 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         # x/y pair before using to calculate conveyance.
         for section in all_sections:
 
-            panel_data =  calcSectionK(section, d)
+            panel_data = calcSectionK(section, d)
             total_area = sum(panel_data['area'])
             total_wp = sum(panel_data['wp'])
             total_nxwp = sum(panel_data['nxwp'])
 
             if not total_wp == 0.0:
-                panel_k = ( (total_area**5.0 / total_wp**2.0 )**(1.0/3.0) ) * ( total_wp / total_nxwp )
-                #print 'Panel totals'
-                #print 'Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f' % (d, total_area, total_wp, total_nxwp)
+                panel_k = ((total_area**5.0 / total_wp**2.0)**(1.0 / 3.0)) * (total_wp / total_nxwp)
+                # print 'Panel totals'
+                # print 'Stage = %f  :  Area = %f  :  WP = %f  :  NxWP = %f' % (d, total_area, total_wp, total_nxwp)
             else:
                 panel_k = 0.0
 
@@ -276,10 +273,7 @@ def calcConveyance(x_vals, y_vals, panel_vals=[], n_vals=None, depths=[],
         previous_k = depth_k
 
         results.append([depth_k, d, negative])
-        #print 'Depth Totals'
-        #print 'Conveyance at depth: %f  =  %f\n' % (d, depth_k)
+        # print 'Depth Totals'
+        # print 'Conveyance at depth: %f  =  %f\n' % (d, depth_k)
 
     return results, has_negative
-
-
-

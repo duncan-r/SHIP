@@ -48,7 +48,6 @@ class LinkedUnits(object):
         self.named_unit = []
         self.junctions = []
 
-
     def addLinkedUnit(self, unit, link_type, additionals=None):
         """Add a unit to this LinkedUnits contents.
 
@@ -69,5 +68,3 @@ class LinkedUnits(object):
             self.junctions.append((unit, None))
             if additionals:
                 self.junctions[-1][1] = additionals
-
-

@@ -45,8 +45,8 @@ class Ief(object):
     Class data and a methods for accessing and upating the .ief file.
     """
 
-    def __init__(self, path_holder, header, details, snapshots = None,
-                                    ied_data = None, description = None):
+    def __init__(self, path_holder, header, details, snapshots=None,
+                 ied_data=None, description=None):
         """Constructor.
 
         Args:
@@ -71,7 +71,6 @@ class Ief(object):
         self.ied_data = ied_data
         self.description = description
         self.path_holder = path_holder
-
 
     def getFilePaths(self):
         """Returns all the file paths that occur in the ief file.
@@ -121,7 +120,6 @@ class Ief(object):
 
         return paths_dict
 
-
     def getValue(self, key):
         """Get a value from one of the variables dictionaries.
 
@@ -145,7 +143,6 @@ class Ief(object):
         elif key in self.event_details.keys():
             return self.event_details[key]
 
-
     def getIedData(self):
         """Get all of the ied data stored in this object.
 
@@ -162,7 +159,6 @@ class Ief(object):
             return []
         else:
             return self.ied_data
-
 
     def getSnapshots(self):
         """Get all of the snapshot data stored in this object.
@@ -182,11 +178,9 @@ class Ief(object):
         else:
             self.snapshots
 
-
     def getDescription(self):
         """Returns the description component of the ief."""
         return self.description
-
 
     def setValue(self, key, value):
         """Set the value of one of dictionary entries in the ief.
@@ -211,7 +205,6 @@ class Ief(object):
         else:
             self.event_details[key] = value
 
-
     def addIedFile(self, ied_path, name=''):
         """Add a new ied file.
 
@@ -219,9 +212,9 @@ class Ief(object):
             ied_path(str): path to an ied file.
             name=''(str): name for the ied file.
         """
-        if self.ied_data is None: self.ied_data = []
+        if self.ied_data is None:
+            self.ied_data = []
         self.ied_data.append({'name': name, 'file': ied_path})
-
 
     def addSnapshot(self, snapshot_path, time):
         """Add a new snapshot.
@@ -230,12 +223,12 @@ class Ief(object):
             snapshot_path(str): the path for the snapshot.
             time(float): the time to assign to the snapshot.
         """
-        if self.snapshots is None: self.snapshots = []
+        if self.snapshots is None:
+            self.snapshots = []
         if not uf.isNumeric(time):
-            raise ValueError ('time is not a numeric value')
+            raise ValueError('time is not a numeric value')
 
         self.snapshots.append({'time': time, 'file': snapshot_path})
-
 
     def _findVarInDictionary(self, the_dict, key):
         """Returns the variable in a dictionary.
@@ -257,7 +250,6 @@ class Ief(object):
             return False
 
         return variable
-
 
     def getPrintableContents(self):
         """Return the contents of the file for printing.
@@ -310,14 +302,13 @@ class Ief(object):
 
         # Finally, if there's a description add it on.
         if not self.description == None and not len(self.description) < 1 \
-                                        and not self.description[0] == '':
+                and not self.description[0] == '':
 
             contents.append('[Description]')
             for i, d in enumerate(self.description):
                 contents.append(d)
 
         return contents
-
 
     def write(self, filepath=None, overwrite=False):
         """Write the contents of this file to disk.
@@ -347,5 +338,3 @@ class Ief(object):
 
         contents = self.getPrintableContents()
         ft.writeFile(contents, filepath)
-
-

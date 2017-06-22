@@ -39,9 +39,8 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 from ship.tuflow.tuflowfilepart import TuflowPart, TuflowFile, TuflowLogic, \
-                                       TuflowVariable, ModelFile, UnknownPart
+    TuflowVariable, ModelFile, UnknownPart
 from ship.utils import filetools
-
 
 
 class ControlFile(object):
@@ -52,7 +51,6 @@ class ControlFile(object):
         self.logic = LogicHolder(remove_callback=self.removeLogicPart,
                                  add_callback=self.addLogicPart)
         self.control_files = []
-
 
     def files(self, filepart_type=None, no_duplicates=True, se_vals=None,
               **kwargs):
@@ -78,7 +76,7 @@ class ControlFile(object):
                                   se_vals, **kwargs)
 
     def variables(self, filepart_type=None, no_duplicates=True, se_vals=None,
-              **kwargs):
+                  **kwargs):
         """Get all the ATuflowVariable types that match the criteria.
 
         TuflowPart's will be returned in order.
@@ -106,13 +104,13 @@ class ControlFile(object):
         ignore_inactive = kwargs.get('ignore_active', True)
         vars = []
         for logic in self.logic:
-            if ignore_inactive and not logic.active: continue
+            if ignore_inactive and not logic.active:
+                continue
             if filepart_type is not None and logic.filepart_type != filepart_type:
                 continue
             vars.append(logic)
 
         return vars
-
 
     def fetchPartType(self, instance_type, filepart_type=None, no_duplicates=True,
                       se_vals=None, **kwargs):
@@ -164,13 +162,18 @@ class ControlFile(object):
         vars = []
         parents = {}
         for part in self.parts:
-            if active_only and not part.active: continue
-            if not isinstance(part, instance_type): continue
-            if filepart_type and not part.filepart_type in filepart_type: continue
-            if part.filepart_type in exclude: continue
+            if active_only and not part.active:
+                continue
+            if not isinstance(part, instance_type):
+                continue
+            if filepart_type and not part.filepart_type in filepart_type:
+                continue
+            if part.filepart_type in exclude:
+                continue
 
             if se_vals is not None:
-                if not self.checkPartLogic(part, se_vals): continue
+                if not self.checkPartLogic(part, se_vals):
+                    continue
 
             if no_duplicates:
                 if part.command in found_commands and not fetch_sibling:
@@ -253,7 +256,6 @@ class ControlFile(object):
             if take:
                 yield[value]
 
-
     def filepaths(self, filepart_type=None, absolute=False, no_duplicates=True,
                   no_blanks=True, se_vals=None, **kwargs):
         """Get all the TuflowFile filepaths that match the criteria.
@@ -297,21 +299,28 @@ class ControlFile(object):
         paths = []
         parents = {}
         for part in self.parts:
-            if active_only and not part.active: continue
+            if active_only and not part.active:
+                continue
             p = None
-            if not isinstance(part, TuflowFile): continue
-            if filepart_type and not part.filepart_type in filepart_type: continue
-            if part.filepart_type in exclude: continue
+            if not isinstance(part, TuflowFile):
+                continue
+            if filepart_type and not part.filepart_type in filepart_type:
+                continue
+            if part.filepart_type in exclude:
+                continue
             if se_vals is not None:
-                if not self.checkPartLogic(part, se_vals): continue
+                if not self.checkPartLogic(part, se_vals):
+                    continue
 
             if absolute:
                 p = part.absolutePath(user_vars)
             else:
                 p = part.filenameAndExtension(user_vars)
 
-            if no_duplicates and p in paths: continue
-            if no_blanks and p.strip() == '': continue
+            if no_duplicates and p in paths:
+                continue
+            if no_blanks and p.strip() == '':
+                continue
             if p is not None:
                 if by_parent:
                     if not part.associates.parent.filenameAndExtension() in parents.keys():
@@ -324,7 +333,6 @@ class ControlFile(object):
             return parents
         else:
             return paths
-
 
     def checkPartLogic(self, part, se_vals):
         """Check that the part or it's parents are inside the current logic terms.
@@ -341,7 +349,6 @@ class ControlFile(object):
         output = part.isInSeVals(se_vals)
         return output
 
-
     def checkPathsExist(self, se_vals=None, **kwargs):
         """Check that all of the TuflowFile type's absolute paths exist.
 
@@ -355,8 +362,10 @@ class ControlFile(object):
         active_only = kwargs.get('active_only', True)
         failed = []
         for part in self.parts:
-            if active_only and not part.active: continue
-            if not isinstance(part, TuflowFile): continue
+            if active_only and not part.active:
+                continue
+            if not isinstance(part, TuflowFile):
+                continue
             if not os.path.exists(part.absolutePath()):
                 failed.append(part)
         return failed
@@ -412,18 +421,21 @@ class ControlFile(object):
         open_logic = 0
 
         for p in self.parts:
-            if not p.associates.parent in parents: continue
+            if not p.associates.parent in parents:
+                continue
             if not cur_ctrl == p.associates.parent.hash:
                 cur_ctrl = p.associates.parent.hash
             if not cur_ctrl in out.keys():
-                out[cur_ctrl] = []; logic_stack[cur_ctrl] = []; logic_group[cur_ctrl] = []
+                out[cur_ctrl] = []
+                logic_stack[cur_ctrl] = []
+                logic_group[cur_ctrl] = []
                 parent_indents[cur_ctrl] = 0
 
             part_active = False
             if active_only and p.active:
                 part_active = True
-            if se_vals is None or (se_vals is not None and \
-                                                self.checkPartLogic(p, se_vals)):
+            if se_vals is None or (se_vals is not None and
+                                   self.checkPartLogic(p, se_vals)):
                 part_active = True
 
             # Get any logic clauses that appear above this part
@@ -431,7 +443,7 @@ class ControlFile(object):
                 # Helps track open logic clauses when parts are inactive
                 logic_clause = []
                 logic_clause = p.associates.logic.getPrintableContents(
-                                                            p, logic_clause)
+                    p, logic_clause)
                 for i, l in enumerate(logic_clause):
                     open_logic += 1
                     out[cur_ctrl].append(createIndent(parent_indents[cur_ctrl]) + l)
@@ -459,7 +471,6 @@ class ControlFile(object):
                 out[path] = out.pop(c.hash)
         return out
 
-
     def write(self, overwrite=False, **kwargs):
         """Write the control files to disk.
 
@@ -484,9 +495,8 @@ class ControlFile(object):
                 raise IOError('File %s already exists. Use overwrite=True to ignore this warning' % ckey)
 
         for ckey, cval in contents.items():
-            i=0
+            i = 0
             filetools.writeFile(cval, ckey)
-
 
     def removeLogicPart(self, remove_part, last_part):
         """Called when a TuflowPart is removed from a TuflowLogic.
@@ -516,7 +526,6 @@ class ControlFile(object):
             next_part = self.parts[last_index]
             self.parts.add(remove_part, before=next_part)
 
-
     def addLogicPart(self, add_part, adjacent_part, **kwargs):
         """Called when a TuflowPart is added to a TuflowLogic.
 
@@ -533,14 +542,15 @@ class ControlFile(object):
         """
         after = kwargs.get('after', False)
         before = kwargs.get('before', False)
-        if not after and not before: after = True
-        if after and before: after = True
+        if not after and not before:
+            after = True
+        if after and before:
+            after = True
 
         if after:
             self.parts.add(add_part, after=adjacent_part)
         else:
             self.parts.add(add_part, before=adjacent_part)
-
 
     def contains(self, se_vals=None, **kwargs):
         """Find TuflowPart variables that contain a particular string or value.
@@ -577,7 +587,8 @@ class ControlFile(object):
             if active_only and not part.active:
                 continue
             if se_vals is not None:
-                if not self.checkPartLogic(part, se_vals): continue
+                if not self.checkPartLogic(part, se_vals):
+                    continue
 
             if parent_filename:
                 try:
@@ -586,8 +597,10 @@ class ControlFile(object):
                             out = part
                     elif parent_filename in part.associates.parent.filename.upper():
                         out = part
-                    else: continue
-                except AttributeError: continue
+                    else:
+                        continue
+                except AttributeError:
+                    continue
             if command:
                 try:
                     if exact:
@@ -595,8 +608,10 @@ class ControlFile(object):
                             out = part
                     elif command in part.command.upper():
                         out = part
-                    else: continue
-                except AttributeError: continue
+                    else:
+                        continue
+                except AttributeError:
+                    continue
             if variable:
                 try:
                     if exact:
@@ -604,8 +619,10 @@ class ControlFile(object):
                             out = part
                     elif variable in part.variable.upper():
                         out = part
-                    else: continue
-                except AttributeError: continue
+                    else:
+                        continue
+                except AttributeError:
+                    continue
             if filename:
                 try:
                     if exact:
@@ -613,8 +630,10 @@ class ControlFile(object):
                             out = part
                     if filename in part.filename.upper():
                         out = part
-                    else: continue
-                except AttributeError: continue
+                    else:
+                        continue
+                except AttributeError:
+                    continue
 
             if out is not None:
                 results.append(out)
@@ -661,7 +680,6 @@ class ControlFile(object):
 
         return parts, first_index, last_index
 
-
     def controlFileIndices(self, parent_file, **kwargs):
         """Get the last index of TuflowParts with particular parent.
 
@@ -700,7 +718,8 @@ class ControlFile(object):
         c_part, c_sindex, c_eindex = self.allParentHashes(parent_file.hash, self.control_files)
         out = {}
         do_all = False
-        if start == end == both == parts == False: do_all = True
+        if start == end == both == parts == False:
+            do_all = True
         if start or both or do_all:
             out['start_part'] = p_sindex
             out['start_logic'] = l_sindex
@@ -715,7 +734,6 @@ class ControlFile(object):
             out['part_cfile'] = c_part
 
         return out
-
 
     def removeControlFile(self, model_file):
         """Remove the contents of an existing ControlFile.
@@ -753,7 +771,6 @@ class ControlFile(object):
         for c in to_delete:
             self.control_files.remove(c)
 
-
     def addControlFile(self, model_file, control_file, **kwargs):
         """Add the contents of a new ControlFile to this ControlFile.
 
@@ -781,15 +798,14 @@ class ControlFile(object):
 
         if after is not None:
             indices = self.controlFileIndices(after, end=True)
-            self.parts.parts[indices['end_part'] : indices['end_part']] = control_file.parts
-            self.logic.parts[indices['end_logic'] : indices['end_logic']] = control_file.logic
-            self.control_files[indices['end_cfile'] : indices['end_cfile']] = control_file.control_files
+            self.parts.parts[indices['end_part']: indices['end_part']] = control_file.parts
+            self.logic.parts[indices['end_logic']: indices['end_logic']] = control_file.logic
+            self.control_files[indices['end_cfile']: indices['end_cfile']] = control_file.control_files
         elif before is not None:
             indices = self.controlFileIndices(before, start=True)
-            self.parts.parts[indices['start_part'] : indices['start_part']] = control_file.parts
-            self.logic.parts[indices['start_logic'] : indices['start_logic']] = control_file.logic
-            self.control_files[indices['start_cfile'] : indices['start_cfile']] = control_file.control_files
-
+            self.parts.parts[indices['start_part']: indices['start_part']] = control_file.parts
+            self.logic.parts[indices['start_logic']: indices['start_logic']] = control_file.logic
+            self.control_files[indices['start_cfile']: indices['start_cfile']] = control_file.control_files
 
     def replaceControlFile(self, model_file, control_file, replace_modelfile):
         """Replace contents of an existing ModelFile with a new one.
@@ -808,7 +824,6 @@ class ControlFile(object):
         self.removeControlFile(replace_modelfile)
 
 
-
 class PartHolder(object):
 
     def __init__(self):
@@ -817,16 +832,13 @@ class PartHolder(object):
         self._max = len(self.parts)
         self._current = 0
 
-
     def __iter__(self):
         """Return an iterator for the units list"""
         return iter(self.parts)
 
-
     def __delitem__(self, key):
         del self.parts[key]
         self._max -= 1
-
 
     def __next__(self):
         """Iterate to the next unit"""
@@ -836,7 +848,6 @@ class PartHolder(object):
             self._current += 1
             return self.parts[self._current]
 
-
     def __getitem__(self, key):
         """Gets a value from units using index notation.
 
@@ -844,7 +855,6 @@ class PartHolder(object):
             contents of the units element at index.
         """
         return self.parts[key]
-
 
     def __setitem__(self, key, value):
         """Sets a value using index notation
@@ -861,7 +871,6 @@ class PartHolder(object):
             raise ValueError('Item must be of type TuflowPart')
         self.parts[key] = value
 
-
     def append(self, filepart):
         """Adds part to the end of the parts list.
 
@@ -873,7 +882,6 @@ class PartHolder(object):
         if not isinstance(filepart, TuflowPart):
             raise ValueError('filepart must be TuflowPart type')
         self.parts.append(filepart)
-
 
     def add(self, filepart, **kwargs):
         """
@@ -896,7 +904,7 @@ class PartHolder(object):
                 self.parts.append(filepart)
             else:
                 filepart.associates.logic = after.associates.logic
-                self.parts.insert(index+1, filepart)
+                self.parts.insert(index + 1, filepart)
 
         # Insert before the before filepart
         elif before is not None:
@@ -915,7 +923,6 @@ class PartHolder(object):
                 else:
                     self.parts.insert(index + 1, filepart)
 
-
     def replace(self, part, replace_part):
         """
         """
@@ -927,8 +934,7 @@ class PartHolder(object):
         self.parts.pop(index)
         self.parts.insert(index, part)
 
-
-    def move(self, part, **kwargs): #after):
+    def move(self, part, **kwargs):  # after):
         after = kwargs('after', None)
         before = kwargs('before', None)
         if after is None and before is None:
@@ -938,7 +944,6 @@ class PartHolder(object):
         pindex = self.index(part)
         aindex = self.index(after)
         self.parts.insert(aindex, self.parts.pop(pindex))
-
 
     def index(self, part):
         if not isinstance(part, TuflowPart):
@@ -963,7 +968,6 @@ class PartHolder(object):
 #
 #         return self.parts[filepart.part_type][filepart.hash]
 
-
     def remove(self, filepart):
         """
         """
@@ -987,7 +991,6 @@ class LogicHolder(object):
         """Return an iterator for the units list"""
         return iter(self.parts)
 
-
     def __next__(self):
         """Iterate to the next unit"""
         if self._current > self._max or self._current < self._min:
@@ -996,7 +999,6 @@ class LogicHolder(object):
             self._current += 1
             return self.parts[self._current]
 
-
     def __getitem__(self, key):
         """Gets a value from units using index notation.
 
@@ -1004,7 +1006,6 @@ class LogicHolder(object):
             contents of the units element at index.
         """
         return self.parts[key]
-
 
     def __setitem__(self, key, value):
         """Sets a value using index notation
@@ -1021,7 +1022,6 @@ class LogicHolder(object):
             raise ValueError('Item must be of type TuflowPart')
         self.parts[key] = value
 
-
     def getAllParts(self, hash_only):
         output = []
         for p in self.parts:
@@ -1033,16 +1033,15 @@ class LogicHolder(object):
 
     def partFromHash(self, hash):
         for p in self.parts:
-            if p.hash == hash: return p
+            if p.hash == hash:
+                return p
         return None
-
 
     def add(self, logic):
         for l in logic:
             l.remove_callback = self.remove_callback
             l.add_callback = self.add_callback
             self.parts.append(l)
-
 
 
 class TcfControlFile(ControlFile):
@@ -1083,7 +1082,6 @@ class TcfControlFile(ControlFile):
         ControlFile.updateRoot(self, root, must_exist=must_exist)
         self._mainfile.root = root
 
-
     def removeControlFile(self, model_file):
         """Remove the contents of an existing ControlFile.
 
@@ -1108,7 +1106,6 @@ class TcfControlFile(ControlFile):
                 self.remove_callback(model_file)
         else:
             return ControlFile.removeControlFile(self, model_file)
-
 
     def addControlFile(self, model_file, control_file, **kwargs):
         """Add the contents of a new ControlFile to this ControlFile.
@@ -1137,7 +1134,6 @@ class TcfControlFile(ControlFile):
         else:
             ControlFile.addControlFile(self, model_file, control_file, **kwargs)
 
-
     def replaceControlFile(self, model_file, control_file, replace_modelfile):
         """Replace contents of an existing ModelFile with a new one.
 
@@ -1157,4 +1153,3 @@ class TcfControlFile(ControlFile):
         else:
             ControlFile.replaceControlFile(self, model_file, control_file,
                                            replace_modelfile)
-

@@ -84,7 +84,7 @@ def getFile(file_path):
                 file_contents.append(uf.encodeStr(line))
     except IOError:
         logger.error('Read file IOError')
-        raise IOError ('Unable to read file at: ' + file_path)
+        raise IOError('Unable to read file at: ' + file_path)
     except TypeError:
         logger.error('Read file TypeError')
         raise TypeError
@@ -169,7 +169,7 @@ def directoryDialog(path=''):
     """
     if not HAS_QT:
         logger.error('Qt libraries are not installed  - cannot launch file dialog')
-        raise ImportError ('Qt libraries could not be imported - cannot launch dialogs')
+        raise ImportError('Qt libraries could not be imported - cannot launch dialogs')
 
     fd = MyFileDialogs()
     dir_path = fd.dirFileDialog(path)
@@ -204,7 +204,7 @@ def getOpenFileDialog(path='', types='All (*.*)', multi_file=True):
     """
     if not HAS_QT:
         logger.error('Qt libraries are not installed - cannot launch file dialog')
-        raise ImportError ('Qt libraries could not be imported - cannot launch dialogs')
+        raise ImportError('Qt libraries could not be imported - cannot launch dialogs')
 
     fd = MyFileDialogs()
     open_path = fd.openFileDialog(path, file_types=types, multi_file=multi_file)
@@ -238,7 +238,7 @@ def getSaveFileDialog(path='', types='All (*.*)'):
     """
     if not HAS_QT:
         logger.error('Qt libraries are not installed - cannot launch file dialog')
-        raise ImportError ('Qt libraries could not be imported - cannot launch dialogs')
+        raise ImportError('Qt libraries could not be imported - cannot launch dialogs')
 
     fd = MyFileDialogs()
     save_path = fd.saveFileDialog(path, file_types=types)
@@ -251,13 +251,12 @@ def getSaveFileDialog(path='', types='All (*.*)'):
         return False
 
 
-
-
 """
 ###############################
   Path Functions and classes
 ###############################
 """
+
 
 def pathExists(path):
     """Test whether a path exists.
@@ -275,75 +274,75 @@ def pathExists(path):
 
 
 def finalFolder(path):
-        """Get the last folder in the path.
+    """Get the last folder in the path.
 
-        Args:
-            path (str): the path to extract the final folder from.
+    Args:
+        path (str): the path to extract the final folder from.
 
-        Returns:
-            str containing the name of the final folder in the path.
-        """
-        return os.path.basename(os.path.normpath(path))
+    Returns:
+        str containing the name of the final folder in the path.
+    """
+    return os.path.basename(os.path.normpath(path))
 
 
 def setFinalFolder(path, folder_name):
-        """Changes the final folder in the directory path to the given name.
+    """Changes the final folder in the directory path to the given name.
 
-        Args:
-            path (str): the path to update.
-            folder_name (str): the new name for the final folder in the path.
+    Args:
+        path (str): the path to update.
+        folder_name (str): the new name for the final folder in the path.
 
-        Returns:
-            str containing the updated path.
-        """
-        # Normalise the path so that we don't get any funny behaviour
-        norm_path= os.path.normpath(path)
+    Returns:
+        str containing the updated path.
+    """
+    # Normalise the path so that we don't get any funny behaviour
+    norm_path = os.path.normpath(path)
 
-        # Get the drive letter
-        drive_letter = os.path.splitdrive(norm_path)[0]
+    # Get the drive letter
+    drive_letter = os.path.splitdrive(norm_path)[0]
 
-        # Separate out the different folders.
-        # If it's an absolute path then we need to deal with the usual drive
-        # letter problems (doesn't join it back with a slash.
-        plist = norm_path.split(os.sep)
-        if drive_letter:
-            all_but_final_folder = plist[1:-1]
-            all_but_final_folder = os.path.join(*all_but_final_folder)
-            all_but_final_folder = plist[0] + os.path.sep + all_but_final_folder
-            all_but_final_folder = os.path.normpath(all_but_final_folder)
+    # Separate out the different folders.
+    # If it's an absolute path then we need to deal with the usual drive
+    # letter problems (doesn't join it back with a slash.
+    plist = norm_path.split(os.sep)
+    if drive_letter:
+        all_but_final_folder = plist[1:-1]
+        all_but_final_folder = os.path.join(*all_but_final_folder)
+        all_but_final_folder = plist[0] + os.path.sep + all_but_final_folder
+        all_but_final_folder = os.path.normpath(all_but_final_folder)
 
-        # Otherwise just remove the final folder so that we can replace it
-        # with the new one.
-        else:
-            all_but_final_folder = plist[:-1]
-            all_but_final_folder = os.path.join(*all_but_final_folder)
+    # Otherwise just remove the final folder so that we can replace it
+    # with the new one.
+    else:
+        all_but_final_folder = plist[:-1]
+        all_but_final_folder = os.path.join(*all_but_final_folder)
 
-        # Add the new folder name to the end
-        return os.path.join(all_but_final_folder, folder_name)
+    # Add the new folder name to the end
+    return os.path.join(all_but_final_folder, folder_name)
 
 
 def getFileName(in_path, with_extension=False):
-        """Return the file name with the file extension appended.
+    """Return the file name with the file extension appended.
 
-        Args:
-            in_path (str): the file path to extract the filename from.
-            with_extension=False (Bool): flag denoting whether to return
-                the filename with or without the extension.
+    Args:
+        in_path (str): the file path to extract the filename from.
+        with_extension=False (Bool): flag denoting whether to return
+            the filename with or without the extension.
 
-        Returns:
-            Str - file name, with or without the extension appended or a
-                 blank string if there is no file name in the path.
-        """
-        filename = os.path.basename(in_path)
+    Returns:
+        Str - file name, with or without the extension appended or a
+             blank string if there is no file name in the path.
+    """
+    filename = os.path.basename(in_path)
 
-        if os.path.sep in in_path[-2:] or (with_extension and not '.' in filename):
-            return ''
+    if os.path.sep in in_path[-2:] or (with_extension and not '.' in filename):
+        return ''
 
-        if with_extension:
-            return filename
-        else:
-            filename = os.path.splitext(filename)[0]
-            return filename
+    if with_extension:
+        return filename
+    else:
+        filename = os.path.splitext(filename)[0]
+        return filename
 
 
 def directory(in_path):
@@ -417,7 +416,6 @@ class PathHolder(object):
 
         self._setupVars(path)
 
-
     def _setupVars(self, path):
         """Sets up everything.
 
@@ -462,7 +460,6 @@ class PathHolder(object):
 
         return final_folder
 
-
     def setFinalFolder(self, folder_name):
         """Changes the final folder in the directory path to the given name
 
@@ -495,7 +492,7 @@ class PathHolder(object):
 
         outpath = False
         if relative_roots and not self.root is None:
-#         if not self.root == None and not self.relative_root == None:
+            #         if not self.root == None and not self.relative_root == None:
             paths = [self.root] + relative_roots + [filename]
             if normalize:
                 outpath = os.path.normpath(os.path.join(*paths))
@@ -697,7 +694,3 @@ class PathHolder(object):
                 return True
 
         return False
-
-
-
-

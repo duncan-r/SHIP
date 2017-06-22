@@ -24,6 +24,7 @@
 
 from __future__ import unicode_literals
 
+
 class ALoader(object):
     """
     """
@@ -31,8 +32,7 @@ class ALoader(object):
     def __init__(self):
         """
         """
-        self.warnings= []
-
+        self.warnings = []
 
     def loadFile(self, filepath, arg_dict={}):
         """Load the file at the given path
@@ -50,7 +50,6 @@ class ALoader(object):
         """
         raise NotImplementedError
 
-
     def addWarning(self, title, msg):
         """Can be used to store non-deadly errors during load for easy lookup.
 
@@ -66,7 +65,3 @@ class ALoader(object):
             msg (str): the message body of the warning.
         """
         self.warnings.append((title, msg))
-
-
-
-

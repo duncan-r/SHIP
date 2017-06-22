@@ -84,9 +84,10 @@ def formatFloat(value, no_of_dps, ignore_empty_str=True):
     """
     if ignore_empty_str and not isNumeric(value) and str(value).strip() == '':
         return str(value).strip()
-    if not isNumeric(value): raise ValueError
+    if not isNumeric(value):
+        raise ValueError
     decimal_format = '%0.' + str(no_of_dps) + 'f'
-    value =  decimal_format % float(value)
+    value = decimal_format % float(value)
     return value
 
 
@@ -127,12 +128,14 @@ def isNumeric(s):
     except (ValueError, TypeError):
         return False
 
+
 def encodeStr(value):
     try:
         value = unicode(value, "utf-8")
         return value
     except (NameError, TypeError):
         return value
+
 
 def isString(value):
     """Tests a given value to see if it is an instance of basestring or not.
@@ -188,7 +191,7 @@ def arrayToString(self, str_array):
         ValueError: if not contents of list are instances of basestring.
     """
     if not isinstance(str_array[0], basestring):
-        raise ValueError ('Array values are not strings')
+        raise ValueError('Array values are not strings')
 
     out_string = ''
     out_string = ', '.join(str_array)
@@ -293,9 +296,9 @@ def convertRunOptionsToSEDict(options):
     vals = options.split(" ")
     for i in range(len(vals)):
         if vals[i].startswith('-s'):
-            outvals['scenario'][vals[i][1:]] = vals[i+1]
+            outvals['scenario'][vals[i][1:]] = vals[i + 1]
         elif vals[i].startswith('-e'):
-            outvals['event'][vals[i][1:]] = vals[i+1]
+            outvals['event'][vals[i][1:]] = vals[i + 1]
 
     return outvals
 
@@ -322,8 +325,10 @@ def getSEResolvedFilename(filename, se_vals):
     Return:
         str - the updated filename.
     """
-    if not 'scenario' in se_vals.keys(): se_vals['scenario'] = {}
-    if not 'event' in se_vals.keys(): se_vals['event'] = {}
+    if not 'scenario' in se_vals.keys():
+        se_vals['scenario'] = {}
+    if not 'event' in se_vals.keys():
+        se_vals['event'] = {}
 
     # Format the key value pairs into a list and combine the scenario and
     # event list together and sort them into e, e1, e2, s, s1, s2 order.
@@ -348,7 +353,7 @@ def getSEResolvedFilename(filename, se_vals):
             outname = outname.replace('~e~', v[1])
         elif v[0] == '-s1' and '~s~' in filename and not '-s' in se_vals:
             outname = outname.replace('~s~', v[1])
-        #DEBUG - CHECK THIS IS TRUE!
+        # DEBUG - CHECK THIS IS TRUE!
         elif v[0] == '-e' and '~e1~' in filename:
             outname = outname.replace('~e1~', v[1])
         elif v[0] == '-s' and '~s1~' in filename:
@@ -413,7 +418,7 @@ class FileQueue(object):
     def enqueue(self, item):
         """Add an item to the queue
         """
-        self.items.insert(0,item)
+        self.items.insert(0, item)
 
     def dequeue(self):
         """Pop an item from the front of the queue.
@@ -426,7 +431,6 @@ class FileQueue(object):
         return len(self.items)
 
 
-
 class LoadStack(object):
     """Stack class for loading logic."""
 
@@ -434,11 +438,9 @@ class LoadStack(object):
         self.items = []
         self.max_size = max_size
 
-
     def isEmpty(self):
         """Return True if stack is empty."""
         return self.items == []
-
 
     def add(self, item):
         """Add an item to the stack.
@@ -455,7 +457,6 @@ class LoadStack(object):
                 raise IndexError
         self.items.append(item)
 
-
     def pop(self):
         """Get an item From the stack.
 
@@ -468,7 +469,6 @@ class LoadStack(object):
         if len(self.items) == 0:
             raise IndexError
         return self.items.pop()
-
 
     def peek(self):
         """See what the next item on the stack is, but don't remove it.
@@ -483,11 +483,6 @@ class LoadStack(object):
             raise IndexError
         return self.items[-1]
 
-
     def size(self):
         """Return the number of items in the stack."""
         return len(self.items)
-
-
-
-

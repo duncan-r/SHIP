@@ -37,11 +37,10 @@ class JunctionUnit(AUnit):
     UNIT_CATEGORY = 'junction'
     FILE_KEY = 'JUNCTION'
     FILE_KEY2 = None
-    
 
     def __init__(self):
         '''Constructor.
-        
+
         Args:
             file_order (int): the order of this unit in the .dat file.
         '''
@@ -53,8 +52,8 @@ class JunctionUnit(AUnit):
             'type': HeadDataItem('OPEN', '', 0, 0, dtype=dt.CONSTANT, choices=('OPEN', 'ENERGY')),
             'names': [],
         }
-        self.name = 'Junc' # Must be after head_data here (see property below)
-    
+        self.name = 'Junc'  # Must be after head_data here (see property below)
+
     '''
     Junction overrides the name properties. This is because it deals with
     naming in a different way to most of the other units. It doesn't actually
@@ -64,14 +63,14 @@ class JunctionUnit(AUnit):
     @property
     def name(self):
         return self.head_data['names'][0]
-    
+
     @name.setter
     def name(self, value):
         if len(self.head_data['names']) < 1:
             self.head_data['names'].append(value)
         else:
             self.head_data['names'][0] = value
-    
+
     def icLabels(self):
         """Overriddes superclass method."""
         return self.head_data['names']
@@ -83,13 +82,13 @@ class JunctionUnit(AUnit):
             namekey = uf.encodeStr('name_' + str(i))
             out[namekey] = name
         return out
-    
+
     def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
-        
+
         See Also:
             isisunit.
-        
+
         Args:
             unit_data (list): The raw file data to be processed.
         '''
@@ -102,34 +101,31 @@ class JunctionUnit(AUnit):
 
         # Break line into list for every 12th character
         line = unit_data[file_line + 2]
-        names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
+        names = [line[i:i + 12].strip() for i in range(0, len(line), 12)]
 
         self.head_data['names'] = names
         self._name = names[0]
         return file_line + 2
-        
-        
+
     def getData(self):
         '''Returns the formatted data for this unit. 
-        
+
         See Also:
             isisunit.
-        
+
         Returns:
             List of strings formatted for writing to the new dat file.
         '''
         out_data = []
-        
+
         out_data.append('JUNCTION ' + self.head_data['comment'].value)
         out_data.append(self.head_data['type'].value)
         names = self.head_data['names']
-        
+
         # Format the names and then join into one line
         names_out = []
         for n in names:
             names_out.append('{:<12}'.format(n))
         out_data.append(''.join(names_out))
-                        
+
         return out_data
-        
-        

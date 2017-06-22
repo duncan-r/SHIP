@@ -127,7 +127,6 @@ class TuflowPart(object):
         for o in self.observers:
             o.observedActiveChange(value)
 
-
     def allParents(self, parent_list):
         """Get all the hash codes of all parents to this object.
 
@@ -202,7 +201,6 @@ class TuflowPart(object):
         is_in = logic.isInTerms(p, se_vals)
         return is_in
 
-
     @staticmethod
     def resolvePlaceholder(value, user_vars):
         """Replaces the contents of a placeholder value with an actual value.
@@ -244,7 +242,6 @@ class TuflowPart(object):
                 value = value.replace(temp, user_vars[vkey])
         return value
 
-
     def getPrintableContents(self, **kwargs):
         """
         """
@@ -258,7 +255,6 @@ class TuflowPart(object):
 
     def __eq__(self, other):
         return isinstance(other, TuflowPart) and other.hash == self.hash
-
 
     @classmethod
     def copy(self, **kwargs):
@@ -282,18 +278,18 @@ class UnknownPart(TuflowPart):
     def __init__(self, parent, **kwargs):
         self.TOP_CLASS = 'unknown'
         TuflowPart.__init__(self, parent, 'unknown', **kwargs)
-        self.data = kwargs['data'] # raises keyerror
-
+        self.data = kwargs['data']  # raises keyerror
 
     def getPrintableContents(self, **kwargs):
         return self.data, False
 
 
 class ATuflowVariable(TuflowPart):
+
     def __init__(self, parent, obj_type='variable', **kwargs):
         TuflowPart.__init__(self, parent, obj_type, **kwargs)
         self.TOP_CLASS = 'avariable'
-        self.command = kwargs['command'] # raise valuerror
+        self.command = kwargs['command']  # raise valuerror
         self._variable = kwargs['variable'].strip()
         self.comment = kwargs.get('comment', '')
 
@@ -412,9 +408,12 @@ class TuflowModelVariable(ATuflowVariable):
         self._variable_name = value
 
     def getPrintableContents(self, **kwargs):
-        has_next = False; has_prev = False
-        if self.associates.sibling_prev is not None: has_prev = True
-        if self.associates.sibling_next is not None: has_next = True
+        has_next = False
+        has_prev = False
+        if self.associates.sibling_prev is not None:
+            has_prev = True
+        if self.associates.sibling_next is not None:
+            has_next = True
 
         line = []
         if not has_prev:
@@ -432,6 +431,7 @@ class TuflowModelVariable(ATuflowVariable):
 class TuflowKeyValue(ATuflowVariable):
     """
     """
+
     def __init__(self, parent, **kwargs):
         ATuflowVariable.__init__(self, parent, 'keyvalue', **kwargs)
         keyval = self._variable.split('|')
@@ -462,7 +462,7 @@ class TuflowFile(TuflowPart, PathHolder):
         Raises:
             keyError: if kwargs 'root', 'command', 'path' are not given.
         """
-        root = kwargs['root'] # raises keyerror
+        root = kwargs['root']  # raises keyerror
         self.command = kwargs['command']
         path = kwargs['path']
         self.comment = kwargs.get('comment', '')
@@ -471,7 +471,6 @@ class TuflowFile(TuflowPart, PathHolder):
         self.TOP_CLASS = 'file'
         self.all_types = None
         self.has_own_root = False
-
 
     def absolutePathAllTypes(self, user_vars=None):
         """Get the absolute paths for all_types.
@@ -525,11 +524,11 @@ class TuflowFile(TuflowPart, PathHolder):
 
         return abs_path
 
-
     def filenameAndExtension(self, user_vars=None):
         if user_vars:
             name = self.resolvePlaceholder(self.filename, user_vars)
-            if self.extension: name += '.' + self.extension
+            if self.extension:
+                name += '.' + self.extension
             return name
         else:
             return PathHolder.filenameAndExtension(self)
@@ -547,8 +546,6 @@ class TuflowFile(TuflowPart, PathHolder):
 
         return names
 
-
-
     def getRelativeRoots(self, roots):
         """Get the relative paths of this and all parent objects.
 
@@ -561,11 +558,13 @@ class TuflowFile(TuflowPart, PathHolder):
             roots.append(self.relative_root)
         return roots
 
-
     def checkPipedStatus(self, path):
-        has_next = False; has_prev = False
-        if self.associates.sibling_prev is not None: has_prev = True
-        if self.associates.sibling_next is not None: has_next = True
+        has_next = False
+        has_prev = False
+        if self.associates.sibling_prev is not None:
+            has_prev = True
+        if self.associates.sibling_next is not None:
+            has_next = True
 
         if has_next or has_prev:
             line = []
@@ -581,7 +580,6 @@ class TuflowFile(TuflowPart, PathHolder):
             return ' '.join(line), has_prev
         else:
             return [], False
-
 
     def getPrintableContents(self, **kwargs):
         if not self.relative_root == None and not self.has_own_root:
@@ -600,17 +598,16 @@ class TuflowFile(TuflowPart, PathHolder):
 
 class ModelFile(TuflowFile):
 
-
     def __init__(self, parent, **kwargs):
         TuflowFile.__init__(self, parent, 'model', **kwargs)
         self.model_type = kwargs['model_type']
         self.has_auto = kwargs.get('has_auto', False)
 
-
     def getPrintableContents(self, **kwargs):
         if self.model_type == 'ECF' and self.has_auto:
             line = 'Estry Control File Auto '
-            if self.comment: line += '! ' + self.comment
+            if self.comment:
+                line += '! ' + self.comment
             line = (line, False)
         else:
             line = TuflowFile.getPrintableContents(self, **kwargs)
@@ -663,13 +660,11 @@ class GisFile(TuflowFile):
                         if not os.path.exists(self.absolutePath()):
                             self.extension = ''
 
-
         self.gis_type = None
         for key in GisFile.GIS_TYPES:
             if self.extension in GisFile.GIS_TYPES[key]:
                 self.all_types = GisFile.GIS_TYPES[key]
                 self.gis_type = key
-
 
 
 class DataFile(TuflowFile):
@@ -683,7 +678,6 @@ class DataFile(TuflowFile):
             if self.extension in DataFile.DATA_TYPES[d]:
                 self.all_types = DataFile.DATA_TYPES[d]
                 self.data_type = d
-
 
 
 class TuflowLogic(TuflowPart):
@@ -709,7 +703,6 @@ class TuflowLogic(TuflowPart):
 
         self.END_CLAUSE = 'End'
         """Override with with whatever the end statement is (e.g. 'End If')"""
-
 
     def addPart(self, part, group=-1, **kwargs):
         """Add a new TuflowPart.
@@ -810,7 +803,8 @@ class TuflowLogic(TuflowPart):
                 could not be found.
         """
         for i, g in enumerate(self.group_parts):
-            if part in g: return i
+            if part in g:
+                return i
         else:
             return -1
 
@@ -874,7 +868,8 @@ class TuflowLogic(TuflowPart):
         """
         retval = False
         group = self.getGroup(part)
-        if group == -1: return False
+        if group == -1:
+            return False
         terms = self.terms[group]
         command = self.commands[group]
         se_keys = se_vals.keys()
@@ -891,15 +886,18 @@ class TuflowLogic(TuflowPart):
                 found = set(all_terms).isdisjoint(set(se_vals['scenario']))
             elif 'event' in se_keys:
                 found = set(all_terms).isdisjoint(set(se_vals['event']))
-            if found == True: retval = True
+            if found == True:
+                retval = True
 
         # Otherwise we need to check if this groups terms are in the se_vals
         else:
             for t in terms:
                 if 'scenario' in se_keys and t in se_vals['scenario']:
-                    retval = True; break
+                    retval = True
+                    break
                 elif 'event' in se_keys and t in se_vals['event']:
-                    retval = True; break
+                    retval = True
+                    break
         return retval
 
     def getPrintableContents(self, part, out, group=0, **kwargs):
@@ -915,7 +913,8 @@ class TuflowLogic(TuflowPart):
 
     def getTopClause(self, part, out, force, **kwargs):
         """Get the top clause command and terms formatted for printing."""
-        if not force and not self.group_parts[0]: return out
+        if not force and not self.group_parts[0]:
+            return out
         if force or self.group_parts[0][0] == part:
             self._top_written = True
             if self.active:
@@ -937,13 +936,15 @@ class TuflowLogic(TuflowPart):
     def _getContentsLine(self, group=0):
         """Get a clause line formatted for printing.
         """
-        if group > len(self.group_parts): raise IndexError('Group %s does not exist' % group)
-        if self.terms[group]:# is not None:
+        if group > len(self.group_parts):
+            raise IndexError('Group %s does not exist' % group)
+        if self.terms[group]:  # is not None:
             t = ' | '.join(self.terms[group])
             line = self.commands[group] + ' == ' + t
         else:
             line = self.commands[group]
-        if self.comments[group]: line += ' ! ' + self.comments[group]
+        if self.comments[group]:
+            line += ' ! ' + self.comments[group]
         return line
 
 
@@ -1076,6 +1077,3 @@ class SectionLogic(BlockLogic):
         self.comments = [kwargs.get('comment', '').strip()]
         self.check_sevals = False
         self.END_CLAUSE = 'End Define'
-
-
-

@@ -13,7 +13,6 @@ from .ifiles import ifind
 from .struct_parser import StructParser
 
 
-
 VFPFileHeader = StructParser(
     'FPTHeader',
     '>LHH504s',
@@ -36,17 +35,22 @@ DB4MemoHeader = StructParser(
 
 # Used for Visual FoxPro memos to distinguish binary from text memos.
 
+
 class VFPMemo(bytes):
     pass
+
 
 class BinaryMemo(VFPMemo):
     pass
 
+
 class PictureMemo(BinaryMemo):
     pass
 
+
 class ObjectMemo(BinaryMemo):
     pass
+
 
 class TextMemo(VFPMemo):
     pass
@@ -60,6 +64,7 @@ VFP_TYPE_MAP = {
 
 
 class MemoFile(object):
+
     def __init__(self, filename):
         self.filename = filename
         self._open()
@@ -89,6 +94,7 @@ class MemoFile(object):
 
 
 class FakeMemoFile(MemoFile):
+
     def __getitem__(self, i):
         return None
 
@@ -99,6 +105,7 @@ class FakeMemoFile(MemoFile):
 
 
 class VFPMemoFile(MemoFile):
+
     def _init(self):
         self.header = VFPFileHeader.read(self.file)
 
@@ -113,13 +120,14 @@ class VFPMemoFile(MemoFile):
         data = self._read(memo_header.length)
         if len(data) != memo_header.length:
             raise IOError('EOF reached while reading memo')
-        
+
         return VFP_TYPE_MAP.get(memo_header.type, BinaryMemo)(data)
 
 
 class DB3MemoFile(MemoFile):
     """dBase III memo file."""
     # Code from dbf.py
+
     def __getitem__(self, index):
         if index <= 0:
             return None
@@ -145,8 +153,10 @@ class DB3MemoFile(MemoFile):
 
         return data[:eom]
 
+
 class DB4MemoFile(MemoFile):
     """dBase IV memo file"""
+
     def __getitem__(self, index):
         if index <= 0:
             return None

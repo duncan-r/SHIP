@@ -51,7 +51,6 @@ class IefLoader(ATool, ALoader):
         ALoader.__init__(self)
         logger.debug('Initialising IEFLoader')
 
-
     def loadFile(self, file_path, arg_dict={}):
         """Loads the ief file at the given path.
 
@@ -64,17 +63,17 @@ class IefLoader(ATool, ALoader):
         if not uf.checkFileType(file_path, ext=['.ief', '.IEF']):
             logger.error('File: ' + file_path + '\nDoes not match ief extension (*.ief or *.IEF)')
             logger.error('Illegal File Error: %s is not of type ief' % (file_path))
-            raise AttributeError ('Illegal File Error: %s is not of type ief' % (file_path))
+            raise AttributeError('Illegal File Error: %s is not of type ief' % (file_path))
 
         contents = self._loadFile(file_path)
         # if we couldn't load the file let them know.
         if contents == False:
-            raise IOError ('Unable to load file at: ' + file_path)
+            raise IOError('Unable to load file at: ' + file_path)
 
         event_header = {}
         event_details = {}
         snapshot = []
-        ied_data= []
+        ied_data = []
         description = []
         in_event_details = False
 
@@ -103,7 +102,6 @@ class IefLoader(ATool, ALoader):
                 if c.split('=')[0] == 'SnapshotTime':
                     index = self._addSnapshotLine(snapshot, contents, index)
 
-
                 # If the line starts with a ';' then it's an IED file so grab
                 # the name and get the file file reference from the next line
                 # and skip ahead.
@@ -127,7 +125,6 @@ class IefLoader(ATool, ALoader):
         ief_file = Ief(path_holder, event_header, event_details, snapshot, ied_data, description)
         return ief_file
 
-
     def _addHeaderLine(self, event_header, value):
         """Adds a line from the ief file to the event_header dictionary.
 
@@ -137,7 +134,6 @@ class IefLoader(ATool, ALoader):
         """
         splitvals = value.split('=', 1)
         event_header[splitvals[0]] = splitvals[1].rstrip('\n')
-
 
     def _addDetailsLine(self, event_details, contents, index):
         """Adds a line from the ief file to the event_details dictionary.
@@ -149,7 +145,6 @@ class IefLoader(ATool, ALoader):
         """
         splitvals = contents[index].split('=', 1)
         event_details[splitvals[0]] = splitvals[1].rstrip('\n')
-
 
     def _addSnapshotLine(self, snapshot, contents, index):
         """Adds a line from the ief file to the snapshot list.
@@ -165,7 +160,6 @@ class IefLoader(ATool, ALoader):
         snapshot.append({'time': snaptime, 'file': snapfile})
         index += 1
         return index
-
 
     def _addIedLine(self, ied_data, contents, index):
         """Adds a line from the ief file to the ied_data list.
@@ -184,7 +178,6 @@ class IefLoader(ATool, ALoader):
         ied_data.append({'name': event_name, 'file': event_path})
         index += 1
         return index
-
 
     def _loadDescription(self, description, contents, index):
         """Adds the description line from the ief file into a description list.
@@ -205,7 +198,6 @@ class IefLoader(ATool, ALoader):
             description.append(contents[index].strip())
             index += 1
         return index
-
 
     def _loadFile(self, filepath):
         """Load the .ief file into the contents list.
@@ -230,4 +222,3 @@ class IefLoader(ATool, ALoader):
             return False
 
         return contents
-
