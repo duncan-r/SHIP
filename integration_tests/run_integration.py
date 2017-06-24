@@ -32,8 +32,8 @@ from integration_tests import test_updatetcfmodelfile as tcfmodelfile
 from integration_tests import test_datload as datload
 from integration_tests.test_tuflowupdate import TestError
 
-if __name__ == '__main__':
-    
+
+def main():
     # FMP
     print ('*************************************************************')
     print ('Running fmp package integration tests...')
@@ -55,5 +55,10 @@ if __name__ == '__main__':
     print ('\n*************************************************************')
     print ('tuflow package integration tests complete.')
     print ('*************************************************************\n\n')
+    
+
+if __name__ == '__main__':
+    main()
+    
 
     
