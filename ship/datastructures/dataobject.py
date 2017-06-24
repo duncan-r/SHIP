@@ -460,6 +460,7 @@ class FloatData(ADataRowObject):
             if self.use_sn > -1 and value >= self.use_sn:
                 sn_format = '{:.' + str(self.no_of_dps) + 'e}'
                 value = sn_format.format(value)
+                value = value.replace('+', '')
                 value = self.format_str.format(value)
             else:
                 decimal_format = '%0.' + str(self.no_of_dps) + 'f'
