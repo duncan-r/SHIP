@@ -39,6 +39,7 @@ from ship.fmp.datunits import orificeunit
 from ship.fmp.datunits import culvertunit
 from ship.fmp.datunits import htbdyunit
 from ship.fmp.datunits import interpolateunit
+from ship.fmp.datunits import reservoirunit
 
 import logging
 logger = logging.getLogger(__name__)
@@ -68,6 +69,7 @@ class FmpUnitFactory(object):
         culvertunit.CulvertUnitInlet,
         culvertunit.CulvertUnitOutlet,
         interpolateunit.InterpolateUnit,
+        reservoirunit.ReservoirUnit,
     )
 
     def __init__(self):

@@ -61,4 +61,5 @@ def ifind(pat, ext=None):
     else:
         return None
 
+
 __all__ = ['ipat', 'ifnmatch', 'iglob', 'ifind']

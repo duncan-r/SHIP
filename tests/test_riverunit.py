@@ -144,7 +144,7 @@ class RiverUnitTests(unittest.TestCase):
             ['RIVER (Culvert Exit) CH:7932 - Trimmed to BT',
              'SECTION',
              '1.069       Spill1      Spill2      Lat1',
-             '    15.078              1.1111      1000',
+             '    15.078              1.1111   1000.00',
              '        18',
              '     5.996    37.560     0.080     1.000LEFT       291391.67  86582.61LEFT      16        ',
              '     6.936    37.197     0.035*    1.000           291391.43  86581.70          ',

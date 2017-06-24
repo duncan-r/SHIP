@@ -387,9 +387,12 @@ class FloatData(ADataRowObject):
                     Can be None if defaults are not allowed or '~' if the default 
                     should remove the formatting and apply an empty string.
                 no_of_dps: int of the number of decimal places that this value
-                       should be represented with when printed to file. 
+                    should be represented with when printed to file. 
+                use_sn: int the number of significant figures at which 
+                    scientific notation should be used.
         """
         self.no_of_dps = kwargs.get('no_of_dps', 0)
+        self.use_sn = kwargs.get('use_sn', -1)
         ADataRowObject.__init__(self, datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
@@ -436,9 +439,15 @@ class FloatData(ADataRowObject):
         if self.checkDefault(value):
             value = ''
         else:
-            decimal_format = '%0.' + str(self.no_of_dps) + 'f'
-            value = decimal_format % float(value)
-            value = self.format_str.format(value)
+            if self.use_sn > -1 and value >= self.use_sn:
+                sn_format = '{:.' + str(self.no_of_dps) + 'e}'
+                value = sn_format.format(value)
+                value = value.replace('+', '')
+                value = self.format_str.format(value)
+            else:
+                decimal_format = '%0.' + str(self.no_of_dps) + 'f'
+                value = decimal_format % float(value)
+                value = self.format_str.format(value)
         return value
 
 
