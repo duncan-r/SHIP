@@ -2,6 +2,7 @@ from pytest import raises
 from .dbf import DBF
 from .exceptions import MissingMemoFile
 
+
 def test_missing_memofile():
     with raises(MissingMemoFile):
         DBF('testcases/no_memofile.dbf')

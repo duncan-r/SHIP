@@ -55,7 +55,7 @@ DBFField = StructParser(
 
 def expand_year(year):
     """Convert 2-digit year to 4-digit year."""
-    
+
     if year < 80:
         return 2000 + year
     else:
@@ -63,19 +63,21 @@ def expand_year(year):
 
 
 class RecordIterator(object):
+
     def __init__(self, table, record_type):
         self._record_type = record_type
         self._table = table
 
     def __iter__(self):
         return self._table._iter_records(self._record_type)
- 
+
     def __len__(self):
         return self._table._count_records(self._record_type)
 
 
 class DBF(object):
     """DBF table."""
+
     def __init__(self, filename, encoding=None, ignorecase=True,
                  lowernames=False,
                  parserclass=FieldParser,
@@ -119,7 +121,7 @@ class DBF(object):
             self._read_header(infile)
             self._read_field_headers(infile)
             self._check_headers()
-            
+
             try:
                 self.date = datetime.date(expand_year(self.header.year),
                                           self.header.month,
@@ -127,7 +129,7 @@ class DBF(object):
             except ValueError:
                 # Invalid date or '\x00\x00\x00'.
                 self.date = None
- 
+
         self.memofilename = self._get_memofilename()
 
         if load:
@@ -278,7 +280,7 @@ class DBF(object):
 
     def _iter_records(self, record_type=b' '):
         with open(self.filename, 'rb') as infile, \
-             self._open_memofile() as memofile:
+                self._open_memofile() as memofile:
 
             # Skip to first record.
             infile.seek(self.header.headerlen, 0)
@@ -296,11 +298,11 @@ class DBF(object):
 
                 if sep == record_type:
                     if self.raw:
-                        items = [(field.name, read(field.length)) \
+                        items = [(field.name, read(field.length))
                                  for field in self.fields]
                     else:
                         items = [(field.name,
-                                  parse(field, read(field.length))) \
+                                  parse(field, read(field.length)))
                                  for field in self.fields]
 
                     yield self.recfactory(items)

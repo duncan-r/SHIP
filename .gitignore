@@ -148,3 +148,6 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+
+# VSCode
+.vscode/

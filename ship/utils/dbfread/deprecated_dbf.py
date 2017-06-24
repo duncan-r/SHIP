@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 from .dbf import DBF
 
+
 class DeprecatedDBF(DBF, list):
     """This is the old version of the table which is a subclass of list.
 
@@ -23,7 +24,7 @@ class DeprecatedDBF(DBF, list):
         # Also, unloading twice has no consequences.
         del self[:]
         self._deleted = None
-        
+
     def __iter__(self):
         if self.loaded:
             return list.__iter__(self)
@@ -42,13 +43,16 @@ class DeprecatedDBF(DBF, list):
         else:
             return '<unloaded DBF table {!r}>'.format(self.filename)
 
+
 def warn(message):
     print('Deprecation warning: {}'.format(message), file=sys.stderr)
+
 
 def read(filename, load=True, **kwargs):
     warn("dbfread.read() has been replaced by DBF(load=True)"
          " and will be removed in 2.2.")
     return DeprecatedDBF(filename, load=True, **kwargs)
+
 
 def open(filename, load=True, **kwargs):
     warn("dbfread.open() has been replaced by DBF()"

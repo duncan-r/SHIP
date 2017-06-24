@@ -5,9 +5,11 @@ from pytest import fixture
 import datetime
 from .dbf import DBF
 
+
 @fixture
 def table():
     return DBF('testcases/memotest.dbf')
+
 
 @fixture
 def loaded_table():
@@ -24,6 +26,7 @@ deleted_records = [{u'NAME': u'Deleted Guy',
                     u'BIRTHDATE': datetime.date(1979, 12, 22),
                     u'MEMO': u'Deleted Guy memo'}]
 
+
 def test_len():
     assert len(table()) == 2
     assert len(table().deleted) == 1
@@ -31,10 +34,11 @@ def test_len():
     assert len(loaded_table()) == 2
     assert len(loaded_table().deleted) == 1
 
+
 def test_list():
     assert list(table()) == records
     assert list(table().deleted) == deleted_records
-    
+
     assert list(loaded_table()) == records
     assert list(loaded_table().deleted) == deleted_records
 

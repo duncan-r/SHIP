@@ -18,7 +18,7 @@ def ipat(pat):
 
     (dirname, pat) = os.path.split(pat)
 
-    # Convert '/path/to/test.fpt' => '/path/to/[Tt][Ee][Ss][Tt].[]' 
+    # Convert '/path/to/test.fpt' => '/path/to/[Tt][Ee][Ss][Tt].[]'
     newpat = ''
     for c in pat:
         if c.isalpha:
@@ -35,13 +35,16 @@ def ipat(pat):
 
     return newpat
 
+
 def ifnmatch(name, pat):
     """Case insensitive version of fnmatch.fnmatch()"""
     return fnmatch.fnmatch(name, ipat(pat))
 
+
 def iglob(pat):
     """Case insensitive version of glob.glob()"""
     return glob.glob(ipat(pat))
+
 
 def ifind(pat, ext=None):
     """Look for a file in a case insensitive way.

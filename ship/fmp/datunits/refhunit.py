@@ -27,15 +27,14 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 from ship.fmp.datunits.isisunit import AUnit
-from ship.datastructures.rowdatacollection import RowDataCollection 
+from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.datastructures import dataobject as do
 from ship.datastructures import DATA_TYPES as dt
 from ship.fmp.headdata import HeadDataItem
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 
 
-
-class RefhUnit(AUnit): 
+class RefhUnit(AUnit):
     """Concrete implementation of AUnit storing Isis River Unit
     data.
 
@@ -45,26 +44,26 @@ class RefhUnit(AUnit):
 
     Methods for accessing the data in these objects and adding removing rows
     are available.
-    
+
     See Also:
         AUnit
     """
-    
+
     UNIT_TYPE = 'refh'
     UNIT_CATEGORY = 'inflows'
     FILE_KEY = 'REFHBDY'
     FILE_KEY2 = None
 
-
-    def __init__(self, **kwargs): 
+    def __init__(self, **kwargs):
         """Constructor.
         """
         AUnit.__init__(self, **kwargs)
-        
+
         self._unit_type = RefhUnit.UNIT_TYPE
         self._unit_category = RefhUnit.UNIT_CATEGORY
 #         self.row_data['main'] = []
-        if self._name == 'unknown': self._name = 'Refh_unit'
+        if self._name == 'unknown':
+            self._name = 'Refh_unit'
 
         # Fill in the header values these contain the data at the top of the
         # section, such as the unit name and labels.
@@ -72,7 +71,7 @@ class RefhUnit(AUnit):
             'revision': HeadDataItem(1, '{:<1}', 0, 0, dtype=dt.INT),
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
             'z': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=3),
-            'easting': HeadDataItem('', '{:>10}', 2, 1, dtype=dt.STRING), 
+            'easting': HeadDataItem('', '{:>10}', 2, 1, dtype=dt.STRING),
             'northing': HeadDataItem('', '{:>10}', 2, 2, dtype=dt.STRING),
             'time_delay': HeadDataItem(0.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
             'time_step': HeadDataItem(1.0, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=1),
@@ -87,7 +86,7 @@ class RefhUnit(AUnit):
             'urbext': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
             'season': HeadDataItem('DEFAULT', '{:>10}', 4, 3, dtype=dt.CONSTANT, choices=('DEFAULT', 'WINTER', 'SUMMER')),
             'published_report': HeadDataItem('DLL', '{:>10}', 4, 4, dtype=dt.CONSTANT, choices=('DLL', 'REPORT')),
-            
+
             # Urban - only used if 'urban' == 'URBANREFH'
             'urban': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'URBANREFH')),
             'subarea_1': HeadDataItem(0.00, '{:>10}', 5, 0, dtype=dt.FLOAT, dps=2),
@@ -107,7 +106,7 @@ class RefhUnit(AUnit):
             'suburbext_3': HeadDataItem(0.000, '{:>10}', 7, 2, dtype=dt.FLOAT, dps=3),
             'calibration_3': HeadDataItem(0.000, '{:>10}', 7, 3, dtype=dt.FLOAT, dps=3),
             'subrunoff_3': HeadDataItem(0.000, '{:>10}', 7, 4, dtype=dt.FLOAT, dps=3),
-            
+
             'storm_area': HeadDataItem(0.00, '{:>10}', 8, 0, dtype=dt.FLOAT, dps=2),
             'storm_duration': HeadDataItem(0.000, '{:>10}', 8, 1, dtype=dt.FLOAT, dps=3),
             'sn_rate': HeadDataItem(0.000, '{:>10}', 8, 2, dtype=dt.FLOAT, dps=3),
@@ -151,8 +150,8 @@ class RefhUnit(AUnit):
             'up': HeadDataItem(0.000, '{:>10}', 15, 6, dtype=dt.FLOAT, dps=3),
             'uk': HeadDataItem(0.000, '{:>10}', 15, 7, dtype=dt.FLOAT, dps=3),
             'uh_rows': HeadDataItem(0.000, '{:>10}', 16, 0, dtype=dt.INT),
-#             'uh_units': HeadDataItem(0.000, '{:>10}', 14, 9, dtype=dt.INT),        # TODO: Find out what the deal with these is
-#             'uh_fct': HeadDataItem(0.000, '{:>10}', 14, 10, dtype=dt.FLOAT, dps=3),
+            #             'uh_units': HeadDataItem(0.000, '{:>10}', 14, 9, dtype=dt.INT),        # TODO: Find out what the deal with these is
+            #             'uh_fct': HeadDataItem(0.000, '{:>10}', 14, 10, dtype=dt.FLOAT, dps=3),
             'bl_flag': HeadDataItem('DESIGN', '{:>10}', 17, 0, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'br_flag': HeadDataItem('DESIGN', '{:>10}', 17, 1, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'bf0_flag': HeadDataItem('DESIGN', '{:>10}', 17, 2, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
@@ -162,7 +161,7 @@ class RefhUnit(AUnit):
             'br': HeadDataItem(0.000, '{:>10}', 18, 3, dtype=dt.FLOAT, dps=3),
             'bf0': HeadDataItem(0.000, '{:>10}', 18, 4, dtype=dt.FLOAT, dps=3),
         }
-        
+
         dobjs = [
             # update_callback is called every time a value is added or updated
             do.FloatData(rdt.RAIN, format_str='{:>10}', default=0, no_of_dps=3)
@@ -170,17 +169,14 @@ class RefhUnit(AUnit):
         dummy_row = {rdt.RAIN: 0}
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
         self.row_data['main'].setDummyRow({rdt.RAIN: 0})
-    
 
     def icLabels(self):
         """Overriddes superclass method."""
         return [self._name]
 
-
     def linkLabels(self):
         """Overriddes superclass method."""
         return {'name': self.name}
-
 
     def useUrban(self, activate):
         """
@@ -197,13 +193,12 @@ class RefhUnit(AUnit):
             self.head_data['revision'].value = '1'
             self.has_urban = False
 
-        
     def readUnitData(self, unit_data, file_line):
         """Reads the unit data into the geometry objects.
-        
+
         See Also:
             AUnit - readUnitData for more information.
-        
+
         Args:
             unit_data (list): The section of the isis dat file pertaining 
                 to this section 
@@ -212,11 +207,10 @@ class RefhUnit(AUnit):
         file_line = self._readStormData(unit_data, file_line, storm_rows)
         file_line = self._readSuffix(unit_data, file_line)
         return file_line
-        
 
-    def _readHeadData(self, unit_data, file_line):            
+    def _readHeadData(self, unit_data, file_line):
         """Format the header data for writing to file.
-        
+
         Args:
             unit_data (list): containing the data to read.
         """
@@ -244,10 +238,10 @@ class RefhUnit(AUnit):
         self.head_data['season'].value = unit_data[file_line + 4][30:40].strip()
         self.head_data['published_report'].value = unit_data[file_line + 4][40:50].strip()
         self.head_data['urban'].value = unit_data[file_line + 4][50:60].strip()
-        
+
         if self.head_data['urban'].compare('URBANREFH'):
             self.has_urban = True
-        
+
             self.head_data['subarea_1'].value = unit_data[file_line + 5][0:10].strip()
             self.head_data['dplbar_1'].value = unit_data[file_line + 5][10:20].strip()
             self.head_data['suburbext_1'].value = unit_data[file_line + 5][20:30].strip()
@@ -265,36 +259,36 @@ class RefhUnit(AUnit):
             self.head_data['suburbext_3'].value = unit_data[file_line + 7][20:30].strip()
             self.head_data['calibration_3'].value = unit_data[file_line + 7][30:40].strip()
             self.head_data['subrunoff_3'].value = unit_data[file_line + 7][40:50].strip()
-        
+
         file_line += 5
-        if self.has_urban: file_line += 3
-        
+        if self.has_urban:
+            file_line += 3
+
         self.head_data['storm_area'].value = unit_data[file_line][0:10].strip()
         self.head_data['storm_duration'].value = unit_data[file_line][10:20].strip()
         self.head_data['sn_rate'].value = unit_data[file_line][20:30].strip()
-        self.head_data['rainfall_flag'].value = unit_data[file_line+1][0:10].strip()
-        self.head_data['arf_flag'].value = unit_data[file_line+1][10:20].strip()
-        self.head_data['rainfall_comment'].value = unit_data[file_line+1][20:].strip()
-        self.head_data['rainfall_odepth'].value = unit_data[file_line+2][0:10].strip()
-        self.head_data['return_period'].value = unit_data[file_line+2][10:20].strip()
-        self.head_data['arf'].value = unit_data[file_line+2][20:30].strip()
-        self.head_data['c'].value = unit_data[file_line+2][30:40].strip()
-        self.head_data['d1'].value = unit_data[file_line+2][40:50].strip()
-        self.head_data['d2'].value = unit_data[file_line+2][50:60].strip()
-        self.head_data['d3'].value = unit_data[file_line+2][60:70].strip()
-        self.head_data['e'].value = unit_data[file_line+2][70:80].strip()
-        self.head_data['f'].value = unit_data[file_line+2][80:90].strip()
-        self.head_data['rp_flag'].value = unit_data[file_line+3][0:10].strip()
-        self.head_data['scf_flag'].value = unit_data[file_line+3][10:20].strip()
-        self.head_data['scf'].value = unit_data[file_line+3][20:30].strip()
-        self.head_data['use_refined_rainfall'].value = unit_data[file_line+3][30:40].strip()
-        temp = unit_data[file_line+4]
-        storm_rows = int(unit_data[file_line+4][0:10].strip())
-        
+        self.head_data['rainfall_flag'].value = unit_data[file_line + 1][0:10].strip()
+        self.head_data['arf_flag'].value = unit_data[file_line + 1][10:20].strip()
+        self.head_data['rainfall_comment'].value = unit_data[file_line + 1][20:].strip()
+        self.head_data['rainfall_odepth'].value = unit_data[file_line + 2][0:10].strip()
+        self.head_data['return_period'].value = unit_data[file_line + 2][10:20].strip()
+        self.head_data['arf'].value = unit_data[file_line + 2][20:30].strip()
+        self.head_data['c'].value = unit_data[file_line + 2][30:40].strip()
+        self.head_data['d1'].value = unit_data[file_line + 2][40:50].strip()
+        self.head_data['d2'].value = unit_data[file_line + 2][50:60].strip()
+        self.head_data['d3'].value = unit_data[file_line + 2][60:70].strip()
+        self.head_data['e'].value = unit_data[file_line + 2][70:80].strip()
+        self.head_data['f'].value = unit_data[file_line + 2][80:90].strip()
+        self.head_data['rp_flag'].value = unit_data[file_line + 3][0:10].strip()
+        self.head_data['scf_flag'].value = unit_data[file_line + 3][10:20].strip()
+        self.head_data['scf'].value = unit_data[file_line + 3][20:30].strip()
+        self.head_data['use_refined_rainfall'].value = unit_data[file_line + 3][30:40].strip()
+        temp = unit_data[file_line + 4]
+        storm_rows = int(unit_data[file_line + 4][0:10].strip())
+
         file_line = file_line + 5
         return file_line, storm_rows
 
-        
     def _readStormData(self, unit_data, file_line, storm_rows):
         """
         """
@@ -303,10 +297,9 @@ class RefhUnit(AUnit):
             self.row_data['main'].addRow(
                 {rdt.RAIN: unit_data[i][0:10].strip()}, no_copy=True
             )
-        
+
         return out_line
-    
-    
+
     def _readSuffix(self, unit_data, file_line):
         """
         """
@@ -314,87 +307,84 @@ class RefhUnit(AUnit):
         self.head_data['cini_flag'].value = unit_data[file_line][10:20].strip()
         self.head_data['alpha_flag'].value = unit_data[file_line][20:30].strip()
         self.head_data['models_comment'].value = unit_data[file_line][30:].strip()
-        self.head_data['cm_dcf'].value = unit_data[file_line+1][0:10].strip()
-        self.head_data['cmax'].value = unit_data[file_line+1][10:20].strip()
-        self.head_data['cini'].value = unit_data[file_line+1][20:30].strip()
-        self.head_data['alpha'].value = unit_data[file_line+1][30:40].strip()
-        self.head_data['bfihost'].value = unit_data[file_line+1][40:50].strip()
-        self.head_data['uh_flag'].value = unit_data[file_line+2][0:10].strip()
-        self.head_data['tp_flag'].value = unit_data[file_line+2][10:20].strip()
-        self.head_data['up_flag'].value = unit_data[file_line+2][20:30].strip()
-        self.head_data['uk_flag'].value = unit_data[file_line+2][30:40].strip()
-        self.head_data['tp_dcf'].value = unit_data[file_line+3][0:10].strip()
-        self.head_data['tp0'].value = unit_data[file_line+3][10:20].strip()
-        self.head_data['tpt'].value = unit_data[file_line+3][20:30].strip()
-        self.head_data['dplbar'].value = unit_data[file_line+3][30:40].strip()
-        self.head_data['dpsbar'].value = unit_data[file_line+3][40:50].strip()
-        self.head_data['propwet'].value = unit_data[file_line+3][50:60].strip()
-        self.head_data['up'].value = unit_data[file_line+3][60:70].strip()
-        self.head_data['uk'].value = unit_data[file_line+3][70:80].strip()
-        self.head_data['uh_rows'].value = unit_data[file_line+4][0:10].strip()
-        self.head_data['bl_flag'].value = unit_data[file_line+5][0:10].strip()
-        self.head_data['br_flag'].value = unit_data[file_line+5][10:20].strip()
-        self.head_data['bf0_flag'].value = unit_data[file_line+5][20:30].strip()
-        self.head_data['bl_dcf'].value = unit_data[file_line+6][0:10].strip()
-        self.head_data['bl'].value = unit_data[file_line+6][10:20].strip()
-        self.head_data['br_dcf'].value = unit_data[file_line+6][20:30].strip()
-        self.head_data['br'].value = unit_data[file_line+6][30:40].strip()
-        self.head_data['bf0'].value = unit_data[file_line+6][40:50].strip()
-        
+        self.head_data['cm_dcf'].value = unit_data[file_line + 1][0:10].strip()
+        self.head_data['cmax'].value = unit_data[file_line + 1][10:20].strip()
+        self.head_data['cini'].value = unit_data[file_line + 1][20:30].strip()
+        self.head_data['alpha'].value = unit_data[file_line + 1][30:40].strip()
+        self.head_data['bfihost'].value = unit_data[file_line + 1][40:50].strip()
+        self.head_data['uh_flag'].value = unit_data[file_line + 2][0:10].strip()
+        self.head_data['tp_flag'].value = unit_data[file_line + 2][10:20].strip()
+        self.head_data['up_flag'].value = unit_data[file_line + 2][20:30].strip()
+        self.head_data['uk_flag'].value = unit_data[file_line + 2][30:40].strip()
+        self.head_data['tp_dcf'].value = unit_data[file_line + 3][0:10].strip()
+        self.head_data['tp0'].value = unit_data[file_line + 3][10:20].strip()
+        self.head_data['tpt'].value = unit_data[file_line + 3][20:30].strip()
+        self.head_data['dplbar'].value = unit_data[file_line + 3][30:40].strip()
+        self.head_data['dpsbar'].value = unit_data[file_line + 3][40:50].strip()
+        self.head_data['propwet'].value = unit_data[file_line + 3][50:60].strip()
+        self.head_data['up'].value = unit_data[file_line + 3][60:70].strip()
+        self.head_data['uk'].value = unit_data[file_line + 3][70:80].strip()
+        self.head_data['uh_rows'].value = unit_data[file_line + 4][0:10].strip()
+        self.head_data['bl_flag'].value = unit_data[file_line + 5][0:10].strip()
+        self.head_data['br_flag'].value = unit_data[file_line + 5][10:20].strip()
+        self.head_data['bf0_flag'].value = unit_data[file_line + 5][20:30].strip()
+        self.head_data['bl_dcf'].value = unit_data[file_line + 6][0:10].strip()
+        self.head_data['bl'].value = unit_data[file_line + 6][10:20].strip()
+        self.head_data['br_dcf'].value = unit_data[file_line + 6][20:30].strip()
+        self.head_data['br'].value = unit_data[file_line + 6][30:40].strip()
+        self.head_data['bf0'].value = unit_data[file_line + 6][40:50].strip()
+
         return file_line + 6
 
-
-    def getData(self): 
+    def getData(self):
         """Retrieve the data in this unit.
 
         The String[] returned is formatted for printing in the fashion
         of the .dat file.
-        
+
         Return:
             List of strings formated for writing to .dat file.
         """
         out_data = self._getHeadData()
-        out_data.extend(self._getStormData()) 
-        out_data.extend(self._getSuffix()) 
-        
+        out_data.extend(self._getStormData())
+        out_data.extend(self._getSuffix())
+
         return out_data
-    
-        
+
     def _getHeadData(self):
         """
         """
         out = []
         out.append('REFHBDY #revision#' + self.head_data['revision'].format() + ' ' + self.head_data['comment'].value)
         out.append('\n' + self._name)
-        
+
         key_order = ['z', 'easting', 'northing', 'time_delay', 'time_step',
-                     'bf_only', 'sc_flag', 'scale_factor', 'hydrograph_mode', 
-                     'hydrograph_scaling', 'min_flow', 'catchment_area', 'saar', 
+                     'bf_only', 'sc_flag', 'scale_factor', 'hydrograph_mode',
+                     'hydrograph_scaling', 'min_flow', 'catchment_area', 'saar',
                      'urbext', 'season', 'published_report', 'urban']
         for k in key_order:
             out.append(self.head_data[k].format(True))
-        
+
         if self.head_data['urban'].compare('URBANREFH'):
             key_order = ['subarea_1', 'dplbar_1', 'suburbext_1', 'calibration_1',
                          'subarea_2', 'dplbar_2', 'suburbext_2', 'calibration_2',
-                         'subrunoff_2', 'sewer_rp_2', 'sewer_depth_2', 
-                         'sewer_lossvolume_2', 'subarea_3', 'dplbar_3', 
+                         'subrunoff_2', 'sewer_rp_2', 'sewer_depth_2',
+                         'sewer_lossvolume_2', 'subarea_3', 'dplbar_3',
                          'suburbext_3', 'calibration_3', 'subrunoff_3']
             for k in key_order:
                 out.append(self.head_data[k].format(True))
-        
+
         key_order = ['storm_area', 'storm_duration', 'sn_rate', 'rainfall_flag',
-        'arf_flag', 'rainfall_comment', 'rainfall_odepth', 'return_period', 'arf', 
-        'c', 'd1', 'd2', 'd3', 'e', 'f', 'rp_flag', 'scf_flag', 'scf', 
-        'use_refined_rainfall']
+                     'arf_flag', 'rainfall_comment', 'rainfall_odepth', 'return_period', 'arf',
+                     'c', 'd1', 'd2', 'd3', 'e', 'f', 'rp_flag', 'scf_flag', 'scf',
+                     'use_refined_rainfall']
         for k in key_order:
             out.append(self.head_data[k].format(True))
         j = ''.join(out)
         finalout = ''.join(out).split('\n')
-            
+
         return finalout
 
-        
     def _getStormData(self):
         """
         """
@@ -406,10 +396,9 @@ class RefhUnit(AUnit):
 #         out_data = ['{:>10}'.format(self.row_data['main'].numberOfRows())]
 #         for line in self.row_data['main']:
 #             out_data.append('{:>10}'.format(line))
-            
+
         return out_data
-    
-    
+
     def _getSuffix(self):
         """
         """
@@ -417,8 +406,8 @@ class RefhUnit(AUnit):
         # Add this heere to avoid an additional newline
         out.append(self.head_data['cmax_flag'].format())
         key_order = [
-            'cini_flag', 'alpha_flag', 'models_comment', 'cm_dcf', 
-            'cmax', 'cini', 'alpha', 'bfihost', 'uh_flag' , 'tp_flag', 'up_flag',
+            'cini_flag', 'alpha_flag', 'models_comment', 'cm_dcf',
+            'cmax', 'cini', 'alpha', 'bfihost', 'uh_flag', 'tp_flag', 'up_flag',
             'uk_flag', 'tp_dcf', 'tp0', 'tpt', 'dplbar', 'dpsbar', 'propwet',
             'up', 'uk', 'uh_rows', 'bl_flag', 'br_flag', 'bf0_flag', 'bl_dcf',
             'bl', 'br_dcf', 'br', 'bf0'
@@ -426,9 +415,5 @@ class RefhUnit(AUnit):
         for k in key_order:
             out.append(self.head_data[k].format(True))
         out = ''.join(out).split('\n')
-        
+
         return out
-    
-    
-    
-        
