@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/duncan-r/SHIP.svg?branch=master)](https://travis-ci.org/duncan-r/SHIP)
+
 SHIP
 ====
 
@@ -9,9 +11,9 @@ Python as easy as possible.
 For more information containing an overview of the setup of the library,
 some usage examples and complete API docs you can clone the repo and build the 
 Sphynx documentation provided in the docs folder, or if you prefer you can view
-the [SHIP Docs](http://duncan-r.github.io/SHIP/index.html) hosted here on 
-GitHub. There's also some example scripts that use the API available in the
-[examples folder](https://github.com/duncan-r/SHIP/tree/develop/examples).
+the `SHIP Docs <http://duncan-r.github.io/SHIP/index.html>`_ hosted here on 
+GitHub. There's also some example scripts that use the API available in the 
+`examples folder <https://github.com/duncan-r/SHIP/tree/develop/examples>`_.
 
 Notice
 ------
@@ -24,7 +26,7 @@ a decent deprecation period). Note that this is not completely true for the
 datafileloader and datafileobject modules, which still need overhauling. The
 good news is the documentation is now a lot better, so it should be easier to
 see what's going on. You can see the documentation for the project here:
-[SHIP Docs](http://duncan-r.github.io/SHIP/index.html)
+`SHIP Docs <http://duncan-r.github.io/SHIP/index.html>`_
 
 
 If you need to continue using the older (0.2.5) version there is a branch
@@ -52,7 +54,8 @@ Here's more context from the extract in the docs:
    *find it much improved and it's defintiely easier to maintain and improve going*
    *forward. Not also that "the possible API break" stage is through and any*
    *functionality will be properly deprecated for a reasonable amount of time from*
-   *now on. For more info on what's changed see [API Changes](http://duncan-r.github.io/SHIP/fmp/updatechanges.html#updatechanges-top)*
+   *now on. For more info on what's changed see* 
+   `API Changes <http://duncan-r.github.io/SHIP/fmp/updatechanges.html#updatechanges-top>`_
 
 
 Python version
