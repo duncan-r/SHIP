@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/duncan-r/SHIP.svg?branch=master)](https://travis-ci.org/duncan-r/SHIP)
+.. image:: https://travis-ci.org/duncan-r/SHIP.svg?branch=develop
+    :target: https://travis-ci.org/duncan-r/SHIP
 
 SHIP
 ====
