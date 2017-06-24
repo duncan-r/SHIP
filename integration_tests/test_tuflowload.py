@@ -5,6 +5,7 @@ import copy
 
 from ship.utils.fileloaders import fileloader
 from ship.utils import filetools as ft
+from integration_tests import utils
 
 
 class TuflowLoadTests(object):
@@ -22,7 +23,7 @@ class TuflowLoadTests(object):
         del self.tuflow
 
         self.loadTuflowModel(main_path)
-        assert(self.tuflow.missing_model_files == [])
+        utils.softAssertion(self.tuflow.missing_model_files, [])
 #         self.test_deactiveLogic()
         self.test_writeTuflowModel()
         self.test_controlFileTypes()
@@ -48,7 +49,7 @@ class TuflowLoadTests(object):
             os.path.normpath(os.path.join(self.tuflow.root, "..\\model\\test_tgc_NOEXIST.tgc")),
             os.path.normpath(os.path.join(self.tuflow.root, "..\\model\\test_tbc_NOEXIST.tbc")),
         ]
-        assert(set(self.tuflow.missing_model_files) == set(test_files))
+        utils.softAssertion(set(self.tuflow.missing_model_files), set(test_files))
     
     def test_writeTuflowModel(self):
         """Note this will write the outputs of the tuflow model to disk.
@@ -74,6 +75,7 @@ class TuflowLoadTests(object):
         except IOError:
             print ('\t Could not make test directeries - aborting test')
             print ('\nFail!\n')
+
         tuflow = copy.deepcopy(self.tuflow)
         new_root = os.path.normpath(need_dirs[4])       # ending 'runs'
         root_compare = os.path.normpath(need_dirs[3])   # ending 'tuflow'
@@ -86,7 +88,7 @@ class TuflowLoadTests(object):
             for tkey, tval in temp.items():
 #                 print ('root compare: ' + root_compare)
 #                 print ('tkey:         ' + tkey)
-                assert(root_compare in tkey)
+                utils.softAssertionIn(root_compare, tkey)
                 contents[ckey][tkey] = tval
         
         for ctype, c in contents.items():
@@ -94,7 +96,7 @@ class TuflowLoadTests(object):
                 ft.writeFile(val, pkey)
 
         del tuflow
-        print ('pass')
+        print ('Done')
     
     def test_deactiveLogic(self):
         pass
@@ -119,8 +121,8 @@ class TuflowLoadTests(object):
         print ('Testing control_files keys...')
         ckeys = self.tuflow.control_files.keys()
         test_keys = ['TCF', 'ECF', 'TGC', 'TBC']
-        assert(set(ckeys) == set(test_keys))
-        print ('pass')
+        utils.softAssertion(set(ckeys), set(test_keys))
+        print ('Done')
     
     def test_seVals(self):
         print ('Testing se_vals filepaths keys...')
@@ -145,13 +147,13 @@ class TuflowLoadTests(object):
             '2d_mat_shiptest_tgc_v1_R.shp'
         ]
         paths = self.tuflow.control_files['TGC'].filepaths(se_vals=se_vals)
-        assert(set(test_paths) == set(paths))
-        print ('pass')
+        utils.softAssertion(set(test_paths), set(paths))
+        print ('Done')
         
         print ('Testing se_vals variables count...')
         vars = self.tuflow.control_files['TGC'].variables(se_vals=se_vals)
-        assert(len(vars) == 6)
-        print ('pass')
+        utils.softAssertion(len(vars), 6)
+        print ('Done')
 
     
     def test_files(self):
@@ -165,9 +167,8 @@ class TuflowLoadTests(object):
         for key, c in self.tuflow.control_files.items():
             print ('Checking model_type: ' + key + '...')
             vars = c.files()
-            assert(len(vars) == test_filecounts[key]), \
-                                    "%s variable lengths differ" % key
-        print ('pass')
+            utils.softAssertion(len(vars), test_filecounts[key])
+        print ('Done')
 
         print ('Testing no_duplicates=False files count...')
         test_filecounts = {
@@ -179,9 +180,8 @@ class TuflowLoadTests(object):
         for key, c in self.tuflow.control_files.items():
             print ('Checking model_type: ' + key + '...')
             vars = c.files(no_duplicates=False)
-            assert(len(vars) == test_filecounts[key]), \
-                                    "%s file lengths differ" % key
-        print ('pass')
+            utils.softAssertion(len(vars), test_filecounts[key])
+        print ('Done')
 
     
     def test_variables(self):
@@ -195,9 +195,8 @@ class TuflowLoadTests(object):
         for key, c in self.tuflow.control_files.items():
             print ('Checking model_type: ' + key + '...')
             vars = c.variables()
-            assert(len(vars) == test_varcounts[key]), \
-                                    "%s variable lengths differ" % key
-        print ('pass')
+            utils.softAssertion(len(vars), test_varcounts[key])
+        print ('Done')
 
         print ('Testing no_duplciates=False variables count...')
         test_varcounts = {
@@ -209,9 +208,8 @@ class TuflowLoadTests(object):
         for key, c in self.tuflow.control_files.items():
             print ('Checking model_type: ' + key + '...')
             vars = c.variables(no_duplicates=False)
-            assert(len(vars) == test_varcounts[key]), \
-                                    "%s variable lengths differ" % key
-        print ('pass')
+            utils.softAssertion(len(vars), test_varcounts[key])
+        print ('Done')
     
     def  test_allFilepaths(self):
         print ('Testing all filepaths...')
@@ -268,6 +266,5 @@ class TuflowLoadTests(object):
         for key, c in self.tuflow.control_files.items():
             filepaths = c.filepaths()
             print ('Checking model_type: ' + key + '...')
-            assert(set(test_paths[key]) == set(filepaths)), \
-                                    "%s file sets differ" % key
-        print ('pass')
+            utils.softAssertion(set(test_paths[key]), set(filepaths))
+        print ('Done')

@@ -5,6 +5,7 @@ import copy
 
 from ship.utils.fileloaders import fileloader
 from ship.utils import filetools as ft
+from integration_tests import utils
 
 
 class DatLoadTests(object):
@@ -43,25 +44,25 @@ class DatLoadTests(object):
         ics = self.dat.unitsByType('initial_conditions')
         gis = self.dat.unitsByType('gis_info')
         
-        assert(len(headers) == 1)
-        assert(len(comments) == 1)
-        assert(len(refhs) == 1)
-        assert(len(rivers) == 6)
-        assert(len(bridges) == 2)
-        assert(len(junctions) == 2)
-        assert(len(spills) == 1)
-        assert(len(htbdys) == 1)
-        assert(len(unknowns) == 1)
-        assert(len(ics) == 1)
-        assert(len(gis) == 1)
+        utils.softAssertion(len(headers), 1)
+        utils.softAssertion(len(comments), 1)
+        utils.softAssertion(len(refhs), 1)
+        utils.softAssertion(len(rivers), 6)
+        utils.softAssertion(len(bridges), 2)
+        utils.softAssertion(len(junctions), 2)
+        utils.softAssertion(len(spills), 1)
+        utils.softAssertion(len(htbdys), 1)
+        utils.softAssertion(len(unknowns), 1)
+        utils.softAssertion(len(ics), 1)
+        utils.softAssertion(len(gis), 1)
         
-        print ('pass')
+        print ('Done')
     
     def test_icsSetup(self):
         print ('Test ics setup...')
         ics = self.dat.unit('initial_conditions')
-        assert(len(ics.row_data['main']._collection[0].data_collection) == 14)
-        print('pass')
+        utils.softAssertion(len(ics.row_data['main']._collection[0].data_collection), 14)
+        print('Done')
         
     
     def test_datWrite(self):
@@ -82,16 +83,22 @@ class DatLoadTests(object):
         
         outpath = os.path.join(need_dirs[-1], self.dat.path_holder.filenameAndExtension()) 
         
+
+        # Write the dat file once to start with - use overwrite in case it exists
+        self.dat.write(outpath, overwrite=True)
+
+        # Then hopefully this fails without overwrite set to true
         error_raised = False
         try:
             self.dat.write(outpath)
         except IOError:
             error_raised = True
+        utils.softAssertion(error_raised, True) 
         
-        assert(error_raised == True) 
+        # Then a final check to make sure overwrite is working
         self.dat.write(outpath, overwrite=True)
         
-        print ('pass')
+        print ('Done')
         
         
         
