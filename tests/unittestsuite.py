@@ -45,5 +45,3 @@ if __name__ == '__main__':
 
     # run the test suite
     test_runner.run(test_suite)
-    
-    
