@@ -60,12 +60,11 @@ class ReservoirUnit (AUnit):
         AUnit.__init__(self, **kwargs)
 
         self._name = 'Res'
-        self._name_ds = 'ResDS'
         self.head_data = {
             'revision': HeadDataItem(0, '{:<1}', 0, 0, dtype=dt.INT, allow_blank=True),
             'comment': HeadDataItem('', '', 0, 1, dtype=dt.STRING),
-            'easting': HeadDataItem('', '{:>10}', 1, 0, dtype=dt.STRING), 
-            'northing': HeadDataItem('', '{:>10}', 1, 1, dtype=dt.STRING),
+            'easting': HeadDataItem(0.000, '{:>10}', 1, 0, dtype=dt.FLOAT, dps=3), 
+            'northing': HeadDataItem(0.000, '{:>10}', 1, 1, dtype=dt.FLOAT, dps=3),
             'runoff_factor': HeadDataItem(0.000, '{:>10}', 1, 2, dtype=dt.FLOAT, dps=3),
             'lateral1': HeadDataItem('', '{:<12}', 2, 0, dtype=dt.STRING),
             'lateral2': HeadDataItem('', '{:<12}', 2, 1, dtype=dt.STRING),
@@ -82,18 +81,25 @@ class ReservoirUnit (AUnit):
                 rdt.ELEVATION, format_str='{:>10}', no_of_dps=3, use_sn=1000000, 
                 update_callback=self.checkIncreases
             ),
-            do.FloatData(rdt.AREA, format_str='{:>10}', no_of_dps=3, use_sn=1000000),
+            do.FloatData(
+                rdt.AREA, format_str='{:>10}', no_of_dps=3, use_sn=1000000,
+                update_callback=self.checkIncreases
+            ),
         ]
         self.row_data['main'] = RowDataCollection.bulkInitCollection(dobjs)
         self.row_data['main'].setDummyRow({rdt.ELEVATION: 0, rdt.AREA: 0})
 
-
     def icLabels(self):
-        return []
+        labels = [self._name] + self.head_data['names'] 
+        for i in range(1, 4):
+            latname = 'lateral' + str(i)
+            if self.head_data[latname].value != '':
+                labels.append(self.head_data[latname].value)
+        return labels
 
     def linkLabels(self):
         names = {}
-        for i, n in enumerate(self.head_data['names']):
+        for i, n in enumerate([self._name] + self.head_data['names']):
             names['name' + str(i)] = n
         laterals = {
             'lateral1': self.head_data['lateral1'].value,
@@ -135,16 +141,19 @@ class ReservoirUnit (AUnit):
         
         line = unit_data[file_line+1]
         names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
-        self.head_data['names'] = names
+        self._name = names[0]
+        self.head_data['names'] = names[1:] # Remove the main name from the list
         
+        line_count = 2
         if self.head_data['revision'].value > 0:
+            line_count += 1
             line = unit_data[file_line+2]
             names = [line[i:i+12].strip() for i in range(0, len(line), 12)]
             for i, n in enumerate(names):
                 if i > 3: break
                 self.head_data['lateral' + str(i+1)].value = n.strip()
         
-        return file_line + 3
+        return file_line + line_count
     
     
     def _readPostRowData(self, unit_data, file_line):
@@ -189,13 +198,17 @@ class ReservoirUnit (AUnit):
         The String[] returned is formatted for printing in the fashion
         of the .dat file.
         
+        The _getPostRowData function is only returned for units that have
+        a revision number > 0.
+        
         Returns:
             list of output data formated the same as in the .DAT file.
         """
         num_rows = self.row_data['main'].numberOfRows()
         out_data = self._getHeadData(num_rows)
         out_data.extend(self._getRowData(num_rows)) 
-        out_data.extend(self._getPostRowData())
+        if self.head_data['revision'].value > 0:
+            out_data.extend(self._getPostRowData())
         return out_data
   
   
@@ -228,7 +241,7 @@ class ReservoirUnit (AUnit):
         else:
             out.append('RESERVOIR ' + self.head_data['comment'].value)
         names = []
-        for n in self.head_data['names']:
+        for n in ([self._name] + self.head_data['names']):
             names.append('{:<12}'.format(n))
         out.append(''.join(names))
         lats = []
@@ -237,7 +250,7 @@ class ReservoirUnit (AUnit):
             lats.append(self.head_data['lateral2'].format())
             lats.append(self.head_data['lateral3'].format())
             lats.append(self.head_data['lateral4'].format())
-        out.append(''.join(lats))
+            out.append(''.join(lats))
         return out
     
 
@@ -257,8 +270,8 @@ class ReservoirUnit (AUnit):
         """Adds a new row to the spill unit.
 
         Ensures that certain requirements of the data rows, such as the 
-        chainage needing to increase for each row down are met, then call the 
-        addNewRow() method in the row_collection.
+        elevation and area needing to increase for each row down are met, then 
+        call the addNewRow() method in the row_collection.
         
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
@@ -284,5 +297,17 @@ class ReservoirUnit (AUnit):
         # Call superclass method to add the new row
         AUnit.addRow(self, row_vals, index=index, **kwargs)
         
+    
+    def convertToLatestVersion(self):
+        """Convert old style reservoir units to the new format.
+        
+        We don't really need to do anything here. All of the defaults are
+        set in the constructor, so it's just the revision value that needs
+        updating.
+        """
+        if self.head_data['revision'].value > 0:
+            return
+        
+        self.head_data['revision'].value = 1
     
         
