@@ -45,12 +45,13 @@ try:
     from PyQt4 import QtGui
     from PyQt4 import QtCore
     HAS_QT = True
-    
+
 except Exception:
     logger.warning('Unable to load Qt modules - cannot launch file dialogues')
     HAS_QT = False
 
-class MyFileDialogs(QtGui.QFileDialog):    
+
+class MyFileDialogs(QtGui.QFileDialog):
     """Class for launching file dialogs.
 
     If the Qt modules could not be loaded  when the module was imported all of
@@ -62,18 +63,18 @@ class MyFileDialogs(QtGui.QFileDialog):
         of these classes all over the place taking up space. I think that I
         might make the Gui application use QThreads to lauch plugins etc so
         need to consider that when messing around in here.
-    """   
-    
+    """
+
     def openFileDialog(self, path='', file_types='ALL (*.*)', multi_file=False):
         """ Launches an open-file dialog.
-        
+
         file_types should be a formatted string setup as follows:
         "CSV (*.csv);;TXT (*.txt)"
 
         Args:
             path (str): the preset path to launch the dialog in.
             file_types (str): the extensions to filter the files with. 
-        
+
         Returns:
             str - containing the chosen file path or False if cancelled.
         """
@@ -99,18 +100,17 @@ class MyFileDialogs(QtGui.QFileDialog):
             else:
                 logger.info('User cancelled file open process')
                 return False
-        
 
     def saveFileDialog(self, path='', file_types='ALL (*.*)'):
         """Launches an save-file dialog
-        
+
         file_types should be a formatted string setup as follows:
         "CSV (*.csv);;TXT (*.txt)"
 
         Args:
             path (str): the preset path to launch the dialog in.
             file_types (str): the extensions to filter the files with  
-        
+
         Returns:
             str - containing the chosen file path or False if cancelled.
         """
@@ -121,61 +121,59 @@ class MyFileDialogs(QtGui.QFileDialog):
         else:
             logger.info('User cancelled file save process')
             return False
-        
-    
+
     def dirFileDialog(self, path=''):
         """Launches a dialog to choose directories from.
-        
+
         Args:
             path (str): Optional - the preset path to launch the dialog in.
-    
+
         Returns:
             str - containing the chosen file path or False if cancelled.
         """
-        file_path = str(QtGui.QFileDialog.getExistingDirectory(self, 
-                    caption='Select Directory', directory=path,
-                    options=QtGui.QFileDialog.ShowDirsOnly))
-        
+        file_path = str(QtGui.QFileDialog.getExistingDirectory(self,
+                                                               caption='Select Directory', directory=path,
+                                                               options=QtGui.QFileDialog.ShowDirsOnly))
+
         if not file_path == '':
             logger.info('Selected directory: Filepath = ' + file_path)
             return file_path
         else:
             logger.info('User cancelled get directory process')
             return False
-        
 
 
 class QNumericSortTableWidgetItem (QtGui.QTableWidgetItem):
     """Custom implementation of the QTableWidgetItem class.
-    
+
     Allows sorting of numerical values by overridding the default __lt__
     operator to do a numerical comparision.
     """
-    
-    def __init__ (self, value):
+
+    def __init__(self, value):
         super(QNumericSortTableWidgetItem, self).__init__(QtCore.QString('%s' % value))
 
-    def __lt__ (self, other):
+    def __lt__(self, other):
         """Check order of two values.
-        
+
         Tries to convert the value to a float. If successful it will return 
         the order of those two values. 
-        
+
         If value is not numeric or is not a QCustomTableWidgetItem type it
         will return the standard string compare output.
-        
+
         Args:
             other(QTableWidgetItem): value to compare with that stored by this.
-        
+
         Return:
             Bool - True if given value is less than this.
         """
         if (isinstance(other, QNumericSortTableWidgetItem)):
             try:
-                self_data_value  = float(self.data(QtCore.Qt.EditRole).toString())
+                self_data_value = float(self.data(QtCore.Qt.EditRole).toString())
                 other_data_value = float(other.data(QtCore.Qt.EditRole).toString())
             except:
                 return QtGui.QTableWidgetItem.__lt__(self, other)
             return self_data_value < other_data_value
         else:
-            return QtGui.QTableWidgetItem.__lt__(self, other) 
+            return QtGui.QTableWidgetItem.__lt__(self, other)

@@ -38,11 +38,10 @@ class InterpolateUnit(AUnit):
     UNIT_CATEGORY = 'interpolate'
     FILE_KEY = 'INTERPOLATE'
     FILE_KEY2 = None
-    
 
     def __init__(self):
         '''Constructor.
-        
+
         Args:
             file_order (int): the order of this unit in the .dat file.
         '''
@@ -64,49 +63,46 @@ class InterpolateUnit(AUnit):
             'northing': HeadDataItem(0.00, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3, default=0.00),
         }
 
-
     def icLabels(self):
         """Overriddes superclass method."""
         return [self._name]
-            
-    
-    def readUnitData(self, unit_data, file_line): 
+
+    def readUnitData(self, unit_data, file_line):
         '''Reads the given data into the object.
-        
+
         See Also:
             isisunit.
-        
+
         Args:
             unit_data (list): The raw file data to be processed.
         '''
-        self.head_data['comment'].value = unit_data[file_line][12:].strip() 
-        self._name = unit_data[file_line+1][:12].strip()
-        self.head_data['spill1'].value = unit_data[file_line+1][12:24].strip()
-        self.head_data['spill2'].value = unit_data[file_line+1][24:36].strip()
-        self.head_data['lateral1'].value = unit_data[file_line+1][36:48].strip()
-        self.head_data['lateral2'].value = unit_data[file_line+1][48:60].strip()
-        self.head_data['lateral3'].value = unit_data[file_line+1][60:72].strip()
-        self.head_data['lateral4'].value = unit_data[file_line+1][72:84].strip()
-        self.head_data['distance'].value = unit_data[file_line+2][:10].strip()
-        self.head_data['easting'].value = unit_data[file_line+2][10:20].strip()
-        self.head_data['northing'].value = unit_data[file_line+2][20:30].strip()
+        self.head_data['comment'].value = unit_data[file_line][12:].strip()
+        self._name = unit_data[file_line + 1][:12].strip()
+        self.head_data['spill1'].value = unit_data[file_line + 1][12:24].strip()
+        self.head_data['spill2'].value = unit_data[file_line + 1][24:36].strip()
+        self.head_data['lateral1'].value = unit_data[file_line + 1][36:48].strip()
+        self.head_data['lateral2'].value = unit_data[file_line + 1][48:60].strip()
+        self.head_data['lateral3'].value = unit_data[file_line + 1][60:72].strip()
+        self.head_data['lateral4'].value = unit_data[file_line + 1][72:84].strip()
+        self.head_data['distance'].value = unit_data[file_line + 2][:10].strip()
+        self.head_data['easting'].value = unit_data[file_line + 2][10:20].strip()
+        self.head_data['northing'].value = unit_data[file_line + 2][20:30].strip()
         return file_line + 2
-        
-        
+
     def getData(self):
         '''Returns the formatted data for this unit. 
-        
+
         See Also:
             isisunit.
-        
+
         Returns:
             List of strings formatted for writing to the new dat file.
         '''
         out = []
         out.append('INTERPOLATE ' + self.head_data['comment'].value)
-        out.append('\n'+'{:<12}'.format(self._name))
+        out.append('\n' + '{:<12}'.format(self._name))
         key_order1 = ['spill1', 'spill2', 'lateral1', 'lateral2', 'lateral3',
-                     'lateral4']
+                      'lateral4']
         for k in key_order1:
             out.append(self.head_data[k].format())
         key_order2 = ['distance', 'easting', 'northing']
@@ -114,6 +110,3 @@ class InterpolateUnit(AUnit):
             out.append(self.head_data[k].format(True))
         out_data = ''.join(out).split('\n')
         return out_data
-        
-        
-        
