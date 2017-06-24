@@ -363,11 +363,12 @@ class AUnit(object):
         details = self._getAdjacentDataObjDetails(data_obj, value, index)
         if details['prev_value']:
             if not value >= details['prev_value']:
-                raise ValueError('CHAINAGE must be > prev index and < next index.')
+                raise ValueError('VALUE must be > prev index and < next index.')
         if details['next_value']:
             if not value <= details['next_value']:
-                raise ValueError('CHAINAGE must be > prev index and < next index.')
-
+                raise ValueError('VALUE must be > prev index and < next index.')
+    
+    
     def _getAdjacentDataObjDetails(self, data_obj, value, index):
         """Safely check the status of adjacent values in an ADataRowObject.
 
@@ -402,8 +403,8 @@ class AUnit(object):
         if index > 0:
             prev_index = index - 1
             prev_value = data_obj[prev_index]
-        if index < data_obj._max:
-            next_index = index + 1
+        if index < data_obj._max: 
+            next_index = index
             next_value = data_obj[next_index]
 
         retvals = {'index': index,

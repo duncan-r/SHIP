@@ -65,10 +65,10 @@ class test_SpillUnit(unittest.TestCase):
         i, spill = ifactory.createUnitFromFile(self.spill_unitdata, 0, 'SPILL', 1, 1)
 
         # Add with required only args
-        args = {rdt.CHAINAGE: 6.0, rdt.ELEVATION: 37.2}
+        args = {rdt.CHAINAGE: 4.0, rdt.ELEVATION: 37.9}
         spill.addRow(args, index=1)
         row = spill.row_data['main'].rowAsList(1)
-        testrow = [6.0, 37.2, 0.00, 0.00]
+        testrow = [4.0, 37.9, 0.00, 0.00]
         self.assertListEqual(testrow, row)
 
         # Add with all args

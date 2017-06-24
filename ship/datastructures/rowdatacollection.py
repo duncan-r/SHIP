@@ -674,13 +674,14 @@ class RowDataCollection(object):
         Args:
             temp_list: The versions to return the objects to.
         """
-        self._collection = temp_list
-
-        for o in temp_list:
-            del o
-        del temp_list
-
-    def _deepCopyDataObjects(self, obj):
+        if temp_list is not None:
+            self._collection = temp_list
+            for o in temp_list:
+                del o
+            del temp_list
+               
+                
+    def _deepCopyDataObjects(self, obj): 
         """Create a deep copy of the data_objects
 
         """
