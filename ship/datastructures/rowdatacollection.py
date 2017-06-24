@@ -679,9 +679,8 @@ class RowDataCollection(object):
             for o in temp_list:
                 del o
             del temp_list
-               
-                
-    def _deepCopyDataObjects(self, obj): 
+
+    def _deepCopyDataObjects(self, obj):
         """Create a deep copy of the data_objects
 
         """

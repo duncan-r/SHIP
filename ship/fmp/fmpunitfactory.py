@@ -37,9 +37,9 @@ from ship.fmp.datunits import isisunit
 from ship.fmp.datunits import refhunit
 from ship.fmp.datunits import orificeunit
 from ship.fmp.datunits import culvertunit
-from ship.fmp.datunits import htbdyunit 
-from ship.fmp.datunits import interpolateunit 
-from ship.fmp.datunits import reservoirunit 
+from ship.fmp.datunits import htbdyunit
+from ship.fmp.datunits import interpolateunit
+from ship.fmp.datunits import reservoirunit
 
 import logging
 logger = logging.getLogger(__name__)

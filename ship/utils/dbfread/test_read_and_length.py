@@ -15,6 +15,7 @@ def table():
 def loaded_table():
     return DBF('testcases/memotest.dbf', load=True)
 
+
 # This relies on people.dbf having this exact content.
 records = [{u'NAME': u'Alice',
             u'BIRTHDATE': datetime.date(1987, 3, 1),

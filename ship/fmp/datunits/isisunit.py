@@ -367,8 +367,7 @@ class AUnit(object):
         if details['next_value']:
             if not value <= details['next_value']:
                 raise ValueError('VALUE must be > prev index and < next index.')
-    
-    
+
     def _getAdjacentDataObjDetails(self, data_obj, value, index):
         """Safely check the status of adjacent values in an ADataRowObject.
 
@@ -403,7 +402,7 @@ class AUnit(object):
         if index > 0:
             prev_index = index - 1
             prev_value = data_obj[prev_index]
-        if index < data_obj._max: 
+        if index < data_obj._max:
             next_index = index
             next_value = data_obj[next_index]
 

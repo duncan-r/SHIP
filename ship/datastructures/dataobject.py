@@ -446,8 +446,8 @@ class FloatData(ADataRowObject):
                 value = self.format_str.format(value)
             else:
                 decimal_format = '%0.' + str(self.no_of_dps) + 'f'
-                value =  decimal_format % float(value)
-                value = self.format_str.format(value) 
+                value = decimal_format % float(value)
+                value = self.format_str.format(value)
         return value
 
 
