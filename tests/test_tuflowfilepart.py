@@ -8,6 +8,7 @@ from ship.tuflow.tuflowfilepart import TuflowPart
 from ship.tuflow import FILEPART_TYPES as ft
 from ship.tuflow import tuflowfactory as f
 
+from .utils import fakeAbsPath
 
 class TuflowFilePartTests(unittest.TestCase):
     '''Tests TuflowPart's and subclasses.
@@ -19,7 +20,7 @@ class TuflowFilePartTests(unittest.TestCase):
 
         Tests within test_tuflowfactor.py provide decent coverage of creating
         new instances of specific TuflowPart's and checking that they have
-        been instanciated properly. If you need to add tests to check that 
+        been instanciated properly. If you need to add tests to check that
         they have been created properly they should probably go in the factory
         tests.
     '''
@@ -27,30 +28,30 @@ class TuflowFilePartTests(unittest.TestCase):
     def setUp(self):
 
         # Setup a main .tcf file
-        self.fake_root = 'c:/path/to/fake/'
+        self.fake_root = fakeAbsPath('c:/path/to/fake/')
         self.tcf = tfp.ModelFile(None, **{'path': 'tcffile.tcf', 'command': None,
                                           'comment': None, 'model_type': 'TCF',
                                           'root': self.fake_root})
 
         # Setup a tgc file with tcf parent
-        tgc_line = "Geometry Control File == ..\\model\\tgcfile.tgc ! A tgc comment"
+        tgc_line = "Geometry Control File == ../model/tgcfile.tgc ! A tgc comment"
         self.tgc = f.TuflowFactory.getTuflowPart(tgc_line, self.tcf)[0]
 
         # Setup a gis file with tgc parent
-        gis_line = "Read Gis Z Shape == gis\\gisfile.shp ! A gis comment"
+        gis_line = "Read Gis Z Shape == gis/gisfile.shp ! A gis comment"
         self.gis = f.TuflowFactory.getTuflowPart(gis_line, self.tgc)[0]
         var_line = "Timestep == 2 ! A var comment"
         self.var = f.TuflowFactory.getTuflowPart(var_line, self.tgc)[0]
-        gis_line2 = "Read Gis Z Shape == gis\\gisfile2.shp ! A gis 2 comment"
+        gis_line2 = "Read Gis Z Shape == gis/gisfile2.shp ! A gis 2 comment"
         self.gis2 = f.TuflowFactory.getTuflowPart(gis_line2, self.tgc)[0]
 
         # For the evt testing stuff
-        line_evt = "Read Gis Z Shape == gis\\gisfile_evt.shp ! A gis 3 comment"
+        line_evt = "Read Gis Z Shape == gis/gisfile_evt.shp ! A gis 3 comment"
         self.gis_evt = f.TuflowFactory.getTuflowPart(line_evt, self.tgc)[0]
         linevar_evt = "Timestep == 6 ! A var evt comment"
         self.var_evt = f.TuflowFactory.getTuflowPart(linevar_evt, self.tgc)[0]
         # For the scenario testing stuff
-        line_scen = "Read Gis Z Shape == gis\\gisfile_evt.shp ! A gis 3 comment"
+        line_scen = "Read Gis Z Shape == gis/gisfile_evt.shp ! A gis 3 comment"
         self.gis_scen = f.TuflowFactory.getTuflowPart(line_scen, self.tgc)[0]
         linevar_scen = "Timestep == 6 ! A var scen comment"
         self.var_scen = f.TuflowFactory.getTuflowPart(linevar_scen, self.tgc)[0]
@@ -130,7 +131,7 @@ class TuflowFilePartTests(unittest.TestCase):
             's1': 'scen1', 'size': '10', 'e1': 'event1', 'anothervar': '2.5'
         }
         path = vardata.absolutePath(user_vars=user_vars)
-        self.assertEqual('c:\\path\\to\\model\\Materials_scen1.tmf', path)
+        self.assertEqual(fakeAbsPath('c:/path/to/model/Materials_scen1.tmf'), path)
         var = TuflowPart.resolvePlaceholder(varvar.variable, user_vars)
         var2 = varvar.resolvedVariable(user_vars)
         var3 = varvar.resolvePlaceholder(varvar.variable, user_vars=user_vars)
@@ -140,8 +141,8 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def test_TFabsolutePath(self):
         """Test return value of absolutePath in TuflowFile."""
-        path1 = 'c:\\path\\to\\model\\tgcfile.tgc'
-        path2 = 'c:\\path\\to\\model\\gis\\gisfile.shp'
+        path1 = fakeAbsPath('c:/path/to/model/tgcfile.tgc')
+        path2 = fakeAbsPath('c:/path/to/model/gis/gisfile.shp')
         self.assertEqual(path1, self.tgc.absolutePath())
         self.assertEqual(path2, self.gis.absolutePath())
 
@@ -151,15 +152,15 @@ class TuflowFilePartTests(unittest.TestCase):
         This will return the same as absolutePath if there is only one associated
         file extension. Otherwise it will return one path for each type.
         """
-        paths = ['c:\\path\\to\\model\\gis\\gisfile.shp',
-                 'c:\\path\\to\\model\\gis\\gisfile.shx',
-                 'c:\\path\\to\\model\\gis\\gisfile.dbf']
+        paths = [fakeAbsPath('c:/path/to/model/gis/gisfile.shp'),
+                 fakeAbsPath('c:/path/to/model/gis/gisfile.shx'),
+                 fakeAbsPath('c:/path/to/model/gis/gisfile.dbf')]
         self.assertListEqual(paths, self.gis.absolutePathAllTypes())
 
     def test_TFrelativePath(self):
         """Test return value of relativePaths in TuflowFile."""
-        path1 = ['..\\model']
-        path2 = ['..\\model', 'gis']
+        path1 = ['../model']
+        path2 = ['../model', 'gis']
         self.assertListEqual(path1, self.tgc.getRelativeRoots([]))
         self.assertListEqual(path2, self.gis.getRelativeRoots([]))
 
