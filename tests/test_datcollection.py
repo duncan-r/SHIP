@@ -6,6 +6,7 @@ from ship.fmp import fmpunitfactory as iuf
 from ship.fmp.datunits import riverunit
 from ship.fmp.datunits import ROW_DATA_TYPES as rdt
 from ship.utils.filetools import PathHolder
+from .utils import fakeAbsPath
 
 
 class IsisUnitCollectionTest(unittest.TestCase):
@@ -15,7 +16,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
     def setUp(self):
         '''Set up stuff that will be used throughout the class.
         '''
-        self.fake_path = 'c:\\fake\\path\\to\\datfile.dat'
+        self.fake_path = fakeAbsPath('c:/fake/path/to/datfile.dat')
         self.path_holder = PathHolder(self.fake_path)
 
         # Setup some data to create units with
@@ -89,7 +90,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         self.assertEqual(p.filename, 'datfile')
         self.assertEqual(p.extension, 'dat')
         self.assertEqual(p.relative_root, None)
-        self.assertEqual(p.root, 'c:\\fake\\path\\to')
+        self.assertEqual(p.root, fakeAbsPath('c:/fake/path/to'))
 
     def test_initialisedDat(self):
         """Make sure we're creating default setup collections properly."""
