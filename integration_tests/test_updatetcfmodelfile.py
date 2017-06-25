@@ -6,6 +6,7 @@ import copy
 from ship.utils.fileloaders import fileloader
 from ship.tuflow import tuflowfactory as factory
 from ship.utils.fileloaders.tuflowloader import TuflowLoader
+from integration_tests import utils
 
 
 class UpdateTcfModelFile(object):
@@ -23,7 +24,7 @@ class UpdateTcfModelFile(object):
         path = os.path.normpath(os.path.join(os.getcwd(), path))
         loader = fileloader.FileLoader()
         self.tuflow = loader.loadFile(path)
-        assert(self.tuflow.missing_model_files == [])
+        utils.softAssertion(self.tuflow.missing_model_files, [])
         print ('Tuflow model load complete.')
     
     def test_addTcfModelFile(self):
@@ -45,16 +46,16 @@ class UpdateTcfModelFile(object):
         tgc_control = loader.loadControlFile(tgc_part)
         tcf.addControlFile(tgc_part, tgc_control, after=geom)
         
-        assert(tgc_part in tuflow.control_files['TGC'].control_files)
+        utils.softAssertionIn(tgc_part, tuflow.control_files['TGC'].control_files)
         
         test_part = tuflow.control_files['TGC'].contains(filename='shiptest_tgc2_v1_DTM_2m')
-        assert(len(test_part) == 1)
+        utils.softAssertion(len(test_part), 1)
         
         index = tcf.parts.index(tgc_part)
-        assert(index == tcf.parts.index(geom) + 1)
+        utils.softAssertion(index, tcf.parts.index(geom) + 1)
         del tuflow
 
-        print ('pass')
+        print ('Done')
 
     def test_removeTcfModelFile(self):
         print ('Testing delete tcf ModelFile...')
@@ -66,11 +67,11 @@ class UpdateTcfModelFile(object):
         
         tcf.removeControlFile(geom)
         
-        assert(len(tuflow.control_files['TGC'].parts.parts) == 0)
-        assert(len(tuflow.control_files['TGC'].control_files) == 0)
-        assert(len(tuflow.control_files['TGC'].logic.parts) == 0)
+        utils.softAssertion(len(tuflow.control_files['TGC'].parts.parts), 0)
+        utils.softAssertion(len(tuflow.control_files['TGC'].control_files), 0)
+        utils.softAssertion(len(tuflow.control_files['TGC'].logic.parts), 0)
 
-        print ('pass')
+        print ('Done')
     
     
     def test_replaceTcfModelFile(self):
@@ -87,8 +88,8 @@ class UpdateTcfModelFile(object):
         
         tcf.replaceControlFile(tgc_part, tgc_control, geom)
         
-        assert(not geom in tuflow.control_files['TGC'].control_files)
-        assert(tgc_part in tuflow.control_files['TGC'].control_files)
+        utils.softAssertionIn(geom, tuflow.control_files['TGC'].control_files, False)
+        utils.softAssertionIn(tgc_part, tuflow.control_files['TGC'].control_files)
 
-        print ('pass')
+        print ('Done')
 

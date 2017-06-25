@@ -31,8 +31,11 @@ from integration_tests import test_tuflowupdate as tuflowupdate
 from integration_tests import test_updatetcfmodelfile as tcfmodelfile
 from integration_tests import test_datload as datload
 from integration_tests.test_tuflowupdate import TestError
+from integration_tests import utils
 
-if __name__ == '__main__':
+
+def main():
+    utils.assertionErrors = 0
     
     # FMP
     print ('*************************************************************')
@@ -55,5 +58,14 @@ if __name__ == '__main__':
     print ('\n*************************************************************')
     print ('tuflow package integration tests complete.')
     print ('*************************************************************\n\n')
+    
+    print ('Number of Errors:')
+    print (str(utils.assertionErrors))
+    print ('\n\n')
+    
+
+if __name__ == '__main__':
+    main()
+    
 
     

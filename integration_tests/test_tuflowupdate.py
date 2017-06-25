@@ -5,6 +5,7 @@ import copy
 
 from ship.utils.fileloaders import fileloader
 from ship.tuflow import tuflowfactory as factory
+from integration_tests import utils
 
 class TestError(ValueError):
     pass
@@ -27,7 +28,7 @@ class TuflowUpdateTests(object):
         path = os.path.normpath(os.path.join(os.getcwd(), path))
         loader = fileloader.FileLoader()
         self.tuflow = loader.loadFile(path)
-        assert(self.tuflow.missing_model_files == [])
+        utils.softAssertion(self.tuflow.missing_model_files, [])
         print ('Tuflow model load complete.')
     
     def test_changeActiveStatus(self):
@@ -40,7 +41,7 @@ class TuflowUpdateTests(object):
                                     parent_filename="test_trd2")
         zln_part = control.contains(command="Z Line THIN", filename="zln_shiptest_trd_v2")
         parts = zpt_part + zln_part
-        assert(len(parts) == 3)
+        utils.softAssertion(len(parts), 3)
 
         trd = control.contains(filename="test_trd2")[0]
         trd.active = False
@@ -50,9 +51,9 @@ class TuflowUpdateTests(object):
                                     parent_filename="test_trd2")
         zln_part = control.contains(command="Z Line THIN", filename="zln_shiptest_trd_v2")
         parts = zpt_part + zln_part
-        assert(len(parts) == 0)
+        utils.softAssertion(len(parts), 0)
         
-        print ('pass')
+        print ('Done')
 
     def test_addPartToPartHolder(self):
         print ('Testing add part to PartHolder...')
@@ -79,21 +80,21 @@ class TuflowUpdateTests(object):
         for i, p in enumerate(control.parts):
             if p == existing_part:
                 found = True
-                assert(control.parts[i+1] == varpart)
-                assert(control.parts[i+1].associates.logic == existing_part.associates.logic)
-                assert(control.parts[i-1] == varpart2)
-                assert(control.parts[i-1].associates.logic == existing_part.associates.logic)
+                utils.softAssertion(control.parts[i+1], varpart)
+                utils.softAssertion(control.parts[i+1].associates.logic, existing_part.associates.logic)
+                utils.softAssertion(control.parts[i-1], varpart2)
+                utils.softAssertion(control.parts[i-1].associates.logic, existing_part.associates.logic)
         if not found:
             raise TestError('Failed to add part to PartHolder')
         
         
-        assert(control.parts[-1] != varpart3)
-        assert(varpart3.associates.parent != tgc)
+        utils.softAssertion(control.parts[-1] ,varpart3, False)
+        utils.softAssertion(varpart3.associates.parent ,tgc, False)
         
         trd_index = control.parts.lastIndexOfParent(varpart3.associates.parent)
-        assert(control.parts[trd_index] == varpart3)
+        utils.softAssertion(control.parts[trd_index], varpart3)
         
-        print ('pass')
+        print ('Done')
     
     def test_removePartFromPartHolder(self):
         print ('Testing remove part to LogicHolder...')
@@ -112,11 +113,11 @@ class TuflowUpdateTests(object):
         index = control.parts.index(part1)
         index2 = control.parts.index(part2)
         index3 = control.parts.index(part3)
-        assert(index == -1)
-        assert(index2 == -1)
-        assert(index3 == -1)
+        utils.softAssertion(index, -1)
+        utils.softAssertion(index2, -1)
+        utils.softAssertion(index3, -1)
         
-        print ('pass')
+        print ('Done')
 
                 
     def test_addPartToLogicHolder(self):
@@ -136,12 +137,12 @@ class TuflowUpdateTests(object):
         varpart = factory.TuflowFactory.getTuflowPart(line, tgc)[0]
         logic1.insertPart(varpart, part1)
         
-        assert(varpart.associates.logic == part1.associates.logic)
+        utils.softAssertion(varpart.associates.logic, part1.associates.logic)
         
         part1_index = control.parts.index(part1)
-        assert(control.parts.index(varpart) == part1_index + 1)
+        utils.softAssertion(control.parts.index(varpart), part1_index + 1)
 
-        print ('pass')
+        print ('Done')
     
     
     def test_removePartFromLogicHolder(self):
@@ -164,12 +165,11 @@ class TuflowUpdateTests(object):
         
         last_part = logic1.group_parts[-1][-1]
         last_index = control.parts.index(last_part)
-        assert(logic1.getGroup(part1) == -1)
-        assert(part1.associates.logic != logic1)
-        assert(control.parts[last_index + 1] == part1)
+        utils.softAssertion(logic1.getGroup(part1), -1)
+        utils.softAssertion(part1.associates.logic ,logic1, False)
+        utils.softAssertion(control.parts[last_index + 1], part1)
 
-
-        print ('pass')
+        print ('Done')
         
         
         
