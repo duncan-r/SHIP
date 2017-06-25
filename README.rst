@@ -1,5 +1,13 @@
+**Travis Build Status**
+
 .. image:: https://travis-ci.org/duncan-r/SHIP.svg?branch=develop
     :target: https://travis-ci.org/duncan-r/SHIP
+
+
+**Appveyor Build Status**
+
+.. image:: https://ci.appveyor.com/api/projects/status/g4r2my1f7obcq71a/branch/develop?svg=true
+
 
 SHIP
 ====
