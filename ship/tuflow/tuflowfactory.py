@@ -28,42 +28,42 @@ class TuflowFactory(object):
             if not found:
                 raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
 
-        vars = {}
+        kwargs = {}
         if logic is not None:
-            vars['logic'] = logic
+            kwargs['logic'] = logic
 
         # Don't know what to do with it
         if not found:
-            vars['filepart_type'] = fpt.UNKNOWN
-            vars['data'] = line
-            return [tuflowpart.UnknownPart(parent, **vars)]
+            kwargs['filepart_type'] = fpt.UNKNOWN
+            kwargs['data'] = line
+            return [tuflowpart.UnknownPart(parent, **kwargs)]
 
         key = checkMultiTypes(line, key)
-        vars['filepart_type'] = key
+        kwargs['filepart_type'] = key
 
         if key == fpt.MODEL:
-            parts = TuflowFactory.createModelType(line, parent, **vars)
+            parts = TuflowFactory.createModelType(line, parent, **kwargs)
 
         elif key == fpt.GIS:
-            parts = TuflowFactory.createGisType(line, parent, **vars)
+            parts = TuflowFactory.createGisType(line, parent, **kwargs)
 
         elif key == fpt.RESULT:
-            parts = TuflowFactory.createResultType(line, parent, **vars)
+            parts = TuflowFactory.createResultType(line, parent, **kwargs)
 
         elif key == fpt.DATA:
-            parts = TuflowFactory.createDataType(line, parent, **vars)
+            parts = TuflowFactory.createDataType(line, parent, **kwargs)
 
         elif key == fpt.VARIABLE:
-            parts = TuflowFactory.createVariableType(line, parent, **vars)
+            parts = TuflowFactory.createVariableType(line, parent, **kwargs)
 
         elif key == fpt.MODEL_VARIABLE:
-            parts = TuflowFactory.createModelVariableType(line, parent, **vars)
+            parts = TuflowFactory.createModelVariableType(line, parent, **kwargs)
 
         elif key == fpt.EVENT_VARIABLE:
-            parts = TuflowFactory.createBcEventVariable(line, parent, **vars)
+            parts = TuflowFactory.createBcEventVariable(line, parent, **kwargs)
 
         elif key == fpt.USER_VARIABLE:
-            parts = TuflowFactory.createUserVariableType(line, parent, **vars)
+            parts = TuflowFactory.createUserVariableType(line, parent, **kwargs)
 
         return parts
 
@@ -194,8 +194,8 @@ class TuflowFactory(object):
         iflogic = None
         for i, c in enumerate(commands):
             if i == 0:
-                vars = {'command': c, 'terms': terms[i], 'comment': comments[i]}
-                iflogic = tuflowpart.IfLogic(parent, **vars)
+                kwargs = {'command': c, 'terms': terms[i], 'comment': comments[i]}
+                iflogic = tuflowpart.IfLogic(parent, **kwargs)
             else:
                 iflogic.addClause(c, terms[i], comments[i])
 
@@ -215,8 +215,8 @@ class TuflowFactory(object):
         Return:
             BlockLogic - created with given args.
         """
-        vars = {'command': commands, 'terms': terms, 'comment': comments}
-        blocklogic = tuflowpart.BlockLogic(parent, **vars)
+        kwargs = {'command': commands, 'terms': terms, 'comment': comments}
+        blocklogic = tuflowpart.BlockLogic(parent, **kwargs)
 
         return blocklogic
 
@@ -243,10 +243,10 @@ def partsFromPipedFiles(part_type, parent, **kwargs):
 
     parts = []
     for i, s in enumerate(split_var):
-        vars = copy.deepcopy(kwargs)
+        params = copy.deepcopy(kwargs)
         s = s.strip()
-        vars['path'] = s
-        parts.append(part_type(parent, **vars))
+        params['path'] = s
+        parts.append(part_type(parent, **params))
 
     parts = assignSiblings(parts)
     return parts
