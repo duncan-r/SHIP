@@ -154,10 +154,10 @@ class TuflowLoader(ALoader):
         """Add TuflowFilepart's to the correct ControlFile's.
 
         Loops through the list of TuflowFilePart's created when parsing the
-        tuflow input files. When it finds a TuflowFilepart containing a 
+        tuflow input files. When it finds a TuflowFilepart containing a
         reference to a tuflow control file it will recursively call itself and
-        start adding parts to the ControlFile for that type instead. It will 
-        either find another control file and, again, make a recursive call, or 
+        start adding parts to the ControlFile for that type instead. It will
+        either find another control file and, again, make a recursive call, or
         will finish adding the TuflowFileparts to the ControlFile and drop back
         into the previous function call (recursive) to continue reading the
         previous list of TuflowFilepart's.
@@ -217,7 +217,6 @@ class TuflowLoader(ALoader):
         unknown_store = []
         logic = []
         logic_done = []
-        factory = tfactory.TuflowFactory()
 
         def createUnknown(unknown_store, l):
             """Creates an UnknownPart from the current list."""
@@ -280,7 +279,7 @@ class TuflowLoader(ALoader):
 
             # All other FilePart types
             else:
-                parts = factory.getTuflowPart(line, control_part, key, current_logic)
+                parts = tfactory.getTuflowPart(line, control_part, key, current_logic)
                 if key == fpt.MODEL:
                     for p in parts:
                         self._file_queue.enqueue(p)
@@ -360,7 +359,7 @@ class TuflowLoader(ALoader):
         """Load the file into the contents list.
 
         Args:
-            file_path (str): path to the required file. 
+            file_path (str): path to the required file.
 
         Returns:
             True if loaded ok, False otherwise.
