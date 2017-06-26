@@ -7,4 +7,4 @@ python:
  
 script: 
   - python setup.py test
-  - python run_integration_tests.py
+  # - python run_integration_tests.py
