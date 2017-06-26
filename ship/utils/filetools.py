@@ -278,29 +278,7 @@ def setFinalFolder(path, folder_name):
     """
     # Normalise the path so that we don't get any funny behaviour
     norm_path = os.path.normpath(path)
-
-    # Get the drive letter
-    drive_letter = os.path.splitdrive(norm_path)[0]
-
-    # Separate out the different folders.
-    # If it's an absolute path then we need to deal with the usual drive
-    # letter problems (doesn't join it back with a slash.
-    plist = norm_path.split(os.sep)
-    if drive_letter:
-        all_but_final_folder = plist[1:-1]
-        all_but_final_folder = os.path.join(*all_but_final_folder)
-        all_but_final_folder = plist[0] + os.path.sep + all_but_final_folder
-        all_but_final_folder = os.path.normpath(all_but_final_folder)
-
-    # Otherwise just remove the final folder so that we can replace it
-    # with the new one.
-    else:
-        all_but_final_folder = plist[:-1]
-        all_but_final_folder = os.path.join(*all_but_final_folder)
-
-    # Add the new folder name to the end
-    return os.path.join(all_but_final_folder, folder_name)
-
+    return os.path.join(os.path.dirname(path), folder_name)
 
 def getFileName(in_path, with_extension=False):
     """Return the file name with the file extension appended.
@@ -415,7 +393,6 @@ class PathHolder(object):
             self.setFilename(getFileName(path, True), True, True)
 
 
-#     def getFinalFolder(self):
     def finalFolder(self):
         """Get the last folder in the path.
 
