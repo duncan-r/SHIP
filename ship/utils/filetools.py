@@ -38,23 +38,21 @@
 from __future__ import unicode_literals
 
 import os
-
 import logging
-logger = logging.getLogger(__name__)
-"""logging references with a __name__ set to this module."""
 
 from ship.utils import utilfunctions as uf
 
+# logging references with a __name__ set to this module.
+logger = logging.getLogger(__name__)
 
+# If Qt is not installed on the machine running the library we can't use any
+# of the GUI related code, such as file dialogs. This flag informs the code in
+# the module about the load status.
 HAS_QT = True
-"""If Qt is not installed on the machine running the library we can't use any
-of the GUI related code, such as file dialogs. This flag informs the code in
-the module about the load status.
-"""
+
 
 try:
     from ship.utils.qtclasses import MyFileDialogs
-
 except Exception:
     logger.warning('Unable to load Qt modules - cannot launch file dialogues')
     HAS_QT = False
@@ -251,12 +249,10 @@ def getSaveFileDialog(path='', types='All (*.*)'):
         return False
 
 
-"""
-###############################
-  Path Functions and classes
-###############################
-"""
 
+###############################
+#  Path Functions and classes #
+###############################
 
 def pathExists(path):
     """Test whether a path exists.
@@ -403,16 +399,12 @@ class PathHolder(object):
                 file that they are called from. The root will allow for an
                 absolute path to be created from the relative path.
         """
-#         if not isinstance(path, basestring):
-#         if not type(path) in (str, unicode):
-#             raise TypeError
 
         self.root = root
         self.relative_root = None
         self.filename = None
         self.extension = None
         self.path_as_read = None
-#         self.parent_relative_root = ''
 
         self._setupVars(path)
 
@@ -472,7 +464,6 @@ class PathHolder(object):
             self.root = setFinalFolder(self.root, folder_name)
 
 
-#     def getAbsolutePath(self, filename=None, relative_roots=[], normalize=True):
     def absolutePath(self, filename=None, relative_roots=[], normalize=True):
         """Get the absolute path of the file path stored in this object.
 
