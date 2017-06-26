@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import os
 import unittest
 from ship.fmp.datcollection import DatCollection
 from ship.fmp import fmpunitfactory as iuf
@@ -15,7 +16,10 @@ class IsisUnitCollectionTest(unittest.TestCase):
     def setUp(self):
         '''Set up stuff that will be used throughout the class.
         '''
-        self.fake_path = 'c:\\fake\\path\\to\\datfile.dat'
+        self.prefix = '/'
+        if os.name != 'posix':
+            self.prefix = 'c:'
+        self.fake_path = os.path.join(self.prefix, 'fake', 'path', 'to', 'datfile.dat')
         self.path_holder = PathHolder(self.fake_path)
 
         # Setup some data to create units with
@@ -89,7 +93,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         self.assertEqual(p.filename, 'datfile')
         self.assertEqual(p.extension, 'dat')
         self.assertEqual(p.relative_root, None)
-        self.assertEqual(p.root, 'c:\\fake\\path\\to')
+        self.assertEqual(p.root, os.path.dirname(self.fake_path))
 
     def test_initialisedDat(self):
         """Make sure we're creating default setup collections properly."""
