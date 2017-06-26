@@ -166,6 +166,16 @@ def createBlockLogic(parent, commands, terms, comments):
 
     return blocklogic
 
+FUNCTION_MAP = {
+    fpt.MODEL: createModelType,
+    fpt.GIS: createGisType,
+    fpt.RESULT: createResultType,
+    fpt.DATA: createDataType,
+    fpt.VARIABLE: createVariableType,
+    fpt.MODEL_VARIABLE: createModelVariableType,
+    fpt.EVENT_VARIABLE: createBcEventVariable,
+    fpt.USER_VARIABLE: createUserVariableType
+}
 
 def getTuflowPart(line, parent, part_type=None, logic=None):
 
@@ -192,31 +202,8 @@ def getTuflowPart(line, parent, part_type=None, logic=None):
     key = checkMultiTypes(line, key)
     kwargs['filepart_type'] = key
 
-    if key == fpt.MODEL:
-        parts = createModelType(line, parent, **kwargs)
-
-    elif key == fpt.GIS:
-        parts = createGisType(line, parent, **kwargs)
-
-    elif key == fpt.RESULT:
-        parts = createResultType(line, parent, **kwargs)
-
-    elif key == fpt.DATA:
-        parts = createDataType(line, parent, **kwargs)
-
-    elif key == fpt.VARIABLE:
-        parts = createVariableType(line, parent, **kwargs)
-
-    elif key == fpt.MODEL_VARIABLE:
-        parts = createModelVariableType(line, parent, **kwargs)
-
-    elif key == fpt.EVENT_VARIABLE:
-        parts = createBcEventVariable(line, parent, **kwargs)
-
-    elif key == fpt.USER_VARIABLE:
-        parts = createUserVariableType(line, parent, **kwargs)
-
-    return parts
+    func = FUNCTION_MAP[key]
+    return func(line, parent, **kwargs)
 
 def partsFromPipedFiles(part_type, parent, **kwargs):
     """Separates piped file paths and creates a TuflowFilepart for each.
@@ -305,27 +292,20 @@ def checkEstryAuto(line, parent):
 
 
 def checkIsComment(line):
-    if line.strip().startswith('!') or line.strip().startswith('#'):
-        return True
-    else:
-        return False
+    stripped = line.strip()
+    return stripped.startswith('!') or stripped.startswith('#')
 
 
 def takeParentType(path):
     types = ['TCF', 'TBC', 'TGC', 'TEF', 'ECF']
     ext = getExtension(path)
-    if ext in types:
-        return False
-    else:
-        return True
-
+    return not ext in types
 
 def getExtension(path, upper=True):
-    ext = os.path.splitext(path)[1][1:].upper()
-    if upper == True:
+    ext = os.path.splitext(path)[1][1:]
+    if upper:
         return ext.upper()
-    else:
-        return ext.lower()
+    return ext.lower()
 
 
 def breakLine(line):
