@@ -39,24 +39,24 @@ class TuflowFilePartTests(unittest.TestCase):
         gis_line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.shp'))
         model_line = "Geometry Control File == {}".format(os.path.join('..', 'model', 'tgcfile.tgc'))
 
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(scen_line, self.parent)[0], TuflowModelVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(event_line, self.parent)[0], TuflowModelVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(uservar_line, self.parent)[0], TuflowUserVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(bcname_line, self.parent)[0], TuflowVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(bctext_line, self.parent)[0], TuflowVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(bcsource_line, self.parent)[0], TuflowKeyValue)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(variable_line, self.parent)[0], TuflowVariable)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(data_line, self.parent)[0], DataFile)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(output_line, self.parent)[0], ResultFile)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(check_line, self.parent)[0], ResultFile)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(log_line, self.parent)[0], ResultFile)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(gis_line, self.parent)[0], GisFile)
-        self.assertIsInstance(f.TuflowFactory.getTuflowPart(model_line, self.parent)[0], ModelFile)
+        self.assertIsInstance(f.getTuflowPart(scen_line, self.parent)[0], TuflowModelVariable)
+        self.assertIsInstance(f.getTuflowPart(event_line, self.parent)[0], TuflowModelVariable)
+        self.assertIsInstance(f.getTuflowPart(uservar_line, self.parent)[0], TuflowUserVariable)
+        self.assertIsInstance(f.getTuflowPart(bcname_line, self.parent)[0], TuflowVariable)
+        self.assertIsInstance(f.getTuflowPart(bctext_line, self.parent)[0], TuflowVariable)
+        self.assertIsInstance(f.getTuflowPart(bcsource_line, self.parent)[0], TuflowKeyValue)
+        self.assertIsInstance(f.getTuflowPart(variable_line, self.parent)[0], TuflowVariable)
+        self.assertIsInstance(f.getTuflowPart(data_line, self.parent)[0], DataFile)
+        self.assertIsInstance(f.getTuflowPart(output_line, self.parent)[0], ResultFile)
+        self.assertIsInstance(f.getTuflowPart(check_line, self.parent)[0], ResultFile)
+        self.assertIsInstance(f.getTuflowPart(log_line, self.parent)[0], ResultFile)
+        self.assertIsInstance(f.getTuflowPart(gis_line, self.parent)[0], GisFile)
+        self.assertIsInstance(f.getTuflowPart(model_line, self.parent)[0], ModelFile)
 
     def test_createModelVariableType(self):
         """Test construction of TuflowModelVariable."""
         line = "Model Scenarios == scen1 | scen2 | scen3 ! A comment"
-        scenarios = f.TuflowFactory.createModelVariableType(line, self.parent)
+        scenarios = f.createModelVariableType(line, self.parent)
         vtypes = ['scen1', 'scen2', 'scen3']
         vnames = ['s1', 's2', 's3']
         for i, s in enumerate(scenarios):
@@ -69,7 +69,7 @@ class TuflowFilePartTests(unittest.TestCase):
             self.assertEqual(s.associates.parent.hash, self.parent.hash)
 
         line = "Model Events == evt1 | evt2 | evt3 ! A comment"
-        events = f.TuflowFactory.createModelVariableType(line, self.parent)
+        events = f.createModelVariableType(line, self.parent)
         vtypes = ['evt1', 'evt2', 'evt3']
         vnames = ['e1', 'e2', 'e3']
         for i, e in enumerate(events):
@@ -84,7 +84,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createUserVariableType(self):
         """Test contruction of TuflowUserVariable."""
         line = "Set Variable myvar == 2.0 ! A comment"
-        var = f.TuflowFactory.createUserVariableType(line, self.parent)[0]
+        var = f.createUserVariableType(line, self.parent)[0]
         self.assertIsInstance(var, TuflowPart)
         self.assertEqual(var.obj_type, 'uservariable')
         self.assertEqual(var.variable_name, 'myvar')
@@ -95,7 +95,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createBcEventVariable(self):
         """Test contruction of a BC event variable."""
         line = "BC Event Name == evtname"
-        var = f.TuflowFactory.createBcEventVariable(line, self.parent)[0]
+        var = f.createBcEventVariable(line, self.parent)[0]
         self.assertIsInstance(var, TuflowPart)
         self.assertIsInstance(var, TuflowVariable)
         self.assertEqual(var.obj_type, 'variable')
@@ -104,7 +104,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(var.associates.parent.hash, self.parent.hash)
 
         line = "BC Event Text == evttext"
-        var = f.TuflowFactory.createBcEventVariable(line, self.parent)[0]
+        var = f.createBcEventVariable(line, self.parent)[0]
         self.assertIsInstance(var, TuflowPart)
         self.assertIsInstance(var, TuflowVariable)
         self.assertEqual(var.obj_type, 'variable')
@@ -113,7 +113,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(var.associates.parent.hash, self.parent.hash)
 
         line = "BC Event Source == evtname | evttext"
-        var = f.TuflowFactory.createBcEventVariable(line, self.parent)[0]
+        var = f.createBcEventVariable(line, self.parent)[0]
         self.assertIsInstance(var, TuflowPart)
         self.assertIsInstance(var, TuflowKeyValue)
         self.assertEqual(var.obj_type, 'keyvalue')
@@ -126,7 +126,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createVariableType(self):
         """Test construction of TuflowVariable type."""
         line = "Timestep == 2.5 ! A comment"
-        var = f.TuflowFactory.createVariableType(line, self.parent)[0]
+        var = f.createVariableType(line, self.parent)[0]
         self.assertIsInstance(var, TuflowPart)
         self.assertIsInstance(var, TuflowVariable)
         self.assertEqual(var.obj_type, 'variable')
@@ -138,7 +138,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createDataType(self):
         """Test construction of DataFile type."""
         line = "Read Materials File == materials.csv"
-        data = f.TuflowFactory.createDataType(line, self.parent)[0]
+        data = f.createDataType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, DataFile)
@@ -152,7 +152,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createResultType(self):
         """Test construction of ResultFile type."""
         line = "Output Folder == {}".format(os.path.join('..', 'results'))
-        data = f.TuflowFactory.createResultType(line, self.parent)[0]
+        data = f.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, ResultFile)
@@ -164,7 +164,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.filenameAndExtension(), '')
 
         line = "Write Check Files == {}".format(os.path.join('..', 'checks') + os.sep)
-        data = f.TuflowFactory.createResultType(line, self.parent)[0]
+        data = f.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, ResultFile)
@@ -177,7 +177,7 @@ class TuflowFilePartTests(unittest.TestCase):
 #         self.assertTrue(data.filename_is_prefix)
 
         line = "Log Folder == log"
-        data = f.TuflowFactory.createResultType(line, self.parent)[0]
+        data = f.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, ResultFile)
@@ -191,7 +191,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createGisType(self):
         """Test construction of GisFile type."""
         line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.shp'))
-        data = f.TuflowFactory.createGisType(line, self.parent)[0]
+        data = f.createGisType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
@@ -204,7 +204,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertTupleEqual(('shp', 'shx', 'dbf'), data.all_types)
 
         line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.mif'))
-        data = f.TuflowFactory.createGisType(line, self.parent)[0]
+        data = f.createGisType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
@@ -217,7 +217,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertTupleEqual(('mif', 'mid'), data.all_types)
 
         line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile'))
-        data = f.TuflowFactory.createGisType(line, self.parent, test='mif')[0]
+        data = f.createGisType(line, self.parent, test='mif')[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
@@ -232,7 +232,7 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_createModelType(self):
         """Test construction of ModelFile type."""
         line = "Geometry Control File == {}".format(os.path.join('..', 'model', 'tgcfile.tgc'))
-        data = f.TuflowFactory.createModelType(line, self.parent, model_type='TGC')[0]
+        data = f.createModelType(line, self.parent, model_type='TGC')[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, ModelFile)
@@ -250,7 +250,7 @@ class TuflowFilePartTests(unittest.TestCase):
             os.path.join('gis', 'somefile_L.shp'),
             os.path.join('gis', 'somefile_P.shp')
         )
-        data = f.TuflowFactory.createGisType(line, self.parent)
+        data = f.createGisType(line, self.parent)
         self.assertEqual(len(data), 3)
 
         names = ['somefile_R', 'somefile_L', 'somefile_P']
@@ -308,9 +308,9 @@ class TuflowFilePartTests(unittest.TestCase):
         line1 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_R.shp'))
         line2 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_L.shp'))
         line3 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_R.shp'))
-        gis1 = f.TuflowFactory.createGisType(line1, self.parent)[0]
-        gis2 = f.TuflowFactory.createGisType(line2, self.parent)[0]
-        gis3 = f.TuflowFactory.createGisType(line3, self.parent)[0]
+        gis1 = f.createGisType(line1, self.parent)[0]
+        gis2 = f.createGisType(line2, self.parent)[0]
+        gis3 = f.createGisType(line3, self.parent)[0]
 
         f.assignSiblings([gis1, gis2, gis3])
         self.assertEqual(gis1.hash, gis2.associates.sibling_prev.hash)

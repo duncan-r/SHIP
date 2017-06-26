@@ -13,213 +13,197 @@ logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
 
-class TuflowFactory(object):
+#
+# TuflowFilepart type builders.
+#
 
-    @classmethod
-    def getTuflowPart(cls, line, parent, part_type=None, logic=None):
+def createModelVariableType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], variable = breakLine(command)
+    split_var = variable.split('|')
 
-        filepart_types = TuflowFilepartTypes()
-        line = line.strip()
-        upline = line.upper()
-        if part_type is None:
-            found, key = filepart_types.find(upline)
+    if 'MODEL SCENARIOS' in kwargs['command'].upper():
+        prefix = 's'
+    else:
+        prefix = 'e'
+
+    parts = []
+    for i, s in enumerate(split_var):
+        s = s.strip()
+        name = prefix + uf.encodeStr(str(i + 1))
+        parts.append(tuflowpart.TuflowModelVariable(parent, **{
+            'logic': kwargs.get('logic', None), 'command': kwargs['command'],
+            'comment': kwargs['comment'], 'variable': s, 'name': name
+        }))
+
+    parts = assignSiblings(parts)
+    return parts
+
+
+def createUserVariableType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['variable'] = breakLine(command)
+    part = tuflowpart.TuflowUserVariable(parent, **kwargs)
+    return [part]
+
+
+def createBcEventVariable(line, parent, **kwargs):
+    l = line.strip().upper()
+    if l.startswith('BC EVENT NAME'):
+        return createVariableType(line, parent, **kwargs)
+    if l.startswith('BC EVENT TEXT'):
+        return createVariableType(line, parent, **kwargs)
+    if l.startswith('BC EVENT SOURCE'):
+        return createKeyValueType(line, parent, **kwargs)
+
+
+def createVariableType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['variable'] = breakLine(command)
+    part = tuflowpart.TuflowVariable(parent, **kwargs)
+    return [part]
+
+
+def createKeyValueType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['variable'] = breakLine(command)
+    part = tuflowpart.TuflowKeyValue(parent, **kwargs)
+    return [part]
+
+
+def createDataType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['path'] = breakLine(command)
+    kwargs['root'] = parent.root
+    part = tuflowpart.DataFile(parent, **kwargs)
+    return [part]
+
+
+def createResultType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['path'] = breakLine(command)
+    kwargs['root'] = parent.root
+    part = tuflowpart.ResultFile(parent, **kwargs)
+    part = resolveResult(part)
+    return [part]
+
+
+def createGisType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+    kwargs['command'], kwargs['path'] = breakLine(command)
+    kwargs['root'] = parent.root
+
+    if '|' in kwargs['path']:
+        return partsFromPipedFiles(tuflowpart.GisFile, parent, **kwargs)
+    else:
+        part = tuflowpart.GisFile(parent, **kwargs)
+        return [part]
+
+
+def createModelType(line, parent, **kwargs):
+    command, kwargs['comment'], _ = separateComment(line)
+
+    # Check for Estry auto command
+    command, has_auto = checkEstryAuto(command, parent)
+    kwargs['has_auto'] = has_auto
+    kwargs['command'], kwargs['path'] = breakLine(command)
+    kwargs['root'] = parent.root
+    if takeParentType(kwargs['path']):
+        kwargs['model_type'] = parent.model_type
+    else:
+        kwargs['model_type'] = getExtension(kwargs['path'])
+    part = tuflowpart.ModelFile(parent, **kwargs)
+    return [part]
+
+
+def createIfLogic(parent, commands, terms, comments):
+    """Create a new IfLogic object.
+
+    Args:
+        parent(ModelFile): the parent TuflowPart.
+        commands(list): a list of the command part to add for each clause.
+            e.g. 'If Scenario', 'Else', 'Else If Event', etc.
+        terms:(list(list)): terms to add for each clause. e.g.
+            [['scen1', 'scen2'], ['scen3']]
+        comments(list): the comment that should be attached to the end of
+            each clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
+
+    Return:
+        IfLogic - created with given args.
+
+    Raises:
+        ValueError - if commands, terms and comments are not the same length.
+    """
+    if not len(commands) == len(terms) == len(comments):
+        raise ValueError('commands, terms and comments must be the same length')
+
+    iflogic = None
+    for i, c in enumerate(commands):
+        if i == 0:
+            kwargs = {'command': c, 'terms': terms[i], 'comment': comments[i]}
+            iflogic = tuflowpart.IfLogic(parent, **kwargs)
         else:
-            found, key = filepart_types.find(upline, part_type)
-            if not found:
-                raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
+            iflogic.addClause(c, terms[i], comments[i])
 
-        kwargs = {}
-        if logic is not None:
-            kwargs['logic'] = logic
+    return iflogic
 
-        # Don't know what to do with it
+
+def createBlockLogic(parent, commands, terms, comments):
+    """Create a new IfLogic object.
+
+    Args:
+        parent(ModelFile): the parent TuflowPart.
+        commands(str): the command part e.g. 'Define Event'.
+        terms:(list): terms to add for the clause ['scen1', 'scen2'].
+        comments(str): the comment that should be attached to the end of
+            the clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
+
+    Return:
+        BlockLogic - created with given args.
+    """
+    kwargs = {'command': commands, 'terms': terms, 'comment': comments}
+    blocklogic = tuflowpart.BlockLogic(parent, **kwargs)
+
+    return blocklogic
+
+FUNCTION_MAP = {
+    fpt.MODEL: createModelType,
+    fpt.GIS: createGisType,
+    fpt.RESULT: createResultType,
+    fpt.DATA: createDataType,
+    fpt.VARIABLE: createVariableType,
+    fpt.MODEL_VARIABLE: createModelVariableType,
+    fpt.EVENT_VARIABLE: createBcEventVariable,
+    fpt.USER_VARIABLE: createUserVariableType
+}
+
+def getTuflowPart(line, parent, part_type=None, logic=None):
+
+    filepart_types = TuflowFilepartTypes()
+    line = line.strip()
+    upline = line.upper()
+    if part_type is None:
+        found, key = filepart_types.find(upline)
+    else:
+        found, key = filepart_types.find(upline, part_type)
         if not found:
-            kwargs['filepart_type'] = fpt.UNKNOWN
-            kwargs['data'] = line
-            return [tuflowpart.UnknownPart(parent, **kwargs)]
+            raise TypeError("Provided part type (%s) doesn't match line (%s)" % (part_type, line))
 
-        key = checkMultiTypes(line, key)
-        kwargs['filepart_type'] = key
+    kwargs = {}
+    if logic is not None:
+        kwargs['logic'] = logic
 
-        if key == fpt.MODEL:
-            parts = TuflowFactory.createModelType(line, parent, **kwargs)
+    # Don't know what to do with it
+    if not found:
+        kwargs['filepart_type'] = fpt.UNKNOWN
+        kwargs['data'] = line
+        return [tuflowpart.UnknownPart(parent, **kwargs)]
 
-        elif key == fpt.GIS:
-            parts = TuflowFactory.createGisType(line, parent, **kwargs)
+    key = checkMultiTypes(line, key)
+    kwargs['filepart_type'] = key
 
-        elif key == fpt.RESULT:
-            parts = TuflowFactory.createResultType(line, parent, **kwargs)
-
-        elif key == fpt.DATA:
-            parts = TuflowFactory.createDataType(line, parent, **kwargs)
-
-        elif key == fpt.VARIABLE:
-            parts = TuflowFactory.createVariableType(line, parent, **kwargs)
-
-        elif key == fpt.MODEL_VARIABLE:
-            parts = TuflowFactory.createModelVariableType(line, parent, **kwargs)
-
-        elif key == fpt.EVENT_VARIABLE:
-            parts = TuflowFactory.createBcEventVariable(line, parent, **kwargs)
-
-        elif key == fpt.USER_VARIABLE:
-            parts = TuflowFactory.createUserVariableType(line, parent, **kwargs)
-
-        return parts
-
-    #
-    # TuflowFilepart type builders.
-    #
-    @staticmethod
-    def createModelVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], variable = breakLine(command)
-        split_var = variable.split('|')
-
-        if 'MODEL SCENARIOS' in kwargs['command'].upper():
-            prefix = 's'
-        else:
-            prefix = 'e'
-
-        parts = []
-        for i, s in enumerate(split_var):
-            s = s.strip()
-            name = prefix + uf.encodeStr(str(i + 1))
-            parts.append(tuflowpart.TuflowModelVariable(parent, **{
-                'logic': kwargs.get('logic', None), 'command': kwargs['command'],
-                'comment': kwargs['comment'], 'variable': s, 'name': name
-            }))
-
-        parts = assignSiblings(parts)
-        return parts
-
-    @staticmethod
-    def createUserVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
-        part = tuflowpart.TuflowUserVariable(parent, **kwargs)
-        return [part]
-
-    @staticmethod
-    def createBcEventVariable(line, parent, **kwargs):
-        l = line.strip().upper()
-        if l.startswith('BC EVENT NAME'):
-            return TuflowFactory.createVariableType(line, parent, **kwargs)
-        if l.startswith('BC EVENT TEXT'):
-            return TuflowFactory.createVariableType(line, parent, **kwargs)
-        if l.startswith('BC EVENT SOURCE'):
-            return TuflowFactory.createKeyValueType(line, parent, **kwargs)
-
-    @staticmethod
-    def createVariableType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
-        part = tuflowpart.TuflowVariable(parent, **kwargs)
-        return [part]
-
-    @staticmethod
-    def createKeyValueType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['variable'] = breakLine(command)
-        part = tuflowpart.TuflowKeyValue(parent, **kwargs)
-        return [part]
-
-    @staticmethod
-    def createDataType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
-        kwargs['root'] = parent.root
-        part = tuflowpart.DataFile(parent, **kwargs)
-        return [part]
-
-    @staticmethod
-    def createResultType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
-        kwargs['root'] = parent.root
-        part = tuflowpart.ResultFile(parent, **kwargs)
-        part = resolveResult(part)
-        return [part]
-
-    @staticmethod
-    def createGisType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-        kwargs['command'], kwargs['path'] = breakLine(command)
-        kwargs['root'] = parent.root
-
-        if '|' in kwargs['path']:
-            return partsFromPipedFiles(tuflowpart.GisFile, parent, **kwargs)
-        else:
-            part = tuflowpart.GisFile(parent, **kwargs)
-            return [part]
-
-    @staticmethod
-    def createModelType(line, parent, **kwargs):
-        command, kwargs['comment'], _ = separateComment(line)
-
-        # Check for Estry auto command
-        command, has_auto = checkEstryAuto(command, parent)
-        kwargs['has_auto'] = has_auto
-        kwargs['command'], kwargs['path'] = breakLine(command)
-        kwargs['root'] = parent.root
-        if takeParentType(kwargs['path']):
-            kwargs['model_type'] = parent.model_type
-        else:
-            kwargs['model_type'] = getExtension(kwargs['path'])
-        part = tuflowpart.ModelFile(parent, **kwargs)
-        return [part]
-
-    @staticmethod
-    def createIfLogic(parent, commands, terms, comments):
-        """Create a new IfLogic object.
-
-        Args:
-            parent(ModelFile): the parent TuflowPart.
-            commands(list): a list of the command part to add for each clause.
-                e.g. 'If Scenario', 'Else', 'Else If Event', etc.
-            terms:(list(list)): terms to add for each clause. e.g.
-                [['scen1', 'scen2'], ['scen3']]
-            comments(list): the comment that should be attached to the end of
-                each clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
-
-        Return:
-            IfLogic - created with given args.
-
-        Raises:
-            ValueError - if commands, terms and comments are not the same length.
-        """
-        if not len(commands) == len(terms) == len(comments):
-            raise ValueError('commands, terms and comments must be the same length')
-
-        iflogic = None
-        for i, c in enumerate(commands):
-            if i == 0:
-                kwargs = {'command': c, 'terms': terms[i], 'comment': comments[i]}
-                iflogic = tuflowpart.IfLogic(parent, **kwargs)
-            else:
-                iflogic.addClause(c, terms[i], comments[i])
-
-        return iflogic
-
-    @staticmethod
-    def createBlockLogic(parent, commands, terms, comments):
-        """Create a new IfLogic object.
-
-        Args:
-            parent(ModelFile): the parent TuflowPart.
-            commands(str): the command part e.g. 'Define Event'.
-            terms:(list): terms to add for the clause ['scen1', 'scen2'].
-            comments(str): the comment that should be attached to the end of
-                the clause line. e.g. 'If Scenario == scen1 | scen2 ! comment'
-
-        Return:
-            BlockLogic - created with given args.
-        """
-        kwargs = {'command': commands, 'terms': terms, 'comment': comments}
-        blocklogic = tuflowpart.BlockLogic(parent, **kwargs)
-
-        return blocklogic
-
+    func = FUNCTION_MAP[key]
+    return func(line, parent, **kwargs)
 
 def partsFromPipedFiles(part_type, parent, **kwargs):
     """Separates piped file paths and creates a TuflowFilepart for each.
@@ -308,27 +292,20 @@ def checkEstryAuto(line, parent):
 
 
 def checkIsComment(line):
-    if line.strip().startswith('!') or line.strip().startswith('#'):
-        return True
-    else:
-        return False
+    stripped = line.strip()
+    return stripped.startswith('!') or stripped.startswith('#')
 
 
 def takeParentType(path):
     types = ['TCF', 'TBC', 'TGC', 'TEF', 'ECF']
     ext = getExtension(path)
-    if ext in types:
-        return False
-    else:
-        return True
-
+    return not ext in types
 
 def getExtension(path, upper=True):
-    ext = os.path.splitext(path)[1][1:].upper()
-    if upper == True:
+    ext = os.path.splitext(path)[1][1:]
+    if upper:
         return ext.upper()
-    else:
-        return ext.lower()
+    return ext.lower()
 
 
 def breakLine(line):
