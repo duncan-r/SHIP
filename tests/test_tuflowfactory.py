@@ -16,7 +16,7 @@ class TuflowFilePartTests(unittest.TestCase):
         """Setup and global variables."""
         self.prefix = '/'
         if os.name != 'posix':
-            self.prefix = 'c:'
+            self.prefix = 'c:' + os.sep
         self.fake_root = os.path.join(self.prefix, 'path', 'to', 'fake')
         main_file = tfp.ModelFile(None, **{'path': 'tcffile.tcf', 'command': None,
                                            'comment': None, 'model_type': 'TCF',
