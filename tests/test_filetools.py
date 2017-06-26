@@ -6,18 +6,22 @@ import unittest
 from ship.utils.filetools import PathHolder
 from ship.utils import filetools
 
-
 class PathHolderTests(unittest.TestCase):
-    '''Tests the function and setup of the PathHolder object. 
+    '''Tests the function and setup of the PathHolder object.
 
     '''
 
     def setUp(self):
-        self.fake_root = 'c:\\some\\fake\\root'
-        self.fake_abs_path = 'c:\\first\\second\\third\\fourth\\TuflowFile.txt'
-        self.fake_relative_path = '..\\relative\\TuflowFile.txt'
-        self.no_relative_path = '..\\relative'
-        self.path_with_comment = 'relative\\file.txt ! Some comment'
+        self.prefix = '/'
+        if os.name != 'posix':
+            self.prefix = 'c:' + os.sep
+
+        self.fake_root = os.path.join(self.prefix, 'some', 'fake', 'root')
+        self.fake_abs_path = os.path.join(
+            self.prefix, 'first', 'second', 'third', 'fourth', 'TuflowFile.txt')
+        self.fake_relative_path = os.path.join('..', 'relative', 'TuflowFile.txt')
+        self.no_relative_path = os.path.join('..', 'relative')
+        self.path_with_comment = os.path.join('relative', 'file.txt') + ' ! Some comment'
 
     def test_setupVars(self):
         '''Test the _setupVars method.
@@ -27,14 +31,15 @@ class PathHolderTests(unittest.TestCase):
         '''
         # Check that it loads an absolute path properly
         ph = PathHolder(self.fake_abs_path)
-        self.assertEqual('c:\\first\\second\\third\\fourth', ph.root, 'roots do not match')
+        pth = os.path.join(self.prefix, 'first', 'second', 'third', 'fourth' )
+        self.assertEqual(pth, ph.root, 'roots do not match')
         self.assertEqual('TuflowFile', ph.filename, 'filenames do not match')
         self.assertEqual('txt', ph.extension, 'extensions do not match')
         self.assertIsNone(ph.relative_root, 'relative root should be None')
 
         # Check that it loads a relative path properly
         ph = PathHolder(self.fake_relative_path)
-        self.assertEqual('..\\relative', ph.relative_root, 'relative roots do not match')
+        self.assertEqual(os.path.join('..', 'relative'), ph.relative_root, 'relative roots do not match')
         self.assertEqual('TuflowFile', ph.filename, 'filenames do not match')
         self.assertEqual('txt', ph.extension, 'extensions do not match')
         self.assertIsNone(ph.root, 'root should be None')
@@ -53,11 +58,12 @@ class PathHolderTests(unittest.TestCase):
         '''
         ph = PathHolder(self.fake_abs_path)
         ph.setFinalFolder('fifth')
-        self.assertEqual('c:\\first\\second\\third\\fifth', ph.root, 'set absolute final folder fail')
+        pth = os.path.join(self.prefix, 'first', 'second', 'third', 'fifth')
+        self.assertEqual(pth, ph.root, 'set absolute final folder fail')
 
         ph = PathHolder(self.fake_relative_path)
         ph.setFinalFolder('fifth')
-        self.assertEqual('..\\fifth', ph.relative_root, 'set relative final folder fail')
+        self.assertEqual(os.path.join('..', 'fifth'), ph.relative_root, 'set relative final folder fail')
 
     def test_absolutePath(self):
         '''Test that the absolute path is returned correctly.
@@ -71,7 +77,8 @@ class PathHolderTests(unittest.TestCase):
 
         ph = PathHolder(self.fake_relative_path, self.fake_root)
         q = ph.absolutePath()
-        self.assertEqual('c:\\some\\fake\\root\\TuflowFile.txt', ph.absolutePath(), 'absolutePath() with root and relative root fail')
+        pth = os.path.join(self.prefix, 'some', 'fake', 'root', 'TuflowFile.txt')
+        self.assertEqual(pth, ph.absolutePath(), 'absolutePath() with root and relative root fail')
 
     def test_getDirectory(self):
         '''Check that the function returns the directory properly.
