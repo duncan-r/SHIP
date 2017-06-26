@@ -163,7 +163,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), '')
 
-        line = "Write Check Files == {}".format(os.path.join('..', 'checks'))
+        line = "Write Check Files == {}".format(os.path.join('..', 'checks') + os.sep)
         data = f.TuflowFactory.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
@@ -171,7 +171,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.obj_type, 'result')
         self.assertEqual(data.filename, '')
         self.assertEqual(data.extension, '')
-        self.assertEqual(data.relative_root, os.path.join('..', 'checks'))
+        self.assertEqual(data.relative_root, os.path.join('..', 'checks') + os.sep)
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), '')
 #         self.assertTrue(data.filename_is_prefix)
