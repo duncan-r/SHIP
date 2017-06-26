@@ -254,21 +254,6 @@ def getSaveFileDialog(path='', types='All (*.*)'):
 #  Path Functions and classes #
 ###############################
 
-def pathExists(path):
-    """Test whether a path exists.
-
-    Args:
-        path (str):  the path to test.
-
-    Returns:
-        True if the path exists or False if it doesn't.
-    """
-    if os.path.exists(path):
-        return True
-
-    return False
-
-
 def finalFolder(path):
     """Get the last folder in the path.
 
