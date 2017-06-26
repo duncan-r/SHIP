@@ -18,7 +18,7 @@ class IsisUnitCollectionTest(unittest.TestCase):
         '''
         self.prefix = '/'
         if os.name != 'posix':
-            self.prefix = 'c:'
+            self.prefix = 'c:' + os.sep
         self.fake_path = os.path.join(self.prefix, 'fake', 'path', 'to', 'datfile.dat')
         self.path_holder = PathHolder(self.fake_path)
 

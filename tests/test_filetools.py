@@ -14,7 +14,7 @@ class PathHolderTests(unittest.TestCase):
     def setUp(self):
         self.prefix = '/'
         if os.name != 'posix':
-            self.prefix = 'c:'
+            self.prefix = 'c:' + os.sep
 
         self.fake_root = os.path.join(self.prefix, 'some', 'fake', 'root')
         self.fake_abs_path = os.path.join(

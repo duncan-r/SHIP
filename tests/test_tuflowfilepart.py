@@ -29,7 +29,7 @@ class TuflowFilePartTests(unittest.TestCase):
         # Setup a main .tcf file
         self.prefix = '/'
         if os.name != 'posix':
-            self.prefix = 'c:'
+            self.prefix = 'c:' + os.sep
         self.fake_root = os.path.join(self.prefix, 'path', 'to', 'fake')
         self.tcf = tfp.ModelFile(None, **{'path': 'tcffile.tcf', 'command': None,
                                           'comment': None, 'model_type': 'TCF',
