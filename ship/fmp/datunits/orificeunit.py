@@ -3,16 +3,16 @@
  Summary:
     Contains the OrificeUnit type classes.
     This holds all of the data read in from the orifice units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
-    
+
     The OutfallUnit is also in here. It has the same setup as the OrificeUnit
     so it subclasses orifice.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -45,7 +45,7 @@ class OrificeUnit(AUnit):
     def __init__(self, **kwargs):
         '''Constructor.
         '''
-        AUnit.__init__(self, **kwargs)
+        super(OrificeUnit, self).__init__(**kwargs)
         self._unit_type = OrificeUnit.UNIT_TYPE
         self._unit_category = OrificeUnit.UNIT_CATEGORY
         self._name = 'orif'
@@ -97,7 +97,7 @@ class OrificeUnit(AUnit):
         return file_line + 4
 
     def getData(self):
-        '''Returns the formatted data for this unit. 
+        '''Returns the formatted data for this unit.
 
         See Also:
             isisunit.
@@ -134,7 +134,7 @@ class OutfallUnit(OrificeUnit):
     def __init__(self, **kwargs):
         '''Constructor.
         '''
-        OrificeUnit.__init__(self, **kwargs)
+        super(OutfallUnit, self).__init__(**kwargs)
         self._unit_type = OutfallUnit.UNIT_TYPE
         self._unit_category = OutfallUnit.UNIT_CATEGORY
         self._name = 'outf'
@@ -157,7 +157,7 @@ class FloodReliefUnit(OrificeUnit):
     def __init__(self, **kwargs):
         '''Constructor.
         '''
-        OrificeUnit.__init__(self, **kwargs)
+        super(FloodReliefUnit, self).__init__(**kwargs)
         self._unit_type = FloodReliefUnit.UNIT_TYPE
         self._unit_category = FloodReliefUnit.UNIT_CATEGORY
         self._name = 'FRelUs'

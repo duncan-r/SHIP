@@ -2,16 +2,16 @@
 
  Summary:
     Contains the InterpolateUnit class.
-    These hold all of the data read in from the interpolate units in the dat 
-    file. 
+    These hold all of the data read in from the interpolate units in the dat
+    file.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      23 July 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -45,7 +45,7 @@ class InterpolateUnit(AUnit):
         Args:
             file_order (int): the order of this unit in the .dat file.
         '''
-        AUnit.__init__(self)
+        super(InterpolateUnit, self).__init__()
         self._unit_type = InterpolateUnit.UNIT_TYPE
         self._unit_category = InterpolateUnit.UNIT_CATEGORY
         self._name = 'Interp'
@@ -90,7 +90,7 @@ class InterpolateUnit(AUnit):
         return file_line + 2
 
     def getData(self):
-        '''Returns the formatted data for this unit. 
+        '''Returns the formatted data for this unit.
 
         See Also:
             isisunit.

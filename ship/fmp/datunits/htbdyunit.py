@@ -3,16 +3,16 @@
  Summary:
     Contains the HtbdyUnit class.
     This holds all of the data read in from the HTBDY units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan R.
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -57,7 +57,7 @@ class HtbdyUnit (AUnit):
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AUnit.__init__(self, **kwargs)
+        super(HtbdyUnit, self).__init__(**kwargs)
 
         self._unit_type = HtbdyUnit.UNIT_TYPE
         self._unit_category = HtbdyUnit.UNIT_CATEGORY
@@ -89,8 +89,8 @@ class HtbdyUnit (AUnit):
         """Reads the unit data into the geometry objects.
 
         Args:
-            unit_data (list): The part of the isis dat file pertaining to 
-                this section 
+            unit_data (list): The part of the isis dat file pertaining to
+                this section
 
         See Also:
             AUnit - readUnitData()
@@ -234,7 +234,7 @@ class HtbdyUnit (AUnit):
 
         Raises:
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObjects. 
+            ValueError: If the given value is not accepted by the DataObjects.
 
         See Also:
             ADataObject and subclasses for information on the parameters.

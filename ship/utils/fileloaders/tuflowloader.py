@@ -1,9 +1,6 @@
 from __future__ import unicode_literals
 
 import logging
-logger = logging.getLogger(__name__)
-"""logging references with a __name__ set to this module."""
-
 import os
 import uuid
 
@@ -16,18 +13,16 @@ from ship.utils.fileloaders.loader import ALoader
 from ship.utils import filetools
 from ship.tuflow import tuflowfactory as tfactory
 
+logger = logging.getLogger(__name__)
+"""logging references with a __name__ set to this module."""
 
 class TuflowLoader(ALoader):
 
     def __init__(self):
-        ALoader.__init__(self)
+        super(TuflowLoader, self).__init__()
         self.types = TuflowFilepartTypes()
 
         self.user_variables = UserVariables()
-#         self.scenario_vals = {}
-#         """Any scenario values that are passed through."""
-#
-#         self.event_vals = {}
         """Any event values that are passed through."""
 
         self.tuflow_model = None
