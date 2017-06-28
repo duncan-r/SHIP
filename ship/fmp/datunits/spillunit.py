@@ -3,16 +3,16 @@
  Summary:
     Contains the SpillUnit class.
     This holds all of the data read in from the spill units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan R.
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -57,7 +57,7 @@ class SpillUnit (AUnit):
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AUnit.__init__(self, **kwargs)
+        super(SpillUnit, self).__init__(**kwargs)
 
         self._name = 'Spl'
         self._name_ds = 'SplDS'
@@ -90,8 +90,8 @@ class SpillUnit (AUnit):
         """Reads the unit data into the geometry objects.
 
         Args:
-            unit_data (list): The part of the isis dat file pertaining to 
-                this section 
+            unit_data (list): The part of the isis dat file pertaining to
+                this section
 
         See Also:
             AUnit - readUnitData()
@@ -136,7 +136,7 @@ class SpillUnit (AUnit):
 
                 '''
                 In some edge cases there are no values set in the file for the
-                easting and northing, so use defaults. this actually checks 
+                easting and northing, so use defaults. this actually checks
                 that they are both there, e starts at 21, n starts at 31
                 '''
                 if len(unit_data[i]) > 31:
@@ -201,8 +201,8 @@ class SpillUnit (AUnit):
     def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
 
-        Ensures that certain requirements of the data rows, such as the 
-        chainage needing to increase for each row down are met, then call the 
+        Ensures that certain requirements of the data rows, such as the
+        chainage needing to increase for each row down are met, then call the
         addNewRow() method in the row_collection.
 
         Args:
@@ -217,7 +217,7 @@ class SpillUnit (AUnit):
 
         Raises:
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObjects. 
+            ValueError: If the given value is not accepted by the DataObjects.
 
         See Also:
             ADataObject and subclasses for information on the parameters.

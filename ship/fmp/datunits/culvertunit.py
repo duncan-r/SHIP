@@ -3,13 +3,13 @@
  Summary:
     Contains the Culvert unit type classes.
     This holds all of the data read in from the culvert units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -41,7 +41,7 @@ class CulvertUnit(AUnit):
     def __init__(self):
         '''Constructor.
         '''
-        AUnit.__init__(self)
+        super(CulvertUnit, self).__init__()
         self._unit_type = CulvertUnit.UNIT_TYPE
         self._unit_category = CulvertUnit.UNIT_CATEGORY
 
@@ -65,7 +65,7 @@ class CulvertUnitInlet(CulvertUnit):
     def __init__(self, **kwargs):
         '''Constructor.
         '''
-        CulvertUnit.__init__(self, **kwargs)
+        super(CulvertUnitInlet, self).__init__(**kwargs)
         self._unit_type = CulvertUnitInlet.UNIT_TYPE
         self._unit_category = CulvertUnitInlet.UNIT_CATEGORY
 
@@ -114,7 +114,7 @@ class CulvertUnitInlet(CulvertUnit):
         return file_line + 4
 
     def getData(self):
-        '''Returns the formatted data for this unit. 
+        '''Returns the formatted data for this unit.
 
         See Also:
             isisunit.
@@ -145,7 +145,7 @@ class CulvertUnitOutlet(CulvertUnit):
     FILE_KEY2 = 'OUTLET'
 
     def __init__(self):
-        CulvertUnit.__init__(self)
+        super(CulvertUnitOutlet, self).__init__()
         self._unit_type = CulvertUnitOutlet.UNIT_TYPE
         self._unit_category = CulvertUnitOutlet.UNIT_CATEGORY
 
@@ -174,7 +174,7 @@ class CulvertUnitOutlet(CulvertUnit):
         return file_line + 3
 
     def getData(self):
-        '''Returns the formatted data for this unit. 
+        '''Returns the formatted data for this unit.
 
         See Also:
             isisunit.

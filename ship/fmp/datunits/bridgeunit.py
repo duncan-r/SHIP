@@ -5,16 +5,16 @@
     The BridgeUnit is a superclass to the other containing default shared
     behaviour and content.
     These hold all of the data read in from the bridge units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -62,7 +62,7 @@ class BridgeUnit (AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs)
+        super(BridgeUnit, self).__init__(**kwargs)
 
         self._unit_type = BridgeUnit.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -72,7 +72,7 @@ class BridgeUnit (AUnit):
         self.setupRowData()
 
     def setupRowData(self):
-        """Setup the main geometry and opening RowCollection's. 
+        """Setup the main geometry and opening RowCollection's.
 
         These are used by all BridgeUnits, but they're added to a method called
         by the constructor in cases anyone need to override them.
@@ -121,9 +121,9 @@ class BridgeUnit (AUnit):
         See Also:
             AUnit
 
-        Args: 
-            unit_data (list): The section of the isis dat file pertaining to 
-                this section. 
+        Args:
+            unit_data (list): The section of the isis dat file pertaining to
+                this section.
         """
         file_line = self._readHeadData(unit_data, file_line)
         file_line = self._readMainRowData(unit_data, file_line)
@@ -245,13 +245,13 @@ class BridgeUnit (AUnit):
     def updateRow(self, row_vals, index, collection_name=None, **kwargs):
         """Updates the row at the given index in the river units row_collection.
 
-        The row will be updated at the given index. 
+        The row will be updated at the given index.
 
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
                 value assigned for the DataType. Chainage and Elevation MUST
                 be included.
-            index: the row to update. 
+            index: the row to update.
             collection_name=None(str): If None the self.row_collection
                 with the bridges geometry data will be updated. If a string it
                 will be looked for in the self.additional_row_collections
@@ -260,7 +260,7 @@ class BridgeUnit (AUnit):
         Raises:
             KeyError: If collection_name key does not exist.
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.
@@ -278,7 +278,7 @@ class BridgeUnit (AUnit):
         The new row will be added at the given index. If no index is given it
         will be appended to the end of the collection.
 
-        If no chainage or elevation values are given an AttributeError will be 
+        If no chainage or elevation values are given an AttributeError will be
         raised as they cannot have default values. All other values can be
         ommitted. If they are they will be given defaults.
 
@@ -301,7 +301,7 @@ class BridgeUnit (AUnit):
             AttributeError: If required values are not given for the rowdata_key
                 collection. See _checkRowKeys().
             KeyError: if the collection_name does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.
@@ -317,7 +317,7 @@ class BridgeUnit (AUnit):
         SOFFIT_LEVEL must be >= SPRINGING_LEVEL.
         OPEN_END must be > OPEN_START.
 
-        if rowdata_type == 'main' rdt.CHAINAGE and rdt.ELEVATION must be 
+        if rowdata_type == 'main' rdt.CHAINAGE and rdt.ELEVATION must be
         given. if rowdata_type == 'opening' rdt.OPEN_START and rdt.OPEN_END
         must be given.
 
@@ -386,7 +386,7 @@ class BridgeUnit (AUnit):
                     raise ValueError('Bridge: OPEN_END must be < than next OPEN_START value')
 
     def area(self):
-        """Returns the cross sectional area of the bridge openings.    
+        """Returns the cross sectional area of the bridge openings.
 
         Return:
             Dict - containing the area of the opening(s). keys = 'total', then
@@ -430,7 +430,7 @@ class BridgeUnitUsbpr (BridgeUnit):
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self, **kwargs)
+        super(BridgeUnitUsbpr, self).__init__(**kwargs)
 
         self._unit_type = BridgeUnitUsbpr.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
@@ -665,7 +665,7 @@ class BridgeUnitArch (BridgeUnit):
         See Also:
             BridgeUnit
         """
-        BridgeUnit.__init__(self, **kwargs)
+        super(BridgeUnitArch, self).__init__(**kwargs)
 
         self._unit_type = BridgeUnitArch.UNIT_TYPE
         self._unit_category = BridgeUnit.UNIT_CATEGORY
