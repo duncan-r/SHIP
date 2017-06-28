@@ -28,14 +28,14 @@
 
 from __future__ import unicode_literals
 
+import logging
 from itertools import chain
 
-from ship.tuflow.tuflowfilepart import TuflowFile, TuflowKeyValue, TuflowUserVariable, TuflowModelVariable
 from ship.tuflow import FILEPART_TYPES as fpt
-from ship.utils import utilfunctions as uf
+from ship.tuflow.tuflowfilepart import (TuflowFile, TuflowKeyValue,
+                                        TuflowModelVariable,
+                                        TuflowUserVariable)
 
-
-import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
@@ -254,16 +254,7 @@ class TuflowModel(object):
         self.control_files['TCF'].parts.add(model_file, **kwargs)
 
 
-# class TuflowUtils(object):
-#     """Utility functions for dealing with TuflowModel outputs."""
-#
-#     def __init__(self):
-#         pass
-#
-#     @staticmethod
-#     def resultsByParent(results):
-#         """
-#         """
+
 
 
 class UserVariables(object):

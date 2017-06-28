@@ -33,7 +33,6 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
-
 class AssociatedParts(object):
     """Stores associate TuflowPart references.
 
