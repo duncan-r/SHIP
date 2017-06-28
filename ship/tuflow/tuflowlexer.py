@@ -24,7 +24,7 @@ class Statement(object):
     def __str__(self):
         if not self.command:
             return self.comment
-        return "{} == {} {}".format(self.command.upper(), self.parameter, self.comment)
+        return "{} == {} {}".format(self.command, self.parameter, self.comment)
 
 
 class ControlStructure(object):
@@ -139,7 +139,7 @@ class TuflowLexer(object):
 
     def t_COMMAND(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
-        t.type = self.reserved.get(t.value, 'COMMAND')
+        t.type = self.reserved.get(t.value.lower(), 'COMMAND')
         return t
 
     # Error handling rule
@@ -209,7 +209,7 @@ def loadFile(tcf_path, keep_comments=True):
     Read a file into a ControlStructure
     '''
     with open(tcf_path) as fin:
-        source = fin.read().lower()
+        source = fin.read()
     lexer = TuflowLexer()
     lexer.build()
     lexer.lexer.input(source)
