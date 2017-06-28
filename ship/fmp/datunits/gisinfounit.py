@@ -5,17 +5,17 @@
     It's used to hold the details in the gis section of the dat file which
     sets up the ixy or gxy files.
 
- Author:  
+ Author:
     Duncan Runnacles
 
- Created:  
+ Created:
      01 Apr 2016
-     
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
-     
+
  TODO:
-    
+
     Not really implemented at the moment - see class TODO.
 
  Updates:
@@ -37,15 +37,15 @@ class GisInfoUnit (AUnit):
     Stores the GIS info found at the bottom of .dat file.
 
     Warning:
-        Reads the file by simply parsing until it reaches EOF. This isn't 
-        necessarily the case as there can be information about photos 
+        Reads the file by simply parsing until it reaches EOF. This isn't
+        necessarily the case as there can be information about photos
         attached to the model below it. Be careful of this.
 
     See Also:
         isisunit
 
     TODO:
-        Actually do something with this class. At the moment it might as well 
+        Actually do something with this class. At the moment it might as well
         be an UnknownSection.
     """
     # Class constants
@@ -58,14 +58,14 @@ class GisInfoUnit (AUnit):
         """Constructor
 
         Args:
-            node_count (int): The number of nodes in the model. We need this 
+            node_count (int): The number of nodes in the model. We need this
                 to know how many lines there are to read from the contents list.
-            fileOrder (inti) The location of this unit in the .DAT file. This 
-                will always be at the end but for the GisInfoUnit, but we need 
+            fileOrder (inti) The location of this unit in the .DAT file. This
+                will always be at the end but for the GisInfoUnit, but we need
                 to pass it to the superclass.
         """
 
-        AUnit.__init__(self)
+        super(GisInfoUnit, self).__init__()
         self._unit_type = GisInfoUnit.UNIT_TYPE
         self._unit_category = GisInfoUnit.UNIT_CATEGORY
         self._name = "GisInfo"

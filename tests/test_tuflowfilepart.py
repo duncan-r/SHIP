@@ -39,40 +39,40 @@ class TuflowFilePartTests(unittest.TestCase):
         tgc_line = "Geometry Control File == {} ! A tgc comment".format(
             os.path.join('..', 'model', 'tgcfile.tgc')
         )
-        self.tgc = f.TuflowFactory.getTuflowPart(tgc_line, self.tcf)[0]
+        self.tgc = f.getTuflowPart(tgc_line, self.tcf)[0]
 
         # Setup a gis file with tgc parent
         gis_line = "Read Gis Z Shape == {} ! A gis comment".format(
             os.path.join('gis', 'gisfile.shp')
         )
-        self.gis = f.TuflowFactory.getTuflowPart(gis_line, self.tgc)[0]
+        self.gis = f.getTuflowPart(gis_line, self.tgc)[0]
         var_line = "Timestep == 2 ! A var comment"
-        self.var = f.TuflowFactory.getTuflowPart(var_line, self.tgc)[0]
+        self.var = f.getTuflowPart(var_line, self.tgc)[0]
         gis_line2 = "Read Gis Z Shape == {} ! A gis 2 comment".format(
             os.path.join('gis', 'gisfile2.shp')
         )
-        self.gis2 = f.TuflowFactory.getTuflowPart(gis_line2, self.tgc)[0]
+        self.gis2 = f.getTuflowPart(gis_line2, self.tgc)[0]
 
         # For the evt testing stuff
         line_evt = "Read Gis Z Shape == {} ! A gis 3 comment".format(
             os.path.join('gis', 'gisfile_evt.shp')
         )
-        self.gis_evt = f.TuflowFactory.getTuflowPart(line_evt, self.tgc)[0]
+        self.gis_evt = f.getTuflowPart(line_evt, self.tgc)[0]
         linevar_evt = "Timestep == 6 ! A var evt comment"
-        self.var_evt = f.TuflowFactory.getTuflowPart(linevar_evt, self.tgc)[0]
+        self.var_evt = f.getTuflowPart(linevar_evt, self.tgc)[0]
         # For the scenario testing stuff
         line_scen = "Read Gis Z Shape == {} ! A gis 3 comment".format(
             os.path.join('gis', 'gisfile_evt.shp')
         )
-        self.gis_scen = f.TuflowFactory.getTuflowPart(line_scen, self.tgc)[0]
+        self.gis_scen = f.getTuflowPart(line_scen, self.tgc)[0]
         linevar_scen = "Timestep == 6 ! A var scen comment"
-        self.var_scen = f.TuflowFactory.getTuflowPart(linevar_scen, self.tgc)[0]
+        self.var_scen = f.getTuflowPart(linevar_scen, self.tgc)[0]
 
         if_args = {
             'commands': ['If Scenario', 'Else'], 'terms': [['scen1', 'scen2'], []],
             'comments': ['', '']
         }
-        self.iflogic = f.TuflowFactory.createIfLogic(self.tgc, if_args['commands'],
+        self.iflogic = f.createIfLogic(self.tgc, if_args['commands'],
                                                      if_args['terms'],
                                                      if_args['comments'])
         self.iflogic.add_callback = self.fakeCallbackfunc
@@ -82,7 +82,7 @@ class TuflowFilePartTests(unittest.TestCase):
             'commands': 'Define Event', 'terms': ['event1', 'event2'],
             'comments': ''
         }
-        self.evtlogic = f.TuflowFactory.createBlockLogic(self.tgc, evt_args['commands'],
+        self.evtlogic = f.createBlockLogic(self.tgc, evt_args['commands'],
                                                          evt_args['terms'],
                                                          evt_args['comments'])
         self.evtlogic.add_callback = self.fakeCallbackfunc
@@ -135,9 +135,9 @@ class TuflowFilePartTests(unittest.TestCase):
     def test_TPresolvePlaceholder(self):
         """Test return value of resolvePlaceholder in TuflowPart."""
         data_line = "Read Materials File == Materials_<<s1>>.tmf ! A tmf comment"
-        vardata = f.TuflowFactory.getTuflowPart(data_line, self.tgc)[0]
+        vardata = f.getTuflowPart(data_line, self.tgc)[0]
         var_line = "Cell Size == <<size>> ! a cell size comment"
-        varvar = f.TuflowFactory.getTuflowPart(var_line, self.tgc)[0]
+        varvar = f.getTuflowPart(var_line, self.tgc)[0]
 
         user_vars = {
             's1': 'scen1', 'size': '10', 'e1': 'event1', 'anothervar': '2.5'

@@ -4,13 +4,13 @@
     Factory class for building the AUnits from an ISIS data file.
     This is used to read and build the parts of the ISIS dat file.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -18,7 +18,7 @@
     doesn't really make much difference in Python in terms of encapsulation,
     but it makes it a bit clearer to any calling scripts that they might be
     messing with something that they probablly shouldn't be messing with.
-    
+
     Comments are a bit over the top in this file. Need to go through and
     decide what is helpful and what is just getting in the way.
 
@@ -50,17 +50,16 @@ class DatLoader(ATool, ALoader):
     Identifies different section of the .DAT file and creates objects of
     the different units. Also saves updated file.
 
-    All unknown data within the file is contained within UnkownSection units. 
-    These read in the text as found and write out as found, with no knowledge 
-    of the contents. Effectively bypassing the need to worry about parts that 
+    All unknown data within the file is contained within UnkownSection units.
+    These read in the text as found and write out as found, with no knowledge
+    of the contents. Effectively bypassing the need to worry about parts that
     aren't being used yet.
     """
 
     def __init__(self):
         """Constructor."""
 
-        ATool.__init__(self)
-        ALoader.__init__(self)
+        super(DatLoader, self).__init__()
         logger.debug('Instantiating DatLoader')
 
         self.cur_no_of_units = 0
@@ -81,20 +80,20 @@ class DatLoader(ATool, ALoader):
 
         Splits it into objects for each unit type, initial conditions etc.
 
-        This is an epic if-else section for each unit type currently 
+        This is an epic if-else section for each unit type currently
         represented.
 
         Needs cleaning up and writing with a bit more style.
 
-        Easy to add another unit type, if it's not currently covered then it 
-        will just be collected in the universal 'UnknownUnit' and printed 
+        Easy to add another unit type, if it's not currently covered then it
+        will just be collected in the universal 'UnknownUnit' and printed
         back out the same as it came in.
 
         Args:
             file_path (str): path to the .dat file to load.
 
         Returns:
-            units - UnitCollection containing the dat file units or False if 
+            units - UnitCollection containing the dat file units or False if
                 they couldn't be loaded.
 
         Raises:
@@ -177,7 +176,7 @@ class DatLoader(ATool, ALoader):
 
                 '''Call the unit creator function and get back the unit and the
                 updated contents list index.
-                Most of these variables are self explanatory, but 
+                Most of these variables are self explanatory, but
                 unit_vars[first_word] is the key for the unit type to make.
                 '''
 #                 i, self.temp_unit = unit_factory.createUnit(self.contents, i,
@@ -227,14 +226,14 @@ class DatLoader(ATool, ALoader):
             Deprecated: Will be removed. Please use self.units directly.
 
         Returns:
-            IsisUnitCollection - The units loaded from the dat file. 
+            IsisUnitCollection - The units loaded from the dat file.
         """
         return self.units
 
     def updateSubContents(self):
         """Updates the self.units.
 
-        Appends the new temp_unit to list of units and resets all the 
+        Appends the new temp_unit to list of units and resets all the
         variables.
         """
         #logger.debug('In updateSubContents')

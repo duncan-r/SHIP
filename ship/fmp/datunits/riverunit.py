@@ -3,16 +3,16 @@
  Summary:
     Contains the RiverUnit class.
     This holds all of the data read in from the river units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
-     
-  Created:  
+
+  Created:
      01 Apr 2016
- 
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -62,7 +62,7 @@ class RiverUnit (AUnit):
             fileOrder (int): The location of this unit in the file.
             reach_number (int): The reach ID for this unit.
         """
-        AUnit.__init__(self, **kwargs)
+        super(RiverUnit, self).__init__(**kwargs)
 
         self._unit_type = RiverUnit.UNIT_TYPE
         self._unit_category = RiverUnit.UNIT_CATEGORY
@@ -149,8 +149,8 @@ class RiverUnit (AUnit):
             AUnit - readUnitData for more information.
 
         Args:
-            unit_data (list): The section of the isis dat file pertaining 
-                to this section 
+            unit_data (list): The section of the isis dat file pertaining
+                to this section
         """
         file_line = self._readHeadData(unit_data, file_line)
         file_line = self._readRowData(unit_data, file_line)
@@ -284,18 +284,18 @@ class RiverUnit (AUnit):
     def updateRow(self, row_vals, index, **kwargs):
         """Updates the row at the given index in the river units row_data.
 
-        The row will be updated at the given index. 
+        The row will be updated at the given index.
 
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
                 value assigned for the DataType. Chainage and Elevation MUST
                 be included.
-            index: the row to update. 
+            index: the row to update.
 
         Raises:
             AttributeError: If CHAINAGE or ELEVATION are not given.
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.
@@ -311,7 +311,7 @@ class RiverUnit (AUnit):
         The new row will be added at the given index. If no index is given it
         will be appended to the end of the collection.
 
-        If no chainage or elevation values are given a AttributeError will be 
+        If no chainage or elevation values are given a AttributeError will be
         raised as they cannot have default values. All other values can be
         ommitted. If they are they will be given defaults.
 
@@ -329,7 +329,7 @@ class RiverUnit (AUnit):
         Raises:
             AttributeError: If CHAINAGE or ELEVATION are not given.
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.

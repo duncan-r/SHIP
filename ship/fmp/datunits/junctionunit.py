@@ -3,13 +3,13 @@
  Summary:
     Contains the JuntionUnit type classes.
     This holds all of the data read in from the junction units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -44,7 +44,7 @@ class JunctionUnit(AUnit):
         Args:
             file_order (int): the order of this unit in the .dat file.
         '''
-        AUnit.__init__(self)
+        super(JunctionUnit, self).__init__()
         self._unit_type = JunctionUnit.UNIT_TYPE
         self._unit_category = JunctionUnit.UNIT_CATEGORY
         self.head_data = {
@@ -108,7 +108,7 @@ class JunctionUnit(AUnit):
         return file_line + 2
 
     def getData(self):
-        '''Returns the formatted data for this unit. 
+        '''Returns the formatted data for this unit.
 
         See Also:
             isisunit.
