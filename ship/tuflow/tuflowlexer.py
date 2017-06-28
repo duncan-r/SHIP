@@ -5,6 +5,7 @@ into objects
 TODO: Needs integrating with the rest of SHIP
 (i.e using ship classes instead of Statement/ControlStructure or integrating these)
 '''
+from __future__ import print_function
 from ply import lex
 
 class Statement(object):
@@ -21,6 +22,8 @@ class Statement(object):
         return "<Statement: {}>".format(self.command)
 
     def __str__(self):
+        if not self.command:
+            return self.comment
         return "{} == {} {}".format(self.command.upper(), self.parameter, self.comment)
 
 
@@ -150,7 +153,7 @@ class TuflowLexer(object):
         '''
         self.lexer = lex.lex(module=self, **kwargs)
 
-def parse(lexer, container):
+def parse(lexer, container, keep_comments=True):
     '''
     Parses a tuflow control file, placing the results in
     ``container``.
@@ -168,7 +171,7 @@ def parse(lexer, container):
         if not token:
             break
         if token.type in ('IF', 'DEFINE'):
-            container.append(parse(lexer, ControlStructure(token.type)))
+            container.append(parse(lexer, ControlStructure(token.type), keep_comments))
         elif token.type == 'END':
             # look ahead to next token
             next_tok = lexer.token()
@@ -187,8 +190,12 @@ def parse(lexer, container):
         elif token.type == 'NEWLINE':
             if command or parameter:
                 container.append(
-                    Statement(" ".join(command), " ".join(parameter), comment))
+                    Statement(" ".join(command), " ".join(parameter), comment)
+                )
                 command, parameter, comment = [], [], None
+            elif comment and keep_comments:
+                container.append(Statement(comment=comment))
+                comment = None
         elif token.type == 'COMMENT':
             comment = token.value
         elif token.type == 'PARAMETER':
@@ -197,7 +204,7 @@ def parse(lexer, container):
             command.append(token.value)
     return container
 
-def loadFile(self, tcf_path):
+def loadFile(tcf_path, keep_comments=True):
     '''
     Read a file into a ControlStructure
     '''
@@ -206,4 +213,4 @@ def loadFile(self, tcf_path):
     lexer = TuflowLexer()
     lexer.build()
     lexer.lexer.input(source)
-    return parse(lexer.lexer, ControlStructure('ROOT'))
+    return parse(lexer.lexer, ControlStructure('ROOT'), keep_comments)
