@@ -1,24 +1,24 @@
 """
 
- Summary:  
+ Summary:
     Contains the ADataObject class and all of its subclasses.
-    
+
     These classes can be used to hold used by the :class:'<RowDataCollection>'.
     They provide a range of methods for easily acessing, amending and retrieving
-    values to print to file. Classes include support for:  
-        # Numeric data.  
-        # String data.  
-        # Symbol data.  
+    values to print to file. Classes include support for:
+        # Numeric data.
+        # String data.
+        # Symbol data.
         # Constant data (a tuple of legal values).
 
 
- Author:  
+ Author:
      Duncan Runnacles
-     
- Created:  
+
+ Created:
      01 Apr 2016
-     
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -53,16 +53,16 @@ class ADataRowObject(object):
         """Constructor
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
                 update_callback: a callback function that should be run everytime
                     a value is updated (added or set). For example to check
@@ -135,19 +135,19 @@ class ADataRowObject(object):
         """Getter for the formatted printable value at the supplied index.
 
         If the default value given == '~' then all formatting should be removed
-        from the value if it is empty. Otherwise we call the subclass 
+        from the value if it is empty. Otherwise we call the subclass
         formatPrintString() method.
 
         Args:
             index (int): The index of the required value.
 
         Returns:
-            String containing the .DAT file print formatted value as defined 
+            String containing the .DAT file print formatted value as defined
                 by the format_print_string variables set when the object was
                 initialised.
 
         Raises:
-             IndexError: If the given index doesn't exist. 
+             IndexError: If the given index doesn't exist.
         """
         try:
             out_value = self.data_collection[index]
@@ -173,17 +173,17 @@ class ADataRowObject(object):
     def addValue(self, value=None, index=None):
         """Adds a value to the data_collection.
 
-        This values will either be appended or put at a specific index if 
-        one is provided. 
+        This values will either be appended or put at a specific index if
+        one is provided.
 
         Arguments:
-            value: Optional - The value to be added. If no value is 
+            value: Optional - The value to be added. If no value is
                 provided the default value will be used.
             index (int): Optional - The index at which to add the value. If no
                 value is given it will be appended to the end.
 
         Raises:
-            IndexError: If index does not exist. 
+            IndexError: If index does not exist.
         """
         if value == None:
             value = self.default
@@ -211,11 +211,11 @@ class ADataRowObject(object):
         """Changes the value at the given index
 
         Args:
-            value: The new value to set. 
+            value: The new value to set.
             index (int): The index of the value to be changed
 
         Raises:
-            IndexError: If index does not exist. 
+            IndexError: If index does not exist.
         """
         if self.update_callback is not None:
             self.update_callback(self, value, index)
@@ -241,7 +241,7 @@ class ADataRowObject(object):
             index (int): index of value to be removed.
 
         Raises:
-            IndexError: If index does not exist. 
+            IndexError: If index does not exist.
         """
         try:
             del self.data_collection[index]
@@ -267,7 +267,7 @@ class ADataRowObject(object):
         """Abstract method for formatting the value to be printed.
 
         Formats the value as defined by format_string when the object was
-        instantiated. This should be the format required when printing to 
+        instantiated. This should be the format required when printing to
         the .DAT file.
 
         Note:
@@ -301,19 +301,19 @@ class IntData(ADataRowObject):
         """Constructor.
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default=None: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
+        super(IntData, self).__init__(datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
         """Adds a value to the collection.
@@ -366,7 +366,7 @@ class IntData(ADataRowObject):
 
 
 class FloatData(ADataRowObject):
-    """Overrides the value return methods from ADataObject to return a 
+    """Overrides the value return methods from ADataObject to return a
     float value instead of a string.
     """
 
@@ -375,25 +375,25 @@ class FloatData(ADataRowObject):
         """Constructor.
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default=None: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
                 no_of_dps: int of the number of decimal places that this value
-                    should be represented with when printed to file. 
-                use_sn: int the number of significant figures at which 
+                    should be represented with when printed to file.
+                use_sn: int the number of significant figures at which
                     scientific notation should be used.
         """
         self.no_of_dps = kwargs.get('no_of_dps', 0)
         self.use_sn = kwargs.get('use_sn', -1)
-        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
+        super(FloatData, self).__init__(datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
         """Adds a value to the collection.
@@ -452,27 +452,27 @@ class FloatData(ADataRowObject):
 
 
 class StringData(ADataRowObject):
-    """Overrides the value return methods from ADataObject to return a 
-    str value. 
+    """Overrides the value return methods from ADataObject to return a
+    str value.
     """
 
     def __init__(self, datatype, format_str='{}', **kwargs):
         """Constructor.
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
             format_str={} (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default=None: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
         """
-        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
+        super(StringData, self).__init__(datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
         """Adds a value to the collection.
@@ -530,7 +530,7 @@ class StringData(ADataRowObject):
 
 
 class ConstantData(ADataRowObject):
-    """Overrides the value return methods from ADataObject to return a 
+    """Overrides the value return methods from ADataObject to return a
     str value from a list of predefined constants.
     """
 
@@ -538,18 +538,18 @@ class ConstantData(ADataRowObject):
         """Constructor.
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
-            legal_values(tuple): contains the possible values that this 
+            legal_values(tuple): contains the possible values that this
                 collection can have.
             format_str={} (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default=None: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
 
         Raises:
@@ -558,7 +558,7 @@ class ConstantData(ADataRowObject):
         if not isinstance(legal_values, tuple):
             raise AttributeError('legal_values is not a tuple')
         self.legal_values = legal_values
-        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
+        super(ConstantData, self).__init__(datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
         """Adds a value to the collection.
@@ -616,7 +616,7 @@ class ConstantData(ADataRowObject):
 
 
 class SymbolData(ADataRowObject):
-    """Overrides the value return methods from ADataObject to return a 
+    """Overrides the value return methods from ADataObject to return a
     float value instead of a string.
     """
 
@@ -624,20 +624,20 @@ class SymbolData(ADataRowObject):
         """Constructor.
 
         Args:
-            datatype (int): The type of collection it will hold (see the enum 
+            datatype (int): The type of collection it will hold (see the enum
                 list in the isis.datunits.ROW_DATA_TYPES.
-            symbol(str): The symbol that should should be used to represent the 
+            symbol(str): The symbol that should should be used to represent the
                presence of this value in the file.
-            legal_values(tuple): contains the possible values that this 
+            legal_values(tuple): contains the possible values that this
                 collection can have.
             format_str={} (str): Represents the format that should be used to
-                print out the values kept in this data collection. This 
-                should be in the form '{:<10}' = 10 spaces formatted left. 
-                With the required spaces need to correctly format the value 
+                print out the values kept in this data collection. This
+                should be in the form '{:<10}' = 10 spaces formatted left.
+                With the required spaces need to correctly format the value
                 in the file.
             **kwargs:
                 default=None: The default value that the collection should use -
-                    Can be None if defaults are not allowed or '~' if the default 
+                    Can be None if defaults are not allowed or '~' if the default
                     should remove the formatting and apply an empty string.
 
         Raises:
@@ -645,7 +645,7 @@ class SymbolData(ADataRowObject):
         """
         self.symbol = symbol
         self.bool_type = bool  # Used to test if a value is of type bool or not
-        ADataRowObject.__init__(self, datatype, format_str, **kwargs)
+        super(SymbolData, self).__init__(datatype, format_str, **kwargs)
 
     def addValue(self, value=None, index=None):
         """Adds a value to the collection.

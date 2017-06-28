@@ -4,13 +4,13 @@
     Contains the Factory class for loading and building the Ief object from
     an ief file at a given path.
 
- Author:  
+ Author:
      Duncan Runnacles
 
-  Created:  
+  Created:
      01 Apr 2016
-     
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -47,8 +47,7 @@ class IefLoader(ATool, ALoader):
 
     def __init__(self):
         """Constructor."""
-        ATool.__init__(self)
-        ALoader.__init__(self)
+        super(IefLoader, self).__init__()
         logger.debug('Initialising IEFLoader')
 
     def loadFile(self, file_path, arg_dict={}):
@@ -141,7 +140,7 @@ class IefLoader(ATool, ALoader):
         Args:
             event_details (Dict): The event details.
             contents (List): the lines from the ief file.
-            index (int): The current index in the contents list. 
+            index (int): The current index in the contents list.
         """
         splitvals = contents[index].split('=', 1)
         event_details[splitvals[0]] = splitvals[1].rstrip('\n')
@@ -153,7 +152,7 @@ class IefLoader(ATool, ALoader):
             snapshot (List): contains dictionaries with the name and filepath
                 of all the snapshot files in the ief.
             contents (List): The list containing the lines from the ief file.
-            index (int): The current index in the contents list. 
+            index (int): The current index in the contents list.
         """
         snaptime = contents[index].split('=', 1)[1].rstrip()
         snapfile = contents[index + 1].split('=', 1)[1].rstrip('\n')
@@ -165,10 +164,10 @@ class IefLoader(ATool, ALoader):
         """Adds a line from the ief file to the ied_data list.
 
         Args:
-            ied_data (List): dictionaries with the name and filepath of all 
+            ied_data (List): dictionaries with the name and filepath of all
                 the ied files in the ief.
             contents (List): containing the lines from the ief file.
-            index (int): The current index in the contents list. 
+            index (int): The current index in the contents list.
 
         Returns:
             Int - updated index value.
@@ -203,7 +202,7 @@ class IefLoader(ATool, ALoader):
         """Load the .ief file into the contents list.
 
         Args:
-            filepath (str): Path to the required IEF file. 
+            filepath (str): Path to the required IEF file.
 
         Returns:
             The file contents as a list if loaded ok; False otherwise.

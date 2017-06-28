@@ -2,25 +2,25 @@
 
  Summary:
     Used for accessing files that contain data and links to other files.
-    contains a factory method that will select the correct concrete 
+    contains a factory method that will select the correct concrete
     implementation of ADataFileObject for the user based on the contents of
     the DataFile variables given as a parameter.
 
     Contains the abstract ADataFileObject class and concrete implmentations.
 
- Author:  
+ Author:
      Duncan Runnacles
-     
-  Created:  
+
+  Created:
      01 Apr 2016
- 
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
 
  Updates:
-     
+
 
 """
 from __future__ import unicode_literals
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 class ADataFileObject(object):
     """Abstract superclass for all data file objects.
 
-    All classes that deal with reading and writing data from the DataFile 
+    All classes that deal with reading and writing data from the DataFile
     derivation of TuflowFilePart should create an implementation of this class.
 
     Loading of the data should be separated into the DataFileLoader module to
@@ -173,7 +173,7 @@ class ADataFileObject(object):
         """Get all paths held by this object
 
         Args:
-            include_this=True(bool): if True it includes the path of this 
+            include_this=True(bool): if True it includes the path of this
                 DatafileObject.
             name_only=False(bool): if True only the filename will be returned.
             resolver_name=True(bool): if True any placeholders in the filename
@@ -237,7 +237,7 @@ class XsDataObject(ADataFileObject):
     def __init__(self, row_collection, file_part, comment_lines=[]):
         """
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines)
+        super(XsDataObject, self).__init__(row_collection, file_part, comment_lines)
         self.keys = XsEnum()
 
     def _getPrintableContents(self):
@@ -270,7 +270,7 @@ class TmfDataObject(ADataFileObject):
             comment_lines (list): containing the contents of any comment only
                 lines in the file.
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines)
+        super(TmfDataObject, self).__init__(row_collection, file_part, comment_lines)
         self.keys = TmfEnum()
 
     def _getPrintableContents(self):
@@ -316,7 +316,7 @@ class BcDataObject(ADataFileObject):
             comment_lines (list): containing the contents of any comment only
                 lines in the file.
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines, args_dict)
+        super(BcDataObject, self).__init__(row_collection, file_part, comment_lines, args_dict)
         self.keys = BcEnum()
 
     def getAllPaths(self, include_this=True, name_only=False, resolve_paths=True):
@@ -397,7 +397,7 @@ class MatCsvDataObject(ADataFileObject):
             comment_lines (list): containing the contents of any comment only
                 lines in the file.
         """
-        ADataFileObject.__init__(self, row_collection, file_part, comment_lines, args_dict)
+        super(MatCsvDataObject, self).__init__(row_collection, file_part, comment_lines, args_dict)
         self.keys = MatCsvEnum()
 
     def _getPrintableContents(self):
@@ -433,10 +433,10 @@ class MatCsvDataObject(ADataFileObject):
     def _refactorPrintableRow(self, data_row, is_header=False):
         """Converts the values from individual back to tuflow recognised groupings.
 
-        Tuflow can have multiple values grouped under a single heading.  
-        E.g. Mannings can equal:  
-            * Single value.  
-            * Two n values and two depth values.  
+        Tuflow can have multiple values grouped under a single heading.
+        E.g. Mannings can equal:
+            * Single value.
+            * Two n values and two depth values.
             * A file name and up to two column headers.
 
         This takes the separated values and groups them back together again.
@@ -542,8 +542,8 @@ class DataFileSubfileMat(ADataFileSubfile):
             head2_location (int): location of the second key header in the file
                 columns.
         """
-        ADataFileSubfile.__init__(self, path_holder, row_collection, filename,
-                                  comment_lines)
+        super(DataFileSubfileMat, self).__init__(path_holder, row_collection, filename,
+                                                 comment_lines)
 
         self.keys = SubfileMatEnum()
         self.head1_location = head1_location
