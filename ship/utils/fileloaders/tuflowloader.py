@@ -1,21 +1,21 @@
 from __future__ import unicode_literals
 
 import logging
-logger = logging.getLogger(__name__)
-"""logging references with a __name__ set to this module."""
-
 import os
 import uuid
 
 from ship.tuflow import FILEPART_TYPES as fpt
-from ship.utils import utilfunctions as uf
-from ship.tuflow.tuflowmodel import TuflowModel, TuflowFilepartTypes, UserVariables
 from ship.tuflow import controlfile as control
-from ship.tuflow import tuflowfilepart as tuflowpart
-from ship.utils.fileloaders.loader import ALoader
-from ship.utils import filetools
 from ship.tuflow import tuflowfactory as tfactory
+from ship.tuflow import tuflowfilepart as tuflowpart
+from ship.tuflow.tuflowmodel import (TuflowFilepartTypes, TuflowModel,
+                                     UserVariables)
+from ship.utils import utilfunctions as uf
+from ship.utils import filetools
+from ship.utils.fileloaders.loader import ALoader
 
+logger = logging.getLogger(__name__)
+"""logging references with a __name__ set to this module."""
 
 class TuflowLoader(ALoader):
 
