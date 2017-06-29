@@ -24,10 +24,6 @@ class TuflowLoader(ALoader):
         self.types = TuflowFilepartTypes()
 
         self.user_variables = UserVariables()
-#         self.scenario_vals = {}
-#         """Any scenario values that are passed through."""
-#
-#         self.event_vals = {}
         """Any event values that are passed through."""
 
         self.tuflow_model = None
@@ -43,8 +39,6 @@ class TuflowLoader(ALoader):
         self._file_list = {}
         self._logic_list = {}
         self._bc_event = {}
-#         self.scenario_vals = {}
-#         self.event_vals = {}
         self.tuflow_model = None
         self._control_files = []
 
@@ -82,7 +76,6 @@ class TuflowLoader(ALoader):
             raise IOError('Tcf file at %s does not exist' % tcf_path)
         root, tcf_name = os.path.split(tcf_path)
         root = uf.encodeStr(root)
-#         root = unicode(root)
         tcf_name = uf.encodeStr(tcf_name)
 
         self.tuflow_model = TuflowModel(root)
@@ -92,7 +85,6 @@ class TuflowLoader(ALoader):
                                                   'comment': None, 'model_type': 'TCF',
                                                   'root': root})
         tcf_path = main_file.absolutePath()
-#         self.tuflow_model.main_file = main_file
 
         # Setup the file and object holders
         self._file_queue.enqueue(main_file)
@@ -115,8 +107,6 @@ class TuflowLoader(ALoader):
         return self.tuflow_model
 
     def loadControlFile(self, model_file):
-        """
-        """
         path = model_file.absolutePath()
         if not os.path.exists(path):
             raise IOError('model_file path does not exists at: ' + path)
