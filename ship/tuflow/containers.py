@@ -25,7 +25,7 @@ class Statement(object):
         '''
         Returns the filepart type of this statement
         '''
-        if not self.__type:
+        if not self.__type and self.command:
             _, self.__type = TuflowFilepartTypes().find(self.command)
         return self.__type
 

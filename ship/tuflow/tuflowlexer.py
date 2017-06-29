@@ -56,13 +56,13 @@ class Lexer(object):
         return t
 
     def t_COMMAND(self, t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*'
+        r'[\(a-zA-Z_/][a-zA-Z0-9_\)]*'
         t.type = self.reserved.get(t.value.lower(), 'COMMAND')
         return t
 
     # Error handling rule
     def t_error(self, t):
-        print("Illegal character '%s'" % t.value[0])
+        print("Illegal character '{}' on line {}".format(t.value[0], t.lexer.lineno))
         t.lexer.skip(1)
 
     def build(self, **kwargs):
