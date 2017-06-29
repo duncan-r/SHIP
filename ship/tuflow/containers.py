@@ -110,3 +110,14 @@ class ControlStructure(object):
             raise TypeError(
                 "Can only append Statement or ControlStructure types")
         self.statements.append(statement)
+
+    def filter(self, part_type):
+        '''
+        Retrieve all statements which have a type equal
+        to the given filepart type
+        '''
+        for statement in self.statements:
+            if isinstance(statement, ControlStructure):
+                yield from statement.filter(part_type)
+            elif statement.type == part_type:
+                yield statement
