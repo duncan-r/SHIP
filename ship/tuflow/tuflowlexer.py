@@ -9,7 +9,7 @@ from __future__ import print_function
 from ply import lex
 from ship.tuflow.containers import Statement, ControlStructure
 
-class TuflowLexer(object):
+class Lexer(object):
     '''
     Lexer for tokenising tuflow control files
     '''
@@ -71,56 +71,89 @@ class TuflowLexer(object):
         '''
         self.lexer = lex.lex(module=self, **kwargs)
 
-def parse(lexer, container, keep_comments=True):
+class Parser(object):
     '''
-    Parses a tuflow control file, placing the results in
-    ``container``.
-    ``container`` can be any object which provides an ``append``
-    method.
-    E.g.
-    container = ControlStructure('ROOT')
-    parse(lexer, container)
+    Parser for tuflow control files
+    Accepts a token stream from Lexer and creates
+    container objects
     '''
-    command = []
-    parameter = []
-    comment = None
-    while True:
-        token = lexer.token()
-        if not token:
-            break
-        if token.type in ('IF', 'DEFINE'):
-            container.append(parse(lexer, ControlStructure(token.type), keep_comments))
-        elif token.type == 'END':
-            # look ahead to next token
-            next_tok = lexer.token()
+    def __init__(self, lexer, keep_comments=True):
+        self.lexer = lexer
+        self.keep_comments = keep_comments
+        self.command = []
+        self.parameter = []
+        self.comment = None
 
-            # If it is an 'if' or 'define', we are at the end
-            # of this control block, so we should break out of lexing
-            if next_tok.type in ('IF', 'DEFINE'):
-                break
-            else:
-                # Some other commands actually start with 'END' (!)
-                command.append(token.value)
-                command.append(next_tok.value)
-        elif token.type == 'ELSE':
-            # consume next token as it is an 'IF' we can ignore
-            lexer.token()
-        elif token.type == 'NEWLINE':
-            if command or parameter:
-                container.append(
-                    Statement(" ".join(command), " ".join(parameter), comment)
+    def parse(self, container):
+        '''
+        Parses a tuflow control file, placing the results in
+        ``container``.
+        ``container`` can be any object which provides an ``append``
+        method.
+        E.g.
+        container = ControlStructure('ROOT')
+        parse(lexer, container)
+        '''
+        try:
+            while True:
+                token = self.lexer.token()
+                if not token:
+                    break
+                if token.type in ('IF', 'DEFINE'):
+                    container.append(self.parse(ControlStructure(token.type)))
+                elif token.type == 'END':
+                    self._end_token(token)
+                elif token.type == 'ELSE':
+                    self._else()
+                elif token.type == 'NEWLINE':
+                    self._newline(container)
+                elif token.type == 'COMMENT':
+                    self.comment = token.value
+                elif token.type == 'PARAMETER':
+                    self.parameter.append(token.value)
+                elif token.type == 'COMMAND':
+                    self.command.append(token.value)
+        except StopIteration:
+            pass
+        return container
+
+    def _else(self):
+        # consume next token
+        token = self.lexer.token()
+        # if it is not an 'IF' we have another statment
+        # otherwise ignore
+        if token.type == 'COMMAND':
+            self.command.append(token.value)
+
+    def _newline(self, container):
+        if self.command or self.parameter:
+            container.append(
+                Statement(
+                    " ".join(self.command),
+                    " ".join(self.parameter),
+                    self.comment
                 )
-                command, parameter, comment = [], [], None
-            elif comment and keep_comments:
-                container.append(Statement(comment=comment))
-                comment = None
-        elif token.type == 'COMMENT':
-            comment = token.value
-        elif token.type == 'PARAMETER':
-            parameter.append(token.value)
-        elif token.type == 'COMMAND':
-            command.append(token.value)
-    return container
+            )
+            self.command = []
+            self.parameter = []
+            self.comment = None
+        elif self.comment and self.keep_comments:
+            container.append(Statement(comment=self.comment))
+            self.comment = None
+
+
+    def _end_token(self, token):
+        # look ahead to next token
+        next_tok = self.lexer.token()
+
+        # If it is an 'if' or 'define', we are at the end
+        # of this control block, so we should break out of lexing
+        if next_tok.type in ('IF', 'DEFINE'):
+            raise StopIteration
+        else:
+            # Some other commands actually start with 'END' (!)
+            self.command.append(token.value)
+            self.command.append(next_tok.value)
 
 def loadFile(tcf_path, keep_comments=True):
     '''
@@ -128,7 +161,8 @@ def loadFile(tcf_path, keep_comments=True):
     '''
     with open(tcf_path) as fin:
         source = fin.read()
-    lexer = TuflowLexer()
+    lexer = Lexer()
     lexer.build()
     lexer.lexer.input(source)
-    return parse(lexer.lexer, ControlStructure('ROOT'), keep_comments)
+    parser = Parser(lexer.lexer, keep_comments=True)
+    return parser.parse(ControlStructure('ROOT'))
