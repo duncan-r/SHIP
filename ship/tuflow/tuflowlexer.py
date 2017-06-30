@@ -9,6 +9,7 @@ from __future__ import print_function
 from ply import lex
 from ship.tuflow.containers import ControlFileNode
 
+
 class Lexer(object):
     '''
     Lexer for tokenising tuflow control files
@@ -62,7 +63,8 @@ class Lexer(object):
 
     # Error handling rule
     def t_error(self, t):
-        print("Illegal character '{}' on line {}".format(t.value[0], t.lexer.lineno))
+        print("Illegal character '{}' on line {}".format(
+            t.value[0], t.lexer.lineno))
         t.lexer.skip(1)
 
     def build(self, **kwargs):
@@ -71,19 +73,20 @@ class Lexer(object):
         '''
         self.lexer = lex.lex(module=self, **kwargs)
 
+
 class Parser(object):
     '''
     Parser for tuflow control files
     Accepts a token stream from Lexer and creates
     container objects
     '''
+
     def __init__(self, lexer, keep_comments=True):
         self.lexer = lexer
         self.keep_comments = keep_comments
         self.command = []
         self.parameter = []
         self.comment = None
-        self.keyword = []
 
     def parse(self, container):
         '''
@@ -103,11 +106,12 @@ class Parser(object):
                 if not token:
                     break
                 if token.type in ('IF', 'DEFINE'):
-                    container.append(self.parse(ControlFileNode(token.type, keyword=token.type)))
+                    container.append(self.parse(
+                        ControlFileNode('KEYWORD', command=token.type)))
                 elif token.type == 'END':
-                    self._end(token)
+                    self._end(token, container)
                 elif token.type == 'ELSE':
-                    self._else()
+                    self._else(container)
                 elif token.type == 'NEWLINE':
                     self._newline(container)
                 elif token.type == 'COMMENT':
@@ -120,16 +124,24 @@ class Parser(object):
             pass
         return container
 
-    def _else(self):
-        self.keyword.append('ELSE')
+    def _else(self, container):
+        self.command.append('ELSE')
         # consume next token
         token = self.lexer.token()
         # if it is not an 'IF' we have another statment
         # otherwise ignore
+        if token.type == 'IF':
+            self.command.append(token.type)
+        container.append(
+            ControlFileNode(
+                'KEYWORD',
+                command=" ".join(self.command)
+            )
+        )
+        self.command = []
+
         if token.type == 'COMMAND':
             self.command.append(token.value)
-        elif token.type == 'IF':
-            self.keyword.append(token.type)
 
     def _newline(self, container):
         if self.command or self.parameter:
@@ -139,29 +151,34 @@ class Parser(object):
                     command=" ".join(self.command),
                     parameter=" ".join(self.parameter),
                     comment=self.comment,
-                    keyword=" ".join(self.keyword)
                 )
             )
             self.command = []
             self.parameter = []
-            self.keyword = []
             self.comment = None
         elif self.comment and self.keep_comments:
             container.append(ControlFileNode('COMMENT', comment=self.comment))
             self.comment = None
 
-    def _end(self, token):
+    def _end(self, token, container):
         # look ahead to next token
         next_tok = self.lexer.token()
 
         # If it is an 'if' or 'define', we are at the end
         # of this control block, so we should break out of lexing
         if next_tok.type in ('IF', 'DEFINE'):
+            container.append(
+                ControlFileNode(
+                    'KEYWORD',
+                    command=" ".join((token.type, next_tok.type))
+                )
+            )
             raise StopIteration
         else:
             # Some other commands actually start with 'END' (!)
             self.command.append(token.value)
             self.command.append(next_tok.value)
+
 
 def loadFile(tcf_path, keep_comments=True):
     '''

@@ -13,7 +13,7 @@ class ControlFileNode(object):
     ``Statement`` instances
     '''
 
-    node_types = {'ROOT', 'IF', 'DEFINE', 'STATEMENT', 'COMMENT'}
+    node_types = {'ROOT', 'KEYWORD', 'STATEMENT', 'COMMENT'}
 
     def __init__(
             self,
@@ -21,7 +21,6 @@ class ControlFileNode(object):
             command=None,
             parameter=None,
             comment=None,
-            keyword=None,
             parent=None
     ):
         if node_type not in self.node_types:
@@ -40,23 +39,36 @@ class ControlFileNode(object):
         # Parameter is anything (excluding a comment) on the RHS of '=='
         self.parameter = parameter
 
-        # Keywords can be 'IF', 'DEFINE', 'ELSE' or 'ELSE IF'
-        # and dictate how to write out this statement
-        self.keyword = keyword
-
         self.__type = None
 
     def __repr__(self):
         return "<ControlFileNode: {}>".format(self.node_type)
 
     def __str__(self):
-        writer = getattr(self, "_write_{}_block".format(
-            self.node_type.lower()))
-        return writer()
+        if self.children:
+            inner = "".join(s.__str__() for s in self.children)
+            if self.command:
+                return "{} {}".format(self.command, inner)
+            return inner
+
+        line = self.indent
+        if self.command:
+            line += self.command
+        if self.parameter:
+            line += ' == %r' % self.parameter
+        if self.comment:
+            line += ' %r' % self.comment
+
+        if self.command in {'IF', 'ELSE IF'}:
+            return line
+        return line + '\n'
 
     @property
     def indent(self):
-        if self.node_type in {'IF', 'DEFINE'}:
+        '''
+        If within a logic control block, we should indent
+        '''
+        if self.node_type != 'KEYWORD' and self.parent.node_type == 'KEYWORD':
             return '\t'
         return ''
 
@@ -70,63 +82,16 @@ class ControlFileNode(object):
         if not self.__type:
             if self.node_type == 'STATEMENT':
                 _, self.__type = TuflowFilepartTypes().find(self.command)
-            elif self.node_type in {'IF', 'DEFINE'}:
+            elif self.node_type == 'KEYWORD' and self.children:
                 _, self.__type = TuflowFilepartTypes().find(
                     "{} {}".format(self.node_type, self.children[0].command)
                 )
         return self.__type
 
-    def _write_root_block(self):
-        '''
-        A root block contains the entire control file
-        '''
-        return "\n".join((st.__str__() for st in self.children))
-
-    def _write_if_block(self):
-        '''
-        Statements are formatted in an IF...ELSE IF...END IF
-        control structure
-        '''
-        first = self.children[0]
-        newline = "\n{indent}".format(indent=self.parent.indent)
-        out = '{indent}IF {first}\n{block}{newline}END IF'.format(
-            first=first.__str__(),
-            block=newline.join(st.__str__() for st in self.children[1:]),
-            newline=newline,
-            indent=self.parent.indent
-        )
-        return out
-
-    def _write_define_block(self):
-        '''
-        Statements are formatted in a DEFINE....END DEFINE
-        control structure
-        '''
-        return 'DEFINE {}\n\t{}\nEND DEFINE'.format(
-            self.children[0].__str__(),
-            "\n".join(st.__str__() for st in self.children[1:]))
-
-    def _write_statement_block(self):
-        '''
-        Writes the statement of this node
-        '''
-        line = ''
-        if self.keyword:
-            line += self.keyword
-            if self.keyword == 'ELSE':
-                line += '\n'
-        if self.command:
-            line += ' ' + self.command
-        if self.parameter:
-            line += ' == ' + self.parameter
-        if self.comment:
-            line += ' ' + self.comment
-        return line
-
-    def _write_comment_block(self):
-        return self.comment
-
     def root(self):
+        '''
+        Find the root node of the tree
+        '''
         if self.parent:
             return self.parent.root()
         else:
