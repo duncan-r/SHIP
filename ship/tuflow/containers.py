@@ -90,6 +90,12 @@ class ControlFileNode(object):
     def _write_comment_block(self):
         return self.comment
 
+    def root(self):
+        if self.parent:
+            return self.parent.root()
+        else:
+            return self
+
     def append(self, node):
         '''
         Append a Statement or another ControlFileNode.
