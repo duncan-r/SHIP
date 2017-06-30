@@ -56,7 +56,7 @@ class Lexer(object):
         return t
 
     def t_COMMAND(self, t):
-        r'[\(a-zA-Z_/][a-zA-Z0-9_\)]*'
+        r'[\(a-zA-Z_/][a-zA-Z0-9_,\)]*'
         t.type = self.reserved.get(t.value.lower(), 'COMMAND')
         return t
 
@@ -83,6 +83,7 @@ class Parser(object):
         self.command = []
         self.parameter = []
         self.comment = None
+        self.keyword = []
 
     def parse(self, container):
         '''
@@ -102,9 +103,9 @@ class Parser(object):
                 if not token:
                     break
                 if token.type in ('IF', 'DEFINE'):
-                    container.append(self.parse(ControlFileNode(token.type)))
+                    container.append(self.parse(ControlFileNode(token.type, keyword=token.type)))
                 elif token.type == 'END':
-                    self._end_token(token)
+                    self._end(token)
                 elif token.type == 'ELSE':
                     self._else()
                 elif token.type == 'NEWLINE':
@@ -120,12 +121,15 @@ class Parser(object):
         return container
 
     def _else(self):
+        self.keyword.append('ELSE')
         # consume next token
         token = self.lexer.token()
         # if it is not an 'IF' we have another statment
         # otherwise ignore
         if token.type == 'COMMAND':
             self.command.append(token.value)
+        elif token.type == 'IF':
+            self.keyword.append(token.type)
 
     def _newline(self, container):
         if self.command or self.parameter:
@@ -134,18 +138,19 @@ class Parser(object):
                     'STATEMENT',
                     command=" ".join(self.command),
                     parameter=" ".join(self.parameter),
-                    comment=self.comment
+                    comment=self.comment,
+                    keyword=" ".join(self.keyword)
                 )
             )
             self.command = []
             self.parameter = []
+            self.keyword = []
             self.comment = None
         elif self.comment and self.keep_comments:
             container.append(ControlFileNode('COMMENT', comment=self.comment))
             self.comment = None
 
-
-    def _end_token(self, token):
+    def _end(self, token):
         # look ahead to next token
         next_tok = self.lexer.token()
 

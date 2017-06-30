@@ -1,5 +1,6 @@
 from ship.tuflow.tuflowmodel import TuflowFilepartTypes
 
+
 class ControlFileNode(object):
     '''
     A container for a control structure within a tuflow control file.
@@ -14,7 +15,15 @@ class ControlFileNode(object):
 
     node_types = {'ROOT', 'IF', 'DEFINE', 'STATEMENT', 'COMMENT'}
 
-    def __init__(self, node_type, command=None, parameter=None, comment=None, parent=None):
+    def __init__(
+            self,
+            node_type,
+            command=None,
+            parameter=None,
+            comment=None,
+            keyword=None,
+            parent=None
+    ):
         if node_type not in self.node_types:
             raise TypeError(
                 'logic_type must be one of {}'.format(self.node_types))
@@ -22,9 +31,18 @@ class ControlFileNode(object):
         self.parent = parent
         self.children = []
 
+        # Command is anything (excluding keywords) on the LHS of '=='
         self.command = command
+
+        # A comment (preceded by ! or #) at the end of the line
         self.comment = comment
+
+        # Parameter is anything (excluding a comment) on the RHS of '=='
         self.parameter = parameter
+
+        # Keywords can be 'IF', 'DEFINE', 'ELSE' or 'ELSE IF'
+        # and dictate how to write out this statement
+        self.keyword = keyword
 
         self.__type = None
 
@@ -35,6 +53,12 @@ class ControlFileNode(object):
         writer = getattr(self, "_write_{}_block".format(
             self.node_type.lower()))
         return writer()
+
+    @property
+    def indent(self):
+        if self.node_type in {'IF', 'DEFINE'}:
+            return '\t'
+        return ''
 
     @property
     def type(self):
@@ -64,12 +88,13 @@ class ControlFileNode(object):
         control structure
         '''
         first = self.children[0]
-        second = self.children[1]
-        out = 'IF {}\n\t{}\n'.format(first.__str__(), second.__str__())
-        for i in range(2, len(self.children) - 1):
-            out += 'ELSE IF {}\n\t{}\n'.format(
-                self.children[i].__str__(), self.children[i + 1].__str__())
-        out += 'END IF'
+        newline = "\n{indent}".format(indent=self.parent.indent)
+        out = '{indent}IF {first}\n{block}{newline}END IF'.format(
+            first=first.__str__(),
+            block=newline.join(st.__str__() for st in self.children[1:]),
+            newline=newline,
+            indent=self.parent.indent
+        )
         return out
 
     def _write_define_block(self):
@@ -79,13 +104,24 @@ class ControlFileNode(object):
         '''
         return 'DEFINE {}\n\t{}\nEND DEFINE'.format(
             self.children[0].__str__(),
-            "\n\t".join(st.__str__() for st in self.children[1:]))
+            "\n".join(st.__str__() for st in self.children[1:]))
 
     def _write_statement_block(self):
         '''
         Writes the statement of this node
         '''
-        return "{} == {} {}".format(self.command, self.parameter, self.comment)
+        line = ''
+        if self.keyword:
+            line += self.keyword
+            if self.keyword == 'ELSE':
+                line += '\n'
+        if self.command:
+            line += ' ' + self.command
+        if self.parameter:
+            line += ' == ' + self.parameter
+        if self.comment:
+            line += ' ' + self.comment
+        return line
 
     def _write_comment_block(self):
         return self.comment
