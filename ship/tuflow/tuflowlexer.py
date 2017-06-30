@@ -3,11 +3,11 @@ Example functions for simplified parsing of a tuflow control file
 into objects
 
 TODO: Needs integrating with the rest of SHIP
-(i.e using ship classes instead of Statement/ControlStructure or integrating these)
+(i.e using ship classes instead of Statement/ControlFileNode or integrating these)
 '''
 from __future__ import print_function
 from ply import lex
-from ship.tuflow.containers import Statement, ControlStructure
+from ship.tuflow.containers import ControlFileNode
 
 class Lexer(object):
     '''
@@ -88,10 +88,12 @@ class Parser(object):
         '''
         Parses a tuflow control file, placing the results in
         ``container``.
-        ``container`` can be any object which provides an ``append``
-        method.
+
+        Args:
+            container (ControlFileNode): The root node to begin parsing with.
+
         E.g.
-        container = ControlStructure('ROOT')
+        container = ControlFileNode('ROOT')
         parse(lexer, container)
         '''
         try:
@@ -100,7 +102,7 @@ class Parser(object):
                 if not token:
                     break
                 if token.type in ('IF', 'DEFINE'):
-                    container.append(self.parse(ControlStructure(token.type)))
+                    container.append(self.parse(ControlFileNode(token.type)))
                 elif token.type == 'END':
                     self._end_token(token)
                 elif token.type == 'ELSE':
@@ -128,17 +130,18 @@ class Parser(object):
     def _newline(self, container):
         if self.command or self.parameter:
             container.append(
-                Statement(
-                    " ".join(self.command),
-                    " ".join(self.parameter),
-                    self.comment
+                ControlFileNode(
+                    'STATEMENT',
+                    command=" ".join(self.command),
+                    parameter=" ".join(self.parameter),
+                    comment=self.comment
                 )
             )
             self.command = []
             self.parameter = []
             self.comment = None
         elif self.comment and self.keep_comments:
-            container.append(Statement(comment=self.comment))
+            container.append(ControlFileNode('COMMENT', comment=self.comment))
             self.comment = None
 
 
@@ -157,7 +160,7 @@ class Parser(object):
 
 def loadFile(tcf_path, keep_comments=True):
     '''
-    Read a file into a ControlStructure
+    Read a file into a ControlFileNode
     '''
     with open(tcf_path) as fin:
         source = fin.read()
@@ -165,4 +168,4 @@ def loadFile(tcf_path, keep_comments=True):
     lexer.build()
     lexer.lexer.input(source)
     parser = Parser(lexer.lexer, keep_comments=True)
-    return parser.parse(ControlStructure('ROOT'))
+    return parser.parse(ControlFileNode('ROOT'))

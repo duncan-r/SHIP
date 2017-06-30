@@ -1,36 +1,6 @@
 from ship.tuflow.tuflowmodel import TuflowFilepartTypes
 
-class Statement(object):
-    '''
-    A single tuflow statement, of the form COMMAND == PARAMETER.
-    Also keeps the original comment
-    '''
-
-    def __init__(self, command=None, parameter=None, comment=None):
-        self.command = command
-        self.comment = comment
-        self.parameter = parameter
-        self.__type = None
-
-    def __repr__(self):
-        return "<Statement: {}>".format(self.command or 'Comment')
-
-    def __str__(self):
-        if not self.command:
-            return self.comment
-        return "{} == {} {}".format(self.command, self.parameter, self.comment)
-
-    @property
-    def type(self):
-        '''
-        Returns the filepart type of this statement
-        '''
-        if not self.__type and self.command:
-            _, self.__type = TuflowFilepartTypes().find(self.command)
-        return self.__type
-
-
-class ControlStructure(object):
+class ControlFileNode(object):
     '''
     A container for a control structure within a tuflow control file.
     3 types of structure are defined:
@@ -38,26 +8,32 @@ class ControlStructure(object):
     IF: An if-block which can contain multiple 'ELSE IF' statements
     DEFINE: A 'DEFINE' block which can contain multiple statements.
 
-    An instance of ``ControlStructure`` is essentially just a grouping of
+    An instance of ``ControlFileNode`` is essentially just a grouping of
     ``Statement`` instances
     '''
 
-    logic_types = {'ROOT', 'IF', 'DEFINE'}
+    node_types = {'ROOT', 'IF', 'DEFINE', 'STATEMENT', 'COMMENT'}
 
-    def __init__(self, logic_type, statements=None):
-        if logic_type not in self.logic_types:
+    def __init__(self, node_type, command=None, parameter=None, comment=None, parent=None):
+        if node_type not in self.node_types:
             raise TypeError(
-                'logic_type must be one of {}'.format(self.logic_types))
-        self.logic_type = logic_type
-        self.statements = statements or []
+                'logic_type must be one of {}'.format(self.node_types))
+        self.node_type = node_type
+        self.parent = parent
+        self.children = []
+
+        self.command = command
+        self.comment = comment
+        self.parameter = parameter
+
         self.__type = None
 
     def __repr__(self):
-        return "<ControlStructure: {}>".format(self.logic_type)
+        return "<ControlFileNode: {}>".format(self.node_type)
 
     def __str__(self):
         writer = getattr(self, "_write_{}_block".format(
-            self.logic_type.lower()))
+            self.node_type.lower()))
         return writer()
 
     @property
@@ -67,29 +43,32 @@ class ControlStructure(object):
         If this is the root block (i.e. the whole file)
         then it will return none
         '''
-        if not self.__type and len(self.statements) > 0:
-            _, self.__type = TuflowFilepartTypes().find(
-                "{} {}".format(self.logic_type, self.statements[0].command)
-            )
+        if not self.__type:
+            if self.node_type == 'STATEMENT':
+                _, self.__type = TuflowFilepartTypes().find(self.command)
+            elif self.node_type in {'IF', 'DEFINE'}:
+                _, self.__type = TuflowFilepartTypes().find(
+                    "{} {}".format(self.node_type, self.children[0].command)
+                )
         return self.__type
 
     def _write_root_block(self):
         '''
         A root block contains the entire control file
         '''
-        return "\n".join((st.__str__() for st in self.statements))
+        return "\n".join((st.__str__() for st in self.children))
 
     def _write_if_block(self):
         '''
         Statements are formatted in an IF...ELSE IF...END IF
         control structure
         '''
-        first = self.statements[0]
-        second = self.statements[1]
+        first = self.children[0]
+        second = self.children[1]
         out = 'IF {}\n\t{}\n'.format(first.__str__(), second.__str__())
-        for i in range(2, len(self.statements) - 1):
+        for i in range(2, len(self.children) - 1):
             out += 'ELSE IF {}\n\t{}\n'.format(
-                self.statements[i].__str__(), self.statements[i + 1].__str__())
+                self.children[i].__str__(), self.children[i + 1].__str__())
         out += 'END IF'
         return out
 
@@ -98,18 +77,38 @@ class ControlStructure(object):
         Statements are formatted in a DEFINE....END DEFINE
         control structure
         '''
-        return 'DEFINE {}\n{}\nEND DEFINE'.format(
-            self.statements[0].__str__(),
-            "\n\t".join(st.__str__() for st in self.statements[1:]))
+        return 'DEFINE {}\n\t{}\nEND DEFINE'.format(
+            self.children[0].__str__(),
+            "\n\t".join(st.__str__() for st in self.children[1:]))
 
-    def append(self, statement):
+    def _write_statement_block(self):
         '''
-        Append a Statement or another ControlStructure.
+        Writes the statement of this node
         '''
-        if not isinstance(statement, (Statement, ControlStructure)):
+        return "{} == {} {}".format(self.command, self.parameter, self.comment)
+
+    def _write_comment_block(self):
+        return self.comment
+
+    def append(self, node):
+        '''
+        Append a Statement or another ControlFileNode.
+        '''
+        if not isinstance(node, ControlFileNode):
             raise TypeError(
-                "Can only append Statement or ControlStructure types")
-        self.statements.append(statement)
+                "Can only append ControlFileNode types")
+        node.parent = self
+        self.children.append(node)
+
+    def walk(self):
+        '''
+        Depth-first traversal of the tree
+        '''
+        for node in self.children:
+            yield node
+            if node.children:
+                for node in node.walk():
+                    yield node
 
     def filter(self, part_type, unique=True):
         '''
@@ -125,16 +124,14 @@ class ControlStructure(object):
         Yields:
             Statement: A control file statement matching the filepart_type
         '''
-        if not isinstance(list, set, tuple):
+        if not isinstance(part_type, (list, set, tuple)):
             part_type = {part_type}
 
         commands = set()
-        for statement in self.statements:
-            if isinstance(statement, ControlStructure):
-                yield from statement.filter(part_type)
-            elif statement.type in part_type:
+        for node in self.walk():
+            if node.type in part_type:
                 if not unique:
-                    yield statement
-                elif statement.command not in commands:
-                    commands.add(statement.command)
-                    yield statement
+                    yield node
+                elif node.command not in commands:
+                    commands.add(node.command)
+                    yield node
