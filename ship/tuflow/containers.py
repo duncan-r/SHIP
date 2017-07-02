@@ -83,7 +83,7 @@ class ControlFileNode(object):
                 _, self.__type = TuflowFilepartTypes().find(self.command)
             elif self.node_type == 'KEYWORD' and self.children:
                 _, self.__type = TuflowFilepartTypes().find(
-                    "{} {}".format(self.node_type, self.children[0].command)
+                    "{} {}".format(self.command, self.children[0].command)
                 )
         return self.__type
 
