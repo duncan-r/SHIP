@@ -19,15 +19,15 @@
 
 """
 from __future__ import unicode_literals
-
+import warnings
 from ship.utils import utilfunctions as uuf
-from ship.utils.fileloaders import tuflowloader
-from ship.utils.fileloaders import iefloader
-from ship.utils.fileloaders import datloader
+from ship.utils.fileloaders import tuflowloader, iefloader, datloader, tuflow
 
 import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
+
+warnings.simplefilter('always', DeprecationWarning)
 
 
 class FileLoader(object):
@@ -44,7 +44,7 @@ class FileLoader(object):
 
         self.warnings = []
 
-    def loadFile(self, filepath, arg_dict={}):
+    def loadFile(self, filepath, arg_dict={}, version=1):
         """Load a file from disk.
 
         Args:
@@ -55,7 +55,7 @@ class FileLoader(object):
 
         Returns:
             The object created by the individual file loaders. E.g. for .dat
-            files this will be an IsisUnitCollection. See the individual 
+            files this will be an IsisUnitCollection. See the individual
             ALoader implementations for details of return types.
 
         Raises:
@@ -63,8 +63,8 @@ class FileLoader(object):
 
         See Also:
             :class:'ALoader'
-            :class:'IefLoader'  
-            :class:'TuflowLoader'  
+            :class:'IefLoader'
+            :class:'TuflowLoader'
             :class:'DatLoader'
 
         """
@@ -74,8 +74,17 @@ class FileLoader(object):
             raise AttributeError('File type %s is not currently supported for loading' % ext)
 
         loader = self._known_files[ext]()
+        if isinstance(loader, tuflowloader.TuflowLoader):
+            if version == 1:
+                warnings.warn(
+                    'v1 of the tuflow api is deprecated; specify version==2',
+                    DeprecationWarning
+                )
+            elif version == 2:
+                loader = tuflow
+
         contents = loader.loadFile(filepath, arg_dict)
-        self.warnings = loader.warnings
+        self.warnings = getattr(loader, 'warnings', None)
 
         del loader
         return contents
