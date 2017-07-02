@@ -1,4 +1,39 @@
+from __future__ import print_function
+import sys
 from ship.tuflow.tuflowmodel import TuflowFilepartTypes
+
+def print_tree(root, indent_char="  ", out=sys.stdout):
+    '''
+    Pretty print a control file tree
+    '''
+    scopingCommands = {'IF', 'DEFINE'}
+    scope_count = 0
+    for node in root.walk():
+        # Count when we enter a control block
+        if node.command in scopingCommands:
+            scope_count += 1
+
+        # The indent level is dependent on the number of
+        # nested blocks we are (scope_count) and the type
+        # of node. If the node is a keyword, we only indent
+        # to the 'outer' scope level. If if is the first child
+        # of the start of the block (i.e the IF keyword),
+        # we dont indent as this has to be on the same line
+        if node.parent.children[0] is node:
+            indent_level = 0
+        elif node.node_type == 'KEYWORD':
+            indent_level = scope_count - 1
+        else:
+            indent_level = scope_count
+
+        # Write the line
+        indent = indent_char * indent_level
+        line = indent + str(node)
+        out.write(line)
+
+        # Check whether we need to leave this scope
+        if node.node_type == 'KEYWORD' and 'END' in node.command:
+            scope_count -= 1
 
 
 class ControlFileNode(object):
@@ -45,32 +80,19 @@ class ControlFileNode(object):
         return "<ControlFileNode: {}>".format(self.node_type)
 
     def __str__(self):
-        if self.children:
-            inner = "".join(s.__str__() for s in self.children)
-            if self.command:
-                return "{} {}".format(self.command, inner)
-            return inner
-
-        line = self.indent
+        line = ''
         if self.command:
-            line += self.command
+            line += self.command + ' '
         if self.parameter:
-            line += ' == %r' % self.parameter
+            line += '== %r ' % self.parameter
         if self.comment:
-            line += ' %r' % self.comment
+            line += self.comment
 
         if self.command in {'IF', 'ELSE IF'}:
+            # No newline as next command needs to be on same
+            # line
             return line
         return line + '\n'
-
-    @property
-    def indent(self):
-        '''
-        If within a logic control block, we should indent
-        '''
-        if self.node_type != 'KEYWORD' and self.parent.node_type == 'KEYWORD':
-            return '\t'
-        return ''
 
     @property
     def type(self):
@@ -99,7 +121,10 @@ class ControlFileNode(object):
 
     def append(self, node):
         '''
-        Append a Statement or another ControlFileNode.
+        Append a node
+
+        Args:
+            node (ControlFileNode): The node to append to this one
         '''
         if not isinstance(node, ControlFileNode):
             raise TypeError(
