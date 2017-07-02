@@ -5,6 +5,11 @@ from ship.tuflow.tuflowmodel import TuflowFilepartTypes
 def print_tree(root, indent_char="  ", out=sys.stdout):
     '''
     Pretty print a control file tree
+
+    Args:
+        root (ControlFileNode): The node to use as the root of the tree.
+        indent_char (str): The character string to use as an indent. Defaults to 2 spaces
+        out (file): File-like object which supports a `write` method. Defaults to stdout
     '''
     scopingCommands = {'IF', 'DEFINE'}
     scope_count = 0
