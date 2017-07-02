@@ -27,7 +27,7 @@
 """
 
 from __future__ import unicode_literals
-
+import os
 import logging
 from itertools import chain
 
@@ -50,9 +50,9 @@ class TuflowModel(object):
 
         self.control_files = {}
         """Tuflow Control File objects.
-        
+
         All types of Tuflow Control file are stored here under the type header.
-        Types are: TCF, TGC, TBC, ECF, TEF.  
+        Types are: TCF, TGC, TBC, ECF, TEF.
         TCF is slightly different to the others as it contains an additional
         member variable 'main_file_hash' to identify the main tcf file that
         was called to load the model.
@@ -252,9 +252,6 @@ class TuflowModel(object):
         self.control_files[model_file.model_type].addControlFile(
             model_file, control_file, **kwargs)
         self.control_files['TCF'].parts.add(model_file, **kwargs)
-
-
-
 
 
 class UserVariables(object):

@@ -6,9 +6,9 @@ TODO: Needs integrating with the rest of SHIP
 (i.e using ship classes instead of Statement/ControlFileNode or integrating these)
 '''
 from __future__ import print_function
+import os
 from ply import lex
-from ship.tuflow.containers import ControlFileNode
-
+from ship.tuflow.containers import ControlFileNode, Model
 
 class Lexer(object):
     '''
@@ -189,5 +189,6 @@ def loadFile(tcf_path, keep_comments=True):
     lexer = Lexer()
     lexer.build()
     lexer.lexer.input(source)
-    parser = Parser(lexer.lexer, keep_comments=True)
-    return parser.parse(ControlFileNode('ROOT'))
+    parser = Parser(lexer.lexer, keep_comments=keep_comments)
+    tree = parser.parse(ControlFileNode('ROOT'))
+    return Model(os.path.dirname(tcf_path), tree)

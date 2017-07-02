@@ -1,45 +1,8 @@
 from __future__ import print_function
+import os
 import sys
 from ship.tuflow.tuflowmodel import TuflowFilepartTypes
-
-def print_tree(root, indent_char="  ", out=sys.stdout):
-    '''
-    Pretty print a control file tree
-
-    Args:
-        root (ControlFileNode): The node to use as the root of the tree.
-        indent_char (str): The character string to use as an indent. Defaults to 2 spaces
-        out (file): File-like object which supports a `write` method. Defaults to stdout
-    '''
-    scopingCommands = {'IF', 'DEFINE'}
-    scope_count = 0
-    for node in root.walk():
-        # Count when we enter a control block
-        if node.command in scopingCommands:
-            scope_count += 1
-
-        # The indent level is dependent on the number of
-        # nested blocks we are (scope_count) and the type
-        # of node. If the node is a keyword, we only indent
-        # to the 'outer' scope level. If if is the first child
-        # of the start of the block (i.e the IF keyword),
-        # we dont indent as this has to be on the same line
-        if node.parent.children[0] is node:
-            indent_level = 0
-        elif node.node_type == 'KEYWORD':
-            indent_level = scope_count - 1
-        else:
-            indent_level = scope_count
-
-        # Write the line
-        indent = indent_char * indent_level
-        line = indent + str(node)
-        out.write(line)
-
-        # Check whether we need to leave this scope
-        if node.node_type == 'KEYWORD' and 'END' in node.command:
-            scope_count -= 1
-
+from ship.tuflow import FILEPART_TYPES as fpt
 
 class ControlFileNode(object):
     '''
@@ -98,6 +61,15 @@ class ControlFileNode(object):
             # line
             return line
         return line + '\n'
+
+    @property
+    def parameter_options(self):
+        '''
+        Yields the parameters, splitting them by the |
+        separator and stripping whitespace
+        '''
+        for parameter in self.parameter.split('|'):
+            yield parameter.strip()
 
     @property
     def type(self):
@@ -172,3 +144,63 @@ class ControlFileNode(object):
                 elif node.command not in commands:
                     commands.add(node.command)
                     yield node
+
+    def write(self, indent_char="  ", out=sys.stdout):
+        '''
+        Pretty print the tree, starting at the current node
+
+        Args:
+            indent_char (str): The character string to use as an indent. Defaults to 2 spaces
+            out (file): File-like object which supports a `write` method. Defaults to stdout
+        '''
+        scopingCommands = {'IF', 'DEFINE'}
+        scope_count = 0
+        for node in self.walk():
+            # Count when we enter a control block
+            if node.command in scopingCommands:
+                scope_count += 1
+
+            # The indent level is dependent on the number of
+            # nested blocks we are (scope_count) and the type
+            # of node. If the node is a keyword, we only indent
+            # to the 'outer' scope level. If if is the first child
+            # of the start of the block (i.e the IF keyword),
+            # we dont indent as this has to be on the same line
+            if node.parent.children[0] is node:
+                indent_level = 0
+            elif node.node_type == 'KEYWORD':
+                indent_level = scope_count - 1
+            else:
+                indent_level = scope_count
+
+            # Write the line
+            indent = indent_char * indent_level
+            line = indent + str(node)
+            out.write(line)
+
+            # Check whether we need to leave this scope
+            if node.node_type == 'KEYWORD' and 'END' in node.command:
+                scope_count -= 1
+
+
+class Model(object):
+    '''
+    Represents a tuflow model for new version
+    '''
+    def __init__(self, root, control_file_tree):
+        self._root = root
+        self.control_file_tree = control_file_tree
+
+    def checkPathsExist(self):
+        '''
+        Check all input filepaths in the model exist
+
+        Yields:
+            ControlFileNode: A node whose parameter is a missing path
+        '''
+        for node in self.control_file_tree.filter({fpt.MODEL, fpt.GIS, fpt.DATA}):
+            for path in node.parameter_options:
+                if not os.path.isabs(path):
+                    path = os.path.normpath(os.path.join(self._root, path))
+                if not os.path.exists(path):
+                    yield node, path
