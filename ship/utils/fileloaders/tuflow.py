@@ -1,9 +1,5 @@
 '''
-Example functions for simplified parsing of a tuflow control file
-into objects
-
-TODO: Needs integrating with the rest of SHIP
-(i.e using ship classes instead of Statement/ControlFileNode or integrating these)
+V2 file parsing for tuflow control files
 '''
 from __future__ import print_function
 import os
@@ -11,8 +7,7 @@ from ply import lex
 from ship.tuflow.containers import ControlFileNode, Model
 
 class Lexer(object):
-    '''
-    Lexer for tokenising tuflow control files
+    '''Tokenise tuflow control files
     '''
     states = (
         ('param', 'inclusive'),
@@ -68,15 +63,13 @@ class Lexer(object):
         t.lexer.skip(1)
 
     def build(self, **kwargs):
-        '''
-        Build the lexer
+        '''Build the lexer
         '''
         self.lexer = lex.lex(module=self, **kwargs)
 
 
 class Parser(object):
-    '''
-    Parser for tuflow control files
+    '''Parser for tuflow control files
     Accepts a token stream from Lexer and creates
     container objects
     '''
@@ -181,8 +174,7 @@ class Parser(object):
 
 
 def loadFile(tcf_path, keep_comments=True):
-    '''
-    Read a file into a ControlFileNode
+    '''Read a file into a ControlFileNode
     '''
     with open(tcf_path) as fin:
         source = fin.read()

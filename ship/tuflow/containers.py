@@ -5,8 +5,7 @@ from ship.tuflow.tuflowmodel import TuflowFilepartTypes
 from ship.tuflow import FILEPART_TYPES as fpt
 
 class ControlFileNode(object):
-    '''
-    A container for a control structure within a tuflow control file.
+    '''A container for a tuflow control file node.
     3 types of structure are defined:
     ROOT: The entire file
     IF: An if-block which can contain multiple 'ELSE IF' statements
@@ -64,7 +63,7 @@ class ControlFileNode(object):
 
     @property
     def parameter_options(self):
-        '''
+        '''Split parameters into their options
         Yields the parameters, splitting them by the |
         separator and stripping whitespace
         '''
@@ -73,9 +72,8 @@ class ControlFileNode(object):
 
     @property
     def type(self):
-        '''
-        Returns the filepart type of this logical block.
-        If this is the root block (i.e. the whole file)
+        '''filepart type of this node.
+        If this is the root block or a keyword such as ELSE/ELSE IF
         then it will return none
         '''
         if not self.__type:
@@ -88,8 +86,7 @@ class ControlFileNode(object):
         return self.__type
 
     def root(self):
-        '''
-        Find the root node of the tree
+        '''Find the root node of the tree
         '''
         if self.parent:
             return self.parent.root()
@@ -97,8 +94,7 @@ class ControlFileNode(object):
             return self
 
     def append(self, node):
-        '''
-        Append a node
+        '''Append a node
 
         Args:
             node (ControlFileNode): The node to append to this one
@@ -110,8 +106,7 @@ class ControlFileNode(object):
         self.children.append(node)
 
     def walk(self):
-        '''
-        Depth-first traversal of the tree
+        '''Depth-first traversal of the tree
         '''
         for node in self.children:
             yield node
@@ -120,7 +115,7 @@ class ControlFileNode(object):
                     yield node
 
     def filter(self, part_type, unique=True):
-        '''
+        '''Filter nodes by filepart types
         Generator which yields all statements which have a type equal
         to the given filepart type
 
@@ -146,8 +141,7 @@ class ControlFileNode(object):
                     yield node
 
     def write(self, indent_char="  ", out=sys.stdout):
-        '''
-        Pretty print the tree, starting at the current node
+        '''Pretty print the tree, starting at the current node
 
         Args:
             indent_char (str): The character string to use as an indent. Defaults to 2 spaces
@@ -184,8 +178,7 @@ class ControlFileNode(object):
 
 
 class Model(object):
-    '''
-    Represents a tuflow model for new version
+    '''Represents a tuflow model
     '''
     def __init__(self, root, control_file_tree):
         self._root = root
@@ -193,14 +186,12 @@ class Model(object):
 
     @property
     def root(self):
-        '''
-        The root directory of the control file
+        '''The root directory of the control file
         '''
         return self._root
 
     def checkPathsExist(self):
-        '''
-        Check all input filepaths in the model exist
+        '''Check all input filepaths in the model exist
 
         Yields:
             ControlFileNode: A node whose parameter is a missing path
