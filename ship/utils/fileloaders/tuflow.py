@@ -57,7 +57,7 @@ class Lexer(object):
         return t
 
     def t_COMMAND(self, t):
-        r'[\(a-zA-Z_/][a-zA-Z0-9_,\)]*'
+        r'[\(a-zA-Z_0-9/][a-zA-Z0-9_,\)]*'
         t.type = self.reserved.get(t.value.lower(), 'COMMAND')
         return t
 

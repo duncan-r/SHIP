@@ -191,6 +191,13 @@ class Model(object):
         self._root = root
         self.control_file_tree = control_file_tree
 
+    @property
+    def root(self):
+        '''
+        The root directory of the control file
+        '''
+        return self._root
+
     def checkPathsExist(self):
         '''
         Check all input filepaths in the model exist
