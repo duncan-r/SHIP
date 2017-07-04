@@ -16,6 +16,7 @@ class ControlFileNode(object):
     '''
 
     node_types = {'ROOT', 'KEYWORD', 'STATEMENT', 'COMMENT'}
+    logic_commands = {'IF', 'DEFINE'}
 
     def __init__(
             self,
@@ -104,6 +105,17 @@ class ControlFileNode(object):
                 "Can only append ControlFileNode types")
         node.parent = self
         self.children.append(node)
+
+    def append_statement(self, command, parameter, comment=None):
+        '''Append a statement to the tree
+        '''
+        node = ControlFileNode(command, parameter, comment)
+        if self.command in self.logic_commands:
+            # We must append it before the last node which is the 'END' node
+            node.parent = self
+            self.children.insert(-1, node)
+        else:
+            self.append(node)
 
     def walk(self):
         '''Depth-first traversal of the tree
