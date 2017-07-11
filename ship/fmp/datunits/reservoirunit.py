@@ -3,16 +3,16 @@
  Summary:
     Contains the ReservoirUnit class.
     This holds all of the data read in from the reservoir units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan R.
 
-  Created:  
+  Created:
      18 May 2017
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2017
 
  TODO:
@@ -56,7 +56,7 @@ class ReservoirUnit (AUnit):
         Args:
             fileOrder (int): The location of this unit in the file.
         """
-        AUnit.__init__(self, **kwargs)
+        super(ReservoirUnit, self).__init__(**kwargs)
 
         self._name = 'Res'
         self.head_data = {
@@ -113,8 +113,8 @@ class ReservoirUnit (AUnit):
         """Reads the unit data into the geometry objects.
 
         Args:
-            unit_data (list): The part of the isis dat file pertaining to 
-                this section 
+            unit_data (list): The part of the isis dat file pertaining to
+                this section
 
         See Also:
             AUnit - readUnitData()
@@ -261,8 +261,8 @@ class ReservoirUnit (AUnit):
     def addRow(self, row_vals, rowdata_key='main', index=None, **kwargs):
         """Adds a new row to the spill unit.
 
-        Ensures that certain requirements of the data rows, such as the 
-        elevation and area needing to increase for each row down are met, then 
+        Ensures that certain requirements of the data rows, such as the
+        elevation and area needing to increase for each row down are met, then
         call the addNewRow() method in the row_collection.
 
         Args:
@@ -277,7 +277,7 @@ class ReservoirUnit (AUnit):
 
         Raises:
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObjects. 
+            ValueError: If the given value is not accepted by the DataObjects.
 
         See Also:
             ADataObject and subclasses for information on the parameters.

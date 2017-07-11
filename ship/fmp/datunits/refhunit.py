@@ -3,16 +3,16 @@
  Summary:
     Contains the Refh class.
     This holds all of the data read in from the refh units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
-     
-  Created:  
+
+  Created:
      01 Apr 2016
- 
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -57,11 +57,10 @@ class RefhUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs)
+        super(RefhUnit, self).__init__(**kwargs)
 
         self._unit_type = RefhUnit.UNIT_TYPE
         self._unit_category = RefhUnit.UNIT_CATEGORY
-#         self.row_data['main'] = []
         if self._name == 'unknown':
             self._name = 'Refh_unit'
 
@@ -200,8 +199,8 @@ class RefhUnit(AUnit):
             AUnit - readUnitData for more information.
 
         Args:
-            unit_data (list): The section of the isis dat file pertaining 
-                to this section 
+            unit_data (list): The section of the isis dat file pertaining
+                to this section
         """
         file_line, storm_rows = self._readHeadData(unit_data, file_line)
         file_line = self._readStormData(unit_data, file_line, storm_rows)

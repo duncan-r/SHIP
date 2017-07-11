@@ -1,19 +1,19 @@
 """
 
  Summary:
-    Contains the AUnit, CommentUnit, HeaderUnit and UnknownSection 
+    Contains the AUnit, CommentUnit, HeaderUnit and UnknownSection
     classes.
     The AUnit is an abstract base class for all types of Isis unit read
     in through the ISIS data file. All section types that are built should
     inherit from the AUnit baseclass.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Created:  
+ Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -44,7 +44,7 @@ class AUnit(object):
     This class must be inherited by all classes representing an isis
     data file unit (such as River, Junction, Culvert, etc).
 
-    Every subclass should override the readUnitData() and getData() methods to 
+    Every subclass should override the readUnitData() and getData() methods to
     ensure they are specific to the setup of the individual units variables.
     If they are not overridden this class will simply take the data and store it
     as read and provide it back in the same state.
@@ -52,12 +52,12 @@ class AUnit(object):
     All calls from the client to these classes should create the object and then
     call the readUnitData() method with the raw data.
 
-    There is an UknownSection class at the bottom of this file that can be used 
+    There is an UknownSection class at the bottom of this file that can be used
     for all parts of the isis dat file that have not had a class defined. It just
     calls the basic read-in read-out methods from this class and understands nothing
     about the structure of the file section it is holding.
 
-    If you are creating subclass of this that has row_data (see below) you 
+    If you are creating subclass of this that has row_data (see below) you
     should make sure that you call the setDummyRow() method in each of the
     RowDataCollections. Otherwise, if the user doesn't add any rows, FMP will
     throw errors.
@@ -82,7 +82,7 @@ class AUnit(object):
 
         self._data = None
         """This is used for catch-all data storage.
-        
+
         Used in units such as UnknownSection.
         Classes that override the readUnitData() and getData() methods are
         likely to ignore this variable and use row_collection and head_data instead.
@@ -96,14 +96,14 @@ class AUnit(object):
 
         self.row_data = {}
         """Collection containing all of the ADataRow objects.
-        
+
         This is the main collection for row data in any unit that contains it.
-        In a RiverUnit, for example, this will hold the RowDataObject's 
+        In a RiverUnit, for example, this will hold the RowDataObject's
         containing the CHAINAGE, ELEVATION, etc.
         """
         self.head_data = {}
         """Dictionary containing set values that are always present in the file.
-        
+
         In a RiverUnit this includes values like slope and distance. I.e.
         values that appear in set locations, usually at the top of the unit
         data in the .dat file.
@@ -166,10 +166,10 @@ class AUnit(object):
     def linkLabels(self):
         """Dict of all the names that the unit references.
 
-        For a RiverUnit this is only the self.name + spills and laterals, 
-        for a bridge it would be self.name, self.name_ds, self.remote_us, 
+        For a RiverUnit this is only the self.name + spills and laterals,
+        for a bridge it would be self.name, self.name_ds, self.remote_us,
         self.remote_ds and for a JunctionUnit it could be many more.
-        It can be used to identify which other units are directly associated to 
+        It can be used to identify which other units are directly associated to
         this one in some way.
 
         Return:
@@ -195,7 +195,7 @@ class AUnit(object):
         read the data then use this.
 
         Args:
-            key (int): the key for the data object requested. It is best to use 
+            key (int): the key for the data object requested. It is best to use
                the class constants (i.e. RiverUnit.CHAINAGE) for this.
             rowdata_key(str): key to a RowDataCollection in row_data.
 
@@ -230,7 +230,7 @@ class AUnit(object):
         of an ISIS .dat file
 
         Note:
-            This method should be overriden by the sub class to restore the 
+            This method should be overriden by the sub class to restore the
             data to the format required by the dat file.
 
         Returns:
@@ -243,7 +243,7 @@ class AUnit(object):
 
         This method is called by the FmpUnitFactory class when constructing the
         Isis  unit based on the data passed in from the dat file.
-        The default hook just copies all the data parsed in the buildUnit() 
+        The default hook just copies all the data parsed in the buildUnit()
         method of the factory and aves it to the given unit. This is exactly
         what happens for the UnknownUnit class that just maintains a copy of the
         unit data exactly as it was read in.
@@ -252,14 +252,14 @@ class AUnit(object):
             data (list): raw data for the section as supplied to the class.
 
         Note:
-            When a class inherits from AUnit it should override this method 
-            with unit specific load behaviour. This is likely to include: 
-            populate unit specific header value dictionary and in some units 
+            When a class inherits from AUnit it should override this method
+            with unit specific load behaviour. This is likely to include:
+            populate unit specific header value dictionary and in some units
             creating row data object.
 
-        See Also: 
-            RiverSection for an example of overriding this method with a 
-                concrete class. 
+        See Also:
+            RiverSection for an example of overriding this method with a
+                concrete class.
 
         """
         self.head_data['all'] = data
@@ -282,8 +282,8 @@ class AUnit(object):
             These are passed onto the RowDataCollection. See there for details.
 
         Args:
-            row_vals(dict): Named arguments required for adding a row to the 
-                collection. These will be as stipulated by the way that a 
+            row_vals(dict): Named arguments required for adding a row to the
+                collection. These will be as stipulated by the way that a
                 concrete implementation of this class setup the collection.
             rowdata_key='main'(str): the name of the RowDataCollection
                 held by this to add the new row to. If None it is the
@@ -304,12 +304,12 @@ class AUnit(object):
         Provides the basics of a function for adding additional row dat to one
         of the RowDataCollection's held by an AUnit type.
 
-        Checks that key required variables: ROW_DATA_TYPES.CHAINAGE amd 
+        Checks that key required variables: ROW_DATA_TYPES.CHAINAGE amd
         ROW_DATA_TYPES.ELEVATION are in the kwargs and that inserting chainge in
         the specified location is not negative, unless check_negatie == False.
 
         It then passes the kwargs directly to the RowDataCollection's
-        addNewRow function. It is the concrete class implementations 
+        addNewRow function. It is the concrete class implementations
         respnsobility to ensure that these are the expected values for it's
         row collection and to set any defaults. If they are not as expected by
         the RowDataObjectCollection a ValueError will be raised.
@@ -318,8 +318,8 @@ class AUnit(object):
             These are passed onto the RowDataCollection. See there for details.
 
         Args:
-            row_vals(dict): Named arguments required for adding a row to the 
-                collection. These will be as stipulated by the way that a 
+            row_vals(dict): Named arguments required for adding a row to the
+                collection. These will be as stipulated by the way that a
                 concrete implementation of this class setup the collection.
             rowdata_key='main'(str): the name of the RowDataCollection
                 held by this to add the new row to. If None it is the
@@ -340,7 +340,7 @@ class AUnit(object):
     def checkIncreases(self, data_obj, value, index):
         """Checks that: prev_value < value < next_value.
 
-        If the given value is not greater than the previous value and less 
+        If the given value is not greater than the previous value and less
         than the next value it will return False.
 
         If an index greater than the number of rows in the row_data it will
@@ -418,7 +418,7 @@ class UnknownUnit(AUnit):
     This can be used for all sections of the isis dat file that have not had
     a unit class constructed.
 
-    It has no knowledge of the file section that it contains and will store it 
+    It has no knowledge of the file section that it contains and will store it
     without altering it's state and return it in exactly the same format that it
     received it.
 
@@ -427,7 +427,7 @@ class UnknownUnit(AUnit):
 
     It has a 'Section' suffix rather that 'Unit' which is the naming convention
     for the other unit objects because it is not necessarily a single unit. It
-    could be many different units. 
+    could be many different units.
 
     It is created whenever the DatLoader finds
     parts of the dat file that it doesn't Know how to load (i.e. there is no
@@ -440,7 +440,7 @@ class UnknownUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs)
+        super(UnknownUnit, self).__init__(**kwargs)
         self._unit_type = 'unknown'
         self._unit_category = 'unknown'
         self._name = 'unknown_' + str(hashlib.md5(str(random.randint(-500, 500)).encode()).hexdigest())  # str(uuid.uuid4())
@@ -468,7 +468,7 @@ class CommentUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs)
+        super(CommentUnit, self).__init__(**kwargs)
 
         text = kwargs.get('text', '')
         self._unit_type = CommentUnit.UNIT_TYPE
@@ -532,8 +532,7 @@ class HeaderUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-#         kwargs['name'] = 'header'
-        AUnit.__init__(self, **kwargs)
+        super(HeaderUnit, self).__init__(**kwargs)
         self._unit_type = HeaderUnit.UNIT_TYPE
         self._unit_category = HeaderUnit.UNIT_CATEGORY
         self._name = 'header'

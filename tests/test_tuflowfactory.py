@@ -14,7 +14,10 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def setUp(self):
         """Setup and global variables."""
-        self.fake_root = 'c:/path/to/fake/'
+        self.prefix = '/'
+        if os.name != 'posix':
+            self.prefix = 'c:' + os.sep
+        self.fake_root = os.path.join(self.prefix, 'path', 'to', 'fake')
         main_file = tfp.ModelFile(None, **{'path': 'tcffile.tcf', 'command': None,
                                            'comment': None, 'model_type': 'TCF',
                                            'root': self.fake_root})
@@ -30,11 +33,11 @@ class TuflowFilePartTests(unittest.TestCase):
         bcsource_line = "BC Event Source == evtname | evttext"
         variable_line = "Timestep == 2.5 ! A comment"
         data_line = "Read Materials File == materials.csv"
-        output_line = "Output Folder == ..\\results\\"
-        check_line = "Write Check Files == ..\\checks\\"
+        output_line = "Output Folder == {}".format(os.path.join('..', 'results'))
+        check_line = "Write Check Files == {}".format(os.path.join('..', 'checks'))
         log_line = "Log Folder == log"
-        gis_line = "Read GIS Z Shape == ..\gis\somefile.shp"
-        model_line = "Geometry Control File == ..\\model\\tgcfile.tgc"
+        gis_line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.shp'))
+        model_line = "Geometry Control File == {}".format(os.path.join('..', 'model', 'tgcfile.tgc'))
 
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(scen_line, self.parent)[0], TuflowModelVariable)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(event_line, self.parent)[0], TuflowModelVariable)
@@ -148,7 +151,7 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def test_createResultType(self):
         """Test construction of ResultFile type."""
-        line = "Output Folder == ..\\results\\"
+        line = "Output Folder == {}".format(os.path.join('..', 'results'))
         data = f.TuflowFactory.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
@@ -156,11 +159,11 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.obj_type, 'result')
         self.assertEqual(data.filename, '')
         self.assertEqual(data.extension, '')
-        self.assertEqual(data.relative_root, '..\\results\\')
+        self.assertEqual(data.relative_root, os.path.join('..', 'results') + os.sep)
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), '')
 
-        line = "Write Check Files == ..\\checks\\"
+        line = "Write Check Files == {}".format(os.path.join('..', 'checks') + os.sep)
         data = f.TuflowFactory.createResultType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
@@ -168,7 +171,7 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.obj_type, 'result')
         self.assertEqual(data.filename, '')
         self.assertEqual(data.extension, '')
-        self.assertEqual(data.relative_root, '..\\checks\\')
+        self.assertEqual(data.relative_root, os.path.join('..', 'checks') + os.sep)
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), '')
 #         self.assertTrue(data.filename_is_prefix)
@@ -181,46 +184,46 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.obj_type, 'result')
         self.assertEqual(data.filename, '')
         self.assertEqual(data.extension, '')
-        self.assertEqual(data.relative_root, 'log\\')
+        self.assertEqual(data.relative_root, 'log' + os.sep)
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), '')
 
     def test_createGisType(self):
         """Test construction of GisFile type."""
-        line = "Read GIS Z Shape == ..\gis\somefile.shp"
+        line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.shp'))
         data = f.TuflowFactory.createGisType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
         self.assertEqual(data.filename, 'somefile')
         self.assertEqual(data.extension, 'shp')
-        self.assertEqual(data.relative_root, '..\gis')
+        self.assertEqual(data.relative_root, os.path.join('..', 'gis'))
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), 'somefile.shp')
         self.assertEqual(data.gis_type, 'shp')
         self.assertTupleEqual(('shp', 'shx', 'dbf'), data.all_types)
 
-        line = "Read GIS Z Shape == ..\gis\somefile.mif"
+        line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.mif'))
         data = f.TuflowFactory.createGisType(line, self.parent)[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
         self.assertEqual(data.filename, 'somefile')
         self.assertEqual(data.extension, 'mif')
-        self.assertEqual(data.relative_root, '..\gis')
+        self.assertEqual(data.relative_root, os.path.join('..', 'gis'))
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), 'somefile.mif')
         self.assertEqual(data.gis_type, 'mi')
         self.assertTupleEqual(('mif', 'mid'), data.all_types)
 
-        line = "Read GIS Z Shape == ..\gis\somefile"
+        line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile'))
         data = f.TuflowFactory.createGisType(line, self.parent, test='mif')[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
         self.assertIsInstance(data, GisFile)
         self.assertEqual(data.filename, 'somefile')
         self.assertEqual(data.extension, 'mif')
-        self.assertEqual(data.relative_root, '..\gis')
+        self.assertEqual(data.relative_root, os.path.join('..', 'gis'))
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), 'somefile.mif')
         self.assertEqual(data.gis_type, 'mi')
@@ -228,7 +231,7 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def test_createModelType(self):
         """Test construction of ModelFile type."""
-        line = "Geometry Control File == ..\\model\\tgcfile.tgc"
+        line = "Geometry Control File == {}".format(os.path.join('..', 'model', 'tgcfile.tgc'))
         data = f.TuflowFactory.createModelType(line, self.parent, model_type='TGC')[0]
         self.assertIsInstance(data, TuflowPart)
         self.assertIsInstance(data, TuflowFile)
@@ -236,13 +239,17 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(data.obj_type, 'model')
         self.assertEqual(data.filename, 'tgcfile')
         self.assertEqual(data.extension, 'tgc')
-        self.assertEqual(data.relative_root, '..\model')
+        self.assertEqual(data.relative_root, os.path.join('..', 'model'))
         self.assertEqual(data.root, self.fake_root)
         self.assertEqual(data.filenameAndExtension(), 'tgcfile.tgc')
         self.assertEqual(data.model_type, 'TGC')
 
     def test_createGisTypeWithPipes(self):
-        line = "Read GIS Z Shape == gis\somefile_R.shp | gis\\somefile_L.shp | gis\\somefile_P.shp"
+        line = "Read GIS Z Shape == {} | {} | {}".format(
+            os.path.join('gis', 'somefile_R.shp'),
+            os.path.join('gis', 'somefile_L.shp'),
+            os.path.join('gis', 'somefile_P.shp')
+        )
         data = f.TuflowFactory.createGisType(line, self.parent)
         self.assertEqual(len(data), 3)
 
@@ -266,9 +273,12 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def test_partsFromPipedFiles(self):
         """Check partsFromPipedFiles."""
-#         line = "Read GIS Z Shape == gis\somefile_R.shp | gis\\somefile_L.shp | gis\\somefile_P.shp"
         vars = {}
-        vars['path'] = "gis\somefile_R.shp | gis\\somefile_L.shp | gis\\somefile_P.shp"
+        vars['path'] = "{} | {} | {}".format(
+            os.path.join('gis', 'somefile_R.shp'),
+            os.path.join('gis', 'somefile_L.shp'),
+            os.path.join('gis', 'somefile_P.shp'),
+        )
         vars['command'] = 'Read GIS Z Shape'
         vars['comment'] = ''
         vars['root'] = self.fake_root
@@ -295,9 +305,9 @@ class TuflowFilePartTests(unittest.TestCase):
 
     def test_assignSiblings(self):
         """Check that sibling assignments are correct."""
-        line1 = "Read GIS Z Shape == gis\somefile_R.shp"
-        line2 = "Read GIS Z Shape == gis\\somefile_L.shp"
-        line3 = "Read GIS Z Shape == gis\\somefile_P.shp"
+        line1 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_R.shp'))
+        line2 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_L.shp'))
+        line3 = "Read GIS Z Shape == {}".format(os.path.join('gis', 'somefile_R.shp'))
         gis1 = f.TuflowFactory.createGisType(line1, self.parent)[0]
         gis2 = f.TuflowFactory.createGisType(line2, self.parent)[0]
         gis3 = f.TuflowFactory.createGisType(line3, self.parent)[0]
@@ -372,38 +382,50 @@ class TuflowFilePartTests(unittest.TestCase):
         """
 
         result_vars = {
-            'command': 'Output Folder', 'comment': '', 'path': '..\\results',
+            'command': 'Output Folder',
+            'comment': '',
+            'path': os.path.join('..', 'results'),
             'root': self.fake_root
         }
         rpart = ResultFile(self.parent, **result_vars)
         rpart = f.resolveResult(rpart)
         result_vars2 = {
-            'command': 'Output Folder', 'comment': '', 'path': '..\\results\\',
+            'command': 'Output Folder',
+            'comment': '',
+            'path': os.path.join('..', 'results') + os.sep,
             'root': self.fake_root
         }
         rpart2 = ResultFile(self.parent, **result_vars2)
         rpart2 = f.resolveResult(rpart2)
         result_vars3 = {
-            'command': 'Output Folder', 'comment': '', 'path': 'c:\\path\\to\\results\\',
+            'command': 'Output Folder',
+            'comment': '',
+            'path': os.path.join(self.prefix, 'path', 'to', 'results') + os.sep,
             'root': self.fake_root
         }
         rpart3 = ResultFile(self.parent, **result_vars3)
         rpart3 = f.resolveResult(rpart3)
 
         log_vars = {
-            'command': 'Log Folder', 'comment': '', 'path': 'log',
+            'command': 'Log Folder',
+            'comment': '',
+            'path': 'log',
             'root': self.fake_root
         }
         lpart = ResultFile(self.parent, **log_vars)
         lpart = f.resolveResult(lpart)
         log_vars2 = {
-            'command': 'Log Folder', 'comment': '', 'path': 'log\\',
+            'command': 'Log Folder',
+            'comment': '',
+            'path': 'log' + os.sep,
             'root': self.fake_root
         }
         lpart2 = ResultFile(self.parent, **log_vars2)
         lpart2 = f.resolveResult(lpart2)
         log_vars3 = {
-            'command': 'Log Folder', 'comment': '', 'path': 'c:\\path\\to\\log',
+            'command': 'Log Folder',
+            'comment': '',
+            'path': os.path.join(self.prefix, 'path', 'to', 'log'),
             'root': self.fake_root
         }
         lpart3 = ResultFile(self.parent, **log_vars3)
@@ -423,11 +445,12 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(lpart2.filename, '')
         self.assertEqual(lpart3.filename, '')
 
-        self.assertEqual(rpart.relative_root, '..\\results\\')
-        self.assertEqual(rpart2.relative_root, '..\\results\\')
+        pth = os.path.join('..', 'results') + os.sep
+        self.assertEqual(rpart.relative_root, pth)
+        self.assertEqual(rpart2.relative_root, pth)
         self.assertEqual(rpart3.relative_root, '')
-        self.assertEqual(lpart.relative_root, 'log\\')
-        self.assertEqual(lpart2.relative_root, 'log\\')
+        self.assertEqual(lpart.relative_root, 'log' + os.sep)
+        self.assertEqual(lpart2.relative_root, 'log' + os.sep)
         self.assertEqual(lpart3.relative_root, '')
 
         self.assertFalse(rpart.filename_is_prefix)
@@ -443,25 +466,33 @@ class TuflowFilePartTests(unittest.TestCase):
         Test the resolveResult function with Write Check Files command.
         """
         check_vars = {
-            'command': 'Write Check Files', 'comment': '', 'path': '..\\check',
+            'command': 'Write Check Files',
+            'comment': '',
+            'path': os.path.join('..', 'check'),
             'root': self.fake_root
         }
         cpart = ResultFile(self.parent, **check_vars)
         cpart = f.resolveResult(cpart)
         check_vars2 = {
-            'command': 'Write Check Files', 'comment': '', 'path': '..\\check\\',
+            'command': 'Write Check Files',
+            'comment': '',
+            'path': os.path.join('..', 'check') + os.sep,
             'root': self.fake_root
         }
         cpart2 = ResultFile(self.parent, **check_vars2)
         cpart2 = f.resolveResult(cpart2)
         check_vars3 = {
-            'command': 'Write Check Files', 'comment': '', 'path': 'c:\\path\\to\\check',
+            'command': 'Write Check Files',
+            'comment': '',
+            'path': os.path.join(self.prefix, 'path', 'to', 'check'),
             'root': self.fake_root
         }
         cpart3 = ResultFile(self.parent, **check_vars3)
         cpart3 = f.resolveResult(cpart3)
         check_vars4 = {
-            'command': 'Write Check Files', 'comment': '', 'path': 'c:\\path\\to\\check\\',
+            'command': 'Write Check Files',
+            'comment': '',
+            'path': os.path.join(self.prefix, 'path', 'to', 'check') + os.sep,
             'root': self.fake_root
         }
         cpart4 = ResultFile(self.parent, **check_vars4)
@@ -477,8 +508,8 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertEqual(cpart3.filename, 'check')
         self.assertEqual(cpart4.filename, '')
 
-        self.assertEqual(cpart.relative_root, '..\\')
-        self.assertEqual(cpart2.relative_root, '..\\check\\')
+        self.assertEqual(cpart.relative_root, '..' + os.sep)
+        self.assertEqual(cpart2.relative_root, os.path.join('..', 'check') + os.sep)
         self.assertEqual(cpart3.relative_root, '')
         self.assertEqual(cpart4.relative_root, '')
 

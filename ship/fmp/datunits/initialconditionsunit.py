@@ -5,13 +5,13 @@
     This is a holder for all of the data in the initial conditions section
     of the dat file.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Created:  
+ Created:
      01 Apr 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -48,13 +48,13 @@ class InitialConditionsUnit (AUnit):
         """Constructor
 
         Args:
-            node_count (int): The number of nodes in the model. We need this to 
+            node_count (int): The number of nodes in the model. We need this to
                 know how many lines there are to read from the contents list.
-            fileOrder (int): The location of the initial conditions in the 
-                .DAT file. This will always be at the end but before the 
+            fileOrder (int): The location of the initial conditions in the
+                .DAT file. This will always be at the end but before the
                 GISINFO if there is any.
         """
-        AUnit.__init__(self, **kwargs)
+        super(InitialConditionsUnit, self).__init__(**kwargs)
         self._unit_type = InitialConditionsUnit.UNIT_TYPE
         self._unit_category = InitialConditionsUnit.UNIT_CATEGORY
         self._name = "initial_conditions"
@@ -129,18 +129,18 @@ class InitialConditionsUnit (AUnit):
     def updateRow(self, row_vals, index, **kwargs):
         """Updates the row at the given index in the row_collection.
 
-        Changes the state of the values in the initial conditions list of 
+        Changes the state of the values in the initial conditions list of
         the .dat file at the given index.
 
         Args:
             row_vals(Dict): keys must be datunits.ROW_DATA_TYPES with a legal
                 value assigned for the DataType. Chainage and Elevation MUST
                 be included.
-            index: the row to update. 
+            index: the row to update.
 
         Raises:
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.
@@ -165,7 +165,7 @@ class InitialConditionsUnit (AUnit):
 
         Raises:
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
             AttributeError: If the given name doesn't exists in the collection.
 
         See Also:
@@ -188,8 +188,8 @@ class InitialConditionsUnit (AUnit):
         The new row will be added at the given index. If no index is given it
         will be appended to the end of the collection.
 
-        If no LABEL value is given a AttributeError will be raised as it 
-        cannot have a default value. All other values can be ommitted. If they 
+        If no LABEL value is given a AttributeError will be raised as it
+        cannot have a default value. All other values can be ommitted. If they
         are they will be given defaults.
 
         Examples:
@@ -204,7 +204,7 @@ class InitialConditionsUnit (AUnit):
         Raises:
             AttributeError: If LABEL is not given.
             IndexError: If the index does not exist.
-            ValueError: If the given value is not accepted by the DataObject's. 
+            ValueError: If the given value is not accepted by the DataObject's.
 
         See Also:
             ADataObject and subclasses for information on the parameters.
@@ -265,7 +265,7 @@ class InitialConditionsUnit (AUnit):
 
         This is the same functionality as the AUnit's getRow(int) method
         which returns a row in the RowDataCollection by the index value given.
-        In this case it will find the index based on the section label and 
+        In this case it will find the index based on the section label and
         return the same dictionary of row values.
 
         Args:
