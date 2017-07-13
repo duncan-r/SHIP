@@ -87,6 +87,9 @@ class RefhUnit(AUnit):
             'published_report': HeadDataItem('DLL', '{:>10}', 4, 4, dtype=dt.CONSTANT, choices=('DLL', 'REPORT')),
 
             # Urban - only used if 'urban' == 'URBANREFH'
+            # Note: urban involves updating the revision number and published_report as well.
+            #       if you want to set it to urban you should use useUrban(True) rather than
+            #       set this directly (or useUrban(False) to deactivate it).
             'urban': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'URBANREFH')),
             'subarea_1': HeadDataItem(0.00, '{:>10}', 5, 0, dtype=dt.FLOAT, dps=2),
             'dplbar_1': HeadDataItem(0.000, '{:>10}', 5, 1, dtype=dt.FLOAT, dps=3),
@@ -97,7 +100,7 @@ class RefhUnit(AUnit):
             'suburbext_2': HeadDataItem(0.000, '{:>10}', 6, 2, dtype=dt.FLOAT, dps=3),
             'calibration_2': HeadDataItem(0.000, '{:>10}', 6, 3, dtype=dt.FLOAT, dps=3),
             'subrunoff_2': HeadDataItem(0.000, '{:>10}', 6, 4, dtype=dt.FLOAT, dps=3),
-            'sewer_rp_2': HeadDataItem('RUNOFF', '{:>10}', 6, 5, dtype=dt.CONSTANT, choices=('RUNOFF', 'DEPTH')),
+            'sewer_rp_2': HeadDataItem('RETURN', '{:>10}', 6, 5, dtype=dt.CONSTANT, choices=('RETURN', 'DEPTH')),
             'sewer_depth_2': HeadDataItem(0.000, '{:>10}', 6, 6, dtype=dt.FLOAT, dps=3),
             'sewer_lossvolume_2': HeadDataItem('VOLUME', '{:>10}', 6, 7, dtype=dt.CONSTANT, choices=('VOLUME', 'FLOW')),
             'subarea_3': HeadDataItem(0.00, '{:>10}', 7, 0, dtype=dt.FLOAT, dps=2),
@@ -186,6 +189,7 @@ class RefhUnit(AUnit):
         if activate:
             self.head_data['urban'].value = 'URBANREFH'
             self.head_data['revision'].value = '2'
+            self.head_data['published_report'].value = 'REPORT'
             self.has_urban = True
         else:
             self.head_data['urban'].value = ''
