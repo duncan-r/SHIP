@@ -212,6 +212,5 @@ class Model(object):
             for path in node.parameter_options:
                 if not os.path.isabs(path):
                     path = os.path.normpath(os.path.join(self._root, path))
-                    print('PATH', path)
                 if not os.path.exists(path):
                     yield node, path
