@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class TuflowLoader(ALoader):
 
     def __init__(self):
-        ALoader.__init__(self)
+        super(TuflowLoader, self).__init__()
         self.types = TuflowFilepartTypes()
 
         self.user_variables = UserVariables()

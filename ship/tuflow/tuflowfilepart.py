@@ -4,13 +4,13 @@
      Contains all of the TuflowPart type classes used to store the data within
      Tuflow control files.
 
- Author:  
+ Author:
      Duncan Runnacles
 
- Created:  
+ Created:
      20 Nov 2016
 
- Copyright:  
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 class AssociatedParts(object):
     """Stores associate TuflowPart references.
 
-    Every TuflowPart will hold a copy of this class. It is used to store 
+    Every TuflowPart will hold a copy of this class. It is used to store
     references to any other TuflowPart's that it has an association with.
     """
 
@@ -99,11 +99,11 @@ class TuflowPart(object):
 
         self.observers = []
         """This is a poor man's observer interface.
-        
+
         If an object wants to be notified of key internal changes, such as the
         Logic being activated/deactivated, then can add themselves to this
         list.
-        
+
         If an object is added to this list it should implement the following
         methods:
 
@@ -137,7 +137,7 @@ class TuflowPart(object):
 
         Note:
             parent_list arg is used to pass the found parents through the
-            recursion. When calling this method you should probably always 
+            recursion. When calling this method you should probably always
             provide an empty list.
 
         Return:
@@ -174,7 +174,7 @@ class TuflowPart(object):
 
             ! This file's logic == None, but if scenario == 'somescenario' it
             ! should not be returned.
-            Read GIS Z Line == afile.shp 
+            Read GIS Z Line == afile.shp
 
         Args:
             part(TuflowPart): the part to check logic terms for.
@@ -205,7 +205,7 @@ class TuflowPart(object):
         """Replaces the contents of a placeholder value with an actual value.
 
         Tuflow allows scenario, event and user defined variables to be used
-        as placeholders. This method will check for a given value against a 
+        as placeholders. This method will check for a given value against a
         dict of current variables and update the value if found.
 
         Example::
@@ -276,7 +276,7 @@ class UnknownPart(TuflowPart):
 
     def __init__(self, parent, **kwargs):
         self.TOP_CLASS = 'unknown'
-        TuflowPart.__init__(self, parent, 'unknown', **kwargs)
+        super(UnknownPart, self).__init__(parent, 'unknown', **kwargs)
         self.data = kwargs['data']  # raises keyerror
 
     def getPrintableContents(self, **kwargs):
@@ -286,7 +286,7 @@ class UnknownPart(TuflowPart):
 class ATuflowVariable(TuflowPart):
 
     def __init__(self, parent, obj_type='variable', **kwargs):
-        TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        super(ATuflowVariable, self).__init__(parent, obj_type, **kwargs)
         self.TOP_CLASS = 'avariable'
         self.command = kwargs['command']  # raise valuerror
         self._variable = kwargs['variable'].strip()
@@ -314,12 +314,12 @@ class TuflowVariable(ATuflowVariable):
 
     def __init__(self, parent, **kwargs):
         """
-        kwargs(dict): the component of this parts command line::  
-            - 'variable': 'one or more variable'  
-            - 'command': 'command string'  
+        kwargs(dict): the component of this parts command line::
+            - 'variable': 'one or more variable'
+            - 'command': 'command string'
             - 'comment': 'comment at end of command'
         """
-        ATuflowVariable.__init__(self, parent, 'variable', **kwargs)
+        super(TuflowVariable, self).__init__(parent, 'variable', **kwargs)
         self.split_char = kwargs.get('split_char', ' ')
         self.split_char = self.split_char.replace('\s', ' ')
         self._createSplitVariable(self.variable)
@@ -359,7 +359,7 @@ class TuflowVariable(ATuflowVariable):
 class TuflowUserVariable(ATuflowVariable):
 
     def __init__(self, parent, **kwargs):
-        ATuflowVariable.__init__(self, parent, 'uservariable', **kwargs)
+        super(TuflowUserVariable, self).__init__(parent, 'uservariable', **kwargs)
         self._variable_name = self.command.split('Set Variable ')[1].strip()
 
     @classmethod
@@ -385,7 +385,7 @@ class TuflowUserVariable(ATuflowVariable):
 class TuflowModelVariable(ATuflowVariable):
 
     def __init__(self, parent, **kwargs):
-        ATuflowVariable.__init__(self, parent, 'modelvariable', **kwargs)
+        super(TuflowModelVariable, self).__init__(parent, 'modelvariable', **kwargs)
         self._variable_name = kwargs['name']
         if self._variable_name.upper().startswith('S'):
             self._variable_type = 'scenario'
@@ -432,7 +432,7 @@ class TuflowKeyValue(ATuflowVariable):
     """
 
     def __init__(self, parent, **kwargs):
-        ATuflowVariable.__init__(self, parent, 'keyvalue', **kwargs)
+        super(TuflowKeyValue, self).__init__(parent, 'keyvalue', **kwargs)
         keyval = self._variable.split('|')
         self.key = keyval[0].strip()
         self.value = keyval[1].strip()
@@ -449,9 +449,9 @@ class TuflowFile(TuflowPart, PathHolder):
     def __init__(self, parent, obj_type='file', **kwargs):
         """Constructor.
 
-        **kwargs: 
-            - 'path': 'relative\path\to\file.ext'   
-            - 'command': 'command string'  
+        **kwargs:
+            - 'path': 'relative\path\to\file.ext'
+            - 'command': 'command string'
             - 'comment': 'comment at the end of the command'
 
         Args:
@@ -479,7 +479,7 @@ class TuflowFile(TuflowPart, PathHolder):
 
         Args:
             user_vars(dict): a dict containing variable placeholder values as
-                keys and the actual values as values. See 
+                keys and the actual values as values. See
                 TuflowPart.resolvePlaceholder() method for more information.
         """
         rel_roots = self.getRelativeRoots([])
@@ -508,7 +508,7 @@ class TuflowFile(TuflowPart, PathHolder):
 
         Args:
             user_vars(dict): a dict containing variable placeholder values as
-                keys and the actual values as values. See 
+                keys and the actual values as values. See
                 TuflowPart.resolvePlaceholder() method for more information.
         """
         if self.has_own_root:
@@ -598,7 +598,7 @@ class TuflowFile(TuflowPart, PathHolder):
 class ModelFile(TuflowFile):
 
     def __init__(self, parent, **kwargs):
-        TuflowFile.__init__(self, parent, 'model', **kwargs)
+        super(ModelFile, self).__init__(parent, 'model', **kwargs)
         self.model_type = kwargs['model_type']
         self.has_auto = kwargs.get('has_auto', False)
 
@@ -619,7 +619,7 @@ class ResultFile(TuflowFile):
                    'log': 'LOG'}
 
     def __init__(self, parent, **kwargs):
-        TuflowFile.__init__(self, parent, 'result', **kwargs)
+        super(ResultFile, self).__init__(parent, 'result', **kwargs)
         self.filename_is_prefix = False
         self.result_type = 'UNKNOWN'
         for key, val in ResultFile.RESULT_TYPE.items():
@@ -638,7 +638,7 @@ class GisFile(TuflowFile):
     GIS_TYPES = {'mi': ('mif', 'mid'), 'shp': ('shp', 'shx', 'dbf')}
 
     def __init__(self, parent, **kwargs):
-        TuflowFile.__init__(self, parent, 'gis', **kwargs)
+        super(GisFile, self).__init__(parent, 'gis', **kwargs)
 
         # Needed to catch GIS files without an extension
         if self.filename == '':
@@ -671,7 +671,7 @@ class DataFile(TuflowFile):
     DATA_TYPES = {'TMF': ('tmf',), 'CSV': ('csv',)}
 
     def __init__(self, parent, **kwargs):
-        TuflowFile.__init__(self, parent, 'data', **kwargs)
+        super(DataFile, self).__init__(parent, 'data', **kwargs)
 
         for d in DataFile.DATA_TYPES:
             if self.extension in DataFile.DATA_TYPES[d]:
@@ -682,7 +682,7 @@ class DataFile(TuflowFile):
 class TuflowLogic(TuflowPart):
 
     def __init__(self, parent, obj_type='logic', **kwargs):
-        TuflowPart.__init__(self, parent, obj_type, **kwargs)
+        super(TuflowLogic, self).__init__(parent, obj_type, **kwargs)
         self.TOP_CLASS = 'logic'
         self.parts = []
         self.group_parts = [[]]
@@ -707,13 +707,13 @@ class TuflowLogic(TuflowPart):
         """Add a new TuflowPart.
 
         **kwargs:
-            skip_callback=False(bool): if true it won't call the callback 
+            skip_callback=False(bool): if true it won't call the callback
                 function in the ControlFile. Basically don't use this.
 
         Args:
             part(TuflowPart): the part to add.
             group(int): the clause group to add the part to.
-            skip_callback=False(bool): if true it won't call the callback 
+            skip_callback=False(bool): if true it won't call the callback
                 function in the ControlFile. Basically don't change this.
         """
         skip_callback = kwargs.get('skip_callback', False)
@@ -747,9 +747,9 @@ class TuflowLogic(TuflowPart):
     def removePart(self, part):
         """Remove a TuflowPart.
 
-        Will also call a callback function to the ControlFile object that 
+        Will also call a callback function to the ControlFile object that
         contains this TuflowLogic and ensure that the PartHolder order is
-        updated. It just ensures that the TuflowPart is moved out of the 
+        updated. It just ensures that the TuflowPart is moved out of the
         scope of the parts still within the TuflowLogic.
 
         Args:
@@ -831,10 +831,10 @@ class TuflowLogic(TuflowPart):
 
         Args:
             part(TuflowPart): check if it's in this TuflowLogic.
-            term(str): term to check the part against. 
+            term(str): term to check the part against.
 
         Return:
-            bool - True if the term is part of one of the clauses in this 
+            bool - True if the term is part of one of the clauses in this
                 TuflowLogic and the part is within that clause; Else False.
         """
         for i, terms in enumerate(self.terms):
@@ -954,14 +954,14 @@ class IfLogic(TuflowLogic):
 
         **kwargs:
             'command(str)': the command (e.g. If Scenario) for the opening clause.
-            'terms'(list): list of terms for the first clause 
+            'terms'(list): list of terms for the first clause
                 (e.g. ['scen1', 'scen2', 'scenN'].
             'comment'(str): any comment next to the first clause.
 
         Args:
             parent(ModelFile): that contains this TuflowLogic.
         """
-        TuflowLogic.__init__(self, parent, 'iflogic', **kwargs)
+        super(IfLogic, self).__init__(parent, 'iflogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         self.all_terms = []
         if kwargs['terms'] is not None:
@@ -1023,14 +1023,14 @@ class BlockLogic(TuflowLogic):
 
         **kwargs:
             'command(str)': the command (e.g. If Scenario) for the opening clause.
-            'terms'(list): list of terms for the first clause 
+            'terms'(list): list of terms for the first clause
                 (e.g. ['scen1', 'scen2', 'scenN'].
             'comment'(str): any comment next to the first clause.
 
         Args:
             parent(ModelFile): that contains this TuflowLogic.
         """
-        TuflowLogic.__init__(self, parent, 'blocklogic', **kwargs)
+        super(BlockLogic, self).__init__(parent, 'blocklogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:
             self.terms = [[i.strip() for i in kwargs['terms']]]
@@ -1048,9 +1048,9 @@ class BlockLogic(TuflowLogic):
 class SectionLogic(BlockLogic):
     """Used for all other types of scoping logic.
 
-    This includes things like 'Define Output Zone ==' etc. The only real 
+    This includes things like 'Define Output Zone ==' etc. The only real
     difference between this and BlockLogic is that BlockLogic sets
-    check_sevals = True. It kind of makes sense to treat them slightly 
+    check_sevals = True. It kind of makes sense to treat them slightly
     differently though as the BlockLogic and IfLogic are used with scenario
     and event logic.
     """
@@ -1060,14 +1060,14 @@ class SectionLogic(BlockLogic):
 
         **kwargs:
             'command(str)': the command (e.g. If Scenario) for the opening clause.
-            'terms'(list): list of terms for the first clause 
+            'terms'(list): list of terms for the first clause
                 (e.g. ['scen1', 'scen2', 'scenN'].
             'comment'(str): any comment next to the first clause.
 
         Args:
             parent(ModelFile): that contains this TuflowLogic.
         """
-        TuflowLogic.__init__(self, parent, 'sectionlogic', **kwargs)
+        super(SectionLogic, self).__init__(parent, 'sectionlogic', **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:
             self.terms = [[i.strip() for i in kwargs['terms']]]

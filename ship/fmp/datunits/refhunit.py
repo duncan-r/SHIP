@@ -3,16 +3,16 @@
  Summary:
     Contains the Refh class.
     This holds all of the data read in from the refh units in the dat file.
-    Can be called to load in the data and read and update the contents 
+    Can be called to load in the data and read and update the contents
     held in the object.
 
- Author:  
+ Author:
      Duncan Runnacles
-     
-  Created:  
+
+  Created:
      01 Apr 2016
- 
- Copyright:  
+
+ Copyright:
      Duncan Runnacles 2016
 
  TODO:
@@ -57,11 +57,10 @@ class RefhUnit(AUnit):
     def __init__(self, **kwargs):
         """Constructor.
         """
-        AUnit.__init__(self, **kwargs)
+        super(RefhUnit, self).__init__(**kwargs)
 
         self._unit_type = RefhUnit.UNIT_TYPE
         self._unit_category = RefhUnit.UNIT_CATEGORY
-#         self.row_data['main'] = []
         if self._name == 'unknown':
             self._name = 'Refh_unit'
 
@@ -74,20 +73,23 @@ class RefhUnit(AUnit):
             'easting': HeadDataItem('', '{:>10}', 2, 1, dtype=dt.STRING),
             'northing': HeadDataItem('', '{:>10}', 2, 2, dtype=dt.STRING),
             'time_delay': HeadDataItem(0.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
-            'time_step': HeadDataItem(1.0, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=1),
+            'time_step': HeadDataItem(1.0, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'bf_only': HeadDataItem('', '{:>10}', 3, 2, dtype=dt.STRING),
-            'sc_flag': HeadDataItem('SCALEFACT', '{:<10}', 3, 3, dtype=dt.CONSTANT, choices=('SCALEFACT', 'PEAKVALUE')),
+            'sc_flag': HeadDataItem('SCALEFACT', '{:>10}', 3, 3, dtype=dt.CONSTANT, choices=('SCALEFACT', 'PEAKVALUE')),
             'scale_factor': HeadDataItem(1.000, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
             'hydrograph_mode': HeadDataItem('HYDROGRAPH', '{:>10}', 3, 5, dtype=dt.CONSTANT, choices=('HYDROGRAPH', 'HYETOGRAPH')),
             'hydrograph_scaling': HeadDataItem('RUNOFF', '{:>10}', 3, 6, dtype=dt.CONSTANT, choices=('RUNOFF', 'FULL')),
             'min_flow': HeadDataItem(1.000, '{:>10}', 3, 7, dtype=dt.FLOAT, dps=3),
-            'catchment_area': HeadDataItem(0.00, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=2),
+            'catchment_area': HeadDataItem(0.00, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=3),
             'saar': HeadDataItem(0, '{:>10}', 4, 1, dtype=dt.INT),
-            'urbext': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=3),
+            'urbext': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=5),
             'season': HeadDataItem('DEFAULT', '{:>10}', 4, 3, dtype=dt.CONSTANT, choices=('DEFAULT', 'WINTER', 'SUMMER')),
             'published_report': HeadDataItem('DLL', '{:>10}', 4, 4, dtype=dt.CONSTANT, choices=('DLL', 'REPORT')),
 
             # Urban - only used if 'urban' == 'URBANREFH'
+            # Note: urban involves updating the revision number and published_report as well.
+            #       if you want to set it to urban you should use useUrban(True) rather than
+            #       set this directly (or useUrban(False) to deactivate it).
             'urban': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'URBANREFH')),
             'subarea_1': HeadDataItem(0.00, '{:>10}', 5, 0, dtype=dt.FLOAT, dps=2),
             'dplbar_1': HeadDataItem(0.000, '{:>10}', 5, 1, dtype=dt.FLOAT, dps=3),
@@ -98,7 +100,7 @@ class RefhUnit(AUnit):
             'suburbext_2': HeadDataItem(0.000, '{:>10}', 6, 2, dtype=dt.FLOAT, dps=3),
             'calibration_2': HeadDataItem(0.000, '{:>10}', 6, 3, dtype=dt.FLOAT, dps=3),
             'subrunoff_2': HeadDataItem(0.000, '{:>10}', 6, 4, dtype=dt.FLOAT, dps=3),
-            'sewer_rp_2': HeadDataItem('RUNOFF', '{:>10}', 6, 5, dtype=dt.CONSTANT, choices=('RUNOFF', 'DEPTH')),
+            'sewer_rp_2': HeadDataItem('RETURN', '{:>10}', 6, 5, dtype=dt.CONSTANT, choices=('RETURN', 'DEPTH')),
             'sewer_depth_2': HeadDataItem(0.000, '{:>10}', 6, 6, dtype=dt.FLOAT, dps=3),
             'sewer_lossvolume_2': HeadDataItem('VOLUME', '{:>10}', 6, 7, dtype=dt.CONSTANT, choices=('VOLUME', 'FLOW')),
             'subarea_3': HeadDataItem(0.00, '{:>10}', 7, 0, dtype=dt.FLOAT, dps=2),
@@ -115,18 +117,18 @@ class RefhUnit(AUnit):
             'rainfall_comment': HeadDataItem('', '', 9, 2, dtype=dt.STRING),
             'rainfall_odepth': HeadDataItem(0.000, '{:>10}', 10, 0, dtype=dt.FLOAT, dps=3),
             'return_period': HeadDataItem(0, '{:>10}', 10, 1, dtype=dt.INT),
-            'arf': HeadDataItem(0.000, '{:>10}', 10, 2, dtype=dt.FLOAT, dps=3),
-            'c': HeadDataItem(0.000, '{:>10}', 10, 3, dtype=dt.FLOAT, dps=3),
-            'd1': HeadDataItem(0.000, '{:>10}', 10, 4, dtype=dt.FLOAT, dps=3),
-            'd2': HeadDataItem(0.000, '{:>10}', 10, 5, dtype=dt.FLOAT, dps=3),
-            'd2': HeadDataItem(0.000, '{:>10}', 10, 6, dtype=dt.FLOAT, dps=3),
-            'd3': HeadDataItem(0.000, '{:>10}', 10, 7, dtype=dt.FLOAT, dps=3),
-            'e': HeadDataItem(0.000, '{:>10}', 10, 8, dtype=dt.FLOAT, dps=3),
-            'f': HeadDataItem(0.000, '{:>10}', 10, 9, dtype=dt.FLOAT, dps=3),
+            'arf': HeadDataItem(0.000, '{:>10}', 10, 2, dtype=dt.FLOAT, dps=5),
+            'c': HeadDataItem(0.000, '{:>10}', 10, 3, dtype=dt.FLOAT, dps=5),
+            'd1': HeadDataItem(0.000, '{:>10}', 10, 4, dtype=dt.FLOAT, dps=5),
+            'd2': HeadDataItem(0.000, '{:>10}', 10, 5, dtype=dt.FLOAT, dps=5),
+            'd2': HeadDataItem(0.000, '{:>10}', 10, 6, dtype=dt.FLOAT, dps=5),
+            'd3': HeadDataItem(0.000, '{:>10}', 10, 7, dtype=dt.FLOAT, dps=5),
+            'e': HeadDataItem(0.000, '{:>10}', 10, 8, dtype=dt.FLOAT, dps=5),
+            'f': HeadDataItem(0.000, '{:>10}', 10, 9, dtype=dt.FLOAT, dps=5),
             'rp_flag': HeadDataItem('DESIGN', '{:>10}', 11, 0, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'scf_flag': HeadDataItem('DESIGN', '{:>10}', 11, 1, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
-            'scf': HeadDataItem(0.000, '{:>10}', 11, 2, dtype=dt.FLOAT, dps=3),
-            'use_refined_rainfall': HeadDataItem('0', '{:>10}', 11, 3, dtype=dt.CONSTANT, choices=('0', '1')),
+            'scf': HeadDataItem(0.000, '{:>10}', 11, 2, dtype=dt.FLOAT, dps=5),
+            'use_refined_rainfall': HeadDataItem('0', '{:>10}', 11, 3, dtype=dt.CONSTANT, choices=('', '0', '1')),
 
             'cmax_flag': HeadDataItem('DESIGN', '{:>10}', 12, 0, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
             'cini_flag': HeadDataItem('DESIGN', '{:>10}', 12, 1, dtype=dt.CONSTANT, choices=('DESIGN', 'USER')),
@@ -187,6 +189,7 @@ class RefhUnit(AUnit):
         if activate:
             self.head_data['urban'].value = 'URBANREFH'
             self.head_data['revision'].value = '2'
+            self.head_data['published_report'].value = 'REPORT'
             self.has_urban = True
         else:
             self.head_data['urban'].value = ''
@@ -200,8 +203,8 @@ class RefhUnit(AUnit):
             AUnit - readUnitData for more information.
 
         Args:
-            unit_data (list): The section of the isis dat file pertaining 
-                to this section 
+            unit_data (list): The section of the isis dat file pertaining
+                to this section
         """
         file_line, storm_rows = self._readHeadData(unit_data, file_line)
         file_line = self._readStormData(unit_data, file_line, storm_rows)
