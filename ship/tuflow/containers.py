@@ -109,7 +109,7 @@ class ControlFileNode(object):
     def append_statement(self, command, parameter, comment=None):
         '''Append a statement to the tree
         '''
-        node = ControlFileNode(command, parameter, comment)
+        node = ControlFileNode('STATEMENT', command, parameter, comment)
         if self.command in self.logic_commands:
             # We must append it before the last node which is the 'END' node
             node.parent = self
@@ -212,5 +212,6 @@ class Model(object):
             for path in node.parameter_options:
                 if not os.path.isabs(path):
                     path = os.path.normpath(os.path.join(self._root, path))
+                    print('PATH', path)
                 if not os.path.exists(path):
                     yield node, path
