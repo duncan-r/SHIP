@@ -987,6 +987,8 @@ class IfLogic(TuflowLogic):
         """
         for i, val in enumerate(self.group_parts):
             if i > 0:
+                if len(val) < 1:
+                    pass
                 if val[0] == part:
 
                     if not self.group_parts[0] and not self._top_written:
@@ -1019,7 +1021,7 @@ class BlockLogic(TuflowLogic):
     there are others?
     """
 
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, object_type='blockLogic', **kwargs):
         """Constructor.
 
         **kwargs:
@@ -1031,7 +1033,7 @@ class BlockLogic(TuflowLogic):
         Args:
             parent(ModelFile): that contains this TuflowLogic.
         """
-        super(BlockLogic, self).__init__(parent, 'blocklogic', **kwargs)
+        super(BlockLogic, self).__init__(parent, object_type, **kwargs)
         self.commands = [kwargs['command'].strip()]
         if kwargs['terms'] is not None:
             self.terms = [[i.strip() for i in kwargs['terms']]]

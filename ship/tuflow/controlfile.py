@@ -604,7 +604,7 @@ class ControlFile(object):
             if command:
                 try:
                     if exact:
-                        if command in part.command.upper():
+                        if command == part.command.upper():
                             out = part
                     elif command in part.command.upper():
                         out = part

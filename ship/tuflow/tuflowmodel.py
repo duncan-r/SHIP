@@ -452,49 +452,63 @@ class TuflowFilepartTypes(object):
     def __init__(self):
         """Initialise the categories and known keywords"""
         self.ambiguous = {
-            'WRITE CHECK FILES': ['WRITE CHECK FILES INCLUDE', fpt.VARIABLE],
-            'WRITE CHECK FILES INCLUDE': ['WRITE CHECK FILES', fpt.RESULT],
-            'DEFINE EVENT': ['DEFINE OUTPUT ZONE', fpt.SECTION_LOGIC],
-            'DEFINE OUTPUT ZONE': ['DEFINE EVENT', fpt.EVENT_LOGIC],
+            'WRITE CHECK FILES': [
+                ['WRITE CHECK FILES INCLUDE', fpt.VARIABLE],
+                ['WRITE CHECK FILES EXCLUDE', fpt.VARIABLE]
+            ],
+#             'WRITE CHECK FILES INCLUDE': ['WRITE CHECK FILES', fpt.RESULT],
+#             'WRITE CHECK FILES EXCLUDE': ['WRITE CHECK FILES', fpt.RESULT],
+            'DEFINE EVENT': [['DEFINE OUTPUT ZONE', fpt.SECTION_LOGIC]],
+            'DEFINE OUTPUT ZONE': [['DEFINE EVENT', fpt.EVENT_LOGIC]],
+#             'START 1D DOMAIN': ['START 2D DOMAIN', fpt.SECTION_LOGIC],
+#             'START 2D DOMAIN': ['START 1D DOMAIN', fpt.SECTION_LOGIC],
         }
         self.ambiguous_keys = self.ambiguous.keys()
 
         self.types = {}
-        self.types[fpt.MODEL] = ['GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
-                                 'READ FILE', 'ESTRY CONTROL FILE',
-                                 'EVENT FILE']
-        self.types[fpt.RESULT] = ['OUTPUT FOLDER', 'WRITE CHECK FILES',
-                                  'LOG FOLDER']
-        self.types[fpt.GIS] = ['READ MI', 'READ GIS', 'READ GRID',
-                               'SHP PROJECTION', 'MI PROJECTION']
-        self.types[fpt.DATA] = ['READ MATERIALS FILE',
-                                'BC DATABASE']
-        self.types[fpt.VARIABLE] = ['START TIME', 'END TIME', 'TIMESTEP',
-                                    'SET IWL', 'MAP OUTPUT INTERVAL',
-                                    'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
-                                    'CELL SIDE WET/DRY DEPTH', 'SET IWL',
-                                    'TIME SERIES OUTPUT INTERVAL',
-                                    'SCREEN/LOG DISPLAY INTERVAL', 'CSV TIME',
-                                    'START OUTPUT', 'OUTPUT INTERVAL',
-                                    'STRUCTURE LOSSES', 'WLL APPROACH',
-                                    'WLL ADJUST XS WIDTH', 'WLL ADDITIONAL POINTS',
-                                    'DEPTH LIMIT FACTOR', 'CELL SIZE', 'SET CODE',
-                                    'GRID SIZE (X,Y)', 'SET ZPTS', 'SET MAT',
-                                    'MASS BALANCE OUTPUT', 'GIS FORMAT',
-                                    'MAP OUTPUT FORMATS', 'END MAT OUTPUT',
-                                    'ASC START MAP OUTPUT', 'ASC END MAP OUTPUT',
-                                    'XMDF MAP OUTPUT DATA TYPES', 'WRITE PO ONLINE',
-                                    'ASC MAP OUTPUT DATA TYPES',
-                                    'WRITE CHECK FILES INCLUDE', 
-                                    'WRITE CHECK FILES EXCLUDE',
-                                    'STORE MAXIMUMS AND MINIMUMS']
-        self.types[fpt.IF_LOGIC] = ['IF SCENARIO', 'ELSE IF SCENARIO', 'IF EVENT',
-                                    'ELSE IF EVENT', 'END IF', 'ELSE']
+        self.types[fpt.MODEL] = [   
+            'GEOMETRY CONTROL FILE', 'BC CONTROL FILE',
+            'READ GEOMETRY CONTROL FILE', 'READ BC CONTROL FILE',
+            'READ FILE', 'ESTRY CONTROL FILE',
+            'EVENT FILE'
+        ]
+        self.types[fpt.RESULT] = [
+            'OUTPUT FOLDER', 'WRITE CHECK FILES', 'LOG FOLDER'
+        ]
+        self.types[fpt.GIS] = [
+            'READ MI', 'READ GIS', 'READ GRID', 'SHP PROJECTION', 
+            'MI PROJECTION'
+        ]
+        self.types[fpt.DATA] = ['READ MATERIALS FILE', 'BC DATABASE']
+        self.types[fpt.VARIABLE] = [
+            'START TIME', 'END TIME', 'TIMESTEP', 'SET IWL', 
+            'MAP OUTPUT INTERVAL', 'MAP OUTPUT DATA TYPES', 'CELL WET/DRY DEPTH',
+            'CELL SIDE WET/DRY DEPTH', 'SET IWL', 'TIME SERIES OUTPUT INTERVAL',
+            'SCREEN/LOG DISPLAY INTERVAL', 'CSV TIME', 'START OUTPUT', 
+            'OUTPUT INTERVAL', 'STRUCTURE LOSSES', 'WLL APPROACH',
+            'WLL ADJUST XS WIDTH', 'WLL ADDITIONAL POINTS',
+            'DEPTH LIMIT FACTOR', 'CELL SIZE', 'SET CODE', 'GRID SIZE (X,Y)', 
+            'SET ZPTS', 'SET MAT', 'MASS BALANCE OUTPUT', 'GIS FORMAT',
+            'MAP OUTPUT FORMATS', 'END MAT OUTPUT', 'ASC START MAP OUTPUT', 
+            'ASC END MAP OUTPUT', 'XMDF MAP OUTPUT DATA TYPES', 
+            'WRITE PO ONLINE', 'ASC MAP OUTPUT DATA TYPES',
+            'WRITE CHECK FILES INCLUDE', 'WRITE CHECK FILES EXCLUDE',
+            'STORE MAXIMUMS AND MINIMUMS'
+        ]
+        self.types[fpt.IF_LOGIC] = [
+            'IF SCENARIO', 'ELSE IF SCENARIO', 'IF EVENT',
+            'ELSE IF EVENT', 'END IF', 'ELSE'
+        ]
         self.types[fpt.EVENT_LOGIC] = ['DEFINE EVENT', 'END DEFINE']
-        self.types[fpt.SECTION_LOGIC] = ['DEFINE OUTPUT ZONE', 'END DEFINE']
+        self.types[fpt.SECTION_LOGIC] = [
+            'DEFINE OUTPUT ZONE', 'END DEFINE', 'START 2D DOMAIN',
+            'END 2D DOMAIN', 'START 1D DOMAIN', 'END 1D DOMAIN'
+        ]
         self.types[fpt.USER_VARIABLE] = ['SET VARIABLE']
-        self.types[fpt.EVENT_VARIABLE] = ['BC EVENT TEXT', 'BC EVENT NAME',
-                                          'BC EVENT SOURCE', ]
+        self.types[fpt.EVENT_VARIABLE] = [
+            'BC EVENT TEXT', 'BC EVENT NAME',
+            'BC EVENT SOURCE', 
+        ]
         self.types[fpt.MODEL_VARIABLE] = ['MODEL SCENARIOS', 'MODEL EVENTS', ]
 
     def find(self, find_val, file_type='*'):
@@ -546,4 +560,26 @@ class TuflowFilepartTypes(object):
         if f.startswith(f2):
             return key
         else:
-            return self.ambiguous[found][1]
+            alternatives = self.ambiguous[found]
+            for i, a in enumerate(alternatives):
+                if find_val.startswith(a[0]):
+                    return self.ambiguous[found][i][1]
+            return key
+
+        
+        
+#         if type(find_val) == type([]):
+#             for val in find_val:
+#                 f = val.replace(' ', '')
+#                 f2 = found.replace(' ', '') + '='
+#                 if f.startswith(f2):
+#                     return key
+#                 else:
+#                     return self.ambiguous[found][1]
+#         else:
+#             f = find_val.replace(' ', '')
+#             f2 = found.replace(' ', '') + '='
+#             if f.startswith(f2):
+#                 return key
+#             else:
+#                 return self.ambiguous[found][1]
