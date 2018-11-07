@@ -82,8 +82,8 @@ class TuflowModel(object):
     def checkPathsExist(self):
         """Test that all of the filepaths in the TuflowModel exist."""
         failed = []
-        for c in self.control_files:
-            failed.extend(c.checkPathsExist())
+        for file_type, file in self.control_files.items():
+            failed.extend(file.checkPathsExist())
         return failed
 
     def updateRoot(self, root):
