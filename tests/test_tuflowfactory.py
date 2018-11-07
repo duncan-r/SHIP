@@ -35,6 +35,8 @@ class TuflowFilePartTests(unittest.TestCase):
         data_line = "Read Materials File == materials.csv"
         output_line = "Output Folder == {}".format(os.path.join('..', 'results'))
         check_line = "Write Check Files == {}".format(os.path.join('..', 'checks'))
+        check_line_exclude = "Write Check Files EXCLUDE == uvpt ! A comment"
+        check_line_include = "Write Check Files INCLUDE == uvpt ! A comment"
         log_line = "Log Folder == log"
         gis_line = "Read GIS Z Shape == {}".format(os.path.join('..', 'gis', 'somefile.shp'))
         model_line = "Geometry Control File == {}".format(os.path.join('..', 'model', 'tgcfile.tgc'))
@@ -49,6 +51,8 @@ class TuflowFilePartTests(unittest.TestCase):
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(data_line, self.parent)[0], DataFile)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(output_line, self.parent)[0], ResultFile)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(check_line, self.parent)[0], ResultFile)
+        self.assertIsInstance(f.TuflowFactory.getTuflowPart(check_line_exclude, self.parent)[0], TuflowVariable)
+        self.assertIsInstance(f.TuflowFactory.getTuflowPart(check_line_include, self.parent)[0], TuflowVariable)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(log_line, self.parent)[0], ResultFile)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(gis_line, self.parent)[0], GisFile)
         self.assertIsInstance(f.TuflowFactory.getTuflowPart(model_line, self.parent)[0], ModelFile)

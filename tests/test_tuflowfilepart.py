@@ -78,6 +78,10 @@ class TuflowFilePartTests(unittest.TestCase):
         self.iflogic.add_callback = self.fakeCallbackfunc
         self.iflogic.remove_callback = self.fakeCallbackfunc
 
+        self.iflogic.addPart(self.gis, 0)
+        self.iflogic.addPart(self.var, 0)
+        self.iflogic.addPart(self.gis2, 1)
+
         evt_args = {
             'commands': 'Define Event', 'terms': ['event1', 'event2'],
             'comments': ''
@@ -87,15 +91,15 @@ class TuflowFilePartTests(unittest.TestCase):
                                                          evt_args['comments'])
         self.evtlogic.add_callback = self.fakeCallbackfunc
         self.evtlogic.remove_callback = self.fakeCallbackfunc
+        
+#         domain_args = {
+#             'commands': 'Start 1D Domain', 'terms': ['domain1d'],
+#             'comments': ''
+#         }
+#         self.domainlogic = f.TuflowFactory.createSectionLogic(
+#             self.tgc, evt_args['commands'], evt_args['terms'], evt_args['comments']
+#         )
 
-        self.iflogic.addPart(self.gis, 0)
-        self.iflogic.addPart(self.var, 0)
-        self.iflogic.addPart(self.gis2, 1)
-
-        # Not needed now as it's done automatically in TuflowLogic.addPart()
-#         self.gis.associates.logic = self.iflogic
-#         self.var.associates.logic = self.iflogic
-#         self.gis2.associates.logic = self.iflogic
 
     def test_TPallParents(self):
         """Check that it returns parents properly.

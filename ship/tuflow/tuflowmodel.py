@@ -566,20 +566,3 @@ class TuflowFilepartTypes(object):
                     return self.ambiguous[found][i][1]
             return key
 
-        
-        
-#         if type(find_val) == type([]):
-#             for val in find_val:
-#                 f = val.replace(' ', '')
-#                 f2 = found.replace(' ', '') + '='
-#                 if f.startswith(f2):
-#                     return key
-#                 else:
-#                     return self.ambiguous[found][1]
-#         else:
-#             f = find_val.replace(' ', '')
-#             f2 = found.replace(' ', '') + '='
-#             if f.startswith(f2):
-#                 return key
-#             else:
-#                 return self.ambiguous[found][1]
