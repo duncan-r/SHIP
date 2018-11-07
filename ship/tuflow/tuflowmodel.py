@@ -485,7 +485,8 @@ class TuflowFilepartTypes(object):
                                     'ASC START MAP OUTPUT', 'ASC END MAP OUTPUT',
                                     'XMDF MAP OUTPUT DATA TYPES', 'WRITE PO ONLINE',
                                     'ASC MAP OUTPUT DATA TYPES',
-                                    'WRITE CHECK FILES INCLUDE',
+                                    'WRITE CHECK FILES INCLUDE', 
+                                    'WRITE CHECK FILES EXCLUDE',
                                     'STORE MAXIMUMS AND MINIMUMS']
         self.types[fpt.IF_LOGIC] = ['IF SCENARIO', 'ELSE IF SCENARIO', 'IF EVENT',
                                     'ELSE IF EVENT', 'END IF', 'ELSE']
