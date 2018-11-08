@@ -261,21 +261,14 @@ class TuflowLoader(ALoader):
                     current_logic.addClause(vars['command'], vars['terms'], vars['comment'])
                 continue
 
-            elif key == fpt.EVENT_LOGIC or key == fpt.SECTION_LOGIC:
+            elif key == fpt.EVENT_LOGIC or key == fpt.SECTION_LOGIC or key == fpt.DOMAIN_LOGIC:
                 vars = self.parseDefineLogic(line, control_part, key)
-#                 if vars['command'].upper().strip().startswith('END'):
-#                     logic_done.append(logic.pop())
-#                 else:
-#                     if key == fpt.EVENT_LOGIC:
-#                         dfile = tuflowpart.BlockLogic(control_part, **vars)
-#                     else:
-#                         dfile = tuflowpart.SectionLogic(control_part, **vars)
-#                     logic = addLogicAssociate(dfile, logic)
-#                 continue
                 upper_cmd = vars['command'].upper().strip()
                 if upper_cmd.startswith('START') or upper_cmd.startswith('DEFINE'):
                     if key == fpt.EVENT_LOGIC:
                         lfile = tuflowpart.BlockLogic(control_part, **vars)
+                    elif key == fpt.DOMAIN_LOGIC:
+                        lfile = tuflowpart.DomainLogic(control_part, **vars)
                     else:
                         lfile = tuflowpart.SectionLogic(control_part, **vars)
                     logic = addLogicAssociate(lfile, logic)

@@ -500,9 +500,10 @@ class TuflowFilepartTypes(object):
             'ELSE IF EVENT', 'END IF', 'ELSE'
         ]
         self.types[fpt.EVENT_LOGIC] = ['DEFINE EVENT', 'END DEFINE']
-        self.types[fpt.SECTION_LOGIC] = [
-            'DEFINE OUTPUT ZONE', 'END DEFINE', 'START 2D DOMAIN',
-            'END 2D DOMAIN', 'START 1D DOMAIN', 'END 1D DOMAIN'
+        self.types[fpt.SECTION_LOGIC] = ['DEFINE OUTPUT ZONE', 'END DEFINE']
+        self.types[fpt.DOMAIN_LOGIC] = [
+           'START 1D DOMAIN', 'END 1D DOMAIN', 'START 2D DOMAIN', 
+           'END 2D DOMAIN'
         ]
         self.types[fpt.USER_VARIABLE] = ['SET VARIABLE']
         self.types[fpt.EVENT_VARIABLE] = [

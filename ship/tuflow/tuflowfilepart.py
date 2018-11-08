@@ -699,7 +699,7 @@ class TuflowLogic(TuflowPart):
         """Function called when a TuflowPart is added."""
 
         self.check_sevals = False
-        """Whether to check the scenarion event values."""
+        """Whether to check the scenario event values."""
 
         self.END_CLAUSE = 'End'
         """Override with with whatever the end statement is (e.g. 'End If')"""
@@ -866,6 +866,9 @@ class TuflowLogic(TuflowPart):
         Return:
             bool - True if the part is within the given se_vals, otherwise False.
         """
+        if not self.check_sevals:
+            return True
+        
         retval = False
         group = self.getGroup(part)
         if group == -1:
@@ -1066,6 +1069,8 @@ class SectionLogic(BlockLogic):
             'terms'(list): list of terms for the first clause
                 (e.g. ['scen1', 'scen2', 'scenN'].
             'comment'(str): any comment next to the first clause.
+            'end_clause'(str): the closing statement for the block section.
+                Defaults to 'End Define'.
 
         Args:
             parent(ModelFile): that contains this TuflowLogic.
@@ -1079,3 +1084,41 @@ class SectionLogic(BlockLogic):
         self.comments = [kwargs.get('comment', '').strip()]
         self.check_sevals = False
         self.END_CLAUSE = 'End Define'
+
+
+class DomainLogic(BlockLogic):
+    """Used for 1D and 2D domain blocks.
+
+    This includes things like 'Start 1D Domain ==' etc. The only real
+    difference between this and BlockLogic is that BlockLogic sets
+    check_sevals = True. It kind of makes sense to treat them slightly
+    differently though as the BlockLogic and IfLogic are used with scenario
+    and event logic.
+    """
+
+    def __init__(self, parent, **kwargs):
+        """Constructor.
+
+        **kwargs:
+            'command(str)': the command (e.g. If Scenario) for the opening clause.
+            'terms'(list): list of terms for the first clause
+                (e.g. ['scen1', 'scen2', 'scenN'].
+            'comment'(str): any comment next to the first clause.
+
+        Args:
+            parent(ModelFile): that contains this TuflowLogic.
+        """
+        super(DomainLogic, self).__init__(parent, 'domainlogic', **kwargs)
+        command = kwargs['command'].strip()
+        self.commands = [command]
+        if kwargs['terms'] is not None:
+            self.terms = [[i.strip() for i in kwargs['terms']]]
+        else:
+            self.terms = [[]]
+        self.comments = [kwargs.get('comment', '').strip()]
+        self.check_sevals = False
+        if '1D' in command.upper():
+            self.END_CLAUSE = 'End 1D Domain'
+        else:
+            self.END_CLAUSE = 'End 2D Domain'
+
