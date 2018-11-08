@@ -157,7 +157,7 @@ class ControlFile(object):
         elif not isinstance(filepart_type, list):
             filepart_type = [filepart_type]
 
-        found_commands = []
+        duplicate_list = []
         fetch_sibling = False
         vars = []
         parents = {}
@@ -176,13 +176,13 @@ class ControlFile(object):
                     continue
 
             if no_duplicates:
-                if part.command in found_commands and not fetch_sibling:
+                if part.duplicate_comparison in duplicate_list and not fetch_sibling:
                     continue
                 else:
-                    if not part.command in found_commands:
-                        found_commands.append(part.command)
+                    if not part.duplicate_comparison in duplicate_list:
+                        duplicate_list.append(part.duplicate_comparison)
                     # If a part has a sibling note that here so that it doesn't
-                    # get missed by the found_commands check
+                    # get missed by the duplicate_list check
                     if part.associates.sibling_next is not None:
                         fetch_sibling = True
                     else:

@@ -126,6 +126,16 @@ class TuflowPart(object):
         self._active = value
         for o in self.observers:
             o.observedActiveChange(value)
+            
+    @property
+    def duplicate_comparison(self):
+        """Used to check whether there is another matching entry.
+        
+        The default (this) assumes that the same command read twice means the
+        final version will override earlier ones. This isn't always the case and
+        files, for instance, should be handled differently.
+        """
+        return self.command
 
     def allParents(self, parent_list):
         """Get all the hash codes of all parents to this object.
@@ -471,6 +481,10 @@ class TuflowFile(TuflowPart, PathHolder):
         self.TOP_CLASS = 'file'
         self.all_types = None
         self.has_own_root = False
+
+    @property
+    def duplicate_comparison(self):
+        return self.command + self.filename
 
     def absolutePathAllTypes(self, user_vars=None):
         """Get the absolute paths for all_types.
