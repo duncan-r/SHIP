@@ -135,7 +135,7 @@ class ReservoirUnit (AUnit):
             self.head_data['revision'].value = unit_data[file_line][20:21]
             self.head_data['comment'].value = unit_data[file_line][23:].strip()
         else:
-            self.head_data['comment'].value = unit_data[file_line][11:]
+            self.head_data['comment'].value = unit_data[file_line][10:]
 
         line = unit_data[file_line + 1]
         names = [line[i:i + 12].strip() for i in range(0, len(line), 12)]
@@ -146,18 +146,21 @@ class ReservoirUnit (AUnit):
         if self.head_data['revision'].value > 0:
             line_count += 1
             line = unit_data[file_line + 2]
-            names = [line[i:i + 12].strip() for i in range(0, len(line), 12)]
+            names = [line[i:i + 12].strip() for i in range(0, len(line), 12) if line[i:i + 12].strip() != '']
             for i, n in enumerate(names):
                 if i > 3:
                     break
-                self.head_data['lateral' + str(i + 1)].value = n.strip()
+
+#         self.head_data['lateral' + str(i + 1)].value = n.strip()
 
         return file_line + line_count
 
     def _readPostRowData(self, unit_data, file_line):
         self.head_data['easting'].value = unit_data[file_line][:10].strip()
         self.head_data['northing'].value = unit_data[file_line][10:20].strip()
-        self.head_data['runoff_factor'].value = unit_data[file_line][20:].strip()
+        rf = unit_data[file_line][20:].strip()
+        if rf != '':
+            self.head_data['runoff_factor'].value = rf
         return file_line + 1
 
     def _readRowData(self, unit_data, file_line):

@@ -146,26 +146,26 @@ class HeadDataItem(object):
             if not uf.isString(value):
                 if default is not None:
                     return default
-                raise ValueError('value %s is not compatible with dtype STRING' % value)
+                raise ValueError('value "%s" is not compatible with dtype STRING' % value)
             else:
                 return value
         if dtype == dt.INT:
             if not uf.isNumeric(value):
                 if default is not None:
                     return default
-                raise ValueError('value %s is not compatible with dtype INT' % value)
+                raise ValueError('value "%s" is not compatible with dtype INT' % value)
             else:
                 return int(value)
         if dtype == dt.FLOAT:
             if not uf.isNumeric(value):
                 if default is not None:
                     return default
-                raise ValueError('value %s is not compatible with dtype FLOAT' % value)
+                raise ValueError('value "%s" is not compatible with dtype FLOAT' % value)
             else:
                 return float(value)
         if dtype == dt.CONSTANT:
             choices = self.kwargs['choices']
             if not value in choices:
-                raise ValueError("value %s is not in CONSTANT 'choices' tuple %s" % (value, choices))
+                raise ValueError('value "%s" is not in CONSTANT choices tuple "%s"' % (value, choices))
             else:
                 return value
