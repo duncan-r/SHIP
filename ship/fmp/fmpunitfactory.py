@@ -163,9 +163,9 @@ class FmpUnitFactory(object):
         try:
             file_line = unit.readUnitData(contents, file_line, **read_kwargs)
         except ValueError as err:
-            print('Load failed at the following line:')
-            print(contents[file_line])
-            print('On dat file line number: {0}'.format(file_line + 1))
+            logger.error('Load failed at the following line:')
+            logger.error(contents[file_line])
+            logger.error('On dat file line number: %s' % (file_line + 1))
             raise
 
         # Need to grab the number of units in the initial conditions from the

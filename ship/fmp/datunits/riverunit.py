@@ -340,3 +340,34 @@ class RiverUnit (AUnit):
 
         # Call superclass method to add the new row
         AUnit.addRow(self, row_vals, index=index, **kwargs)
+        
+        
+    def width(self, active_only=False):
+        """Return the section width.
+        
+        Args:
+            active_only=False(bool): if True the section width will be calculated
+                as the section between the deactivation markers - if present.
+                
+        Return:
+            float - the width of the section.
+        """
+        chainage = self.row_data['main'].dataObject(rdt.CHAINAGE)
+
+        if active_only:
+            deact = self.row_data['main'].dataObject(rdt.DEACTIVATION)
+            left_deact = -1
+            right_deact = -1
+            for i, val in enumerate(deact):
+                if val == 'LEFT': left_deact = i
+                if val == 'RIGHT': right_deact = i
+                if left_deact is not -1 and right_deact is not -1: break
+            new_chain = chainage
+            if right_deact != -1:
+                new_chain = new_chain[:right_deact]
+            if left_deact != -1:
+                new_chain = new_chain[left_deact:]
+            width = abs(new_chain[-1] - new_chain[0])
+        else:
+            width = abs(chainage[-1] - chainage[0])
+        return width

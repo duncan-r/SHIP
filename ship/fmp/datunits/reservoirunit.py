@@ -186,7 +186,7 @@ class ReservoirUnit (AUnit):
                 }, no_copy=True)
 
         except NotImplementedError:
-            logger.ERROR('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
+            logger.error('Unable to read Unit Data(dataRowObject creation) - NotImplementedError')
             raise
 
         return out_line
