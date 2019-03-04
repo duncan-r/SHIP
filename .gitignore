@@ -5,6 +5,7 @@
 #####################################
 
 test_output/
+sandbox*
 
 #####################################
 # Standard Python template stuff
