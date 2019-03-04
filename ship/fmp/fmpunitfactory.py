@@ -158,11 +158,18 @@ class FmpUnitFactory(object):
             constructor_kwargs['reach_number'] = self.reach_number
 
         unit = unit_type(**constructor_kwargs)
-        file_line = unit.readUnitData(contents, file_line, **read_kwargs)
+        
+        # If the unit fails to load print the first line out to help with debugging
+        try:
+            file_line = unit.readUnitData(contents, file_line, **read_kwargs)
+        except ValueError as err:
+            print('Load failed at the following line:')
+            print(contents[file_line])
+            print('On dat file line number: {0}'.format(file_line + 1))
+            raise
 
-        '''Need to grab the number of units in the initial conditions from the
-        header unit because there's no way to know how long it is otherwise.
-        '''
+        # Need to grab the number of units in the initial conditions from the
+        # header unit because there's no way to know how long it is otherwise.
         if file_key == 'HEADER':
             self.unit_count = unit.head_data['node_count'].value
 
