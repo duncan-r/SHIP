@@ -589,7 +589,8 @@ class HeaderUnit(AUnit):
             List - data formatted for writing to the new dat file.
         """
         out = []
-        key_order = ['name', 'revision', 'node_count', 'fr_lower', 'fr_upper', 'min_depth',
+        out.append(self.head_data['name'].value)
+        key_order = ['revision', 'node_count', 'fr_lower', 'fr_upper', 'min_depth',
                      'direct_method', 'unknown', 'water_temp', 'flow', 'head',
                      'math_damp', 'pivot', 'relax', 'dummy']
         for k in key_order:
