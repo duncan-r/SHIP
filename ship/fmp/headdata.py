@@ -112,12 +112,15 @@ class HeadDataItem(object):
             value = decimal_format % float(self._value)
             out = self.format_str.format(value)
         else:
-            out = self.format_str.format(self._value)
+            if not self.format_str:
+                out = self._value
+            else:
+                out = self.format_str.format(self._value)
 
         if auto_newline and self.col_no == 0:
             out = '\n' + out
 
-        return self.format_str.format(out)
+        return out #self.format_str.format(out)
 
     def compare(self, compare_val):
         """Check equality of given value against self.value.
