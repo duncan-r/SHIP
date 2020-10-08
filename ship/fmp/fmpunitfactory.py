@@ -73,6 +73,10 @@ class FmpUnitFactory(object):
         reservoirunit.ReservoirUnit,
         conduitunit.RectangularConduitUnit,
         conduitunit.CircularConduitUnit,
+        conduitunit.FullarchConduitUnit,
+        conduitunit.SprungarchConduitUnit,
+        conduitunit.SymmetricalConduitUnit,
+        conduitunit.AsymmetricalConduitUnit,
     )
 
     def __init__(self):
