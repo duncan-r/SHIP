@@ -26,6 +26,8 @@ import logging
 logger = logging.getLogger(__name__)
 """logging references with a __name__ set to this module."""
 
+import numbers
+
 from ship.fmp.datunits.isisunit import AUnit
 from ship.datastructures.rowdatacollection import RowDataCollection
 from ship.datastructures import dataobject as do
@@ -81,7 +83,7 @@ class RefhUnit(AUnit):
             'hydrograph_scaling': HeadDataItem('RUNOFF', '{:>10}', 3, 6, dtype=dt.CONSTANT, choices=('RUNOFF', 'FULL')),
             'min_flow': HeadDataItem(1.000, '{:>10}', 3, 7, dtype=dt.FLOAT, dps=3),
             'catchment_area': HeadDataItem(0.00, '{:>10}', 4, 0, dtype=dt.FLOAT, dps=3),
-            'saar': HeadDataItem(0, '{:>10}', 4, 1, dtype=dt.INT),
+            'saar': HeadDataItem(0, '{:>10}', 4, 1, dtype=dt.FLOAT, dps=2, format_float_to_int=True),
             'urbext': HeadDataItem(0.000, '{:>10}', 4, 2, dtype=dt.FLOAT, dps=5),
             'season': HeadDataItem('DEFAULT', '{:>10}', 4, 3, dtype=dt.CONSTANT, choices=('DEFAULT', 'WINTER', 'SUMMER')),
             'published_report': HeadDataItem('DLL', '{:>10}', 4, 4, dtype=dt.CONSTANT, choices=('DLL', 'REPORT')),

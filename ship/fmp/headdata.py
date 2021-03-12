@@ -19,6 +19,7 @@
 
 """
 from __future__ import unicode_literals
+import math
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,8 +46,12 @@ class HeadDataItem(object):
             dtype(int): one of the datatructures.DATA_TYPES.
             default: a default value to apply when none is given.
             allow_blank(bool): whether to allow blank/non-value entries.
-            update_callback(func): a function to vall when a value is updated.
+            format_float_to_int(bool): whether to round float value to an in is 
+                remainder is 0 when formatting (e.g. 100.00 -> 100).
+            update_callback(func): a function to call when a value is updated.
                 This is not currently used.
+            format_callback(func): a function to call when a value is formatted.
+                This will override any default formatting for the value.
 
         Args:
             initial_value: the initial value to set.
@@ -75,7 +80,12 @@ class HeadDataItem(object):
 
         value = self._checkValue(initial_value)
         self._value = value
+        self._format_float_to_int = kwargs.get('format_float_to_int', None)
         self._update_callback = kwargs.get('update_callback', None)
+        if 'format_callback' in kwargs.keys():
+            i=0
+        self._format_callback = kwargs.get('format_callback', None)
+        i=0
 
     @property
     def value(self):
@@ -99,6 +109,9 @@ class HeadDataItem(object):
         A newline char '\n' will be appended to the start of the returned 
         string if it's col_no == 0 and auto_newline == True.
         """
+        if self._format_callback is not None:
+            return self._format_callback(self)
+
         out = ''
         if self.allow_blank and self._value == '':
             if auto_newline and self.col_no == 0:
@@ -107,10 +120,14 @@ class HeadDataItem(object):
                 return out
 
         if self.dtype == dt.FLOAT:
-            dps = self.kwargs.get('dps', 1)
-            decimal_format = '%0.' + str(dps) + 'f'
-            value = decimal_format % float(self._value)
-            out = self.format_str.format(value)
+            value = float(self._value)
+            if self._format_float_to_int and math.isclose(value, int(value)):
+                    out = self.format_str.format(int(value))
+            else:
+                dps = self.kwargs.get('dps', 1)
+                decimal_format = '%0.' + str(dps) + 'f'
+                value = decimal_format % float(self._value)
+                out = self.format_str.format(value)
         else:
             if not self.format_str:
                 out = self._value
