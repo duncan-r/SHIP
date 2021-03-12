@@ -173,6 +173,7 @@ class FmpUnitFactory(object):
             logger.error('Load failed at the following line:')
             logger.error(contents[file_line])
             logger.error('On dat file line number: %s' % (file_line + 1))
+            err.args = err.args + (' - In %s unit near dat file line: %s' % (unit._unit_type, file_line + 1),)
             raise
 
         # Need to grab the number of units in the initial conditions from the
