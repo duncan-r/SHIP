@@ -169,7 +169,7 @@ class FmpUnitFactory(object):
         # If the unit fails to load print the first line out to help with debugging
         try:
             file_line = unit.readUnitData(contents, file_line, **read_kwargs)
-        except ValueError as err:
+        except (ValueError, IndexError) as err:
             logger.error('Load failed at the following line:')
             logger.error(contents[file_line])
             logger.error('On dat file line number: %s' % (file_line + 1))

@@ -448,15 +448,15 @@ class BridgeUnitUsbpr (BridgeUnit):
             'dual_distance': HeadDataItem(0.000, '{:>10}', 4, 3, dtype=dt.FLOAT, dps=3),
             'pier_width': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.FLOAT),
             'orifice_flag': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'ORIFICE')),
-            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3),
-            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3),
-            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3),
+            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3, default=0.0),
+            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3, default=0.0),
+            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3, default=1.0),
             'abutment_type': HeadDataItem('3', '{:>10}', 5, 0, dtype=dt.CONSTANT, choices=('1', '2', '3')),
             'num_of_piers': HeadDataItem(0, '{:>10}', 6, 0, dtype=dt.INT),
             'pier_shape': HeadDataItem('FLAT', '{:<10}', 6, 1, dtype=dt.CONSTANT, choices=('FLAT', 'ARCH', 'CYLINDER', 'RECTANGLE', 'SQUARE', 'IBEAM')),
             'pier_shape_2': HeadDataItem('', '{:<10}', 6, 2, dtype=dt.CONSTANT, choices=('STREAMLINE', 'SEMICIRCLE', 'TRIANGLE', 'DIAPHRAGM'), allow_blank=True),
             'pier_calibration_coef': HeadDataItem('', '{:>10}', 6, 3, dtype=dt.FLOAT, dps=3, allow_blank=True),
-            'abutment_align': HeadDataItem('ALIGNED', '{:>10}', 7, 0, dtype=dt.CONSTANT, choices=('ALIGNED', 'SKEW')),
+            'abutment_align': HeadDataItem('ALIGNED', '{:>10}', 7, 0, dtype=dt.CONSTANT, choices=('ALIGNED', 'SKEW'), default='ALIGNED'),
         }
 
         # Add an culvert RowCollection to self.row_data dict

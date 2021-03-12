@@ -130,14 +130,15 @@ class HtbdyUnit (AUnit):
                 vars = l.split()
 
             rows = int(vars[0])
-            if uf.isNumeric(vars[1]):
-                self.head_data['time_units'].value = 'USER SET'
-                self.head_data['multiplier'].value = vars[1]
-            else:
-                self.head_data['time_units'].value = vars[1]
+            if len(vars) > 1:
+                if uf.isNumeric(vars[1]):
+                    self.head_data['time_units'].value = 'USER SET'
+                    self.head_data['multiplier'].value = vars[1]
+                else:
+                    self.head_data['time_units'].value = vars[1]
 
-            self.head_data['extending_method'].value = vars[2]
-            self.head_data['interpolation'].value = vars[3]
+                self.head_data['extending_method'].value = vars[2]
+                self.head_data['interpolation'].value = vars[3]
 
         return file_line + 3, rows
 

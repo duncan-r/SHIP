@@ -46,7 +46,7 @@ class HeadDataItem(object):
             dtype(int): one of the datatructures.DATA_TYPES.
             default: a default value to apply when none is given.
             allow_blank(bool): whether to allow blank/non-value entries.
-            format_float_to_int(bool): whether to round float value to an in is 
+            format_float_to_int(bool): whether to round float value to an int if 
                 remainder is 0 when formatting (e.g. 100.00 -> 100).
             update_callback(func): a function to call when a value is updated.
                 This is not currently used.
@@ -71,6 +71,8 @@ class HeadDataItem(object):
                 raise AttributeError("Keyword args must contain 'choices=(str1, str2, strN)' when dtype == CONSTANT")
             elif not isinstance(kwargs['choices'], tuple):
                 raise ValueError('choices must be a tuple')
+            elif default is not None and default not in kwargs['choices']:
+                raise ValueError('default value must be in choices tuple')
 
         self.dtype = dtype
         self.format_str = format_str
@@ -81,11 +83,9 @@ class HeadDataItem(object):
         value = self._checkValue(initial_value)
         self._value = value
         self._format_float_to_int = kwargs.get('format_float_to_int', None)
+#         self._default_blank_value = kwargs.get('default_blank_value', None)
         self._update_callback = kwargs.get('update_callback', None)
-        if 'format_callback' in kwargs.keys():
-            i=0
         self._format_callback = kwargs.get('format_callback', None)
-        i=0
 
     @property
     def value(self):
@@ -186,6 +186,8 @@ class HeadDataItem(object):
         if dtype == dt.CONSTANT:
             choices = self.kwargs['choices']
             if not value in choices:
+                if default is not None:
+                    return default
                 raise ValueError('value "%s" is not in CONSTANT choices tuple "%s"' % (value, choices))
             else:
                 return value
