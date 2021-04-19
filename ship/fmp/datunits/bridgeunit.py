@@ -681,9 +681,9 @@ class BridgeUnitArch (BridgeUnit):
             'dual_distance': HeadDataItem(0.000, '{:>10}', 4, 3, dtype=dt.FLOAT, dps=3),
             'num_of_orifices': HeadDataItem(0, '{:>10}', 4, 4, dtype=dt.INT),
             'orifice_flag': HeadDataItem('', '{:>10}', 4, 5, dtype=dt.CONSTANT, choices=('', 'ORIFICE')),
-            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3),
-            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3),
-            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3),
+            'op_lower': HeadDataItem(0.000, '{:>10}', 4, 6, dtype=dt.FLOAT, dps=3, allow_blank=True),
+            'op_upper': HeadDataItem(0.000, '{:>10}', 4, 7, dtype=dt.FLOAT, dps=3, allow_blank=True),
+            'op_cd': HeadDataItem(0.000, '{:>10}', 4, 8, dtype=dt.FLOAT, dps=3, allow_blank=True),
         }
 
     def _getHeadData(self):
