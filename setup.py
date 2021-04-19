@@ -41,7 +41,7 @@ def readme():
     
 
 setup(  name='ship',
-        version='0.3.2',
+        version='0.3.3',
         description='A Library of Python utilities for interacting with 1D and 2D hydraulic models',
         long_description=readme(),
         classifiers=[
@@ -51,6 +51,9 @@ setup(  name='ship',
           'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
+          'Programming Language :: Python :: 3.8',
           'Topic :: Utilities :: Model processing :: API',
         ],
         keywords='FMP TUFLOW Utilities Files Tools API',
