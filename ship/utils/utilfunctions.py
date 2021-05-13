@@ -133,7 +133,7 @@ def encodeStr(value):
     try:
         value = unicode(value, "utf-8")
         return value
-    except (NameError, TypeError):
+    except (UnicodeDecodeError, NameError, TypeError):
         return value
 
 

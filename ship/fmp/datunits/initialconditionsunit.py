@@ -103,12 +103,15 @@ class InitialConditionsUnit (AUnit):
             ustate = unit_data[i][64:74].strip()
             elevation = unit_data[i][74:84].strip()
 
-            self.row_data['main'].addRow({
-                rdt.LABEL: label, rdt.QMARK: qmark, rdt.FLOW: flow,
-                rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity,
-                rdt.UMODE: umode, rdt.USTATE: ustate,
-                rdt.ELEVATION: elevation
-            }, no_copy=True)
+            try:
+                self.row_data['main'].addRow({
+                    rdt.LABEL: label, rdt.QMARK: qmark, rdt.FLOW: flow,
+                    rdt.STAGE: stage, rdt.FROUDE_NO: froude_no, rdt.VELOCITY: velocity,
+                    rdt.UMODE: umode, rdt.USTATE: ustate,
+                    rdt.ELEVATION: elevation
+                }, no_copy=True)
+            except:
+                pass
 
         return out_line - 1
 

@@ -226,7 +226,13 @@ class RefhUnit(AUnit):
 
         self._name = self.head_data['section_label'] = unit_data[file_line + 1][:12].strip()
 
-        self.head_data['z'].value = unit_data[file_line + 2][:10].strip()
+        # I've seen this set weirdly a couple of time and it cause a fail, but isn't
+        # used for anything. Catch it if fails and set to 0
+        try:
+            self.head_data['z'].value = unit_data[file_line + 2][:10].strip()
+        except ValueError:
+            self.head_data['z'].value = 0
+
         self.head_data['easting'].value = unit_data[file_line + 2][10:20].strip()
         self.head_data['northing'].value = unit_data[file_line + 2][20:30].strip()
         self.head_data['time_delay'].value = unit_data[file_line + 3][0:10].strip()
