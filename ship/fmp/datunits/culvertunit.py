@@ -81,9 +81,9 @@ class CulvertUnitInlet(CulvertUnit):
             'bar_proportion': HeadDataItem(0.000, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
             'debris_proportion': HeadDataItem(0.000, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
             'loss_coef': HeadDataItem(0.000, '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
-            'trashscreen_height': HeadDataItem(0.000, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3, default=''),
-            'headloss_type': HeadDataItem('STATIC', '{:>10}', 3, 5, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL')),
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 3, 6, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
+            'headloss_type': HeadDataItem('STATIC', '{:>10}', 3, 5, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL', '')),
+            'trashscreen_height': HeadDataItem(0.000, '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3, default=''),
         }
 
     def readUnitData(self, unit_data, file_line):
@@ -152,8 +152,8 @@ class CulvertUnitOutlet(CulvertUnit):
         self.head_data = {
             'comment': HeadDataItem('', '', 0, 0, dtype=dt.STRING),
             'loss_coef': HeadDataItem(0.000, '{:>10}', 2, 0, dtype=dt.FLOAT, dps=3),
-            'headloss_type': HeadDataItem('STATIC', '{:>10}', 2, 1, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL')),
             'reverse_flow_model': HeadDataItem('CALCULATED', '{:<10}', 2, 2, dtype=dt.CONSTANT, choices=('CALCULATED', 'ZERO')),
+            'headloss_type': HeadDataItem('STATIC', '{:>10}', 2, 1, dtype=dt.CONSTANT, choices=('STATIC', 'TOTAL', '')),
         }
 
     def readUnitData(self, unit_data, file_line):
