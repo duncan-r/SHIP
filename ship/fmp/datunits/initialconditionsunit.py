@@ -60,6 +60,7 @@ class InitialConditionsUnit (AUnit):
         self._name = "initial_conditions"
         self._name_types = {}
         self._node_count = 0
+        self._label_length = 12
 #         self.has_datarows = True
 #         self.has_ics = False
 
@@ -86,6 +87,7 @@ class InitialConditionsUnit (AUnit):
         """
         self._node_count = kwargs['node_count']
         self._name_types = kwargs['name_types']
+        self._label_length = kwargs['label_length']
 
         i = file_line
         out_line = file_line + self._node_count + 2
@@ -93,15 +95,15 @@ class InitialConditionsUnit (AUnit):
             if i < file_line + 2:
                 continue  # Skip the first couple of header lines
 
-            label = unit_data[i][0:12].strip()
-            qmark = unit_data[i][12:14].strip()
-            flow = unit_data[i][14:24].strip()
-            stage = unit_data[i][24:34].strip()
-            froude_no = unit_data[i][34:44].strip()
-            velocity = unit_data[i][44:54].strip()
-            umode = unit_data[i][54:64].strip()
-            ustate = unit_data[i][64:74].strip()
-            elevation = unit_data[i][74:84].strip()
+            label = unit_data[i][0:self._label_length].strip()
+            qmark = unit_data[i][self._label_length:self._label_length+2].strip()
+            flow = unit_data[i][self._label_length+2:self._label_length+12].strip()
+            stage = unit_data[i][self._label_length+12:self._label_length+22].strip()
+            froude_no = unit_data[i][self._label_length+22:self._label_length+32].strip()
+            velocity = unit_data[i][self._label_length+32:self._label_length+42].strip()
+            umode = unit_data[i][self._label_length+42:self._label_length+52].strip()
+            ustate = unit_data[i][self._label_length+52:self._label_length+62].strip()
+            elevation = unit_data[i][self._label_length+62:self._label_length+72].strip()
 
             try:
                 self.row_data['main'].addRow({

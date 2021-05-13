@@ -544,7 +544,7 @@ class HeaderUnit(AUnit):
             'fr_upper': HeadDataItem(0.900, '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3, default=0.75),
             'min_depth': HeadDataItem(0.100, '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3, default=0.01),
             'direct_method': HeadDataItem(0.001, '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3, default=0.001),
-            'unknown': HeadDataItem('12', '{:>10}', 2, 5, dtype=dt.STRING),
+            'label_length': HeadDataItem(12, '{:>10}', 2, 5, dtype=dt.INT),
             'water_temp': HeadDataItem(10.000, '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3, default=10),
             'flow': HeadDataItem(0.010, '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3, default=0.10),
             'head': HeadDataItem(0.010, '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3, default=0.10),
@@ -568,7 +568,7 @@ class HeaderUnit(AUnit):
         self.head_data['fr_upper'].value = unit_data[2][20:30].strip()
         self.head_data['min_depth'].value = unit_data[2][30:40].strip()
         self.head_data['direct_method'].value = unit_data[2][40:50].strip()
-        self.head_data['unknown'].value = unit_data[2][50:60].strip()
+        self.head_data['label_length'].value = unit_data[2][50:60].strip()
         self.head_data['water_temp'].value = unit_data[3][:10].strip()
         self.head_data['flow'].value = unit_data[3][10:20].strip()
         self.head_data['head'].value = unit_data[3][20:30].strip()
@@ -577,25 +577,6 @@ class HeaderUnit(AUnit):
         self.head_data['relax'].value = unit_data[3][50:60].strip()
         self.head_data['dummy'].value = unit_data[3][60:70].strip()
         self.head_data['roughness'].value = unit_data[5].strip()
-        
-#         self.head_data = {
-#             'name': HeadDataItem(unit_data[0].strip(), '', 0, 0, dtype=dt.STRING),
-#             'revision': HeadDataItem(unit_data[1].strip(), '{:>10}', 1, 0, dtype=dt.STRING),
-#             'node_count': HeadDataItem(unit_data[2][:10].strip(), '{:>10}', 2, 0, dtype=dt.INT),
-#             'fr_lower': HeadDataItem(unit_data[2][10:20].strip(), '{:>10}', 2, 1, dtype=dt.FLOAT, dps=3),
-#             'fr_upper': HeadDataItem(unit_data[2][20:30].strip(), '{:>10}', 2, 2, dtype=dt.FLOAT, dps=3),
-#             'min_depth': HeadDataItem(unit_data[2][30:40].strip(), '{:>10}', 2, 3, dtype=dt.FLOAT, dps=3),
-#             'direct_method': HeadDataItem(unit_data[2][40:50].strip(), '{:>10}', 2, 4, dtype=dt.FLOAT, dps=3),
-#             'unknown': HeadDataItem(unit_data[2][50:60].strip(), '{:>10}', 2, 5, dtype=dt.STRING),
-#             'water_temp': HeadDataItem(unit_data[3][:10].strip(), '{:>10}', 3, 0, dtype=dt.FLOAT, dps=3),
-#             'flow': HeadDataItem(unit_data[3][10:20].strip(), '{:>10}', 3, 1, dtype=dt.FLOAT, dps=3),
-#             'head': HeadDataItem(unit_data[3][20:30].strip(), '{:>10}', 3, 2, dtype=dt.FLOAT, dps=3),
-#             'math_damp': HeadDataItem(unit_data[3][30:40].strip(), '{:>10}', 3, 3, dtype=dt.FLOAT, dps=3),
-#             'pivot': HeadDataItem(unit_data[3][40:50].strip(), '{:>10}', 3, 4, dtype=dt.FLOAT, dps=3),
-#             'relax': HeadDataItem(unit_data[3][50:60].strip(), '{:>10}', 3, 5, dtype=dt.FLOAT, dps=3),
-#             'dummy': HeadDataItem(unit_data[3][60:70].strip(), '{:>10}', 3, 6, dtype=dt.FLOAT, dps=3),
-#             'roughness': HeadDataItem(unit_data[5].strip(), '{:>10}', 5, 0, dtype=dt.STRING),
-#         }
 
         return file_line + 7
 

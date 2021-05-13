@@ -161,6 +161,7 @@ class FmpUnitFactory(object):
         if file_key == 'INITIAL':
             read_kwargs['node_count'] = self.unit_count
             read_kwargs['name_types'] = self._ic_name_types
+            read_kwargs['label_length'] = self.label_length
         elif file_key == 'RIVER':
             constructor_kwargs['reach_number'] = self.reach_number
 
@@ -178,8 +179,11 @@ class FmpUnitFactory(object):
 
         # Need to grab the number of units in the initial conditions from the
         # header unit because there's no way to know how long it is otherwise.
+        # Same for the label length value (how long unit names can be) as this
+        # dictates the formatting width of the labels in the IC's.
         if file_key == 'HEADER':
             self.unit_count = unit.head_data['node_count'].value
+            self.label_length = unit.head_data['label_length'].value
 
         if file_key != 'INITIAL':
             self.findIcLabels(unit)
