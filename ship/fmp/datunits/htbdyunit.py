@@ -137,8 +137,14 @@ class HtbdyUnit (AUnit):
                 else:
                     self.head_data['time_units'].value = vars[1]
 
-                self.head_data['extending_method'].value = vars[2]
-                self.head_data['interpolation'].value = vars[3]
+                if len(vars) > 2:
+                    self.head_data['extending_method'].value = vars[2]
+                else:
+                    self.head_data['extending_method'].value = 'EXTEND'
+                if len(vars) > 3:
+                    self.head_data['interpolation'].value = vars[3]
+                else:
+                    self.head_data['interpolation'].value = 'LINEAR'
 
         return file_line + 3, rows
 
