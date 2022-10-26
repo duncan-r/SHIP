@@ -363,7 +363,7 @@ class RiverUnit (AUnit):
             for i, val in enumerate(deact):
                 if val == 'LEFT': left_deact = i
                 if val == 'RIGHT': right_deact = i
-                if left_deact is not -1 and right_deact is not -1: break
+                if left_deact != -1 and right_deact != -1: break
             new_chain = chainage
             if right_deact != -1:
                 new_chain = new_chain[:right_deact]
