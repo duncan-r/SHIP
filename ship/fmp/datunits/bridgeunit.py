@@ -530,6 +530,11 @@ class BridgeUnitUsbpr (BridgeUnit):
                 oend = unit_data[i][10:20].strip()
                 spring = unit_data[i][20:30].strip()
                 soffit = unit_data[i][30:40].strip()
+                
+                if ostart == 'L':
+                    ostart = 'LEFT'
+                if oend == 'R':
+                    oend = 'RIGHT'
 
                 self.row_data['opening'].addRow({
                     rdt.OPEN_START: ostart, rdt.OPEN_END: oend,

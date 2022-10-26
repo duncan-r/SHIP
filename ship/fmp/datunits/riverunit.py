@@ -99,7 +99,7 @@ class RiverUnit (AUnit):
             do.ConstantData(rdt.BANKMARKER, ('', 'LEFT', 'RIGHT', 'BED'), format_str='{:<10}', default=''),
             do.FloatData(rdt.EASTING, format_str='{:>10}', default=0.0, no_of_dps=2),
             do.FloatData(rdt.NORTHING, format_str='{:>10}', default=0.0, no_of_dps=2),
-            do.ConstantData(rdt.DEACTIVATION, ('', 'LEFT', 'RIGHT'), format_str='{:<10}', default=''),
+            do.ConstantData(rdt.DEACTIVATION, ('', 'LEFT', 'RIGHT'), format_str='{:<10}', default=-1),
             # Default == '~' means to ignore formatting and apply '' when value is None
             do.StringData(rdt.SPECIAL, format_str='{:<10}', default='~'),
         ]
@@ -205,6 +205,8 @@ class RiverUnit (AUnit):
                     east = None
                 if north == '':
                     north = None
+                if rpl == '':
+                    rpl = 1.000
 
                 self.row_data['main'].addRow(
                     {rdt.CHAINAGE: chain, rdt.ELEVATION: elev, rdt.ROUGHNESS: rough,
